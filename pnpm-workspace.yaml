@@ -1,0 +1,7 @@
+# Single-package repo; this file only exists to allow native postinstalls under pnpm 12.
+packages:
+  - "."
+allowBuilds:
+  esbuild: true
+  sharp: true
+  "@parcel/watcher": true

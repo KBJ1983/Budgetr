@@ -1,0 +1,95 @@
+/* Design tokens from docs/design/HANDOFF.md §3. Landing page is always light; the app has a light and a dark theme. */
+:root {
+  /* Site (light) */
+  --paper: #f4f5f1;
+  --card: #ffffff;
+  --stone: #edefea;
+  --ink: #16201d;
+  --ink-2: #46534e;
+  --ink-3: #5f6b66;
+  --rule: #dce0da;
+  --field-border: #c9cfc8;
+  --pine: #1f5c4a;
+  --pine-hover: #163f33;
+  --pine-bg: #e3eee9;
+  --pine-light: #6cc2a2;
+  --focus: #2f6fb3;
+
+  /* Product (dark app theme, used for cut-outs on the landing page) */
+  --d-bg: #121816;
+  --d-bar: #0e1311;
+  --d-card: #1a2220;
+  --d-text: #e7ece9;
+  --d-text-2: #b3beb9;
+  --d-text-3: #8e9a94;
+  --d-rule: #2c3633;
+  --d-pos: #6cc2a2;
+  --d-pos-bg: #1d3129;
+  --d-pos-rule: #2b4a3e;
+  --d-neg: #ee8f78;
+  --d-neg-bg: #3a231d;
+  --d-warn: #e4b758;
+  --d-warn-bg: #352a14;
+  --d-warn-rule: #5a4718;
+  --d-blue: #86b8ee;
+  --d-slate: #a7b4c8;
+  --d-slate-bg: #212831;
+  --d-slate-rule: #36404d;
+
+  --shadow-product: 0 40px 80px -30px rgba(18, 24, 22, 0.45), 0 12px 24px -12px rgba(18, 24, 22, 0.35);
+  --font: var(--font-schibsted), "Schibsted Grotesk", ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--pine);
+}
+a:hover {
+  color: var(--pine-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
