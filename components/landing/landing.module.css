@@ -5,7 +5,9 @@
  */
 
 .page {
-  --gutter: 120px;
+  /* Content is at most --content wide and centred; section backgrounds still run full width. */
+  --content: 1120px;
+  --gutter: max(120px, calc((100% - var(--content)) / 2));
   --section-y: 96px;
   --error: #b03a22;
   --error-on-dark: #ffd4c8;
