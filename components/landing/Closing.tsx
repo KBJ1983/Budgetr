@@ -32,7 +32,7 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string }[] =
 export function Trust() {
   return (
     <section id="tryghed" className={`${styles.section} ${styles.trustBand}`} aria-labelledby="tryghed-title">
-      <div className={styles.trustBandHead}>
+      <div className={styles.trustBandHead} data-reveal>
         <span className={styles.trustBadge}>
           <ShieldIcon size={16} strokeWidth={2} /> Tryghed
         </span>
@@ -44,7 +44,7 @@ export function Trust() {
           kommer ud.
         </p>
       </div>
-      <ul className={styles.trustBandGrid}>
+      <ul className={styles.trustBandGrid} data-reveal-group>
         {TRUST_CARDS.map((card) => (
           <li key={card.title} className={styles.trustBandCard}>
             <span className={styles.trustBandIcon} aria-hidden="true">
@@ -90,7 +90,7 @@ const FAQ = [
 export function Pricing() {
   return (
     <section id="pris" className={`${styles.section} ${styles.pricing}`} aria-label="Pris og spørgsmål">
-      <div className={styles.priceCard}>
+      <div className={styles.priceCard} data-reveal>
         <div className={styles.priceHead}>
           <span className={styles.eyebrow}>Pris</span>
           <span className={styles.priceTag}>Alle funktioner</span>
@@ -104,7 +104,7 @@ export function Pricing() {
           Opret gratis bruger
         </Link>
       </div>
-      <div className={styles.faq}>
+      <div className={styles.faq} data-reveal-group>
         <h2 className={`${styles.h2} ${styles.faqTitle}`}>Spørgsmål og svar</h2>
         {FAQ.map((item) => (
           <div key={item.q} className={styles.faqItem}>
@@ -119,7 +119,7 @@ export function Pricing() {
 
 export function FinalCta() {
   return (
-    <section className={styles.cta} aria-labelledby="cta-title">
+    <section className={styles.cta} aria-labelledby="cta-title" data-reveal-group>
       <h2 id="cta-title" className={styles.ctaTitle}>
         Giv din økonomi et hjem. Det tager ti minutter.
       </h2>

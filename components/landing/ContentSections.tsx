@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { AvailabilityCutout, SharingCutout } from "./cutouts";
@@ -25,7 +25,7 @@ const STEPS = [
 export function HowItWorks() {
   return (
     <section id="saadan" className={`${styles.section} ${styles.steps}`} aria-labelledby="saadan-title">
-      <div className={styles.sectionHead}>
+      <div className={styles.sectionHead} data-reveal>
         <div className={styles.sectionHeadTitle}>
           <span className={styles.eyebrow}>Sådan virker det</span>
           <h2 id="saadan-title" className={styles.h2}>
@@ -37,7 +37,7 @@ export function HowItWorks() {
           bygger sig selv.
         </p>
       </div>
-      <ol className={styles.stepGrid}>
+      <ol className={styles.stepGrid} data-reveal-group>
         {STEPS.map((step, index) => (
           <li key={step.title} className={styles.step}>
             <div className={styles.stepTop}>
@@ -86,7 +86,7 @@ function SplitSection({ id, eyebrow, title, body, bullets, visual, visualFirst =
         .join(" ")}
       aria-labelledby={titleId}
     >
-      <div className={styles.splitText}>
+      <div className={styles.splitText} data-reveal>
         <div className={styles.splitIntro}>
           <span className={styles.eyebrow}>{eyebrow}</span>
           <h2 id={titleId} className={styles.h2}>
@@ -96,7 +96,9 @@ function SplitSection({ id, eyebrow, title, body, bullets, visual, visualFirst =
         </div>
         <CheckList items={bullets} className={styles.splitList} />
       </div>
-      <div className={styles.splitVisual}>{visual}</div>
+      <div className={styles.splitVisual} data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties}>
+        {visual}
+      </div>
     </section>
   );
 }

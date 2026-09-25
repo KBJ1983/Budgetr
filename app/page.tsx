@@ -3,6 +3,7 @@ import { Pricing, FinalCta, Trust } from "@/components/landing/Closing";
 import { Availability, HowItWorks, Sharing } from "@/components/landing/ContentSections";
 import { Features } from "@/components/landing/Features";
 import { Hero } from "@/components/landing/Hero";
+import { ScrollReveal } from "@/components/landing/ScrollReveal";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader } from "@/components/landing/SiteHeader";
 
@@ -26,6 +27,7 @@ export default function HomePage() {
         <FinalCta />
       </main>
       <SiteFooter />
+      <ScrollReveal />
     </div>
   );
 }

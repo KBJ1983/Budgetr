@@ -39,7 +39,7 @@ const FEATURES: readonly { icon: ReactNode; title: string; body: string }[] = [
 export function Features() {
   return (
     <section id="funktioner" className={`${styles.section} ${styles.featureSection}`} aria-labelledby="funktioner-title">
-      <div className={styles.sectionHead}>
+      <div className={styles.sectionHead} data-reveal>
         <div className={styles.sectionHeadTitle}>
           <span className={styles.eyebrow}>Alt det andet</span>
           <h2 id="funktioner-title" className={styles.h2}>
@@ -48,7 +48,7 @@ export function Features() {
         </div>
         <p className={styles.headBody}>Planlæg det næste skridt uden at røre det budget, du lever efter i dag.</p>
       </div>
-      <ul className={styles.featureCards}>
+      <ul className={styles.featureCards} data-reveal-group>
         {FEATURES.map((f) => (
           <li key={f.title} className={styles.featureCard}>
             <span className={styles.featureIcon} aria-hidden="true">

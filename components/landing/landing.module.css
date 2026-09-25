@@ -2286,3 +2286,79 @@
     line-height: 1.5;
   }
 }
+
+/* ================= Motion ================= */
+/* Calm and short: things settle into place, nothing bounces. All of it is off with reduced motion.
+   Scroll reveal: components/landing/ScrollReveal.tsx marks elements below the fold as pending. */
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .heroText > * {
+    animation: riseIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .heroText > :nth-child(2) {
+    animation-delay: 0.08s;
+  }
+  .heroText > :nth-child(3) {
+    animation-delay: 0.16s;
+  }
+  .heroText > :nth-child(4) {
+    animation-delay: 0.24s;
+  }
+  .heroText > :nth-child(5) {
+    animation-delay: 0.32s;
+  }
+  .heroVisual {
+    animation: fadeIn 0.9s ease-out 0.2s both;
+  }
+  .heroMobile {
+    animation: riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
+  }
+  .floatGoal {
+    animation:
+      riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s both,
+      drift 7s ease-in-out 1.6s infinite;
+  }
+  .floatScenario {
+    animation:
+      riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.75s both,
+      drift 8s ease-in-out 2.4s infinite;
+  }
+
+  .page :global([data-reveal-state]) {
+    transition:
+      opacity 0.7s ease-out var(--reveal-delay, 0ms),
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+  }
+  .page :global([data-reveal-state="pending"]) {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
