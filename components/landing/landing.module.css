@@ -35,7 +35,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  padding: 24px var(--gutter);
+  padding: 12px var(--gutter);
+  border-bottom: 1px solid var(--rule);
 }
 
 .brand {
@@ -50,20 +51,20 @@
   color: var(--ink);
 }
 .brand svg {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 }
 .brandName {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
 .nav {
   display: flex;
-  gap: 32px;
+  gap: 28px;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
 }
 .nav a {
   color: var(--ink-2);
@@ -79,16 +80,16 @@
 
 .headerActions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
 .loginLink {
   color: var(--ink);
   text-decoration: none;
-  font-size: 15px;
-  padding: 12px 14px;
-  border-radius: 10px;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
 }
 .loginLink:hover {
   color: var(--ink);
@@ -96,22 +97,24 @@
   text-underline-offset: 4px;
 }
 
+/* Quiet outline button: the header should not compete with the hero. */
 .headerCta {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  background: var(--ink);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  padding: 0 20px;
-  border-radius: 10px;
+  min-height: 36px;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--field-border);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 14px;
+  border-radius: 9px;
   text-decoration: none;
   white-space: nowrap;
 }
 .headerCta:hover {
-  color: #fff;
-  background: #2b3733;
+  color: var(--ink);
+  border-color: var(--ink-3);
 }
 
 .menuButton {
@@ -1767,18 +1770,10 @@
   }
 
   .header {
-    padding: 14px var(--gutter);
-    border-bottom: 1px solid var(--rule);
+    padding: 10px var(--gutter);
   }
   .brand {
     gap: 8px;
-  }
-  .brand svg {
-    width: 28px;
-    height: 28px;
-  }
-  .brandName {
-    font-size: 20px;
   }
   .headerActions {
     gap: 6px;
@@ -2064,5 +2059,230 @@
   }
   .companyNarrow {
     display: block;
+  }
+}
+
+/* ================= Hero call to action (no e-mail field) ================= */
+
+.heroActions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.heroButton {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 12px;
+  background: var(--pine);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.heroButton:hover {
+  color: #fff;
+  background: var(--pine-hover);
+}
+.heroLink {
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
+  text-underline-offset: 4px;
+  padding: 12px 0;
+}
+.heroLink:hover {
+  color: var(--pine);
+}
+
+/* ================= Tryghed: dark band ================= */
+
+.trustBand {
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+.trustBandHead {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 760px;
+}
+.trustBadge {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--d-pos-bg);
+  color: var(--pine-light);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.trustBandTitle {
+  font-size: 52px;
+}
+.trustBandBody {
+  font-size: 19px;
+  max-width: 640px;
+}
+.trustBandGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.trustBandCard {
+  min-width: 0;
+  background: var(--d-card);
+  border: 1px solid var(--d-rule);
+  border-radius: 18px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.trustBandIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--d-pos-bg);
+  color: var(--pine-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.trustBandCardTitle {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--paper);
+}
+.trustBandCardBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--d-text-2);
+}
+
+/* ================= Alt det andet: text cards ================= */
+
+.featureSection {
+  background: var(--card);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+.featureCards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.featureCard {
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.featureIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--pine-bg);
+  color: var(--pine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.featureCardTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.featureCardBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+@media (max-width: 1279.98px) {
+  .trustBandTitle {
+    font-size: 42px;
+  }
+  .trustBandGrid,
+  .featureCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .heroActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .heroButton {
+    justify-content: center;
+  }
+  .heroLink {
+    text-align: center;
+  }
+  .trustBand,
+  .featureSection {
+    gap: 28px;
+  }
+  .trustBandTitle {
+    font-size: 32px;
+    line-height: 1.1;
+  }
+  .trustBandBody {
+    font-size: 16px;
+  }
+  .trustBandGrid,
+  .featureCards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .trustBandCard,
+  .featureCard {
+    padding: 18px;
+    border-radius: 14px;
+    gap: 6px;
+  }
+  .trustBandIcon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+  }
+  .trustBandCardTitle,
+  .featureCardTitle {
+    font-size: 17px;
+  }
+  .trustBandCardBody,
+  .featureCardBody {
+    font-size: 14px;
+    line-height: 1.5;
   }
 }

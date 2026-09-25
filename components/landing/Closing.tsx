@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
@@ -6,50 +7,51 @@ import { SignupForm } from "./SignupForm";
 
 const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string }[] = [
   {
-    icon: <LockIcon size={22} />,
+    icon: <LockIcon size={26} />,
     title: "Ingen adgang til netbanken",
     body: "Du uploader selv en kontoudskrift. Vi beder aldrig om login til din bank.",
   },
   {
-    icon: <DownloadIcon size={22} />,
+    icon: <DownloadIcon size={26} />,
     title: "Dine data er dine",
     body: "Eksportér alt som PDF, Excel eller sikkerhedskopi, når som helst.",
   },
   {
-    icon: <PeopleIcon size={22} />,
+    icon: <PeopleIcon size={26} />,
     title: "Alene eller sammen",
     body: "Brug det alene, eller invitér dem, du deler økonomi med. I ser de samme tal.",
   },
   {
-    icon: <ShieldIcon size={22} />,
+    icon: <ShieldIcon size={26} />,
     title: "Data bliver i din browser",
     body: "Indtil videre gemmes budgettet kun i din egen browser på denne enhed. Intet sendes til en server.",
   },
 ];
 
+/** Tryghed gets its own dark band early on the page: people need to trust it before they type in their salary. */
 export function Trust() {
   return (
-    <section id="tryghed" className={`${styles.section} ${styles.trust}`} aria-labelledby="tryghed-title">
-      <div className={styles.trustIntro}>
-        <span className={styles.eyebrow}>Tryghed</span>
-        <h2 id="tryghed-title" className={`${styles.h2} ${styles.h2Sm}`}>
+    <section id="tryghed" className={`${styles.section} ${styles.trustBand}`} aria-labelledby="tryghed-title">
+      <div className={styles.trustBandHead}>
+        <span className={styles.trustBadge}>
+          <ShieldIcon size={16} strokeWidth={2} /> Tryghed
+        </span>
+        <h2 id="tryghed-title" className={`${styles.h2} ${styles.h2Light} ${styles.trustBandTitle}`}>
           Bygget til de tal, man ikke deler med hvem som helst.
         </h2>
-        <p className={styles.headBody}>
+        <p className={`${styles.headBody} ${styles.headBodyDark} ${styles.trustBandBody}`}>
           Et budget indeholder løn, lån og kontonumre. Derfor er det dig, der bestemmer, hvad der kommer ind, og hvad der
           kommer ud.
         </p>
       </div>
-      <ul className={styles.trustGrid}>
+      <ul className={styles.trustBandGrid}>
         {TRUST_CARDS.map((card) => (
-          <li key={card.title} className={styles.trustCard}>
-            <span className={styles.trustIcon} aria-hidden="true">
+          <li key={card.title} className={styles.trustBandCard}>
+            <span className={styles.trustBandIcon} aria-hidden="true">
               {card.icon}
             </span>
-            <div className={styles.trustCardText}>
-              <h3 className={styles.trustTitle}>{card.title}</h3>
-              <p className={styles.trustBody}>{card.body}</p>
-            </div>
+            <h3 className={styles.trustBandCardTitle}>{card.title}</h3>
+            <p className={styles.trustBandCardBody}>{card.body}</p>
           </li>
         ))}
       </ul>
@@ -98,9 +100,9 @@ export function Pricing() {
           <span className={styles.priceNote}>også når I er flere</span>
         </div>
         <CheckList items={PRICE_FEATURES} />
-        <a href="#opret" className={styles.buttonBlock}>
+        <Link href="/login" className={styles.buttonBlock}>
           Opret gratis bruger
-        </a>
+        </Link>
       </div>
       <div className={styles.faq}>
         <h2 className={`${styles.h2} ${styles.faqTitle}`}>Spørgsmål og svar</h2>

@@ -1,7 +1,7 @@
+import Link from "next/link";
 import styles from "./landing.module.css";
 import { HeroFloatGoal, HeroFloatScenario, HeroMobileCutout, HeroWindow } from "./cutouts";
-import { CheckIcon, PeopleIcon } from "./icons";
-import { SignupForm } from "./SignupForm";
+import { ArrowRightIcon, CheckIcon, PeopleIcon } from "./icons";
 
 const PROMISES = ["Gratis", "Ingen adgang til netbank", "Klar på 10 minutter"] as const;
 
@@ -20,8 +20,13 @@ export function Hero() {
           der sker, hvis du flytter, skifter job eller betaler et lån ud. Bor I flere sammen, deler I budgettet og
           fordeler udgifterne fair.
         </p>
-        <div id="opret" className={styles.opret}>
-          <SignupForm idPrefix="hero" />
+        <div id="opret" className={styles.heroActions}>
+          <Link href="/login" className={styles.heroButton}>
+            Opret gratis bruger <ArrowRightIcon />
+          </Link>
+          <a href="#saadan" className={styles.heroLink}>
+            Sådan virker det
+          </a>
         </div>
         <ul className={styles.promises}>
           {PROMISES.map((promise) => (

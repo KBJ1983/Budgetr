@@ -98,6 +98,60 @@ export function ShieldIcon(props: IconProps) {
   );
 }
 
+/** Descending steps: a loan being paid down. */
+export function LoanIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.9} {...props}>
+      <path d="M4 6h4v4h4v4h4v4h4" />
+      <path d="M4 20h16" />
+    </Svg>
+  );
+}
+
+export function TargetIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.9} {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="0.6" />
+    </Svg>
+  );
+}
+
+/** Two paths from one point: a scenario next to the current budget. */
+export function BranchIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.9} {...props}>
+      <circle cx="6" cy="6" r="2" />
+      <circle cx="6" cy="18" r="2" />
+      <circle cx="18" cy="8" r="2" />
+      <path d="M6 8v8" />
+      <path d="M18 10c0 4-6 3-11.5 6.5" />
+    </Svg>
+  );
+}
+
+export function TransferIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.9} {...props}>
+      <path d="M4 8h14" />
+      <path d="M15 5l3 3-3 3" />
+      <path d="M20 16H6" />
+      <path d="M9 13l-3 3 3 3" />
+    </Svg>
+  );
+}
+
+export function CalendarIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.9} {...props}>
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M4 10h16" />
+      <path d="M9 3v4M15 3v4" />
+    </Svg>
+  );
+}
+
 export function MenuIcon(props: IconProps) {
   return (
     <Svg size={20} {...props}>

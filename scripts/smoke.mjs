@@ -45,14 +45,26 @@ try {
   await page.getByText(/Vi kender ikke den bruger/).waitFor();
   check(true, "unknown login is rejected");
 
-  // Landing signup prefills the login
+  // Hero: a button to the login, no e-mail field
   await page.goto(`${BASE}/`);
-  await page.locator('#opret input[type="email"]').fill("ikke-en-mail");
-  await page.locator("#opret button").first().click();
+  check((await page.locator('#top input[type="email"]').count()) === 0, "hero has no e-mail field");
+  await page.locator("#top").getByRole("link", { name: /Opret gratis bruger/ }).click();
+  await page.waitForURL(/\/login/);
+  check(true, "hero button opens the login");
+
+  // Tryghed comes right after "Sådan virker det"
+  await page.goto(`${BASE}/`);
+  const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.id).filter(Boolean));
+  check(order.indexOf("tryghed") === order.indexOf("saadan") + 1, `Tryghed follows Sådan virker det (${order.join(" → ")})`);
+
+  // Final signup form prefills the login
+  const signup = page.locator('form:has(input[type="email"])');
+  await signup.locator('input[type="email"]').fill("ikke-en-mail");
+  await signup.locator('button[type="submit"]').click();
   await page.getByText("Skriv en gyldig e-mail, fx navn@eksempel.dk.").first().waitFor();
   check(true, "signup rejects an invalid e-mail");
-  await page.locator('#opret input[type="email"]').fill("test@eksempel.dk");
-  await page.locator("#opret button").first().click();
+  await signup.locator('input[type="email"]').fill("test@eksempel.dk");
+  await signup.locator('button[type="submit"]').click();
   await page.waitForURL(/\/login\?/);
   check((await page.getByLabel("E-mail eller initialer").inputValue()) === "test@eksempel.dk", "signup prefills the login");
 

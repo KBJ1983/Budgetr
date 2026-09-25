@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
-import { AvailabilityCutout, LoansCutout, SharingCutout } from "./cutouts";
+import { AvailabilityCutout, SharingCutout } from "./cutouts";
 import { PeopleIcon, UploadIcon, WandIcon } from "./icons";
 
 const STEPS = [
@@ -133,23 +133,6 @@ export function Sharing() {
       visual={<SharingCutout />}
       visualFirst
       tone="stone"
-    />
-  );
-}
-
-export function Loans() {
-  return (
-    <SplitSection
-      id="laan"
-      eyebrow="Lån"
-      title="Se, hvornår lånene slipper dig."
-      body="Restgæld, rente og ydelse giver en beregnet slutdato for hvert lån, og en tidslinje viser, hvor meget der frigives om måneden, efterhånden som de bliver betalt ud."
-      bullets={[
-        "Udløb og frigivet beløb for alle lån",
-        "Renter pr. måned og hvor langt I er nået",
-        "Frigivne beløb regnes med i rådighedsbeløbet",
-      ]}
-      visual={<LoansCutout />}
     />
   );
 }

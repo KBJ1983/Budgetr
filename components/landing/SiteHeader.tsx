@@ -16,7 +16,7 @@ export function SiteHeader() {
   return (
     <header className={styles.header}>
       <a href="#top" className={styles.brand}>
-        <LogoMark size={30} />
+        <LogoMark size={24} />
         <b className={styles.brandName}>budgetr</b>
       </a>
       <nav aria-label="Hovedmenu" className={styles.nav}>
@@ -31,9 +31,9 @@ export function SiteHeader() {
         <Link href="/login" className={styles.loginLink}>
           Log ind
         </Link>
-        <a href="#opret" className={styles.headerCta}>
+        <Link href="/login" className={styles.headerCta}>
           Opret gratis bruger
-        </a>
+        </Link>
         <MobileMenu links={NAV_LINKS} />
       </div>
     </header>
