@@ -4,14 +4,20 @@
 
 Language: code and comments in English; UI text in Danish (du-form, calm, no exclamation marks, no sales words – see docs/design/HANDOFF.md §2).
 
+## Architecture
+
+- `/` landing page (Next.js, `components/landing/`), `/login` test-user login (Next.js), `/app` = the ORIGINAL budgetr app from the prototype, a single vanilla-JS file at `public/budgetr-app/index.html` (rewritten in `next.config.ts`). The user chose to keep that app 1:1 instead of a React rebuild; change features by editing that file directly, and keep its behaviour and look.
+- Vendor libs for the app live in `public/budgetr-app/vendor/` (jsPDF, AutoTable, SheetJS). Don't edit them.
+- Test-user layer: `lib/users.ts` (KBJ, TEST1–TEST5, no password). `/login` writes the user id to `localStorage["budgetr:session"]`; the prelude script at the top of the app's `<head>` reads it, redirects to `/login` without it, and stores the budget under `budgetr-app:<userId>`. To add a user, append to `USERS`. Do not add real auth or a backend without being asked.
+
+## Private data (the repo is public)
+
+- Real budget data never goes into git: KBJ's budget is `public/private/kbj.legacy.json` (git-ignored), loaded by the app on a user's first visit when no saved data exists. `pnpm extract:app <Budget2027.html> kbj` regenerates the app and that file from the prototype – it overwrites `public/budgetr-app/index.html`, so only use it to start over.
+- Never put real names, amounts, account numbers or e-mails in committed files, tests, docs or screenshots. Scan `public/budgetr-app/` before committing.
+
 ## Rules
 
-- Design source of truth: `docs/design/HANDOFF.md` + the two facit HTML files. Colours only from the tokens in `app/globals.css` (site) and `app/app/app.css` (app, light + dark). One font: Schibsted Grotesk; numbers `tabular-nums`. Line icons, never emoji.
-- Test-user layer only: `/login` takes a login from `lib/users.ts` (KBJ = example budget, TEST1–TEST5 = empty), no password. Each user's state is stored per user in the browser via `lib/store.ts`. To add a test user, append to `USERS`. Never put real e-mail addresses in `lib/users.ts` (the repo is public).
-- Real budget data is private and never committed: KBJ's budget comes from `public/private/kbj.json` (git-ignored), made with `pnpm import:legacy <Budget2027.html> kbj` from the first prototype. A user's `privateSeed` is applied once on first login and replaces the example; if the file is missing, the user falls back to `seed`. Don't copy real data into fixtures, tests, docs or screenshots in the repo. Do not add a backend or real auth without being asked; when it comes, replace the store behind the same hooks.
-- Domain logic in `lib/domain/` is pure (no React, no `Date.now()` inside calculations – pass `now` as "YYYY-MM"). Add/adjust tests in `lib/domain/domain.test.ts` for every calculation change.
-- Money: DKK, amounts per payment + `interval` (1/3/6/12 months); monthly = amount / interval. Format with `kr()` from `lib/domain/format.ts` (real minus sign).
-- Example data (Anna og Jonas) is invented and lives in `lib/domain/example.ts`.
+- Landing design source of truth: `docs/design/HANDOFF.md` + the two facit HTML files; tokens in `app/globals.css`.
 
 ## Checks before committing
 

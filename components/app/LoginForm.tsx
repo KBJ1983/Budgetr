@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { LogoMark } from "@/components/Logo";
 import { login, logout, useSession } from "@/lib/store";
@@ -10,7 +9,6 @@ import { login, logout, useSession } from "@/lib/store";
 const safeNext = (next: string | undefined) => (next && next.startsWith("/app") ? next : "/app");
 
 export function LoginForm({ next, email }: { next?: string; email?: string }) {
-  const router = useRouter();
   const { user, ready } = useSession();
   const [value, setValue] = useState(email ?? "");
   const [error, setError] = useState("");
@@ -24,7 +22,8 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
       setError("Vi kender ikke den bruger. Mens vi tester, er der kun adgang for testbrugere.");
       return;
     }
-    router.push(safeNext(next));
+    // /app is the original static app, outside the Next router: do a full navigation.
+    window.location.assign(safeNext(next));
   };
 
   return (
@@ -45,9 +44,9 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
               Du er logget ind som <b>{user.name}</b>.
             </span>
             <span style={{ display: "flex", gap: 8 }}>
-              <Link href={safeNext(next)} className="bx-btn bx-btn-primary">
+              <a href={safeNext(next)} className="bx-btn bx-btn-primary">
                 Fortsæt
-              </Link>
+              </a>
               <button type="button" className="bx-btn" onClick={() => logout()}>
                 Log ud
               </button>

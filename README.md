@@ -2,29 +2,29 @@
 
 Gratis budgetværktøj for én person, et par eller en familie: løn, faste udgifter, lån og opsparing ét sted.
 
-- **Forside** (`/`) – bygget efter designet i [docs/design/](docs/design/) (`HANDOFF.md`, `forside-desktop.html`, `forside-mobil.html`).
-- **App** (`/app`) – budget, rådighedsbeløb som banken regner det, fordeling mellem personer, lån med udløb og frigivne beløb, faste overførsler, opsparingsmål, scenarier, import af kontoudskrift (CSV/Excel) og eksport (PDF, CSV, sikkerhedskopi).
-- **Guide** (`/app/start`) – opret dit eget budget i 7 trin. *Opret gratis bruger* på forsiden fører hertil.
+- **Forside** (`/`) – Next.js, bygget efter designet i [docs/design/](docs/design/) (`HANDOFF.md`, `forside-desktop.html`, `forside-mobil.html`).
+- **Log ind** (`/login`) – testbrugere uden adgangskode (se nedenfor).
+- **App** (`/app`) – den oprindelige budgetr-app fra prototypen (`Budget2027.html`), 1:1: budget med posttabel, rådighed som banken regner det, hvem betaler hvad med ekstra indtjening og opsparing pr. person, udvikling i poster, måned for måned, lån, faste overførsler, opsparingsmål, scenarier, guide, import af kontoudskrift og eksport til PDF/Excel/JSON. Filen ligger i [public/budgetr-app/index.html](public/budgetr-app/index.html) og redigeres direkte.
 
-## Status: testbrugere, intet rigtigt login endnu
+## Testbrugere – intet rigtigt login endnu
 
-*Log ind* (`/login`) tager en mail eller initialer uden adgangskode. Brugerne står i [lib/users.ts](lib/users.ts):
+Brugerne står i [lib/users.ts](lib/users.ts). Man logger ind med initialerne:
 
 | Login | Starter med |
 |---|---|
-| `KBJ` | Det rigtige budget fra den første prototype, hvis `public/private/kbj.json` findes lokalt – ellers eksemplet |
-| `TEST1` … `TEST5` | Tomt – guiden åbner |
+| `KBJ` | Det rigtige budget, hvis `public/private/kbj.legacy.json` findes lokalt – ellers app'ens guide |
+| `TEST1` … `TEST5` | Tomt – app'ens guide eller et tomt budget |
 
-Rigtige budgetdata ligger aldrig i repoet. `pnpm import:legacy <sti til Budget2027.html> kbj` konverterer den første prototype til `public/private/kbj.json`, som git ignorerer.
+Hver bruger gemmer i browserens `localStorage` under `budgetr-app:<bruger>`, så data deles ikke mellem computere. Rigtig brugerhåndtering med mail og login kommer senere.
 
-Hver bruger har sine egne budgetter i browserens `localStorage` (`lib/store.ts`), så data deles ikke mellem computere. Rigtig brugerhåndtering med mail og login kommer senere – så skiftes `lib/store.ts` ud med en API-baseret version med de samme hooks.
+**Rigtige budgetdata ligger aldrig i repoet.** `public/private/` er git-ignoreret. `pnpm extract:app <sti til Budget2027.html> kbj` trækker app'en ud af prototypen (uden data) og lægger dataene i `public/private/kbj.legacy.json`. Kør det kun, hvis app'en skal startes forfra fra prototypen – ellers overskrives rettelser i `public/budgetr-app/index.html`.
 
 ## Kom i gang
 
 ```sh
 pnpm install
 pnpm dev          # http://localhost:3200
-pnpm test         # beregninger (vitest)
+pnpm test
 pnpm typecheck
 pnpm build
 pnpm smoke        # klik-igennem-test mod en kørende dev-server (Playwright + Chrome)
@@ -35,7 +35,7 @@ pnpm smoke        # klik-igennem-test mod en kørende dev-server (Playwright + C
 | Sti | Indhold |
 |---|---|
 | `app/page.tsx`, `components/landing/` | Forsiden |
-| `app/app/`, `components/app/` | App og guide |
-| `lib/domain/` | Ren beregningslogik uden React: budget, rådighed, fordeling, lån, overførsler, scenarier, import |
-| `lib/store.ts` | Lager i browseren |
-| `docs/design/` | Designhandoff (facit) |
+| `app/login/`, `components/app/LoginForm.tsx`, `lib/store.ts`, `lib/users.ts` | Testbruger-login |
+| `public/budgetr-app/` | Budget-app'en (vanilla JS) + `vendor/` (jsPDF, jsPDF-AutoTable, SheetJS) |
+| `next.config.ts` | Omskriver `/app` til `public/budgetr-app/index.html` |
+| `docs/design/` | Designhandoff til forsiden |

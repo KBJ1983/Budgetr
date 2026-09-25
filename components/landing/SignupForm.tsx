@@ -19,7 +19,7 @@ type SignupFormProps = {
   centered?: boolean;
 };
 
-/** E-mail signup (HANDOFF §5). A valid address continues to the app's start guide. */
+/** E-mail signup (HANDOFF §5). A valid address continues to the test-user login. */
 export function SignupForm({ idPrefix, variant = "light", centered = false }: SignupFormProps) {
   const router = useRouter();
   const [invalid, setInvalid] = useState(false);
@@ -37,7 +37,8 @@ export function SignupForm({ idPrefix, variant = "light", centered = false }: Si
       return;
     }
     setInvalid(false);
-    router.push(`/app/start?email=${encodeURIComponent(value)}`);
+    // While testing there is no real signup: the e-mail is prefilled on the test-user login.
+    router.push(`/login?next=/app&email=${encodeURIComponent(value)}`);
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {

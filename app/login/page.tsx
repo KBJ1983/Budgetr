@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LoginForm } from "@/components/app/LoginForm";
-import "../app/app.css";
+import "./app.css";
 
 export const metadata: Metadata = { title: "budgetr – log ind", robots: { index: false } };
 

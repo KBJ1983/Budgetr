@@ -9,10 +9,11 @@ describe("test users", () => {
     expect(findUser("")).toBeUndefined();
     expect(findUser("TEST6")).toBeUndefined();
   });
-  it("has KBJ with the example and five empty test users", () => {
-    expect(USERS.find((u) => u.id === "kbj")?.seed).toBe("example");
-    expect(USERS.filter((u) => u.id.startsWith("test") && u.seed === "empty")).toHaveLength(5);
+  it("has KBJ and five test users with unique logins and URL-safe ids", () => {
+    expect(USERS.map((u) => u.id)).toEqual(["kbj", "test1", "test2", "test3", "test4", "test5"]);
     const logins = USERS.flatMap((u) => u.logins.map((l) => l.toLowerCase()));
     expect(new Set(logins).size).toBe(logins.length);
+    // The id is used in the storage key and in /private/<id>.legacy.json.
+    for (const u of USERS) expect(u.id).toMatch(/^[a-z0-9-]+$/);
   });
 });
