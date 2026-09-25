@@ -1,6 +1,6 @@
 "use client";
 
-import { accountBalances, allItems, monthly, summarize } from "@/lib/domain/calc";
+import { accountBalances, allItems, counts, monthly, summarize } from "@/lib/domain/calc";
 import { INTERVAL_LABEL, kr, monthLabel } from "@/lib/domain/format";
 import { compareScenario } from "@/lib/domain/scenario";
 import { computeTransfers } from "@/lib/domain/transfers";
@@ -30,10 +30,13 @@ export function BudgetTab({
   const shared = view.persons.length > 1;
   const transfers = computeTransfers(view, now).map((t) => ({ from: t.from, to: t.to, amount: t.amount }));
   const balances = accountBalances(view, now, transfers);
-  const items = allItems(view, now);
+  // Everything on the account, including inactive lines and extra earnings (shown dimmed, not counted).
+  const items = [...view.items.filter((i) => !counts(i)), ...allItems(view, now)];
   const comparison = scenario ? compareScenario(budget, scenario, now) : null;
   const changedIds = new Set(
-    (scenario?.changes ?? []).flatMap((c) => (c.kind === "setAmount" ? [c.itemId] : c.kind === "addItem" ? [c.item.id] : [])),
+    (scenario?.changes ?? []).flatMap((c) =>
+      c.kind === "setAmount" || c.kind === "editItem" ? [c.itemId] : c.kind === "addItem" ? [c.item.id] : [],
+    ),
   );
   const incomeCats = [...new Set(view.items.filter((i) => i.kind === "indtægt").map((i) => i.category))].map((c, idx) =>
     idx === 0 ? c : c.toLowerCase(),
@@ -182,6 +185,7 @@ export function BudgetTab({
                     <span className="bx-muted">
                       {acc.ownerId ? `Tilhører ${ownerName(view, acc.ownerId)}` : shared ? "Fælles konto" : "Konto"} ·{" "}
                       {accItems.length} {accItems.length === 1 ? "post" : "poster"}
+                      {acc.number ? ` · ${acc.number}` : ""}
                     </span>
                   </span>
                   <span className={`num ${status.cls}`}>{status.text}</span>
@@ -208,11 +212,15 @@ export function BudgetTab({
                     <button
                       key={i.id}
                       type="button"
-                      className={`bx-row${changedIds.has(i.id) ? " is-changed" : ""}`}
+                      className={`bx-row${changedIds.has(i.id) ? " is-changed" : ""}${counts(i) ? "" : " is-off"}`}
                       onClick={() => openItem(i)}
                     >
                       <span className="bx-row-name">
-                        <span>{i.name}</span>
+                        <span>
+                          {i.name}
+                          {i.active === false ? <span className="bx-tag is-muted" style={{ marginLeft: 8 }}>Ikke aktiv</span> : null}
+                          {i.extra ? <span className="bx-tag is-muted" style={{ marginLeft: 8 }}>Ekstra indtjening</span> : null}
+                        </span>
                         <small>
                           {[
                             i.category,
@@ -223,6 +231,7 @@ export function BudgetTab({
                             .filter(Boolean)
                             .join(" · ")}
                         </small>
+                        {i.note ? <small className="bx-row-note">{i.note}</small> : null}
                       </span>
                       <span className="bx-hide-sm">
                         {i.history.length > 0 ? (
@@ -258,7 +267,15 @@ export function BudgetTab({
             </span>
           </div>
           <div className="bx-tiles is-3">
-            <Tile label="Nettoindtægt" value={kr(s.income)} sub="uden ekstra indtjening" />
+            <Tile
+              label="Nettoindtægt"
+              value={kr(s.bankIncome)}
+              sub={
+                s.extraIncome > 0 && view.bankRule.withExtra
+                  ? `inkl. ${kr(s.extraIncome)} ekstra indtjening`
+                  : "uden ekstra indtjening"
+              }
+            />
             <Tile
               label="Faste udgifter"
               value={kr(s.bankExpenses)}

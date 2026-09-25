@@ -1,11 +1,15 @@
 // Click-through smoke test against a running dev server: `pnpm dev`, then `pnpm smoke`.
 // Uses the installed Chrome. Exits non-zero on the first failed check.
+// Example-budget checks run as TEST2; KBJ is only checked for which budget it opens
+// (the real one from public/private/kbj.json when that file exists, else the example).
 import { chromium } from "playwright";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3200";
 const OUT = process.env.SMOKE_OUT ?? "smoke-out";
 mkdirSync(OUT, { recursive: true });
+const PRIVATE = "public/private/kbj.json";
+const kbjBudgetName = existsSync(PRIVATE) ? JSON.parse(readFileSync(PRIVATE, "utf8")).name : "Anna og Jonas’ budget";
 
 const browser = await chromium.launch({ channel: "chrome" });
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
@@ -16,6 +20,11 @@ const check = (ok, msg) => {
   if (!ok) throw new Error(`FAIL: ${msg}`);
   console.log(`ok - ${msg}`);
 };
+async function loginAs(login) {
+  await page.goto(`${BASE}/login`);
+  await page.getByLabel("E-mail eller initialer").fill(login);
+  await page.getByRole("button", { name: /Skift bruger|Log ind/ }).click();
+}
 
 try {
   // Without a session the app sends you to the login page
@@ -23,7 +32,7 @@ try {
   await page.waitForURL(/\/login/);
   check(true, "app requires a test-user login");
 
-  // Landing → Log ind → unknown user is rejected, KBJ gets the example
+  // Landing → Log ind → unknown user is rejected
   await page.goto(`${BASE}/`);
   await page.getByRole("link", { name: "Log ind" }).first().click();
   await page.waitForURL(/\/login/);
@@ -31,11 +40,33 @@ try {
   await page.getByRole("button", { name: "Log ind" }).click();
   await page.getByText(/Vi kender ikke den bruger/).waitFor();
   check(true, "unknown login is rejected");
+
+  // KBJ opens their own budget
   await page.getByLabel("E-mail eller initialer").fill("kbj");
   await page.getByRole("button", { name: "Log ind" }).click();
   await page.waitForURL(/\/app$/);
+  await page.getByRole("heading", { name: kbjBudgetName }).waitFor();
+  check(true, `KBJ opens “${kbjBudgetName}”`);
+  if (existsSync(PRIVATE)) {
+    check((await page.locator("select option", { hasText: "Anna og Jonas" }).count()) === 0, "KBJ's real budget replaces the example");
+    for (const tab of ["lan", "overforsler", "opsparing"]) {
+      await page.goto(`${BASE}/app#${tab}`);
+      await page.waitForTimeout(500);
+    }
+    check(errors.length === 0, "KBJ's real budget renders on every tab without errors");
+  }
+
+  // TEST2 starts empty and fetches the example from the guide
+  await page.goto(`${BASE}/app`);
+  await page.getByRole("button", { name: /Skift bruger/ }).click();
+  await page.waitForURL(/\/login/);
+  await page.getByLabel("E-mail eller initialer").fill("TEST2");
+  await page.getByRole("button", { name: "Log ind" }).click();
+  await page.waitForURL(/\/app\/start/);
+  await page.getByRole("button", { name: "Se eksemplet i stedet" }).click();
+  await page.waitForURL(/\/app$/);
   await page.getByRole("heading", { name: "Anna og Jonas’ budget" }).waitFor();
-  check(true, "KBJ opens the example budget");
+  check(true, "TEST2 can fetch the example budget");
 
   // Scenario comparison
   await page.getByRole("button", { name: /^Nyt hus fra/ }).click();
@@ -105,20 +136,24 @@ try {
   await page.waitForURL(/\/app$/);
   await page.getByRole("heading", { name: "Majas budget" }).waitFor();
   check(true, "guide creates an own budget");
-  check((await page.locator("select option", { hasText: "Anna og Jonas" }).count()) === 0, "TEST1 does not see KBJ's budget");
+  check((await page.locator("select option", { hasText: "Anna og Jonas" }).count()) === 0, "TEST1 does not see TEST2's budget");
 
-  // Back to KBJ: the example (with the edit from above) is still there, Maja's budget is not
-  await page.goto(`${BASE}/login`);
-  await page.getByLabel("E-mail eller initialer").fill("KBJ");
-  await page.getByRole("button", { name: /Skift bruger|Log ind/ }).click();
+  // Back to TEST2: the example with the edit is still there, Maja's budget is not
+  await loginAs("TEST2");
   await page.waitForURL(/\/app$/);
   await page.getByRole("heading", { name: "Anna og Jonas’ budget" }).waitFor();
-  check((await page.getByText("10.100 kr").count()) > 0, "KBJ keeps their own changes");
-  check((await page.getByText("Majas budget").count()) === 0, "KBJ does not see TEST1's budget");
+  check((await page.getByText("10.100 kr").count()) > 0, "TEST2 keeps their own changes");
+  check((await page.getByText("Majas budget").count()) === 0, "TEST2 does not see TEST1's budget");
 
-  // No horizontal scroll on mobile
+  // KBJ is untouched by the other users
+  await loginAs("KBJ");
+  await page.waitForURL(/\/app$/);
+  await page.getByRole("heading", { name: kbjBudgetName }).waitFor();
+  check((await page.getByText("Majas budget").count()) === 0, "KBJ is untouched by the test users");
+
+  // No horizontal scroll on mobile (as KBJ, so the widest real data is covered too)
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const path of ["/", "/login", "/app", "/app#lan", "/app#overforsler", "/app/start"]) {
+  for (const path of ["/", "/login", "/app", "/app#lan", "/app#overforsler", "/app#opsparing"]) {
     await page.goto(`${BASE}${path}`);
     await page.waitForTimeout(600);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

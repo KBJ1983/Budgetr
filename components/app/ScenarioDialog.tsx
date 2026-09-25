@@ -9,6 +9,17 @@ import { Dialog, Field } from "./ui";
 function describe(b: Budget, c: ScenarioChange): string {
   const itemName = (id: string) => b.items.find((i) => i.id === id)?.name ?? "Ukendt post";
   if (c.kind === "setAmount") return `${itemName(c.itemId)}: ${kr(c.amount)}`;
+  if (c.kind === "editItem") {
+    const p = c.patch;
+    const parts = [
+      p.name ? `nyt navn “${p.name}”` : "",
+      p.amount !== undefined ? kr(p.amount) : "",
+      p.accountId ? `fra ${b.accounts.find((a) => a.id === p.accountId)?.name ?? "anden konto"}` : "",
+      p.active === true ? "aktiv" : p.active === false ? "ikke aktiv" : "",
+      p.bankExcluded === false ? "med i rådighed" : p.bankExcluded === true ? "ikke med i rådighed" : "",
+    ].filter(Boolean);
+    return `${itemName(c.itemId)}: ${parts.join(", ")}`;
+  }
   if (c.kind === "removeItem") return `${itemName(c.itemId)} fjernet`;
   if (c.kind === "addItem") return `Ny: ${c.item.name} ${kr(c.item.amount)}`;
   return `Opsparing: ${b.goals.find((g) => g.id === c.goalId)?.name ?? "mål"} fjernet`;

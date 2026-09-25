@@ -3,7 +3,10 @@ import type { Budget, Loan, Month } from "./types";
 
 export interface LoanStatus {
   loan: Loan;
+  /** Monthly payment used for the payoff date (the lender's figure if given, else the budget line). */
   payment: number;
+  /** What leaves the budget each month for this loan, and is freed when it is paid out. */
+  freed: number;
   /** Months until paid out; Infinity when the payment does not cover the interest. */
   monthsLeft: number;
   endMonth: Month | null;
@@ -25,13 +28,15 @@ export function monthsToPayOff(balance: number, ratePct: number, payment: number
 
 export function loanStatus(budget: Budget, loan: Loan, now: Month): LoanStatus {
   const item = budget.items.find((i) => i.id === loan.itemId);
-  const payment = item ? item.amount / item.interval : 0;
-  const monthsLeft = monthsToPayOff(loan.balance, loan.ratePct, payment);
+  const freed = item && item.active !== false ? item.amount / item.interval : 0;
+  const payment = loan.payment ?? freed;
+  const monthsLeft = loan.paused ? Infinity : monthsToPayOff(loan.balance, loan.ratePct, payment);
   const r = loan.ratePct / 100 / 12;
   const totalInterestLeft = Number.isFinite(monthsLeft) ? Math.max(0, payment * monthsLeft - loan.balance) : Infinity;
   return {
     loan,
     payment,
+    freed,
     monthsLeft,
     endMonth: Number.isFinite(monthsLeft) ? addMonths(now, monthsLeft) : null,
     interestThisMonth: loan.balance * r,
@@ -61,12 +66,12 @@ export function loanSummary(budget: Budget, now: Month): LoanSummary {
   const tl = loanTimeline(budget, now).filter((s) => s.endMonth !== null && s.monthsLeft > 0);
   let cum = 0;
   const steps = tl.map((s, i) => {
-    cum += s.payment;
+    cum += s.freed;
     return { month: s.endMonth as Month, freed: cum, index: i + 1, name: s.loan.name };
   });
   const within = tl.filter((s) => s.monthsLeft <= 12);
   return {
-    freedWithin12: within.reduce((a, s) => a + s.payment, 0),
+    freedWithin12: within.reduce((a, s) => a + s.freed, 0),
     freedWithin12Names: within.map((s) => s.loan.name),
     next: tl[0] ?? null,
     freedTotal: cum,

@@ -7,7 +7,7 @@ import { LogoMark } from "@/components/Logo";
 import { summarize } from "@/lib/domain/calc";
 import { emptyBudget, GOAL_COLORS, newId } from "@/lib/domain/example";
 import { addMonths, INTERVAL_LABEL, kr, monthOf } from "@/lib/domain/format";
-import type { Account, Budget, BudgetItem, Interval, SplitMode } from "@/lib/domain/types";
+import { INTERVALS, type Account, type Budget, type BudgetItem, type Interval, type SplitMode } from "@/lib/domain/types";
 import { addBudget, resetExample, useSession } from "@/lib/store";
 import { Field, MoneyInput, Seg } from "./ui";
 
@@ -524,7 +524,7 @@ function RowsEditor({
               </Field>
               <Field label="Betales">
                 <select className="bx-select" value={r.interval} onChange={(e) => set(r.id, { interval: Number(e.target.value) as Interval })}>
-                  {[1, 3, 6, 12].map((n) => (
+                  {INTERVALS.map((n) => (
                     <option key={n} value={n}>
                       {INTERVAL_LABEL[n]}
                     </option>

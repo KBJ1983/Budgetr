@@ -212,7 +212,7 @@ export function analyzeImport(items: BudgetItem[], txs: Transaction[]): ImportRe
   const used = new Set<Transaction>();
   const matches: ImportMatch[] = [];
   for (const item of items) {
-    if (item.bankExcluded || item.id.startsWith("goal:")) continue;
+    if (item.bankExcluded || item.active === false || item.id.startsWith("goal:")) continue;
     const m = matchItem(item, txs);
     if (!m) continue;
     const key = item.agreementNo ? norm(item.agreementNo) : null;

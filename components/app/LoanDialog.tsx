@@ -33,28 +33,44 @@ export function LoanDialog({
   const [ownerId, setOwnerId] = useState<string | null>(
     item ? item.ownerId : budget.persons.length === 1 ? budget.persons[0]!.id : null,
   );
+  const [bank, setBank] = useState(loan?.bank ?? "");
+  const [bankPayment, setBankPayment] = useState(loan?.payment ?? 0);
+  const [paused, setPaused] = useState(!!loan?.paused);
+  const [note, setNote] = useState(loan?.note ?? "");
   const [error, setError] = useState("");
 
   const ratePct = Number(rate.replace(",", ".")) || 0;
-  const months = monthsToPayOff(balance, ratePct, payment);
+  const months = paused ? Infinity : monthsToPayOff(balance, ratePct, bankPayment || payment);
+  const extra = {
+    bank: bank.trim() || undefined,
+    payment: bankPayment > 0 ? bankPayment : undefined,
+    paused: paused || undefined,
+    note: note.trim() || undefined,
+  };
 
   const save = () => {
     if (!name.trim()) return setError("Giv lånet et navn.");
     if (!accountId) return setError("Vælg en konto. Opret en under Indstillinger.");
-    if (payment <= 0) return setError("Skriv den månedlige ydelse.");
+    if (payment <= 0 && !paused) return setError("Skriv den månedlige ydelse.");
     update((b) => {
       if (loan && item) {
-        const history =
-          item.amount !== payment
-            ? [...item.history, { date: new Date().toISOString().slice(0, 10), from: item.amount, to: payment }]
-            : item.history;
+        // Only rewrite the budget line's amount when the payment was actually changed,
+        // so a quarterly line (e.g. 8.927 kr hvert kvartal) stays quarterly.
+        const changed = Math.round(payment) !== Math.round(item.amount / item.interval);
+        const history = changed
+          ? [...item.history, { date: new Date().toISOString().slice(0, 10), from: item.amount, to: payment }]
+          : item.history;
         return {
           ...b,
           loans: b.loans.map((l) =>
-            l.id === loan.id ? { ...l, name: name.trim(), balance, ratePct, principal: Math.max(principal, balance) } : l,
+            l.id === loan.id
+              ? { ...l, ...extra, name: name.trim(), balance, ratePct, principal: Math.max(principal, balance) }
+              : l,
           ),
           items: b.items.map((i) =>
-            i.id === item.id ? { ...i, name: name.trim(), amount: payment, interval: 1, accountId, ownerId, history } : i,
+            i.id === item.id
+              ? { ...i, name: name.trim(), accountId, ownerId, history, ...(changed ? { amount: payment, interval: 1 as const } : {}) }
+              : i,
           ),
         };
       }
@@ -62,7 +78,10 @@ export function LoanDialog({
       const itemId = newId();
       return {
         ...b,
-        loans: [...b.loans, { id: loanId, name: name.trim(), balance, ratePct, principal: Math.max(principal, balance), itemId }],
+        loans: [
+          ...b.loans,
+          { id: loanId, name: name.trim(), balance, ratePct, principal: Math.max(principal, balance), itemId, ...extra },
+        ],
         items: [
           ...b.items,
           {
@@ -127,8 +146,14 @@ export function LoanDialog({
         <Field label="Rente pr. år (%)">
           <input className="bx-input num" inputMode="decimal" value={rate} placeholder="Fx 4,9" onChange={(e) => setRate(e.target.value)} />
         </Field>
-        <Field label="Ydelse pr. måned">
+        <Field label="Ydelse pr. måned i budgettet">
           <MoneyInput value={payment} onChange={setPayment} />
+        </Field>
+        <Field label="Ydelse ifølge banken (valgfrit)" help="Bruges til slutdatoen, hvis den afviger fra budgettet.">
+          <MoneyInput value={bankPayment} onChange={setBankPayment} />
+        </Field>
+        <Field label="Bank eller långiver">
+          <input className="bx-input" value={bank} onChange={(e) => setBank(e.target.value)} />
         </Field>
         <Field label="Oprindeligt lånebeløb" help="Bruges til at vise, hvor langt I er nået.">
           <MoneyInput value={principal} onChange={setPrincipal} />
@@ -155,7 +180,15 @@ export function LoanDialog({
           </Field>
         ) : null}
       </div>
-      {balance > 0 && payment > 0 ? (
+      <label className="bx-check">
+        <input type="checkbox" checked={paused} onChange={(e) => setPaused(e.target.checked)} />
+        <span>Lånet er på pause (fx SU-lån) – der beregnes ingen slutdato</span>
+      </label>
+      <Field label="Note (valgfrit)">
+        <input className="bx-input" value={note} onChange={(e) => setNote(e.target.value)} />
+      </Field>
+      {loan?.bankEnd ? <p className="bx-help">Bankens slutdato: {loan.bankEnd}</p> : null}
+      {paused ? null : balance > 0 && (bankPayment || payment) > 0 ? (
         <div className={`bx-note ${Number.isFinite(months) ? "is-pos" : ""}`}>
           {Number.isFinite(months)
             ? `Betalt ud i ${monthLabel(addMonths(now, months))} – om ${durationLabel(months)}. Derefter frigives ${kr(payment)} om måneden.`

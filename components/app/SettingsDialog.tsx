@@ -287,6 +287,14 @@ export function SettingsDialog({
             <MoneyInput value={rule.perChild} onChange={(n) => setRule({ ...rule, perChild: n })} />
           </Field>
         </div>
+        <label className="bx-check" style={{ marginTop: 10 }}>
+          <input
+            type="checkbox"
+            checked={!!rule.withExtra}
+            onChange={(e) => setRule({ ...rule, withExtra: e.target.checked || undefined })}
+          />
+          <span>Regn ekstra indtjening med i rådighedsbeløbet (budgettet selv regner den aldrig med)</span>
+        </label>
         <p className="bx-help" style={{ marginTop: 6 }}>
           En tommelfingerregel, ikke bankens egne satser. Spørg din bank, hvad de kræver.
         </p>

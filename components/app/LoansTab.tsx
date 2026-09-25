@@ -43,7 +43,7 @@ export function LoansTab({ budget, now, open }: { budget: Budget; now: Month; op
         <Tile
           label="Næste udløb"
           value={sum.next?.endMonth ? monthLabel(sum.next.endMonth, true) : "–"}
-          sub={sum.next ? `${sum.next.loan.name}, ${kr(sum.next.payment)}/md.` : ""}
+          sub={sum.next ? `${sum.next.loan.name}, ${kr(sum.next.freed)}/md.` : ""}
         />
         <Tile label="Frigivet i alt" value={kr(sum.freedTotal)} sub="pr. md., når alle er betalt" tone="hi" />
         <Tile label="Renter pr. måned" value={kr(sum.interestPerMonth)} sub={`Restgæld i alt ${kr(totalBalance)}`} />
@@ -90,11 +90,28 @@ export function LoansTab({ budget, now, open }: { budget: Budget; now: Month; op
                     }}
                   >
                     <td>{n ? <span className="bx-num-badge">{n}</span> : null}</td>
-                    <td>{s.loan.name}</td>
-                    <td className={s.endMonth ? "" : "neg"}>{s.endMonth ? monthLabel(s.endMonth) : "Ydelsen dækker ikke renten"}</td>
-                    <td className="r muted">{durationLabel(s.monthsLeft)}</td>
+                    <td>
+                      {s.loan.name}
+                      {s.loan.bank || s.loan.note ? (
+                        <div className="bx-muted">{[s.loan.bank, s.loan.note].filter(Boolean).join(" · ")}</div>
+                      ) : null}
+                    </td>
+                    <td className={s.endMonth || s.loan.paused ? "" : "neg"}>
+                      {s.loan.paused ? (
+                        <span className="bx-tag is-muted">På pause</span>
+                      ) : s.endMonth ? (
+                        monthLabel(s.endMonth)
+                      ) : (
+                        "Ydelsen dækker ikke renten"
+                      )}
+                      {s.loan.bankEnd ? <div className="bx-muted">Banken: {s.loan.bankEnd}</div> : null}
+                    </td>
+                    <td className="r muted">{s.loan.paused ? "–" : durationLabel(s.monthsLeft)}</td>
                     <td className="r">
                       <b>{kr(s.payment)}</b>
+                      {Math.round(s.freed) !== Math.round(s.payment) ? (
+                        <div className="bx-muted">i budgettet {kr(s.freed)}</div>
+                      ) : null}
                     </td>
                     <td className="r">{kr(s.loan.balance)}</td>
                     <td className="r">{s.loan.ratePct.toLocaleString("da-DK")} %</td>
@@ -112,7 +129,8 @@ export function LoansTab({ budget, now, open }: { budget: Budget; now: Month; op
           </table>
         </div>
         <p className="bx-help" style={{ marginTop: 10 }}>
-          Slutdatoen er beregnet ud fra restgæld, rente og ydelse. Frigivne beløb regnes med i “Luft fra …” på Budget-fanen.
+          Slutdatoen er beregnet ud fra restgæld, rente og ydelse – bankens egen slutdato står under, hvis den er angivet.
+          Frigivet er det beløb, lånet fylder i budgettet, og det regnes med i “Luft fra …” på Budget-fanen.
         </p>
       </section>
     </>

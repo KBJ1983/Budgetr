@@ -35,9 +35,17 @@ export function goalItems(budget: Budget, now: Month): BudgetItem[] {
   }));
 }
 
+/** Inactive lines and extra earnings never count in the budget itself. */
+export const counts = (i: BudgetItem) => i.active !== false && !i.extra;
+
+/** Every line that counts in the budget: active items plus savings goals. */
 export function allItems(budget: Budget, now: Month): BudgetItem[] {
-  return [...budget.items, ...goalItems(budget, now)];
+  return [...budget.items.filter(counts), ...goalItems(budget, now)];
 }
+
+/** Active extra earnings (only used in the bank view). */
+export const extraIncomeItems = (budget: Budget) =>
+  budget.items.filter((i) => i.kind === "indtægt" && i.extra && i.active !== false);
 
 const sum = (items: BudgetItem[]) => items.reduce((a, i) => a + monthly(i), 0);
 
@@ -56,7 +64,7 @@ export function shares(budget: Budget): Record<Id, number> {
     return out;
   }
   if (budget.split.mode === "income") {
-    const inc = ps.map((p) => sum(budget.items.filter((i) => i.kind === "indtægt" && i.ownerId === p.id)));
+    const inc = ps.map((p) => sum(budget.items.filter((i) => counts(i) && i.kind === "indtægt" && i.ownerId === p.id)));
     const total = inc.reduce((a, b) => a + b, 0);
     if (total > 0) {
       ps.forEach((p, idx) => (out[p.id] = inc[idx]! / total));
@@ -86,6 +94,10 @@ export interface Summary {
   savings: number;
   left: number;
   leftAfterSavings: number;
+  /** Extra earnings per month (not in `income`). */
+  extraIncome: number;
+  /** Income the bank view uses: `income`, plus extra earnings when `bankRule.withExtra` is on. */
+  bankIncome: number;
   /** Bank view: income minus fixed expenses that the bank counts. */
   bankExpenses: number;
   bankExcluded: { name: string; amount: number; id: Id }[];
@@ -101,7 +113,7 @@ export interface Summary {
 export function risingItems(items: BudgetItem[], today: string): BudgetItem[] {
   const cutoff = new Date(today);
   cutoff.setFullYear(cutoff.getFullYear() - 1);
-  return items.filter((i) => {
+  return items.filter(counts).filter((i) => {
     const recent = i.history.filter((h) => new Date(h.date) >= cutoff);
     if (recent.length === 0) return false;
     const first = recent[0]!.from;
@@ -120,16 +132,18 @@ export function summarize(budget: Budget, now: Month, today: string = `${now}-01
   const bankExcluded = [...expenseItems.filter((i) => i.bankExcluded), ...savingItems]
     .map((i) => ({ id: i.id, name: i.name, amount: monthly(i) }))
     .filter((x) => x.amount > 0);
-  const disposable = income - bankExpenses;
+  const extraIncome = sum(extraIncomeItems(budget));
+  const bankIncome = income + (budget.bankRule.withExtra ? extraIncome : 0);
+  const disposable = bankIncome - bankExpenses;
   const requirement = budget.persons.length * budget.bankRule.perAdult + budget.children * budget.bankRule.perChild;
   const overRequirement = disposable - requirement;
   const ls = loanSummary(budget, now);
   const nextFreed = ls.next?.endMonth
     ? {
         month: ls.next.endMonth,
-        amount: ls.next.payment,
+        amount: ls.next.freed,
         name: ls.next.loan.name,
-        overRequirement: overRequirement + ls.next.payment,
+        overRequirement: overRequirement + ls.next.freed,
       }
     : null;
 
@@ -164,6 +178,8 @@ export function summarize(budget: Budget, now: Month, today: string = `${now}-01
     savings,
     left: income - expenses,
     leftAfterSavings: income - expenses - savings,
+    extraIncome,
+    bankIncome,
     bankExpenses,
     bankExcluded,
     disposable,

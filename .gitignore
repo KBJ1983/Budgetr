@@ -3,6 +3,8 @@ node_modules/
 out/
 coverage/
 smoke-out/
+# Real budget data for test users (pnpm import:legacy). Never commit.
+public/private/
 *.tsbuildinfo
 next-env.d.ts
 .env

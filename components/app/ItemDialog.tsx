@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { newId } from "@/lib/domain/example";
 import { INTERVAL_LABEL, kr } from "@/lib/domain/format";
-import type { Budget, BudgetItem, Interval, ItemKind, Scenario, ScenarioChange } from "@/lib/domain/types";
+import { INTERVALS, type Budget, type BudgetItem, type Interval, type ItemKind, type Scenario, type ScenarioChange } from "@/lib/domain/types";
 import { CATEGORIES } from "./helpers";
 import { Dialog, Field, MoneyInput } from "./ui";
 
@@ -26,9 +26,16 @@ export function ItemDialog({
   );
   const existing = baseItem ?? addedChange?.item;
   const scenarioEditOfBase = !!scenario && !!baseItem;
-  const scenarioAmount = scenario?.changes.find(
+  const setChange = scenario?.changes.find(
     (c): c is Extract<ScenarioChange, { kind: "setAmount" }> => c.kind === "setAmount" && c.itemId === id,
-  )?.amount;
+  );
+  const editChange = scenario?.changes.find(
+    (c): c is Extract<ScenarioChange, { kind: "editItem" }> => c.kind === "editItem" && c.itemId === id,
+  );
+  const scenarioAmount = editChange?.patch.amount ?? setChange?.amount;
+  const [scenarioActive, setScenarioActive] = useState(
+    editChange?.patch.active ?? (baseItem ? baseItem.active !== false : true),
+  );
   const scenarioRemoved = !!scenario?.changes.some((c) => c.kind === "removeItem" && c.itemId === id);
 
   const defaultAccount =
@@ -71,11 +78,18 @@ export function ItemDialog({
           if (sc.id !== scenario.id) return sc;
           if (scenarioEditOfBase) {
             const rest = sc.changes.filter(
-              (c) => !((c.kind === "setAmount" || c.kind === "removeItem") && c.itemId === item.id),
+              (c) => !((c.kind === "setAmount" || c.kind === "editItem" || c.kind === "removeItem") && c.itemId === item.id),
             );
             if (removed) return { ...sc, changes: [...rest, { kind: "removeItem", itemId: item.id }] };
-            if (amount !== baseItem!.amount) return { ...sc, changes: [...rest, { kind: "setAmount", itemId: item.id, amount }] };
-            return { ...sc, changes: rest };
+            // Keep other scenario edits (name, account …) and set amount/active on top.
+            const patch = { ...(editChange?.patch ?? {}) };
+            if (amount !== baseItem!.amount) patch.amount = amount;
+            else delete patch.amount;
+            if (scenarioActive !== (baseItem!.active !== false)) patch.active = scenarioActive;
+            else delete patch.active;
+            return Object.keys(patch).length
+              ? { ...sc, changes: [...rest, { kind: "editItem", itemId: item.id, patch }] }
+              : { ...sc, changes: rest };
           }
           const rest = sc.changes.filter((c) => !(c.kind === "addItem" && c.item.id === item.id));
           return { ...sc, changes: [...rest, { kind: "addItem", item }] };
@@ -146,9 +160,16 @@ export function ItemDialog({
         <p className="bx-help">
           Nuværende beløb: {kr(baseItem.amount)} {INTERVAL_LABEL[baseItem.interval]}. Ændringen gælder kun i scenariet.
         </p>
+        {baseItem.note ? <p className="bx-help">{baseItem.note}</p> : null}
         <Field label="Beløb i scenariet">
           <MoneyInput value={amount} onChange={setAmount} />
         </Field>
+        {baseItem.active === false || editChange?.patch.active !== undefined ? (
+          <label className="bx-check">
+            <input type="checkbox" checked={scenarioActive} onChange={(e) => setScenarioActive(e.target.checked)} />
+            <span>Aktiv i scenariet (fx et lån, der er på pause i dag)</span>
+          </label>
+        ) : null}
         <label className="bx-check">
           <input type="checkbox" checked={removed} onChange={(e) => setRemoved(e.target.checked)} />
           <span>Posten findes ikke i scenariet (fx husleje, når I køber hus)</span>
@@ -195,7 +216,7 @@ export function ItemDialog({
         </Field>
         <Field label="Betales">
           <select className="bx-select" value={draft.interval} onChange={(e) => set("interval", Number(e.target.value) as Interval)}>
-            {[1, 3, 6, 12].map((n) => (
+            {INTERVALS.map((n) => (
               <option key={n} value={n}>
                 {INTERVAL_LABEL[n]}
               </option>
@@ -238,6 +259,23 @@ export function ItemDialog({
           <span>Tæller med som fast udgift, når rådighedsbeløbet regnes som banken gør (slå fra for mad, gaver o.l.)</span>
         </label>
       ) : null}
+      {draft.kind === "indtægt" ? (
+        <label className="bx-check">
+          <input type="checkbox" checked={!!draft.extra} onChange={(e) => set("extra", e.target.checked || undefined)} />
+          <span>Ekstra indtjening (fx bijob) – tæller ikke med i budgettet, kun i bankens rådighedsbeløb, hvis det er slået til</span>
+        </label>
+      ) : null}
+      <label className="bx-check">
+        <input
+          type="checkbox"
+          checked={draft.active !== false}
+          onChange={(e) => set("active", e.target.checked ? undefined : false)}
+        />
+        <span>Aktiv – slå fra for en post, der er på pause (den gemmes, men regnes ikke med)</span>
+      </label>
+      <Field label="Note (valgfrit)">
+        <input className="bx-input" value={draft.note ?? ""} onChange={(e) => set("note", e.target.value || undefined)} />
+      </Field>
       <Field label="Aftalenummer eller tekst på kontoudskriften (valgfrit)" help="Bruges til at genkende posten, når du importerer en kontoudskrift.">
         <input
           className="bx-input"

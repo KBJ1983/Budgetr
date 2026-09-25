@@ -12,8 +12,10 @@ Gratis budgetværktøj for én person, et par eller en familie: løn, faste udgi
 
 | Login | Starter med |
 |---|---|
-| `KBJ` | Eksempelbudgettet (Anna og Jonas, opdigtede tal) |
+| `KBJ` | Det rigtige budget fra den første prototype, hvis `public/private/kbj.json` findes lokalt – ellers eksemplet |
 | `TEST1` … `TEST5` | Tomt – guiden åbner |
+
+Rigtige budgetdata ligger aldrig i repoet. `pnpm import:legacy <sti til Budget2027.html> kbj` konverterer den første prototype til `public/private/kbj.json`, som git ignorerer.
 
 Hver bruger har sine egne budgetter i browserens `localStorage` (`lib/store.ts`), så data deles ikke mellem computere. Rigtig brugerhåndtering med mail og login kommer senere – så skiftes `lib/store.ts` ud med en API-baseret version med de samme hooks.
 

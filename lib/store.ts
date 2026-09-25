@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { exampleBudget } from "./domain/example";
 import type { Budget } from "./domain/types";
 import { findUser, userById, type TestUser } from "./users";
@@ -16,11 +16,15 @@ export interface AppState {
   /** "" when the user has no budget yet. */
   activeId: string;
   theme: "light" | "dark";
+  /** Private seed files already applied for this user (so deleting the budget does not bring it back). */
+  seeds?: string[];
 }
 
 export interface Snapshot {
   user: TestUser | null;
   state: AppState | null;
+  /** True while the user's private seed is being fetched; don't redirect or render budgets yet. */
+  pending: boolean;
 }
 
 const SESSION_KEY = "budgetr:session";
@@ -77,11 +81,52 @@ function loadState(user: TestUser): AppState {
   return s;
 }
 
+/** Seeds that could not be fetched this session (file missing). */
+const failedSeeds = new Set<string>();
+const inflight = new Set<string>();
+
+const isPending = (user: TestUser | null, state: AppState | null) =>
+  !!user?.privateSeed && !!state && !state.seeds?.includes(user.privateSeed) && !failedSeeds.has(user.privateSeed);
+
 function load(): Snapshot {
   if (snap) return snap;
   const user = userById(read(SESSION_KEY)) ?? null;
-  snap = { user, state: user ? loadState(user) : null };
+  const state = user ? loadState(user) : null;
+  snap = { user, state, pending: isPending(user, state) };
   return snap;
+}
+
+const looksLikeBudget = (x: unknown): x is Budget => {
+  const b = x as Budget;
+  return !!b && typeof b.id === "string" && Array.isArray(b.items) && Array.isArray(b.accounts) && Array.isArray(b.persons);
+};
+
+/** Fetches the user's private seed once and makes it their active budget, replacing the example. */
+function ensurePrivateSeed() {
+  const { user, state, pending } = load();
+  const path = user?.privateSeed;
+  if (!user || !state || !pending || !path || inflight.has(path)) return;
+  inflight.add(path);
+  fetch(path, { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null)
+    .then((b: unknown) => {
+      inflight.delete(path);
+      const cur = load();
+      if (cur.user?.id !== user.id || !cur.state) return;
+      if (!looksLikeBudget(b)) {
+        failedSeeds.add(path);
+        snap = { ...cur, pending: false };
+        emit();
+        return;
+      }
+      setState((s) => ({
+        ...s,
+        budgets: [b, ...s.budgets.filter((x) => x.id !== b.id && x.id !== "eksempel")],
+        activeId: b.id,
+        seeds: [...(s.seeds ?? []), path],
+      }));
+    });
 }
 
 const emit = () => listeners.forEach((l) => l());
@@ -90,7 +135,7 @@ export function setState(next: AppState | ((s: AppState) => AppState)) {
   const cur = load();
   if (!cur.user || !cur.state) return;
   const state = typeof next === "function" ? next(cur.state) : next;
-  snap = { user: cur.user, state };
+  snap = { user: cur.user, state, pending: isPending(cur.user, state) };
   write(stateKey(cur.user.id), JSON.stringify(state));
   emit();
 }
@@ -126,12 +171,18 @@ function subscribe(l: () => void) {
   };
 }
 
-const SERVER: Snapshot = { user: null, state: null };
+const SERVER: Snapshot = { user: null, state: null, pending: false };
 
-/** Current user and their state. `ready` is false during server render / before hydration. */
+/**
+ * Current user and their state. `ready` is false during server render / before hydration and
+ * while a private seed is loading.
+ */
 export function useSession(): Snapshot & { ready: boolean } {
   const s = useSyncExternalStore(subscribe, load, () => SERVER);
-  return { ...s, ready: s !== SERVER };
+  useEffect(() => {
+    if (s.pending) ensurePrivateSeed();
+  }, [s]);
+  return { ...s, ready: s !== SERVER && !s.pending };
 }
 
 export function activeBudget(s: AppState): Budget | undefined {

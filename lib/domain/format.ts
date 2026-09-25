@@ -59,6 +59,7 @@ export function durationLabel(months: number): string {
 
 export const INTERVAL_LABEL: Record<number, string> = {
   1: "hver måned",
+  2: "hver 2. måned",
   3: "hvert kvartal",
   6: "hvert halve år",
   12: "hvert år",

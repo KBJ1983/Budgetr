@@ -568,6 +568,13 @@
 .bx-row.is-changed {
   background: var(--slate-bg);
 }
+.bx-row.is-off > * {
+  opacity: 0.6;
+}
+.bx-row-name small.bx-row-note {
+  color: var(--tx-2);
+  font-style: italic;
+}
 
 .bx-kv {
   display: flex;
