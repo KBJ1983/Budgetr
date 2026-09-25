@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { newId } from "@/lib/domain/example";
 import type { Account, AccountKind, Budget, Person, SplitMode } from "@/lib/domain/types";
-import { deleteBudget, resetExample } from "@/lib/store";
+import { deleteBudget, resetExample, useSession } from "@/lib/store";
 import { Dialog, Field, MoneyInput, Seg } from "./ui";
 
 const KINDS: { value: AccountKind; label: string }[] = [
@@ -31,6 +31,7 @@ export function SettingsDialog({
   const [fixed, setFixed] = useState<Record<string, number>>(budget.split.fixedPct);
   const [rule, setRule] = useState(budget.bankRule);
   const [error, setError] = useState("");
+  const hasExample = !!useSession().state?.budgets.some((b) => b.id === "eksempel");
 
   const used = (accId: string) =>
     budget.items.some((i) => i.accountId === accId) || budget.goals.some((g) => g.accountId === accId);
@@ -94,6 +95,18 @@ export function SettingsDialog({
             <Link href="/app/start" className="bx-btn">
               Nyt budget
             </Link>
+            {!hasExample ? (
+              <button
+                type="button"
+                className="bx-btn"
+                onClick={() => {
+                  resetExample();
+                  onClose();
+                }}
+              >
+                Hent eksemplet
+              </button>
+            ) : null}
           </div>
           <div>
             <button type="button" className="bx-btn" onClick={onClose}>

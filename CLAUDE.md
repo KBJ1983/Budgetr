@@ -7,7 +7,7 @@ Language: code and comments in English; UI text in Danish (du-form, calm, no exc
 ## Rules
 
 - Design source of truth: `docs/design/HANDOFF.md` + the two facit HTML files. Colours only from the tokens in `app/globals.css` (site) and `app/app/app.css` (app, light + dark). One font: Schibsted Grotesk; numbers `tabular-nums`. Line icons, never emoji.
-- No login yet. Everything is stored in the browser via `lib/store.ts`. Do not add a backend or auth without being asked; when it comes, replace the store behind the same hooks.
+- Test-user layer only: `/login` takes a login from `lib/users.ts` (KBJ = example budget, TEST1–TEST5 = empty), no password. Each user's state is stored per user in the browser via `lib/store.ts`. To add a test user, append to `USERS`. Never put real e-mail addresses in `lib/users.ts` (the repo is public). Do not add a backend or real auth without being asked; when it comes, replace the store behind the same hooks.
 - Domain logic in `lib/domain/` is pure (no React, no `Date.now()` inside calculations – pass `now` as "YYYY-MM"). Add/adjust tests in `lib/domain/domain.test.ts` for every calculation change.
 - Money: DKK, amounts per payment + `interval` (1/3/6/12 months); monthly = amount / interval. Format with `kr()` from `lib/domain/format.ts` (real minus sign).
 - Example data (Anna og Jonas) is invented and lives in `lib/domain/example.ts`.

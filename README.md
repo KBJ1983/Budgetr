@@ -6,9 +6,16 @@ Gratis budgetværktøj for én person, et par eller en familie: løn, faste udgi
 - **App** (`/app`) – budget, rådighedsbeløb som banken regner det, fordeling mellem personer, lån med udløb og frigivne beløb, faste overførsler, opsparingsmål, scenarier, import af kontoudskrift (CSV/Excel) og eksport (PDF, CSV, sikkerhedskopi).
 - **Guide** (`/app/start`) – opret dit eget budget i 7 trin. *Opret gratis bruger* på forsiden fører hertil.
 
-## Status: intet login endnu
+## Status: testbrugere, intet rigtigt login endnu
 
-*Log ind* åbner eksempelbudgettet (Anna og Jonas, opdigtede tal). Alle budgetter gemmes kun i browserens `localStorage` (`lib/store.ts`). Login, brugere og en server kommer senere – så skiftes `lib/store.ts` ud med en API-baseret version med de samme hooks.
+*Log ind* (`/login`) tager en mail eller initialer uden adgangskode. Brugerne står i [lib/users.ts](lib/users.ts):
+
+| Login | Starter med |
+|---|---|
+| `KBJ` | Eksempelbudgettet (Anna og Jonas, opdigtede tal) |
+| `TEST1` … `TEST5` | Tomt – guiden åbner |
+
+Hver bruger har sine egne budgetter i browserens `localStorage` (`lib/store.ts`), så data deles ikke mellem computere. Rigtig brugerhåndtering med mail og login kommer senere – så skiftes `lib/store.ts` ud med en API-baseret version med de samme hooks.
 
 ## Kom i gang
 

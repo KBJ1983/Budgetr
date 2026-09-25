@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LogoMark } from "@/components/Logo";
 import { monthOf } from "@/lib/domain/format";
 import { applyScenario } from "@/lib/domain/scenario";
 import type { Budget } from "@/lib/domain/types";
-import { activeBudget, addBudget, setActive, setTheme, updateBudget, useAppState } from "@/lib/store";
+import { activeBudget, addBudget, logout, setActive, setTheme, updateBudget, useSession } from "@/lib/store";
 import { BudgetTab } from "./BudgetTab";
 import { GoalDialog } from "./GoalDialog";
 import { GoalsTab } from "./GoalsTab";
@@ -39,7 +40,7 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"];
 
 export function BudgetApp() {
-  const state = useAppState();
+  const { user, state, ready } = useSession();
   const [tab, setTabState] = useState<TabId>("budget");
   // The tab lives in the URL hash so it survives reloads and can be linked to (/app#lan).
   useEffect(() => {
@@ -58,10 +59,19 @@ export function BudgetApp() {
   const [scenarioId, setScenarioId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const backupInput = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const current = state ? activeBudget(state) : undefined;
 
-  if (!state) return <div className="bx" data-theme="dark" aria-busy="true" />;
+  // Not logged in → login page. Logged in without a budget → the guide.
+  useEffect(() => {
+    if (!ready) return;
+    if (!user) router.replace("/login?next=/app");
+    else if (!current) router.replace("/app/start");
+  }, [ready, user, current, router]);
 
-  const budget = activeBudget(state);
+  if (!state || !user || !current) return <div className="bx" data-theme={state?.theme ?? "dark"} aria-busy="true" />;
+
+  const budget = current;
   const now = monthOf(new Date());
   const scenario = budget.scenarios.find((s) => s.id === scenarioId);
   const view = applyScenario(budget, scenario);
@@ -123,6 +133,17 @@ export function BudgetApp() {
               <button type="button" className="bx-btn" onClick={() => setDialog({ kind: "settings" })}>
                 Indstillinger
               </button>
+              <button
+                type="button"
+                className="bx-btn"
+                title="Skift bruger"
+                onClick={() => {
+                  logout();
+                  router.push("/login?next=/app");
+                }}
+              >
+                <b style={{ color: "var(--tx)" }}>{user.name}</b> · Skift bruger
+              </button>
             </div>
           </div>
         </div>
@@ -133,7 +154,7 @@ export function BudgetApp() {
           <span>
             {isExample
               ? "Du ser et eksempel med opdigtede tal. Ret gerne i det – eller lav dit eget budget."
-              : "Der er ingen login endnu. Budgettet gemmes kun i denne browser – tag en sikkerhedskopi under Eksportér."}
+              : `Testbruger ${user.name}. Budgettet gemmes kun i denne browser – tag en sikkerhedskopi under Eksportér.`}
           </span>
           {isExample ? (
             <Link href="/app/start" style={{ fontWeight: 700 }}>
@@ -147,7 +168,7 @@ export function BudgetApp() {
         <div className="bx-budget-name">
           <h1>{budget.name}</h1>
           <span className="bx-muted">
-            Gemt i denne browser{shared ? ` · ${budget.persons.map((p) => p.name).join(" og ")}` : ""}
+            {user.name} · gemt i denne browser{shared ? ` · ${budget.persons.map((p) => p.name).join(" og ")}` : ""}
           </span>
         </div>
 

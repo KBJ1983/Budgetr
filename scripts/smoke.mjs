@@ -18,12 +18,24 @@ const check = (ok, msg) => {
 };
 
 try {
-  // Landing → Log ind opens the example
+  // Without a session the app sends you to the login page
+  await page.goto(`${BASE}/app`);
+  await page.waitForURL(/\/login/);
+  check(true, "app requires a test-user login");
+
+  // Landing → Log ind → unknown user is rejected, KBJ gets the example
   await page.goto(`${BASE}/`);
   await page.getByRole("link", { name: "Log ind" }).first().click();
+  await page.waitForURL(/\/login/);
+  await page.getByLabel("E-mail eller initialer").fill("TEST9");
+  await page.getByRole("button", { name: "Log ind" }).click();
+  await page.getByText(/Vi kender ikke den bruger/).waitFor();
+  check(true, "unknown login is rejected");
+  await page.getByLabel("E-mail eller initialer").fill("kbj");
+  await page.getByRole("button", { name: "Log ind" }).click();
   await page.waitForURL(/\/app$/);
-  await page.getByText("Anna og Jonas’ budget").first().waitFor();
-  check(true, "Log ind opens the example budget");
+  await page.getByRole("heading", { name: "Anna og Jonas’ budget" }).waitFor();
+  check(true, "KBJ opens the example budget");
 
   // Scenario comparison
   await page.getByRole("button", { name: /^Nyt hus fra/ }).click();
@@ -63,7 +75,15 @@ try {
   check((await page.locator(".bx").getAttribute("data-theme")) === "light", "theme switches to light");
   await page.screenshot({ path: `${OUT}/light.png`, fullPage: true });
 
-  // Guide from the landing signup
+  // Switch to TEST1: starts empty and lands in the guide
+  await page.getByRole("button", { name: /Skift bruger/ }).click();
+  await page.waitForURL(/\/login/);
+  await page.getByLabel("E-mail eller initialer").fill("TEST1");
+  await page.getByRole("button", { name: "Log ind" }).click();
+  await page.waitForURL(/\/app\/start/);
+  check((await page.getByText("Anna og Jonas").count()) === 0, "TEST1 starts empty in the guide");
+
+  // Guide from the landing signup (as TEST1)
   await page.goto(`${BASE}/`);
   await page.locator('#opret input[type="email"]').fill("ikke-en-mail");
   await page.locator("#opret button").first().click();
@@ -85,10 +105,20 @@ try {
   await page.waitForURL(/\/app$/);
   await page.getByRole("heading", { name: "Majas budget" }).waitFor();
   check(true, "guide creates an own budget");
+  check((await page.locator("select option", { hasText: "Anna og Jonas" }).count()) === 0, "TEST1 does not see KBJ's budget");
+
+  // Back to KBJ: the example (with the edit from above) is still there, Maja's budget is not
+  await page.goto(`${BASE}/login`);
+  await page.getByLabel("E-mail eller initialer").fill("KBJ");
+  await page.getByRole("button", { name: /Skift bruger|Log ind/ }).click();
+  await page.waitForURL(/\/app$/);
+  await page.getByRole("heading", { name: "Anna og Jonas’ budget" }).waitFor();
+  check((await page.getByText("10.100 kr").count()) > 0, "KBJ keeps their own changes");
+  check((await page.getByText("Majas budget").count()) === 0, "KBJ does not see TEST1's budget");
 
   // No horizontal scroll on mobile
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const path of ["/", "/app", "/app#lan", "/app#overforsler", "/app/start"]) {
+  for (const path of ["/", "/login", "/app", "/app#lan", "/app#overforsler", "/app/start"]) {
     await page.goto(`${BASE}${path}`);
     await page.waitForTimeout(600);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

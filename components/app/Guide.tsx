@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LogoMark } from "@/components/Logo";
 import { summarize } from "@/lib/domain/calc";
 import { emptyBudget, GOAL_COLORS, newId } from "@/lib/domain/example";
 import { addMonths, INTERVAL_LABEL, kr, monthOf } from "@/lib/domain/format";
 import type { Account, Budget, BudgetItem, Interval, SplitMode } from "@/lib/domain/types";
-import { addBudget, useAppState } from "@/lib/store";
+import { addBudget, resetExample, useSession } from "@/lib/store";
 import { Field, MoneyInput, Seg } from "./ui";
 
 interface Row {
@@ -61,8 +61,13 @@ const STEPS = [
 
 export function Guide({ email }: { email?: string }) {
   const router = useRouter();
-  const state = useAppState();
+  const { state, user, ready } = useSession();
   const now = monthOf(new Date());
+  useEffect(() => {
+    if (ready && !user) {
+      router.replace(`/login?next=/app/start${email ? `&email=${encodeURIComponent(email)}` : ""}`);
+    }
+  }, [ready, user, email, router]);
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
 
@@ -177,9 +182,16 @@ export function Guide({ email }: { email?: string }) {
             <LogoMark size={26} />
             <b style={{ fontSize: 19, letterSpacing: "-0.03em" }}>budgetr</b>
           </Link>
-          <Link href="/app" className="bx-btn">
+          <button
+            type="button"
+            className="bx-btn"
+            onClick={() => {
+              if (!state?.budgets.some((b) => b.id === "eksempel")) resetExample();
+              router.push("/app");
+            }}
+          >
             Se eksemplet i stedet
-          </Link>
+          </button>
         </div>
       </header>
       <main className="bx-guide">
@@ -197,14 +209,12 @@ export function Guide({ email }: { email?: string }) {
           <>
             <p className="bx-guide-lead">
               Korte svar, som kan rettes bagefter. Bor I flere sammen, kan I dele budgettet og fordele udgifterne fair.
-              {email ? (
+              {user ? (
                 <>
                   {" "}
-                  Der er ingen login endnu, så <b>{email}</b> bliver ikke gemt – budgettet gemmes i denne browser.
+                  Budgettet gemmes hos testbruger <b>{user.name}</b> i denne browser.
                 </>
-              ) : (
-                " Der er ingen login endnu – budgettet gemmes i denne browser."
-              )}
+              ) : null}
             </p>
             <div className="bx-list-edit">
               {names.map((p, idx) => (

@@ -27,8 +27,8 @@ export function SiteHeader() {
         ))}
       </nav>
       <div className={styles.headerActions}>
-        {/* No login yet: "Log ind" opens the example budget. */}
-        <Link href="/app" className={styles.loginLink}>
+        {/* Test-user login (no password) until real accounts arrive. */}
+        <Link href="/login" className={styles.loginLink}>
           Log ind
         </Link>
         <a href="#opret" className={styles.headerCta}>
