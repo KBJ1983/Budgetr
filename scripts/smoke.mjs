@@ -2,11 +2,14 @@
 // Uses the installed Chrome. Exits non-zero on the first failed check.
 // KBJ opens the real budget when public/private/kbj.legacy.json exists; TEST users start in the app's guide.
 import { chromium } from "playwright";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import path from "node:path";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3200";
 const OUT = process.env.SMOKE_OUT ?? "smoke-out";
 mkdirSync(OUT, { recursive: true });
+// TEST1 must start empty; its disk copy (lib/budget-file.ts) would otherwise come back. Never touch KBJ's.
+rmSync(path.join(process.env.BUDGETR_DATA_DIR ?? "data", "test1.json"), { force: true });
 const PRIVATE = "public/private/kbj.legacy.json";
 const HAS_PRIVATE = existsSync(PRIVATE);
 // A name from KBJ's private data, to tell their budget apart from the others (never hard-coded here).

@@ -13,6 +13,7 @@ Language: code and comments in English; UI text in Danish (du-form, calm, no exc
 ## Private data (the repo is public)
 
 - Real budget data never goes into git: KBJ's budget is `public/private/kbj.legacy.json` (git-ignored), loaded by the app on a user's first visit when no saved data exists. `pnpm extract:app <Budget2027.html> kbj` regenerates the app and that file from the prototype – it overwrites `public/budgetr-app/index.html`, so only use it to start over.
+- Saved budgets live on disk in `data/<userId>.json` with backups in `data/backups/<userId>/` (git-ignored, `lib/budget-file.ts`, route `app/api/budget/[user]`). The app also keeps a localStorage copy; the disk copy wins unless the last save never reached it. Never delete `data/`.
 - Never put real names, amounts, account numbers or e-mails in committed files, tests, docs or screenshots. Scan `public/budgetr-app/` before committing.
 
 ## Rules

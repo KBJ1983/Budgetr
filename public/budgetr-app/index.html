@@ -8,7 +8,15 @@
   var uid=null;try{uid=localStorage.getItem('budgetr:session')}catch(e){}
   if(!uid){location.replace('/login?next=/app');return}
   window.BUDGETR_USER=uid;window.BUDGETR_KEY='budgetr-app:'+uid;window.BUDGETR_SEED=null;
-  var has=null;try{has=localStorage.getItem(window.BUDGETR_KEY)}catch(e){}
+  /* The safe copy lives on disk via /api/budget/<user>; localStorage is the fast copy. The disk wins only when
+     this browser has no copy, or its copy has been in step with the disk (":disk") and the last save reached it
+     (no ":unsynced"). Otherwise the browser copy is pushed up once the app starts (the disk keeps the old one as a backup). */
+  var has=null,uns=false,synced=false;try{has=localStorage.getItem(window.BUDGETR_KEY);uns=localStorage.getItem(window.BUDGETR_KEY+':unsynced')==='1';synced=localStorage.getItem(window.BUDGETR_KEY+':disk')==='1'}catch(e){}
+  window.BUDGETR_DISK=false;window.BUDGETR_PUSH=false;
+  try{var sx=new XMLHttpRequest();sx.open('GET','/api/budget/'+encodeURIComponent(uid),false);sx.send();
+    if(sx.status===200||sx.status===204)window.BUDGETR_DISK=true;
+    if(sx.status===200&&/^\s*\{/.test(sx.responseText)&&(!has||(synced&&!uns))){try{localStorage.setItem(window.BUDGETR_KEY,sx.responseText);localStorage.setItem(window.BUDGETR_KEY+':disk','1')}catch(e){}has=sx.responseText}
+    else if(window.BUDGETR_DISK)window.BUDGETR_PUSH=true}catch(e){}
   if(!has){try{var x=new XMLHttpRequest();x.open('GET','/private/'+encodeURIComponent(uid)+'.legacy.json',false);x.send();
     if(x.status===200&&/^\s*\{/.test(x.responseText))window.BUDGETR_SEED=x.responseText}catch(e){}}
   document.addEventListener('DOMContentLoaded',function(){
@@ -1649,7 +1657,8 @@ async function flush(){
   const body=JSON.parse(JSON.stringify(S));
   try{
     if(dbRef){await dbRef.set(body);setStatus('Gemt')}
-    else{try{localStorage.setItem(window.BUDGETR_KEY,JSON.stringify(body));setStatus('Gemt i denne browser')}catch(e){setStatus('Kunne ikke gemme – ændringer forsvinder ved genindlæsning')}}
+    else{let inBrowser=true;try{localStorage.setItem(window.BUDGETR_KEY,JSON.stringify(body))}catch(e){inBrowser=false}
+      if(!await saveDisk(body))setStatus(inBrowser?'Gemt i browseren, men ikke på computeren endnu – prøver igen':'Kunne ikke gemme – ændringer forsvinder ved genindlæsning')}
   }catch(e){
     if(e&&e.code==='invalid_argument'){setStatus('Du har kun læseadgang. Ændringer gemmes ikke.')}
     else if(e&&e.code==='unavailable'){dirty=true;setTimeout(flush,1500+Math.random()*1000);setStatus('Forbindelsen hakker – prøver igen')}
@@ -1657,6 +1666,23 @@ async function flush(){
   }finally{saving=false;if(dirty)flush()}
 }
 function setStatus(t){$('status').textContent=t}
+/* Disk copy (see the prelude). Marks the browser copy as unsynced until the disk has it, and retries. */
+const UNSYNCED=window.BUDGETR_KEY+':unsynced';
+async function saveDisk(body){
+  try{
+    const r=await fetch('/api/budget/'+encodeURIComponent(window.BUDGETR_USER),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok)throw new Error(r.status);
+    try{localStorage.removeItem(UNSYNCED);localStorage.setItem(window.BUDGETR_KEY+':disk','1')}catch(e){}
+    clearTimeout(saveDisk._t);setStatus('Gemt på denne computer');return true;
+  }catch(e){
+    try{localStorage.setItem(UNSYNCED,'1')}catch(e2){}
+    clearTimeout(saveDisk._t);saveDisk._t=setTimeout(()=>{if(S&&!dirty)saveDisk(JSON.parse(JSON.stringify(S)))},5000);return false;
+  }
+}
+// Closing the tab inside the save delay would otherwise lose the last change.
+addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.stringify(S);
+  try{localStorage.setItem(window.BUDGETR_KEY,j);localStorage.setItem(UNSYNCED,'1')}catch(e){}
+  try{navigator.sendBeacon('/api/budget/'+encodeURIComponent(window.BUDGETR_USER),new Blob([j],{type:'application/json'}))}catch(e){}});
 
 /* ---------- PDF ---------- */
 function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/[“”]/g,'"')}
@@ -1986,7 +2012,8 @@ render();
   let db=null;
   db=null;
   downloads=null;
-  if(!db){localMode=true;loaded=true;S=normalize(loadLocal());setStatus('Gemmes i denne browser');render();return}
+  if(!db){localMode=true;loaded=true;S=normalize(loadLocal());setStatus(window.BUDGETR_DISK?'Gemmes på denne computer':'Gemmes kun i denne browser – kan ikke nå computeren');render();
+    if(S&&window.BUDGETR_PUSH)saveDisk(JSON.parse(JSON.stringify(S)));return}
   dbRef=db.doc('budget/state');
   let first=true;
   dbRef.onSnapshot(snap=>{
