@@ -13,3 +13,5 @@ next-env.d.ts
 .env.local
 .DS_Store
 Thumbs.db
+# Log from a dev server started in its own window
+.next-dev.log
