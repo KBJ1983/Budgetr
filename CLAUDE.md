@@ -19,7 +19,7 @@ Language: code and comments in English; UI text in Danish (du-form, calm, no exc
 ## Rules
 
 - Landing design source of truth: `docs/design/HANDOFF.md` + the two facit HTML files; tokens in `app/globals.css`.
-- Brand is **budgetpro** ("Skov" design, Sept 2026): wordmark "budget" + PRO badge and the "b." app icon in `components/Logo.tsx` / `public/icon.svg`, font Geist (+ Geist Mono for KPI amounts), pine `#2C6A4D` (dark `#7ED4A8`). The app's copy of the palette is the `:root` block in `public/budgetr-app/index.html`; keep both in step. Storage keys and paths keep the old `budgetr` name – don't rename them (saved data would be lost).
+- Brand is **budgetpro** ("Skov" design, Sept 2026): wordmark "budget" (Geist Light) + PRO badge on the baseline, and the "b." app icon in `components/Logo.tsx` / `public/icon.svg`, font Geist (+ Geist Mono for KPI amounts), pine `#2C6A4D` (dark `#7ED4A8`). The app's copy of the palette is the `:root` block in `public/budgetr-app/index.html`; keep both in step. Storage keys and paths keep the old `budgetr` name – don't rename them (saved data would be lost).
 
 ## Checks before committing
 

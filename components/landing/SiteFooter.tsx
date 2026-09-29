@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className={styles.footer}>
       <div className={styles.footerBrand}>
         <span className={styles.footerName}>
-          <Wordmark fontSize={18} dark />
+          <Wordmark fontSize={21} dark />
         </span>
         <span className={styles.companyWide}>{COMPANY}</span>
       </div>

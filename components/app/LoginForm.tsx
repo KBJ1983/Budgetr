@@ -31,7 +31,7 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
       <header className="bx-top">
         <div className="bx-wrap bx-top-row">
           <Link href="/" className="bx-brand" aria-label="budgetpro – til forsiden">
-            <Wordmark fontSize={20} />
+            <Wordmark fontSize={23} />
           </Link>
         </div>
       </header>

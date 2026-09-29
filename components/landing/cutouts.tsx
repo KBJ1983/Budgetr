@@ -84,7 +84,7 @@ export function HeroWindow() {
       </div>
       <div className={styles.appTop}>
         <div className={styles.appTitle}>
-          <Wordmark fontSize={14} dark />
+          <Wordmark fontSize={16} dark />
           <span className={styles.muted11}>Anna og Jonas’ budget</span>
         </div>
         <span className={styles.appUser}>

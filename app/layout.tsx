@@ -4,7 +4,7 @@ import "./globals.css";
 
 const geist = Geist({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-geist",
   display: "swap",
 });

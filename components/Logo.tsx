@@ -1,5 +1,5 @@
 /**
- * budgetpro brand ("Skov" design): the wordmark is "budget" with a small PRO badge, the icon is a dark
+ * budgetpro brand ("Skov" design): the wordmark is "budget" in light weight with a PRO badge, the icon is a dark
  * rounded square with a "b" and a green dot. Sizes are in em, so the wordmark scales with fontSize.
  */
 const PINE = { light: "#2c6a4d", dark: "#7ed4a8" };
@@ -7,7 +7,7 @@ const PINE = { light: "#2c6a4d", dark: "#7ed4a8" };
 export function Wordmark({ fontSize = 19, dark = false }: { fontSize?: number; dark?: boolean }) {
   return (
     <span
-      style={{ font: `700 ${fontSize}px/1 var(--font)`, letterSpacing: "-0.03em", whiteSpace: "nowrap" }}
+      style={{ font: `300 ${fontSize}px/1 var(--font)`, letterSpacing: "-0.02em", whiteSpace: "nowrap" }}
       aria-label="budgetpro"
       role="img"
     >
@@ -20,12 +20,12 @@ export function Wordmark({ fontSize = 19, dark = false }: { fontSize?: number; d
           overflow: "hidden",
           verticalAlign: "baseline",
           boxSizing: "border-box",
-          font: "700 0.3em/1.35 var(--font)",
-          height: "1.75em",
-          marginLeft: "0.7em",
-          padding: "0.2em 0.42em 0 0.58em",
+          font: "700 0.4em/1.58 var(--font)",
+          height: "1.58em",
+          marginLeft: "0.65em",
+          padding: "0 0.45em 0 0.57em",
           letterSpacing: "0.12em",
-          borderRadius: "0.34em",
+          borderRadius: "0.28em",
           color: dark ? "#0e1a13" : "#ffffff",
           background: dark ? PINE.dark : PINE.light,
         }}

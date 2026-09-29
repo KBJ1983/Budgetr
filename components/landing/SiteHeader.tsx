@@ -16,7 +16,7 @@ export function SiteHeader() {
   return (
     <header className={styles.header}>
       <a href="#top" className={styles.brand}>
-        <Wordmark fontSize={20} />
+        <Wordmark fontSize={23} />
       </a>
       <nav aria-label="Hovedmenu" className={styles.nav}>
         {NAV_LINKS.map((link) => (
