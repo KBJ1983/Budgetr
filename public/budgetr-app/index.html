@@ -287,6 +287,14 @@ tr.grp.in .pfold::before{border-color:var(--pine-ink)}
 tr.cat .gcount{margin-left:8px}
 .catbtn,.catdots{display:inline-flex!important;align-items:center;margin-left:8px;padding:2px 9px!important;font:500 12.5px var(--font)!important;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:6px!important;vertical-align:1px}
 .catdots{letter-spacing:.1em;padding:1px 7px!important}
+.ptools{display:flex;gap:8px;margin-left:auto;align-items:center}
+.tbtn,.catbtn{gap:6px}
+.tbtn{display:inline-flex!important;align-items:center;padding:7px 12px!important;font:500 13.5px var(--font)!important;color:var(--ink2)!important;background:var(--card)!important}
+.tbtn:hover{color:var(--ink)!important;border-color:var(--ink3)!important}
+.tbtn svg,.catbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;flex:0 0 auto}
+.catbtn svg{width:13px;height:13px}
+.filters{align-items:center}
+@media (max-width:760px){.ptools{margin-left:0;width:100%}.ptools .tbtn{flex:1;justify-content:center}}
 .catbtn:hover,.catdots:hover{color:var(--ink);border-color:var(--ink3)!important}
 .catrow.hl input{border-color:var(--pine);box-shadow:0 0 0 3px var(--pine-bg)}
 .gcount{margin-left:10px;font-size:12px;font-weight:400;color:var(--ink3)}
@@ -1038,12 +1046,13 @@ function render(){
   h+=`</div></section>`;
 
   // poster
-  h+=`<section><div class="sechead"><h2>Poster</h2><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;justify-content:flex-end"><span class="hint">Klik på en række for at rette den, + giver en ny post i gruppen, og ⋮⋮ flytter en post. Beløb i kolonnen "${view==='aar'?'Pr. år':'Pr. md.'}" er omregnet efter hyppighed. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span><button type="button" id="btnFoldPosts">${Object.values(PFOLD).some(Boolean)?'Fold alle ud':'Fold alle sammen'}</button><button type="button" id="btnCats">Kategorier</button></div></div>
+  h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
   <div class="filters">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
     <select id="flPayer" aria-label="Filtrér betaler"><option value="alle">Alle betalere</option><option value="${FAELLES}">Fælles</option>${S.persons.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
     <input id="flQ" type="search" placeholder="Søg beskrivelse eller nøgle" aria-label="Søg" value="${esc(F.q)}">
+    <div class="ptools"><button type="button" class="tbtn" id="btnFoldPosts">${foldAllHtml()}</button><button type="button" class="tbtn" id="btnCats" title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg><span>Rediger kategorier</span></button></div>
   </div>
   <div class="tablewrap"><table><thead><tr><th>Beskrivelse</th><th>Nøgle</th><th>Hyppighed</th><th class="r">Beløb</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th class="r">Udvikling</th><th>Konto</th><th>Betaler</th></tr></thead><tbody id="tbody">${rowsHtml()}</tbody></table></div></section>`;
   h+=devHtml();
@@ -1552,6 +1561,7 @@ function filtered(){
 }
 /* ---------- kategorier og rækkefølge i Poster ---------- */
 let PFOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-post-fold')||'{}')||{}}catch(e){return {}}})();
+const foldAllHtml=()=>{const f=Object.values(PFOLD).some(Boolean);return `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${f?'M5 5.2 8 2.2l3 3M5 10.8l3 3 3-3M3 8h10':'M5 2.2 8 5.2l3-3M5 13.8l3-3 3 3M3 8h10'}"/></svg><span>${f?'Fold alle ud':'Fold alle sammen'}</span>`};
 const savePFold=()=>{try{localStorage.setItem('hb-post-fold',JSON.stringify(PFOLD))}catch(e){}};
 const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!PFOLD[key]}" aria-label="${PFOLD[key]?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${PFOLD[key]?'Fold ud':'Fold sammen'}"></button>`;
 // Expense categories: S.settings.categories holds their order and categories without posts; names used on posts are added.
@@ -1581,7 +1591,7 @@ function rowsHtml(){
     const G=L.filter(e=>e.type===type);if(!G.length&&!plain)return;
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
-    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+type,label)}${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${type==='udgift'?'<button type="button" class="catbtn" data-cats>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
+    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+type,label)}${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${type==='udgift'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
     if(PFOLD['g:'+type])return;
     if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
     const by={};G.forEach(e=>{const k=e.category||NOCAT;(by[k]=by[k]||[]).push(e)});
@@ -1723,7 +1733,7 @@ function bindMain(){
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
   const dp=$('devPct');if(dp)dp.onchange=()=>{const v=Math.round(+dp.value||0);S.settings.devPct=v>0?Math.min(100,v):10;commit()};
-  $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!PFOLD[k];savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.textContent=Object.values(PFOLD).some(Boolean)?'Fold alle ud':'Fold alle sammen';return}
+  $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!PFOLD[k];savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
     if(ev.target.closest('[data-cats]')){openCats();return}
     const ce=ev.target.closest('[data-catedit]');if(ce){openCats(ce.dataset.catedit);return}
     const a=ev.target.closest('[data-addpost]');if(a){ev.stopPropagation();openEntry(null,{type:a.dataset.addpost,category:a.dataset.cat||''});return}
@@ -1732,7 +1742,7 @@ function bindMain(){
   bindPostDrag();if($('btnCats'))$('btnCats').onclick=()=>openCats();
   if($('btnFoldPosts'))$('btnFoldPosts').onclick=()=>{const anyFolded=Object.values(PFOLD).some(Boolean);
     if(anyFolded)PFOLD={};else{PFOLD={'g:indtaegt':true};catList().concat([NOCAT,'Opsparing']).forEach(k=>PFOLD['c:'+k]=true)}
-    savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').textContent=Object.values(PFOLD).some(Boolean)?'Fold alle ud':'Fold alle sammen'};
+    savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').innerHTML=foldAllHtml()};
   $('planSel').onchange=e=>{planAcct=e.target.value;render()};
   const svS=()=>{const a=S.accounts.find(x=>x.id===planAcct);if(!a)return;const v=parseAmt($('startSaldo').value)||0,d=$('saldoDate').value||DAY();setSaldo(a.id,v,d,!!curSc());commit()};
   $('startSaldo').onchange=svS;$('saldoDate').onchange=svS;const sr=$('saldoReset');if(sr)sr.onclick=()=>{const sc=curSc();if(sc&&sc.saldo){delete sc.saldo[planAcct];commit()}};
