@@ -273,6 +273,23 @@ th{font-weight:500;color:var(--ink2);font-size:13px;background:var(--card);posit
 td.r,th.r{text-align:right}
 tr.cat td{background:var(--paper);font-weight:700;border-bottom:1px solid var(--rule);padding-top:12px}
 tr.cat td.r{font-weight:700}
+/* Poster: Indtægter / Faste udgifter as clear group headings above the categories */
+tr.grp td{padding:14px 8px 10px;font-size:15px;font-weight:700;border-bottom:2px solid var(--rule);background:var(--card)}
+tr.grp.in td{border-bottom-color:var(--pine);color:var(--pine-ink)}
+tr.grp.out td{border-bottom-color:var(--ink3);color:var(--ink)}
+tr.grp+tr.cat td{padding-top:8px}
+tbody tr.grp:not(:first-child) td{padding-top:26px}
+.gmark{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-right:8px;border-radius:5px;font-size:13px;line-height:1;vertical-align:1px}
+tr.grp.in .gmark{background:var(--pine-bg);color:var(--pine-ink)}
+tr.grp.out .gmark{background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink2)}
+.gcount{margin-left:10px;font-size:12px;font-weight:400;color:var(--ink3)}
+tr.cat td:first-child{padding-left:16px}
+/* Konti: drag handle to reorder accounts */
+.dragh{display:inline-flex;align-items:center;justify-content:center;width:18px;height:24px;margin-right:2px;border-radius:5px;color:var(--ink3);cursor:grab;font-size:13px;letter-spacing:-2px;user-select:none;flex:0 0 auto}
+.dragh:hover,.dragh:focus-visible{color:var(--ink);background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.acctd.dragging{opacity:.45}
+.acctd.drop-before{box-shadow:0 -3px 0 0 var(--pine)}
+.acctd.drop-after{box-shadow:0 3px 0 0 var(--pine)}
 tr.row{cursor:pointer} tr.row:hover td{background:var(--pine-bg)}
 tr.off td{color:var(--ink3);text-decoration:line-through}
 tr.off td.act{text-decoration:none}
@@ -939,7 +956,7 @@ function render(){
     const exTog=accEx?`<label class="extog small"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening (${disp(accEx)})</label>`:'';
     const sumTxt=id===''?`<span class="bad">${disp(c.exp)} ikke placeret</span>`:a.type==='faelles'?(()=>{const gp=c.need-c.tin;return `<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span>${gp>0.5?`<span class="bad">Mangler <b style="color:inherit">${disp(gp)}</b></span>`:(Math.abs(gp)<0.5?`<span class="ok">Dækket</span>`:`<span class="ok">Dækket, overskud ${disp(-gp)}</span>`)}`})()
       :`<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span><span class="${c.left>=0?'ok':'bad'}">Tilbage <b style="color:inherit">${disp(c.left)}</b></span>`;
-    h+=`<details class="acctd" data-acc="${esc(id)}" ${isFolded(id)?'':'open'}><summary><div><h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><div class="asum">${sumTxt}</div></summary>`;
+    h+=`<details class="acctd" data-acc="${esc(id)}" ${isFolded(id)?'':'open'}><summary><div>${id?`<span class="dragh" draggable="true" role="button" tabindex="0" data-drag="${esc(id)}" aria-label="Flyt ${esc(a.name)}. Træk, eller brug pil op og ned" title="Træk for at flytte kontoen">⋮⋮</span>`:''}<h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><div class="asum">${sumTxt}</div></summary>`;
     h+=`<div class="acct"><div><h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div>
       <div class="kv"><span>Indtægter ${ib(listInfo('Indtægter direkte på kontoen',E_.filter(e=>e.type==='indtaegt'&&(e.account||'')===id),exRows(owners),'Kvartals- og årsbeløb er omregnet til et gennemsnit pr. måned.'))}</span><span>${disp(c.inc)}</span>
       <span>Overført ind ${ib(listInfo('Overført ind fra andre konti',E_.filter(e=>e.type==='overfoersel'&&e.to===id),null,E_.some(e=>e.type==='overfoersel'&&e.to===id&&e.auto)?'Auto-beløb følger den anbefalede andel og rundes op til nærmeste 100 kr.':''))}</span><span>${disp(c.tin)}</span>
@@ -1499,16 +1516,19 @@ function filtered(){
 }
 function rowsHtml(){
   const L=filtered(); if(!L.length)return `<tr><td colspan="8" class="muted">Ingen poster matcher filtret. Ret filtret eller opret en ny post.</td></tr>`;
-  const groups=[['indtaegt','Indtægter'],['udgift',null]];
+  const groups=[['indtaegt','Indtægter','in'],['udgift','Faste udgifter','out']];
   let h='';
-  groups.forEach(([type,label])=>{
+  groups.forEach(([type,label,cls])=>{
     const G=L.filter(e=>e.type===type); if(!G.length)return;
+    // Group heading: Indtægter / Faste udgifter with the group total, then (for expenses) one row per category.
+    const gsum=G.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
+    h+=`<tr class="grp ${cls}"><td colspan="4"><span class="gmark" aria-hidden="true">${cls==='in'?'+':'−'}</span>${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span></td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
     const byCat={};
-    G.forEach(e=>{const k=type==='udgift'?(e.category||'Uden kategori'):label;(byCat[k]=byCat[k]||[]).push(e)});
+    G.forEach(e=>{const k=type==='udgift'?(e.category||'Uden kategori'):'';(byCat[k]=byCat[k]||[]).push(e)});
     Object.keys(byCat).forEach(k=>{
       const arr=byCat[k].sort((a,b)=>mAvg(b)-mAvg(a));
       const sum=arr.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
-      h+=`<tr class="cat"><td colspan="4">${esc(k)}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
+      if(k)h+=`<tr class="cat"><td colspan="4">${esc(k)}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
       arr.forEach(e=>{
         const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
         const freq=FREQ[e.freq]||'';
@@ -1553,10 +1573,30 @@ function planSvg(id){
 let FOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-acct-fold2')||'{}')||{}}catch(e){return {}}})();
 function saveFold(){try{localStorage.setItem('hb-acct-fold2',JSON.stringify(FOLD))}catch(e){}}
 function isFolded(id){return FOLD[id]!==undefined?FOLD[id]:true}
+/* Reorder accounts by dragging the ⋮⋮ handle (pointer events, so touch works too) or with arrow keys.
+   The order is S.accounts, which the other lists and the exports follow. */
+function moveAcct(id,toId,after){const A=S.accounts,i=A.findIndex(a=>a.id===id);if(i<0||id===toId)return false;const [a]=A.splice(i,1);
+  let j=A.findIndex(x=>x.id===toId);if(j<0){A.splice(i,0,a);return false}if(after)j++;A.splice(j,0,a);return A.indexOf(a)!==i}
+function bindAcctDrag(){
+  document.querySelectorAll('.dragh').forEach(h=>{
+    h.onclick=ev=>{ev.preventDefault();ev.stopPropagation()};
+    h.onkeydown=ev=>{if(ev.key!=='ArrowUp'&&ev.key!=='ArrowDown')return;ev.preventDefault();const id=h.dataset.drag,A=S.accounts,i=A.findIndex(a=>a.id===id),j=i+(ev.key==='ArrowUp'?-1:1);
+      if(i<0||j<0||j>=A.length)return;[A[i],A[j]]=[A[j],A[i]];commit();setTimeout(()=>{const n=document.querySelector(`.dragh[data-drag="${CSS.escape(id)}"]`);if(n)n.focus()},0)};
+    h.style.touchAction='none';
+    h.onpointerdown=ev=>{if(ev.button!==0)return;ev.preventDefault();const id=h.dataset.drag,src=h.closest('.acctd');let tgt=null,after=false;
+      h.setPointerCapture(ev.pointerId);src.classList.add('dragging');h.style.cursor='grabbing';
+      const clear=()=>document.querySelectorAll('.acctd.drop-before,.acctd.drop-after').forEach(x=>x.classList.remove('drop-before','drop-after'));
+      h.onpointermove=e=>{const edge=60,vh=innerHeight;if(e.clientY>vh-edge)scrollBy(0,Math.ceil((e.clientY-(vh-edge))/3));else if(e.clientY<edge+72)scrollBy(0,-Math.ceil((edge+72-e.clientY)/3));
+        const el=document.elementFromPoint(e.clientX,Math.min(vh-1,Math.max(0,e.clientY))),d=el&&el.closest('.acctd');clear();tgt=null;
+        if(!d||d===src||!d.dataset.acc)return;const r=d.getBoundingClientRect();after=e.clientY>r.top+r.height/2;tgt=d.dataset.acc;d.classList.add(after?'drop-after':'drop-before')};
+      h.onpointerup=h.onpointercancel=e=>{h.onpointermove=h.onpointerup=h.onpointercancel=null;clear();src.classList.remove('dragging');h.style.cursor='';
+        if(e.type==='pointerup'&&tgt&&moveAcct(id,tgt,after))commit()}}});
+}
 function bindMain(){
   document.querySelectorAll('details.acctd').forEach(d=>d.addEventListener('toggle',()=>{FOLD[d.dataset.acc]=!d.open;saveFold();const all=[...document.querySelectorAll('details.acctd')];const b=$('btnFoldAll');if(b)b.textContent=all.every(x=>!x.open)?'Fold alle ud':'Fold alle sammen'}));
   const bf=$('btnFoldAll');if(bf)bf.onclick=()=>{const all=[...document.querySelectorAll('details.acctd')],open=!all.every(x=>!x.open)?false:true;all.forEach(x=>{x.open=open;FOLD[x.dataset.acc]=!open});saveFold();bf.textContent=open?'Fold alle sammen':'Fold alle ud'};
   $('btnAccts').onclick=openAccts;
+  bindAcctDrag();
   document.querySelectorAll('[data-extog]').forEach(c=>c.onchange=()=>{S.settings.withExtra=c.checked;commit()});
   document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{SC=b.dataset.sc||null;render();window.scrollTo(0,0)});
   bindScopes();bindPsav();
