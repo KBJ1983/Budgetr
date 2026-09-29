@@ -15,7 +15,9 @@ export function Wordmark({ fontSize = 19, dark = false }: { fontSize?: number; d
       <span
         aria-hidden="true"
         style={{
+          // overflow hidden makes an inline-block's baseline its bottom edge, so the box sits on the text baseline.
           display: "inline-block",
+          overflow: "hidden",
           verticalAlign: "baseline",
           boxSizing: "border-box",
           font: "700 0.3em/1.35 var(--font)",
