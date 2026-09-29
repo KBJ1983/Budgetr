@@ -287,7 +287,10 @@ tr.cat td:first-child{padding-left:16px}
 .addp{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin-left:10px;padding:0!important;border-radius:6px!important;font:600 15px/1 var(--font)!important;vertical-align:1px;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important}
 .addp:hover{color:var(--on-pine)!important;background:var(--pine)!important;border-color:var(--pine)!important}
 tr.grp.in .addp:hover{background:var(--pine)!important}
-td.desc .dragh{margin:0 6px 0 -4px;vertical-align:-1px;height:20px;width:16px}
+/* Handle beside a block with name, badges and note, so the note lines up under the name */
+td.desc .dwrap{display:flex;align-items:flex-start;gap:6px}
+td.desc .dtext{min-width:0;flex:1}
+td.desc .dragh{margin:0 0 0 -4px;height:20px;width:16px;flex:0 0 16px}
 td.desc .dragh.off{visibility:hidden}
 tr.row.dragging{opacity:.4}
 tr.drop-before td{box-shadow:inset 0 3px 0 var(--pine)}
@@ -1556,7 +1559,7 @@ function rowHtml(e){
   const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
   const freq=FREQ[e.freq]||'', when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:'';
   const hd=e._goal?'<span class="dragh off" aria-hidden="true"></span>':`<span class="dragh" data-dragpost="${e.id}" role="button" tabindex="0" aria-label="Flyt ${esc(e.desc)}. Træk, eller brug pil op og ned" title="Træk for at flytte posten">⋮⋮</span>`;
-  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc">${hd}${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
+  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
         <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`}
 function rowsHtml(){
   const L=filtered(), plain=F.type==='alle'&&F.account==='alle'&&F.payer==='alle'&&!F.q.trim();
