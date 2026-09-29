@@ -284,6 +284,23 @@ tr.grp.in .gmark{background:var(--pine-bg);color:var(--pine-ink)}
 tr.grp.out .gmark{background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink2)}
 .gcount{margin-left:10px;font-size:12px;font-weight:400;color:var(--ink3)}
 tr.cat td:first-child{padding-left:16px}
+.addp{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin-left:10px;padding:0!important;border-radius:6px!important;font:600 15px/1 var(--font)!important;vertical-align:1px;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important}
+.addp:hover{color:var(--on-pine)!important;background:var(--pine)!important;border-color:var(--pine)!important}
+tr.grp.in .addp:hover{background:var(--pine)!important}
+td.desc .dragh{margin:0 6px 0 -4px;vertical-align:-1px;height:20px;width:16px}
+td.desc .dragh.off{visibility:hidden}
+tr.row.dragging{opacity:.4}
+tr.drop-before td{box-shadow:inset 0 3px 0 var(--pine)}
+tr.drop-after td{box-shadow:inset 0 -3px 0 var(--pine)}
+tr.drop-into td{background:var(--pine-bg)!important;box-shadow:inset 0 -2px 0 var(--pine)}
+tr.empty td{font-size:13px;padding:8px 8px 10px 16px}
+.catlist{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto}
+.catrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto auto;gap:6px;align-items:center}
+.catrow input,.catadd input{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:6px 10px;font:inherit;font-size:14px;color:var(--ink);min-width:0}
+.catrow .muted{font-size:12px;white-space:nowrap;padding:0 4px;min-width:62px;text-align:right}
+.catrow button{padding:4px 9px}
+.catadd{display:flex;gap:8px;margin-top:12px}.catadd input{flex:1}
+@media (max-width:640px){.catrow{grid-template-columns:minmax(0,1fr) auto auto auto}.catrow .muted{display:none}}
 /* Konti: drag handle to reorder accounts */
 .dragh{display:inline-flex;align-items:center;justify-content:center;width:18px;height:24px;margin-right:2px;border-radius:5px;color:var(--ink3);cursor:grab;font-size:13px;letter-spacing:-2px;user-select:none;flex:0 0 auto}
 .dragh:hover,.dragh:focus-visible{color:var(--ink);background:color-mix(in srgb,var(--ink) 8%,transparent)}
@@ -677,6 +694,15 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
   </form>
 </dialog>
 
+<dialog id="dlgCat">
+  <form method="dialog" id="frmCat" style="padding:20px 22px">
+    <h2>Kategorier</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 12px">Kategorierne samler de faste udgifter under Poster. Omdøber du en kategori, følger alle dens poster med. Sletter du en, flyttes posterne til Uden kategori.</p>
+    <div class="catlist" id="catList"></div>
+    <div class="catadd"><input id="catNew" placeholder="Ny kategori, fx Børn" aria-label="Ny kategori" autocomplete="off"><button type="button" id="btnCatAdd">Tilføj</button></div>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnCatClose" class="primary">Luk</button></div></div>
+  </form>
+</dialog>
 <dialog id="dlgAcct">
   <form method="dialog" id="frmAcct" style="padding:20px 22px">
     <h2>Konti og personer</h2>
@@ -1002,7 +1028,7 @@ function render(){
   h+=`</div></section>`;
 
   // poster
-  h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint">Klik på en række for at rette den. Beløb i kolonnen "${view==='aar'?'Pr. år':'Pr. md.'}" er omregnet efter hyppighed. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
+  h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint"><button type="button" id="btnCats" style="margin-right:10px">Kategorier</button>Klik på en række for at rette den, tryk + for en ny post i gruppen, og træk i ⋮⋮ for at flytte en post. Beløb i kolonnen "${view==='aar'?'Pr. år':'Pr. md.'}" er omregnet efter hyppighed. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
   <div class="filters">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
@@ -1514,32 +1540,84 @@ function filtered(){
     if(q&&!((e.desc||'').toLowerCase().includes(q)||(e.key||'').toLowerCase().includes(q)))return false;
     return true;});
 }
+/* ---------- kategorier og rækkefølge i Poster ---------- */
+// Expense categories: S.settings.categories holds their order and categories without posts; names used on posts are added.
+const NOCAT='Uden kategori';
+function catList(){const L=((S.settings&&S.settings.categories)||[]).slice();cur().forEach(e=>{if(e.type==='udgift'&&!e._goal&&e.category&&!L.includes(e.category))L.push(e.category)});return L}
+// Every stored copy of a post: the budget itself, scenario additions and scenario overrides.
+const entryCopies=()=>S.entries.concat(...(S.scenarios||[]).map(sc=>(sc.added||[]).concat(Object.values(sc.overrides||{}))));
+function renameCat(from,to){to=(to||'').trim();if(!to||to===from)return;S.settings.categories=catList().map(c=>c===from?to:c).filter((c,i,a)=>a.indexOf(c)===i);entryCopies().forEach(e=>{if(e.category===from)e.category=to});commit()}
+function deleteCat(name){S.settings.categories=catList().filter(c=>c!==name);entryCopies().forEach(e=>{if(e.category===name)e.category=''});commit()}
+function setPostField(id,f,v){const b=S.entries.find(x=>x.id===id);if(b)b[f]=v;(S.scenarios||[]).forEach(sc=>{const o=(sc.overrides||{})[id];if(o&&f in o)o[f]=v;const a=(sc.added||[]).find(x=>x.id===id);if(a)a[f]=v})}
+// Manual order (ord, set by dragging) first, then the largest amount.
+const byOrd=(a,b)=>((a.ord??1e9)-(b.ord??1e9))||(mAvg(b)-mAvg(a));
+const postCat=e=>e.type==='udgift'?(e.category||NOCAT):'';
+function rowHtml(e){
+  const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
+  const freq=FREQ[e.freq]||'', when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:'';
+  const hd=e._goal?'<span class="dragh off" aria-hidden="true"></span>':`<span class="dragh" data-dragpost="${e.id}" role="button" tabindex="0" aria-label="Flyt ${esc(e.desc)}. Træk, eller brug pil op og ned" title="Træk for at flytte posten">⋮⋮</span>`;
+  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc">${hd}${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
+        <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`}
 function rowsHtml(){
-  const L=filtered(); if(!L.length)return `<tr><td colspan="8" class="muted">Ingen poster matcher filtret. Ret filtret eller opret en ny post.</td></tr>`;
-  const groups=[['indtaegt','Indtægter','in'],['udgift','Faste udgifter','out']];
+  const L=filtered(), plain=F.type==='alle'&&F.account==='alle'&&F.payer==='alle'&&!F.q.trim();
+  if(!L.length&&!plain)return `<tr><td colspan="8" class="muted">Ingen poster matcher filtret. Ret filtret eller opret en ny post.</td></tr>`;
+  const add=(type,cat,label)=>`<button type="button" class="addp" data-addpost="${type}" data-cat="${esc(cat)}" aria-label="Ny post i ${esc(label)}" title="Ny post i ${esc(label)}">+</button>`;
+  const order=catList(), rank=k=>k===NOCAT?1e6:(order.indexOf(k)<0?1e5:order.indexOf(k));
   let h='';
-  groups.forEach(([type,label,cls])=>{
-    const G=L.filter(e=>e.type===type); if(!G.length)return;
-    // Group heading: Indtægter / Faste udgifter with the group total, then (for expenses) one row per category.
+  [['indtaegt','Indtægter','in'],['udgift','Faste udgifter','out']].forEach(([type,label,cls])=>{
+    const G=L.filter(e=>e.type===type);if(!G.length&&!plain)return;
+    // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
-    h+=`<tr class="grp ${cls}"><td colspan="4"><span class="gmark" aria-hidden="true">${cls==='in'?'+':'−'}</span>${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span></td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
-    const byCat={};
-    G.forEach(e=>{const k=type==='udgift'?(e.category||'Uden kategori'):'';(byCat[k]=byCat[k]||[]).push(e)});
-    Object.keys(byCat).forEach(k=>{
-      const arr=byCat[k].sort((a,b)=>mAvg(b)-mAvg(a));
-      const sum=arr.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
-      if(k)h+=`<tr class="cat"><td colspan="4">${esc(k)}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
-      arr.forEach(e=>{
-        const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
-        const freq=FREQ[e.freq]||'';
-        const when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:'';
-        h+=`<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" tabindex="0"><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
-        <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`;
-      });
-    });
-  });
+    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4"><span class="gmark" aria-hidden="true">${cls==='in'?'+':'−'}</span>${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
+    if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
+    const by={};G.forEach(e=>{const k=e.category||NOCAT;(by[k]=by[k]||[]).push(e)});
+    (plain?order:[]).concat(Object.keys(by)).filter((k,i,a)=>a.indexOf(k)===i).sort((a,b)=>rank(a)-rank(b)).forEach(k=>{
+      const arr=(by[k]||[]).sort(byOrd), sum=arr.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0), ck=k===NOCAT?'':k;
+      h+=`<tr class="cat" data-type="udgift" data-cat="${esc(ck)}"><td colspan="4">${esc(k)}${add('udgift',ck,k)}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
+      arr.forEach(e=>h+=rowHtml(e));
+      if(!arr.length)h+=`<tr class="empty" data-type="udgift" data-cat="${esc(ck)}"><td colspan="8" class="muted">Ingen poster i ${esc(k)} endnu. Tryk + for at tilføje en.</td></tr>`})});
   return h;
 }
+/* Drag a post by its ⋮⋮ handle (pointer events, so touch works) onto another post or a category heading.
+   Dropping in another expense category moves the post there; the order is saved as ord on the post. */
+function dropPost(id,cat,beforeId,after){
+  const e=cur().find(x=>x.id===id);if(!e||e._goal)return false;
+  const same=cur().filter(x=>x.type===e.type&&!x._goal&&x.id!==id&&postCat(x)===(e.type==='udgift'?(cat||NOCAT):'')).sort(byOrd);
+  let i=beforeId?same.findIndex(x=>x.id===beforeId):same.length;if(i<0)i=same.length;if(beforeId&&after)i++;
+  same.splice(i,0,e);
+  if(e.type==='udgift'&&(e.category||'')!==(cat||''))setPostField(id,'category',cat||'');
+  same.forEach((x,k)=>setPostField(x.id,'ord',k));return true}
+function bindPostDrag(){
+  const tb=$('tbody');if(!tb||tb._drag)return;tb._drag=true;
+  tb.addEventListener('keydown',ev=>{const h=ev.target.closest('[data-dragpost]');if(!h||(ev.key!=='ArrowUp'&&ev.key!=='ArrowDown'))return;ev.preventDefault();ev.stopPropagation();
+    const tr=h.closest('tr'),rows=[...tb.querySelectorAll(`tr.row[data-type="${tr.dataset.type}"][data-cat="${CSS.escape(tr.dataset.cat)}"]`)].filter(r=>r.querySelector('[data-dragpost]'));
+    const i=rows.indexOf(tr),j=i+(ev.key==='ArrowUp'?-1:1);if(j<0||j>=rows.length)return;
+    if(dropPost(tr.dataset.id,tr.dataset.cat,rows[j].dataset.id,ev.key==='ArrowDown'))commit();
+    setTimeout(()=>{const n=$('tbody')&&$('tbody').querySelector(`[data-dragpost="${CSS.escape(tr.dataset.id)}"]`);if(n)n.focus()},0)});
+  tb.addEventListener('pointerdown',ev=>{const h=ev.target.closest('[data-dragpost]');if(!h||ev.button!==0)return;ev.preventDefault();
+    const src=h.closest('tr'),type=src.dataset.type,id=h.dataset.dragpost;let drop=null;h.setPointerCapture(ev.pointerId);src.classList.add('dragging');
+    const clear=()=>tb.querySelectorAll('.drop-before,.drop-after,.drop-into').forEach(x=>x.classList.remove('drop-before','drop-after','drop-into'));
+    h.onpointermove=e=>{const edge=60,vh=innerHeight;if(e.clientY>vh-edge)scrollBy(0,Math.ceil((e.clientY-(vh-edge))/3));else if(e.clientY<edge)scrollBy(0,-Math.ceil((edge-e.clientY)/3));
+      const el=document.elementFromPoint(e.clientX,Math.min(vh-1,Math.max(0,e.clientY))),t=el&&el.closest('#tbody tr');clear();drop=null;
+      if(!t||t===src||t.dataset.type!==type)return;
+      if(t.classList.contains('row')){const r=t.getBoundingClientRect(),after=e.clientY>r.top+r.height/2;drop={cat:t.dataset.cat,before:t.dataset.id,after};t.classList.add(after?'drop-after':'drop-before')}
+      else if(t.matches('.cat,.empty')||(t.matches('.grp')&&type==='indtaegt')){drop={cat:t.dataset.cat,before:null};t.classList.add('drop-into')}};
+    h.onpointerup=h.onpointercancel=e=>{h.onpointermove=h.onpointerup=h.onpointercancel=null;clear();src.classList.remove('dragging');
+      if(e.type==='pointerup'&&drop&&dropPost(id,drop.cat,drop.before,drop.after))commit()}});
+}
+/* Category dialog: rename, reorder (↑ ↓), add and delete expense categories. */
+function openCats(){renderCats();$('dlgCat').showModal()}
+function renderCats(){const L=catList(),n=c=>entryCopies().filter(e=>e.category===c&&e.type==='udgift').length;
+  $('catList').innerHTML=L.length?L.map((c,i)=>`<div class="catrow" data-cat="${esc(c)}"><input data-catname value="${esc(c)}" aria-label="Navn på kategori"><span class="muted">${n(c)} ${n(c)===1?'post':'poster'}</span>
+    <button type="button" class="ghost" data-catmv="-1" aria-label="Flyt ${esc(c)} op" ${i?'':'disabled'}>↑</button><button type="button" class="ghost" data-catmv="1" aria-label="Flyt ${esc(c)} ned" ${i<L.length-1?'':'disabled'}>↓</button>
+    <button type="button" class="ghost danger" data-catdel aria-label="Slet kategori ${esc(c)}">Slet</button></div>`).join(''):'<p class="muted" style="font-size:14px;margin:0">Ingen kategorier endnu.</p>';
+  $('catList').querySelectorAll('.catrow').forEach(r=>{const c=r.dataset.cat;
+    r.querySelector('[data-catname]').onchange=ev=>{const v=ev.target.value.trim();if(!v){ev.target.value=c;return}if(v!==c&&catList().includes(v)&&!confirm('Kategorien '+v+' findes allerede. Vil du lægge de to sammen?')){ev.target.value=c;return}renameCat(c,v);renderCats()};
+    r.querySelectorAll('[data-catmv]').forEach(b=>b.onclick=()=>{const A=catList(),i=A.indexOf(c),j=i+(+b.dataset.catmv);if(j<0||j>=A.length)return;[A[i],A[j]]=[A[j],A[i]];S.settings.categories=A;commit();renderCats()});
+    const del=r.querySelector('[data-catdel]');del.onclick=()=>{const k=n(c);if(k&&del.dataset.armed!=='1'){del.dataset.armed='1';del.textContent=k+' poster flyttes til Uden kategori. Slet?';return}deleteCat(c);renderCats()}})}
+$('btnCatAdd').onclick=()=>{const v=$('catNew').value.trim();if(!v)return;const L=catList();if(!L.includes(v)){S.settings.categories=L.concat([v]);commit()}$('catNew').value='';renderCats();$('catNew').focus()};
+$('catNew').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();$('btnCatAdd').click()}};
+$('btnCatClose').onclick=()=>$('dlgCat').close();
 const monthsOf=e=>{const r=[];for(let m=1;m<=12;m++)if(paidIn(e,m))r.push(MONTHS[m-1]);return r};
 function saldoFor(id){const sc=curSc();if(sc&&sc.saldo&&sc.saldo[id])return {...sc.saldo[id],sc:true};const a=S.accounts.find(x=>x.id===id)||{};
   if(a.saldoDate)return {amount:+a.saldo||0,date:a.saldoDate};return {amount:+a.startSaldo||0,date:new Date().getFullYear()+'-01-01',legacy:true}}
@@ -1578,7 +1656,7 @@ function isFolded(id){return FOLD[id]!==undefined?FOLD[id]:true}
 function moveAcct(id,toId,after){const A=S.accounts,i=A.findIndex(a=>a.id===id);if(i<0||id===toId)return false;const [a]=A.splice(i,1);
   let j=A.findIndex(x=>x.id===toId);if(j<0){A.splice(i,0,a);return false}if(after)j++;A.splice(j,0,a);return A.indexOf(a)!==i}
 function bindAcctDrag(){
-  document.querySelectorAll('.dragh').forEach(h=>{
+  document.querySelectorAll('.dragh[data-drag]').forEach(h=>{
     h.onclick=ev=>{ev.preventDefault();ev.stopPropagation()};
     h.onkeydown=ev=>{if(ev.key!=='ArrowUp'&&ev.key!=='ArrowDown')return;ev.preventDefault();const id=h.dataset.drag,A=S.accounts,i=A.findIndex(a=>a.id===id),j=i+(ev.key==='ArrowUp'?-1:1);
       if(i<0||j<0||j>=A.length)return;[A[i],A[j]]=[A[j],A[i]];commit();setTimeout(()=>{const n=document.querySelector(`.dragh[data-drag="${CSS.escape(id)}"]`);if(n)n.focus()},0)};
@@ -1629,8 +1707,10 @@ function bindMain(){
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
   const dp=$('devPct');if(dp)dp.onchange=()=>{const v=Math.round(+dp.value||0);S.settings.devPct=v>0?Math.min(100,v):10;commit()};
-  $('tbody').addEventListener('click',ev=>{const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)});
-  $('tbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'){const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)}});
+  $('tbody').addEventListener('click',ev=>{const a=ev.target.closest('[data-addpost]');if(a){ev.stopPropagation();openEntry(null,{type:a.dataset.addpost,category:a.dataset.cat||''});return}
+    if(ev.target.closest('[data-dragpost]'))return;const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)});
+  $('tbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.target.closest('[data-dragpost],[data-addpost]')){const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)}});
+  bindPostDrag();if($('btnCats'))$('btnCats').onclick=openCats;
   $('planSel').onchange=e=>{planAcct=e.target.value;render()};
   const svS=()=>{const a=S.accounts.find(x=>x.id===planAcct);if(!a)return;const v=parseAmt($('startSaldo').value)||0,d=$('saldoDate').value||DAY();setSaldo(a.id,v,d,!!curSc());commit()};
   $('startSaldo').onchange=svS;$('saldoDate').onchange=svS;const sr=$('saldoReset');if(sr)sr.onclick=()=>{const sc=curSc();if(sc&&sc.saldo){delete sc.saldo[planAcct];commit()}};
@@ -1686,7 +1766,7 @@ function openEntry(id,preset){
     ((base&&base.history)||[]).slice().sort((a,b)=>a.date<b.date?-1:1).forEach(x=>addHist(x));
     $('wHist').style.display=scx?'none':'';
     const dv=id?devOf(e):null;$('histNote').textContent=dv?`Fra ${kr(dv.base.m)} til ${kr(dv.now.m)} pr. md. ${dv.base.unknown?'fra før':'siden'} ${fmtDate(dv.base.date)} (${dv.pct===null?kr(dv.d):pctTxt(dv.pct)}). Når du retter beløbet, gemmes det gamle automatisk her.`:'Når du retter beløbet, gemmes det gamle beløb automatisk her med datoen, så udviklingen kan følges.'}
-  $('cats').innerHTML=[...new Set(S.entries.map(x=>x.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+  $('cats').innerHTML=catList().map(c=>`<option value="${esc(c)}">`).join('');
   ['eDesc','eAmount','eTo'].forEach(k=>$(k).textContent='');
   const sc=curSc(), isBase=id&&S.entries.some(x=>x.id===id);
   $('btnDel').style.display=id?'':'none';$('btnDel').textContent=sc?(isBase?'Fjern i scenariet':'Slet fra scenariet'):'Slet post';
@@ -1985,11 +2065,12 @@ function buildPdf(){
   S.accounts.forEach(a=>planChart(a.id));
   h2('Poster','Beløb pr. md. er omregnet efter hyppighed. Overførsler mellem konti står under Faste overførsler.');
   const PE=cur().filter(e=>e.type!=='overfoersel'), rowsP=[];
-  const grp=(label,L)=>{if(!L.length)return;L.sort((a,b)=>mAvg(b)-mAvg(a));
+  const grp=(label,L)=>{if(!L.length)return;L.sort(byOrd);
     rowsP.push({cat:true,cells:[{content:label,colSpan:4},{content:kr(L.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0)),styles:{halign:'right'}},{content:'',colSpan:2}]});
     L.forEach(e=>rowsP.push({style:e.active===false||(e._ovr&&e.removed)?{textColor:PC.ink3}:{},cells:[e.desc+(e._goal?' (opsparingsmål)':'')+(e._added?' (ny i scenariet)':e._ovr&&e.removed?' (fjernet i scenariet)':e._ovr?' (ændret i scenariet)':'')+(e.active===false?' (inaktiv)':'')+(e.check?' *':''),e.key||'',(FREQ[e.freq]||'')+((+e.freq||1)>1?' ('+monthsOf(e).join(', ')+')':''),kr(amtOf(e)),kr(mAvg(e)),e.account?accName(e.account):'Ikke placeret',perName(e.payer)]}))};
   grp('Indtægter',PE.filter(e=>e.type==='indtaegt'));
-  const cats={};PE.filter(e=>e.type==='udgift').forEach(e=>{const c=e.category||'Uden kategori';(cats[c]=cats[c]||[]).push(e)});Object.keys(cats).forEach(c=>grp(c,cats[c]));
+  const cats={},corder=catList();PE.filter(e=>e.type==='udgift').forEach(e=>{const c=e.category||NOCAT;(cats[c]=cats[c]||[]).push(e)});
+  Object.keys(cats).sort((a,b)=>(a===NOCAT?1e6:corder.indexOf(a)<0?1e5:corder.indexOf(a))-(b===NOCAT?1e6:corder.indexOf(b)<0?1e5:corder.indexOf(b))).forEach(c=>grp(c,cats[c]));
   if(rowsP.length)table(['Beskrivelse','Nøgle','Hyppighed','Beløb','Pr. md.','Konto','Betaler'],rowsP,{right:[3,4],fs:7.5,cs:{2:{cellWidth:32}}});else para('Ingen poster endnu.',9);
   if(PE.some(e=>e.check))para('* = markeret til tjek',7.5,PC.ink3);
   const DL=act().map(e=>({e,d:devOf(e)})).filter(x=>x.d).sort((a,b)=>(b.d.pct??1e9)-(a.d.pct??1e9));
