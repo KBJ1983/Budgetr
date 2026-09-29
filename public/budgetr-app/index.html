@@ -279,9 +279,16 @@ tr.grp.in td{border-bottom-color:var(--pine);color:var(--pine-ink)}
 tr.grp.out td{border-bottom-color:var(--ink3);color:var(--ink)}
 tr.grp+tr.cat td{padding-top:8px}
 tbody tr.grp:not(:first-child) td{padding-top:26px}
-.gmark{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-right:8px;border-radius:5px;font-size:13px;line-height:1;vertical-align:1px}
-tr.grp.in .gmark{background:var(--pine-bg);color:var(--pine-ink)}
-tr.grp.out .gmark{background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink2)}
+.pfold{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin:0 8px 0 -2px;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;vertical-align:-3px;cursor:pointer}
+.pfold::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.pfold[aria-expanded="false"]::before{transform:rotate(-45deg)}
+.pfold:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)!important}
+tr.grp.in .pfold::before{border-color:var(--pine-ink)}
+tr.cat .gcount{margin-left:8px}
+.catbtn,.catdots{display:inline-flex!important;align-items:center;margin-left:8px;padding:2px 9px!important;font:500 12.5px var(--font)!important;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:6px!important;vertical-align:1px}
+.catdots{letter-spacing:.1em;padding:1px 7px!important}
+.catbtn:hover,.catdots:hover{color:var(--ink);border-color:var(--ink3)!important}
+.catrow.hl input{border-color:var(--pine);box-shadow:0 0 0 3px var(--pine-bg)}
 .gcount{margin-left:10px;font-size:12px;font-weight:400;color:var(--ink3)}
 tr.cat td:first-child{padding-left:16px}
 .addp{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin-left:10px;padding:0!important;border-radius:6px!important;font:600 15px/1 var(--font)!important;vertical-align:1px;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important}
@@ -1031,7 +1038,7 @@ function render(){
   h+=`</div></section>`;
 
   // poster
-  h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint"><button type="button" id="btnCats" style="margin-right:10px">Kategorier</button>Klik på en række for at rette den, tryk + for en ny post i gruppen, og træk i ⋮⋮ for at flytte en post. Beløb i kolonnen "${view==='aar'?'Pr. år':'Pr. md.'}" er omregnet efter hyppighed. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
+  h+=`<section><div class="sechead"><h2>Poster</h2><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;justify-content:flex-end"><span class="hint">Klik på en række for at rette den, + giver en ny post i gruppen, og ⋮⋮ flytter en post. Beløb i kolonnen "${view==='aar'?'Pr. år':'Pr. md.'}" er omregnet efter hyppighed. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span><button type="button" id="btnFoldPosts">${Object.values(PFOLD).some(Boolean)?'Fold alle ud':'Fold alle sammen'}</button><button type="button" id="btnCats">Kategorier</button></div></div>
   <div class="filters">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
@@ -1544,6 +1551,9 @@ function filtered(){
     return true;});
 }
 /* ---------- kategorier og rækkefølge i Poster ---------- */
+let PFOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-post-fold')||'{}')||{}}catch(e){return {}}})();
+const savePFold=()=>{try{localStorage.setItem('hb-post-fold',JSON.stringify(PFOLD))}catch(e){}};
+const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!PFOLD[key]}" aria-label="${PFOLD[key]?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${PFOLD[key]?'Fold ud':'Fold sammen'}"></button>`;
 // Expense categories: S.settings.categories holds their order and categories without posts; names used on posts are added.
 const NOCAT='Uden kategori';
 function catList(){const L=((S.settings&&S.settings.categories)||[]).slice();cur().forEach(e=>{if(e.type==='udgift'&&!e._goal&&e.category&&!L.includes(e.category))L.push(e.category)});return L}
@@ -1571,12 +1581,15 @@ function rowsHtml(){
     const G=L.filter(e=>e.type===type);if(!G.length&&!plain)return;
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
-    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4"><span class="gmark" aria-hidden="true">${cls==='in'?'+':'−'}</span>${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
+    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+type,label)}${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${type==='udgift'?'<button type="button" class="catbtn" data-cats>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
+    if(PFOLD['g:'+type])return;
     if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
     const by={};G.forEach(e=>{const k=e.category||NOCAT;(by[k]=by[k]||[]).push(e)});
     (plain?order:[]).concat(Object.keys(by)).filter((k,i,a)=>a.indexOf(k)===i).sort((a,b)=>rank(a)-rank(b)).forEach(k=>{
       const arr=(by[k]||[]).sort(byOrd), sum=arr.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0), ck=k===NOCAT?'':k;
-      h+=`<tr class="cat" data-type="udgift" data-cat="${esc(ck)}"><td colspan="4">${esc(k)}${add('udgift',ck,k)}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
+      const fk='c:'+k;
+      h+=`<tr class="cat" data-type="udgift" data-cat="${esc(ck)}"><td colspan="4">${foldBtn(fk,k)}${esc(k)}<span class="gcount">${arr.length}</span>${add('udgift',ck,k)}${catList().includes(k)?`<button type="button" class="catdots" data-catedit="${esc(ck)}" aria-label="Ret eller slet kategorien ${esc(k)}" title="Ret eller slet kategorien">···</button>`:''}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
+      if(PFOLD[fk])return;
       arr.forEach(e=>h+=rowHtml(e));
       if(!arr.length)h+=`<tr class="empty" data-type="udgift" data-cat="${esc(ck)}"><td colspan="8" class="muted">Ingen poster i ${esc(k)} endnu. Tryk + for at tilføje en.</td></tr>`})});
   return h;
@@ -1609,7 +1622,7 @@ function bindPostDrag(){
       if(e.type==='pointerup'&&drop&&dropPost(id,drop.cat,drop.before,drop.after))commit()}});
 }
 /* Category dialog: rename, reorder (↑ ↓), add and delete expense categories. */
-function openCats(){renderCats();$('dlgCat').showModal()}
+function openCats(focusCat){renderCats();$('dlgCat').showModal();if(focusCat){const r=[...$('catList').querySelectorAll('.catrow')].find(x=>x.dataset.cat===focusCat);if(r){const i=r.querySelector('[data-catname]');i.focus();i.select();r.classList.add('hl')}}}
 function renderCats(){const L=catList(),n=c=>entryCopies().filter(e=>e.category===c&&e.type==='udgift').length;
   $('catList').innerHTML=L.length?L.map((c,i)=>`<div class="catrow" data-cat="${esc(c)}"><input data-catname value="${esc(c)}" aria-label="Navn på kategori"><span class="muted">${n(c)} ${n(c)===1?'post':'poster'}</span>
     <button type="button" class="ghost" data-catmv="-1" aria-label="Flyt ${esc(c)} op" ${i?'':'disabled'}>↑</button><button type="button" class="ghost" data-catmv="1" aria-label="Flyt ${esc(c)} ned" ${i<L.length-1?'':'disabled'}>↓</button>
@@ -1710,10 +1723,16 @@ function bindMain(){
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
   const dp=$('devPct');if(dp)dp.onchange=()=>{const v=Math.round(+dp.value||0);S.settings.devPct=v>0?Math.min(100,v):10;commit()};
-  $('tbody').addEventListener('click',ev=>{const a=ev.target.closest('[data-addpost]');if(a){ev.stopPropagation();openEntry(null,{type:a.dataset.addpost,category:a.dataset.cat||''});return}
+  $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!PFOLD[k];savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.textContent=Object.values(PFOLD).some(Boolean)?'Fold alle ud':'Fold alle sammen';return}
+    if(ev.target.closest('[data-cats]')){openCats();return}
+    const ce=ev.target.closest('[data-catedit]');if(ce){openCats(ce.dataset.catedit);return}
+    const a=ev.target.closest('[data-addpost]');if(a){ev.stopPropagation();openEntry(null,{type:a.dataset.addpost,category:a.dataset.cat||''});return}
     if(ev.target.closest('[data-dragpost]'))return;const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)});
   $('tbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.target.closest('[data-dragpost],[data-addpost]')){const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)}});
-  bindPostDrag();if($('btnCats'))$('btnCats').onclick=openCats;
+  bindPostDrag();if($('btnCats'))$('btnCats').onclick=()=>openCats();
+  if($('btnFoldPosts'))$('btnFoldPosts').onclick=()=>{const anyFolded=Object.values(PFOLD).some(Boolean);
+    if(anyFolded)PFOLD={};else{PFOLD={'g:indtaegt':true};catList().concat([NOCAT,'Opsparing']).forEach(k=>PFOLD['c:'+k]=true)}
+    savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').textContent=Object.values(PFOLD).some(Boolean)?'Fold alle ud':'Fold alle sammen'};
   $('planSel').onchange=e=>{planAcct=e.target.value;render()};
   const svS=()=>{const a=S.accounts.find(x=>x.id===planAcct);if(!a)return;const v=parseAmt($('startSaldo').value)||0,d=$('saldoDate').value||DAY();setSaldo(a.id,v,d,!!curSc());commit()};
   $('startSaldo').onchange=svS;$('saldoDate').onchange=svS;const sr=$('saldoReset');if(sr)sr.onclick=()=>{const sc=curSc();if(sc&&sc.saldo){delete sc.saldo[planAcct];commit()}};
