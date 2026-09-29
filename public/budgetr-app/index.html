@@ -288,6 +288,9 @@ tr.cat .gcount{margin-left:8px}
 .catbtn,.catdots{display:inline-flex!important;align-items:center;margin-left:8px;padding:2px 9px!important;font:500 12.5px var(--font)!important;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:6px!important;vertical-align:1px}
 .catdots{letter-spacing:.1em;padding:1px 7px!important}
 .ptools{display:flex;gap:8px;margin-left:auto;align-items:center}
+/* Status line under the Budget sentence: a faint yellow bar */
+.hero small.hbar{display:inline-block;margin-top:14px;padding:7px 12px;border-radius:8px;background:var(--ochre-bg);color:var(--ochre);border:1px solid color-mix(in srgb,var(--ochre) 18%,transparent);font-size:13.5px;line-height:1.45}
+.hero small.hbar:empty{display:none}
 /* Sådan regnes det */
 .helphead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.helphead h2{margin:0}
 .helpbody{max-height:72vh;overflow:auto;padding-right:6px;font-size:14px;line-height:1.55}
@@ -978,7 +981,7 @@ function render(){
   if(sc){h+=`<div class="scedit">${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.legacy?DAY():sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
     <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}</div>`}
   h+=`<div class="hero"><p>Husstanden har <b>${disp(t.inc)}</b> i indtægter og <b>${disp(t.exp)}</b> i faste udgifter${ib(catInfo('Alle faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal)))}. Tilbage ${per()}: <b class="${t.left>=0?'left':'neg'}">${disp(t.left)}</b>.${t.sav?` Efter opsparing på ${disp(t.sav)}${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''} er der <b class="${t.afterSav>=0?'left':'neg'}">${disp(t.afterSav)}</b> tilbage.`:''}</p>
-  <small>${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} poster er markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>`;
+  <small class="hbar">${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} ${checks===1?'post er':'poster er'} markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>`;
 
   if(sc)h+=compareHtml(sc);
   const bk=bankCalc();
@@ -2165,7 +2168,7 @@ function buildPdf(){
   chapterStart('Budget');
   const flagged=act().filter(e=>(devOf(e)||{}).flag).length, checks=cur().filter(e=>e.check).length;
   hero(['Husstanden har ',[kr(t.inc),'b'],' i indtægter og ',[kr(t.exp),'b'],' i faste udgifter. Tilbage pr. måned: ',[kr(t.left),t.left>=0?'left':'neg'],'.',...(t.sav?[' Efter opsparing på '+kr(t.sav)+' er der ',[kr(t.afterSav),t.afterSav>=0?'left':'neg'],' tilbage.']:[])],
-    [S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening.':'Uden ekstra indtjening.'):'',checks?checks+' poster er markeret til tjek.':'',flagged?`${flagged} ${flagged===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år.`:'',unplaced.length?unplaced.length+' udgifter er ikke placeret på en konto endnu.':''].filter(Boolean).join(' '));
+    [S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening.':'Uden ekstra indtjening.'):'',checks?checks+(checks===1?' post er':' poster er')+' markeret til tjek.':'',flagged?`${flagged} ${flagged===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år.`:'',unplaced.length?unplaced.length+' udgifter er ikke placeret på en konto endnu.':''].filter(Boolean).join(' '));
   if(sc){h2('Holdt op mod nuværende budget',null,30);table(['Pr. måned','Nuværende','Scenarie','Forskel'],compareRows(sc).map(r=>[r[0],kr(r[1]),kr(r[2]),(r[3]>0.5?'+':'')+kr(r[3])]),{right:[1,2,3]});
     const chg=scChanges(sc);if(chg.length)table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,kr(c.b),kr(c.n)]),{right:[2,3]})}
   h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.',30);
