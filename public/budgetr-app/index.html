@@ -404,10 +404,23 @@ td.act{width:1%;white-space:nowrap}
 #btnNew{padding:9px 14px!important;font:600 14px var(--font)!important;box-shadow:none!important}
 button.primary{color:var(--on-pine)!important}
 .expmenu button[aria-checked="true"] b::after{content:" ✓";color:var(--pine)}
-.scrow{display:flex;align-items:stretch;gap:2px}
-.scrow>button:first-child{flex:1;min-width:0}
-.expmenu .scdots{flex:0 0 auto;justify-content:center;align-items:center;padding:0 12px!important;font-size:15px;letter-spacing:.1em;color:var(--ink2)}
-.expmenu .scdots:hover{color:var(--ink)}
+/* Scenario picker: clear groups, each row one card-like target with its own ··· button. */
+#scnMenu{min-width:330px;padding:8px;gap:0}
+#scnMenu .mh{padding:6px 10px 6px;font-size:11px;letter-spacing:.08em;font-weight:600}
+#scnMenu .mh~.mh{margin-top:8px;padding-top:12px;border-top:1px solid var(--rule)}
+.scrow{display:flex;align-items:center;gap:4px;border-radius:8px;padding-right:4px;border:1px solid transparent}
+.scrow+.scrow{margin-top:4px}
+.scrow:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.scrow.on{background:var(--pine-bg);border-color:color-mix(in srgb,var(--pine) 35%,transparent);box-shadow:inset 3px 0 0 var(--pine)}
+.scrow>button:first-child{flex:1;min-width:0;background:transparent!important;padding:9px 10px 9px 12px}
+.scrow.on>button:first-child b{color:var(--pine-ink)}
+#scnMenu button[aria-checked] b::after{content:none}
+.expmenu .scdots{flex:0 0 auto;width:34px;height:34px;justify-content:center;align-items:center;padding:0!important;border-radius:7px;font-size:15px;letter-spacing:.1em;color:var(--ink2);background:transparent}
+.expmenu .scdots:hover{color:var(--ink);background:color-mix(in srgb,var(--ink) 9%,transparent)}
+.scsep{height:1px;background:var(--rule);margin:10px 2px 6px}
+#scnMenu .scnew{padding:9px 12px}
+#scnMenu .scnew b{color:var(--pine)}
+.expmenu button:focus:not(:focus-visible){outline:none;box-shadow:none}
 .scnbtn #scnName{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hero{padding:40px 0 32px}
 .hero p{font:400 clamp(24px,3.2vw,34px)/1.25 var(--font);letter-spacing:-.01em;max-width:680px}
@@ -2192,10 +2205,10 @@ function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenario
   if(page!=='budget'){document.querySelector('[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
 function renderScn(){const sc=curSc(),b=$('btnScn');if(!b)return;b.hidden=!S;const bn=(S&&S.settings&&S.settings.title)||'Mit budget';
   $('scnName').textContent=sc?(sc.name||'Scenarie'):bn;b.classList.toggle('on',!!sc);
-  const row=(id,name,sub,on,dots)=>`<div class="scrow"><button type="button" role="menuitem" data-scn="${id}" aria-checked="${on}"><b>${esc(name)}</b><span>${sub}</span></button><button type="button" class="scdots" role="menuitem" data-scdots="${id}" aria-label="${dots}" title="${dots}">···</button></div>`;
+  const row=(id,name,sub,on,dots)=>`<div class="scrow${on?' on':''}"><button type="button" role="menuitem" data-scn="${id}" aria-checked="${on}"><b>${esc(name)}</b><span>${sub}</span></button><button type="button" class="scdots" role="menuitem" data-scdots="${id}" aria-label="${dots}" title="${dots}">···</button></div>`;
   $('scnMenu').innerHTML=`<div class="mh">Budget</div>`+row('',bn,'Nuværende · det budget, I lever efter i dag',!sc,'Indstillinger for budgettet')
     +((S&&S.scenarios||[]).length?`<div class="mh">Scenarier</div>`:'')+(S&&S.scenarios||[]).map(x=>row(x.id,x.name||'Scenarie',x.from?'Fra '+esc(x.from):'Scenarie',!!sc&&sc.id===x.id,'Indstillinger for '+esc(x.name||'scenariet'))).join('')
-    +`<hr class="mhr"><button type="button" role="menuitem" data-scnew><b>Nyt scenarie</b><span>Prøv en ændring uden at røre det nuværende budget</span></button>`}
+    +`<div class="scsep"></div><button type="button" role="menuitem" class="scnew" data-scnew><b>+ Nyt scenarie</b><span>Prøv en ændring uden at røre det nuværende budget</span></button>`}
 {const btn=$('btnScn'),menu=$('scnMenu'),close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});renderScn();const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));if(o)menu.querySelector('button').focus()};
   menu.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;close();if(b.hasAttribute('data-scnew')){newScenario();return}
