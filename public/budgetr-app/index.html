@@ -601,7 +601,7 @@ td.act{width:1%;white-space:nowrap}
 
 <script src="/budgetr-app/vendor/jspdf.umd.min.js"></script>
 <script src="/budgetr-app/vendor/jspdf.plugin.autotable.min.js"></script>
-<script src="/budgetr-app/vendor/xlsx.full.min.js"></script>
+<script src="/budgetr-app/vendor/xlsx-js-style.bundle.min.js"></script>
 <script>
 (function(){
 const MONTHS=['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
@@ -1685,54 +1685,279 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
   try{navigator.sendBeacon('/api/budget/'+encodeURIComponent(window.BUDGETR_USER),new Blob([j],{type:'application/json'}))}catch(e){}});
 
 /* ---------- PDF ---------- */
-function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/[“”]/g,'"')}
+/* The report follows the app's four tabs – Budget, Overblik over lån, Faste overførsler, Opsparingsmål – with the
+   same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
+function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ')}
+const PC={paper:[245,246,243],card:[255,255,255],ink:[24,34,31],ink2:[77,90,85],ink3:[125,137,131],rule:[220,224,218],pine:[31,92,74],pineBg:[227,238,233],brick:[168,65,44],brickBg:[246,228,223],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
+const PGC=[PC.pine,PC.ochre,PC.focus,PC.brick,PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
+const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
+/* Month-by-month plan for the goals chart (same rules as goalChart on the page). */
+function goalPlan(L){
+  const C=L.map(g=>({g,c:goalCalc(g)})).filter(x=>x.c.s!==null&&(x.c.e!==null||x.c.open)&&(x.c.monthly>0||x.c.xs>0));
+  if(!C.length)return null;
+  const a=Math.min(...C.map(x=>x.c.s)), fin=C.filter(x=>x.c.e!==null).map(x=>x.c.e), hz=Math.max(nowIdx()+24,a+12,...fin);
+  const b=Math.min(a+120,C.some(x=>x.c.open)?hz:Math.max(...fin)), N=Math.max(1,b-a);
+  C.forEach(x=>{if(x.c.open)x.c={...x.c,e:b}});
+  const val=(x,i)=>i>=x.c.s&&i<x.c.e?x.c.monthly:0, xv=(x,i)=>x.c.X.filter(z=>z.i===i).reduce((s,z)=>s+z.amount,0), xd=(x,i)=>x.c.X.filter(z=>z.i===i).map(z=>z.desc||'ekstra').join(', ');
+  const tot=[],xtot=[];for(let i=a;i<b;i++){tot.push(C.reduce((s,x)=>s+val(x,i),0));xtot.push(C.reduce((s,x)=>s+xv(x,i),0))}
+  return {C,a,b,N,val,xv,xd,tot,xtot};
+}
 function buildPdf(){
-  const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'});
-  const t=totals(), sh=shares(), d=new Date();
-  const k=v=>pdfTxt(kr(v)), yr=v=>pdfTxt(kr(v*12));
-  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('budgetr',14,18);
-  const scP=curSc();
-  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(90);doc.text('Udskrevet '+d.toLocaleDateString('da-DK')+(scP?'   Scenarie: '+pdfTxt(scP.name||'')+(scP.from?' fra '+pdfTxt(scP.from):''):''),14,24);doc.setTextColor(0);
-  const head={fillColor:[31,92,74],textColor:255,fontStyle:'bold'};
-  const base={font:'helvetica',fontSize:9,cellPadding:1.6,overflow:'linebreak'};
-  const rightHead=d=>{if(d.section==='head'&&d.column.index>0&&d.table.columns.length&&(d.table.body[0]?.cells[d.column.index]?.styles.halign==='right'))d.cell.styles.halign='right'};
-  const _at=doc.autoTable.bind(doc); doc.autoTable=o=>{if(o.startY&&o.startY>245&&doc.internal.pageSize.getHeight()>250){doc.addPage();o.startY=16}return _at(Object.assign({didParseCell:rightHead},o))};
-  doc.autoTable({startY:30,head:[['Overblik','Pr. måned','Pr. år']],body:[[exOn()?'Indtægter (inkl. ekstra indtjening)':'Indtægter (uden ekstra indtjening)',k(t.inc),yr(t.inc)],['Faste udgifter',k(t.exp),yr(t.exp)],['Tilbage',k(t.left),yr(t.left)],['Opsparing',k(t.sav),yr(t.sav)],['Tilbage efter opsparing',k(t.afterSav),yr(t.afterSav)],
-    ...(()=>{const b=bankCalc();return [['Rådighedsbeløb, bankens beregning',k(b.rad),yr(b.rad)],['Vejledende krav (tommelfingerregel)',k(b.req),yr(b.req)],[b.buf>=0?'Luft over kravet':'Under kravet',k(Math.abs(b.buf)),yr(Math.abs(b.buf))]]})()],headStyles:head,styles:base,columnStyles:{1:{halign:'right'},2:{halign:'right'}},theme:'grid'});
-  if(scP){const cr=compareRows(scP);doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Sammenligning pr. md.','Nuværende','Scenarie','Forskel']],body:cr.map(r=>[pdfTxt(r[0]),k(r[1]),k(r[2]),(r[3]>0.5?'+':'')+k(r[3])]),headStyles:head,styles:base,columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'}},theme:'grid'});
-    const chg=scChanges(scP);if(chg.length)doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Ændrede poster','','Før pr. md.','Efter pr. md.']],body:chg.map(c=>[pdfTxt(c.desc),c.kind,k(c.b),k(c.n)]),headStyles:head,styles:base,columnStyles:{2:{halign:'right'},3:{halign:'right'}},theme:'grid'});}
-  const ids=S.accounts.map(a=>a.id); if(act().some(e=>e.type==='udgift'&&!e.account))ids.push('');
-  doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Konto','Ind','Ud','Tilbage','Bør overføres','Overføres']],
-    body:ids.map(id=>{const c=accountCalc(id),a=S.accounts.find(x=>x.id===id);const f=a&&a.type==='faelles';return [pdfTxt(a?a.name:'Ikke placeret'),k(c.in),k(c.out),k(c.left),f?k(c.need):'',f?k(c.tin):'']}),
-    headStyles:head,styles:base,columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'}},theme:'grid'});
-  const fa=S.accounts.filter(a=>a.type==='faelles');
-  if(fa.length){doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Anbefalet indbetaling pr. md.',...S.persons.map(p=>pdfTxt(p.name))]],
-    body:fa.map(a=>[pdfTxt(a.name),...S.persons.map(p=>k(recFor(p.id,a.id)))]),headStyles:head,styles:base,theme:'grid',columnStyles:Object.fromEntries(S.persons.map((p,i)=>[i+1,{halign:'right'}]))});}
-  doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Person pr. md.','Faste indt.','Ekstra','Andel fælles indt.','Egne udg.','Andel fælles udg.','Til rådighed','Opsparing','Efter opsparing']],
-    body:S.persons.map(p=>{const c=personCalc(p.id);return [pdfTxt(p.name)+' ('+Math.round(c.sh*100)+' %)',k(c.own),k(c.extra),k(c.shInc),k(c.ownExp),k(c.shExp),k(c.left),k(c.sav),k(c.afterSav)]}),
-    headStyles:head,styles:{...base,fontSize:8},columnStyles:Object.fromEntries([1,2,3,4,5,6,7,8].map(i=>[i,{halign:'right'}])),theme:'grid'});
-  const GG=goalsFor(scP?scP.id:'base');
-  if(GG.length){const gr=GG.map(g=>{const c=goalCalc(g),tr=g.to&&g.to!==g.from;return [pdfTxt(g.name||'Mål'),pdfTxt(fmtDate(g.start)+' - '+(g.end?fmtDate(g.end):'løbende'))+(c.n?' ('+c.n+' md.)':''),c.T?k(c.T):'løbende',k(c.sv)+(c.xs?' + '+k(c.xs)+' ekstra':''),k(c.monthly),pdfTxt(accName(g.from)+(tr?' til '+accName(g.to):'')),pdfTxt(perName(g.payer||FAELLES))]});
-    gr.push([{content:'I alt',colSpan:2,styles:{fontStyle:'bold'}},{content:k(GG.reduce((a,g)=>a+(goalCalc(g).T||0),0)),styles:{fontStyle:'bold',halign:'right'}},{content:k(GG.reduce((a,g)=>a+goalCalc(g).sv,0)),styles:{fontStyle:'bold',halign:'right'}},{content:k(GG.reduce((a,g)=>a+goalCalc(g).monthly,0)),styles:{fontStyle:'bold',halign:'right'}},'','']);
-    doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Opsparingsmål','Periode','Målbeløb','Opsparet','Pr. md.','Konto','Betaler']],body:gr,headStyles:head,styles:{...base,fontSize:8},columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'}},theme:'grid'});}
-  const exRows=[];S.persons.forEach(p=>extras(p).forEach((x,i)=>{if(+x.amount>0||x.desc)exRows.push([pdfTxt(p.name),pdfTxt(x.desc||'Ekstra '+(i+1)),k(+x.amount||0)])}));
-  if(exRows.length)doc.autoTable({startY:doc.lastAutoTable.finalY+6,head:[['Ekstra indtjening','Beskrivelse','Pr. md.']],body:exRows,headStyles:head,styles:base,columnStyles:{2:{halign:'right'}},theme:'grid'});
-  const rows=[]; const E=act();
-  const push=(title,list)=>{if(!list.length)return;const sum=list.reduce((a,e)=>a+mAvg(e),0);rows.push([{content:pdfTxt(title),colSpan:4,styles:{fontStyle:'bold',fillColor:[235,239,236]}},{content:k(sum),styles:{fontStyle:'bold',halign:'right',fillColor:[235,239,236]}},{content:'',colSpan:2,styles:{fillColor:[235,239,236]}}]);
-    list.sort((a,b)=>mAvg(b)-mAvg(a)).forEach(e=>rows.push([pdfTxt(e.desc)+(e.check?' *':''),pdfTxt(e.key||''),pdfTxt(FREQ[e.freq]||'')+((+e.freq||1)>1?' ('+monthsOf(e).join(', ')+')':''),{content:k(amtOf(e))+(e.auto?' (auto)':''),styles:{halign:'right'}},{content:k(mAvg(e)),styles:{halign:'right'}},pdfTxt(e.type==='overfoersel'?accName(e.from)+' til '+accName(e.to):accName(e.account)),pdfTxt(e.type==='overfoersel'?'':perName(e.payer))]))};
-  push('Indtægter',E.filter(e=>e.type==='indtaegt'));
-  push('Overførsler mellem konti',E.filter(e=>e.type==='overfoersel'));
-  const cats={};E.filter(e=>e.type==='udgift').forEach(e=>{const c=e.category||'Uden kategori';(cats[c]=cats[c]||[]).push(e)});
-  Object.keys(cats).forEach(c=>push(c,cats[c]));
-  if((S.loans||[]).length){doc.addPage('a4','landscape');doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('Overblik over lån'+(S.loanUpdated?' - opdateret '+pdfTxt(fmtDate(S.loanUpdated)):''),14,16);
-    const LL=S.loans.map(l=>({l,c:loanCalc(l)})), LI=LL.filter(x=>x.l.include!==false);const pc=v=>v===''||v==null?'-':String((+v).toFixed(2)).replace('.',',')+' %';
-    doc.autoTable({startY:20,head:[['Bank','Beskrivelse','Oprindeligt','Restgæld','Ydelse/md.','Rente','Renter/md.','Udløber','Beregnet slut']],
-      body:LL.map(({l,c})=>[pdfTxt(l.bank),pdfTxt(l.desc)+(l.paused?' (pause)':'')+(l.include===false?' (ikke medtaget)':''),k(c.O),k(c.P),k(c.A),pc(l.rate),l.rate?k(c.interest):'-',pdfTxt(l.ends||''),l.paused?'Pause':(c.endTxt||'-')]).concat([[{content:LI.length===LL.length?'I alt':'I alt, '+LI.length+' af '+LL.length+' lån',colSpan:2,styles:{fontStyle:'bold'}},{content:k(LI.reduce((a,x)=>a+x.c.O,0)),styles:{fontStyle:'bold',halign:'right'}},{content:k(LI.reduce((a,x)=>a+x.c.P,0)),styles:{fontStyle:'bold',halign:'right'}},{content:k(LI.filter(x=>!x.l.paused).reduce((a,x)=>a+x.c.A,0)),styles:{fontStyle:'bold',halign:'right'}},'',{content:k(LI.filter(x=>!x.l.paused).reduce((a,x)=>a+x.c.interest,0)),styles:{fontStyle:'bold',halign:'right'}},'','']]),
-      headStyles:head,styles:base,columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'}},theme:'grid'});}
-  doc.addPage('a4','landscape');
-  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('Alle aktive poster',14,16);
-  doc.autoTable({startY:20,head:[['Beskrivelse','Nøgle','Hyppighed','Beløb','Pr. md.','Konto','Betaler']],body:rows,headStyles:head,styles:{...base,fontSize:8},theme:'grid',columnStyles:{0:{cellWidth:'auto'},1:{cellWidth:28},2:{cellWidth:55},3:{cellWidth:25},4:{cellWidth:25},5:{cellWidth:45},6:{cellWidth:19}},didParseCell:d=>{if(d.section==='head'&&(d.column.index===3||d.column.index===4))d.cell.styles.halign='right'}});
-  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(90);doc.text('* = markeret til tjek',14,doc.lastAutoTable.finalY+5);
+  const {jsPDF}=window.jspdf, doc=new jsPDF({unit:'mm',format:'a4'}), W=210,H=297,M=14,CW=W-2*M,TOP=24,BOT=H-16,PT=0.3528;
+  const sc=curSc(), key=sc?sc.id:'base', title=(S.settings&&S.settings.title)||'budgetr';
+  const stamp='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'})+(sc?' · Scenarie: '+(sc.name||'')+(sc.from?' fra '+sc.from:''):'');
+  const T=pdfTxt, K=v=>T(kr(v)), cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  const fill=c=>doc.setFillColor(...c), stroke=c=>doc.setDrawColor(...c), color=c=>doc.setTextColor(...c), lw=v=>doc.setLineWidth(v);
+  const font=(sz,b)=>{doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(sz)}, lh=sz=>sz*PT*1.25, base=sz=>sz*PT*0.85;
+  const kfmt=v=>{const k=v/1000;return (Math.abs(k)<10&&Math.round(k*10)%10?k.toLocaleString('da-DK',{maximumFractionDigits:1}):nf.format(Math.round(k)))+'k'};
+  doc.setLineHeightFactor(1.25);
+  let y=TOP, chapter='', pages=0;
+  function decor(){fill(PC.paper);doc.rect(0,0,W,H,'F');font(8.5,true);color(PC.ink);doc.text(T(title),M,12);const tw=doc.getTextWidth(T(title));
+    font(8.5,false);color(PC.ink3);doc.text('  ·  '+T(chapter),M+tw,12);doc.text(T(stamp),W-M,12,{align:'right'});stroke(PC.rule);lw(0.25);doc.line(M,15.5,W-M,15.5)}
+  function page(){if(pages++)doc.addPage();decor();y=TOP}
+  const need=h=>{if(y+h>BOT)page()};
+  function chapterStart(name){chapter=name;page();font(22,true);color(PC.ink);doc.text(T(name),M,y+6);y+=13}
+  function para(t,sz,c,maxW,x){if(!t)return;font(sz,false);color(c||PC.ink2);doc.splitTextToSize(T(t),maxW||CW).forEach(l=>{need(lh(sz));doc.text(l,x||M,y+base(sz));y+=lh(sz)})}
+  /* Large sentence with bold and coloured amounts, like the hero on each tab. runs: 'text' or ['text', 'b'|'left'|'neg'] */
+  function rich(runs,sz,maxW){const toks=[];runs.forEach(r=>{const [t,s]=typeof r==='string'?[r,'']:r;T(t).replace(/(\d) kr/g,'$1\u0001kr').split(/(\s+)/).forEach(w=>{if(w)toks.push([w.replace(/\u0001/g,' '),s])})});
+    const lines=[[]];let w0=0;
+    toks.forEach(([w,s])=>{font(sz,!!s);if(/^\s+$/.test(w)){if(w0>0){const ww=doc.getTextWidth(' ');lines[lines.length-1].push([' ',s,ww]);w0+=ww}return}
+      const ww=doc.getTextWidth(w);if(w0+ww>maxW&&w0>0){const L=lines[lines.length-1];while(L.length&&L[L.length-1][0]===' ')L.pop();lines.push([]);w0=0}
+      lines[lines.length-1].push([w,s,ww]);w0+=ww});
+    lines.forEach(L=>{need(lh(sz));let x=M;L.forEach(([w,s,ww])=>{font(sz,!!s);color(s==='left'?PC.pine:s==='neg'?PC.brick:PC.ink);doc.text(w,x,y+base(sz));x+=ww});y+=lh(sz)*1.04})}
+  function hero(runs,small){rich(runs,15,150);if(small){y+=2;para(small,8.5,PC.ink2,155)}y+=4;stroke(PC.rule);lw(0.25);doc.line(M,y,W-M,y);y+=1}
+  function h2(t,hint,minH){need(16+(minH||0));y+=7;font(12.5,true);color(PC.ink);doc.text(T(t),M,y+base(12.5));y+=7;if(hint){para(hint,8,PC.ink3);y+=0.5}y+=2.5}
+  function h3(t,sub,minH){need(12+(minH||0));y+=2;font(10.5,true);color(PC.ink);doc.text(T(t),M,y+base(10.5));y+=5;if(sub){font(7.5,false);color(PC.ink3);doc.text(T(sub),M,y+base(7.5));y+=4}y+=1.5}
+  const VK={ok:[PC.pineBg,PC.pine],bad:[PC.brickBg,PC.brick],warn:[PC.ochreBg,PC.ochre]};
+  function verdict(t,kind){font(8.5,false);const L=doc.splitTextToSize(T(t),CW-8),h=L.length*lh(8.5)+4.4;need(h+2);const [bg,fg]=VK[kind];fill(bg);doc.roundedRect(M,y,CW,h,1.6,1.6,'F');color(fg);doc.text(L,M+4,y+2.2+base(8.5));y+=h+3}
+  /* KPI cards; kind: '' | 'hero' (dark) | 'good' | 'bad'. bar = share 0–1 drawn at the bottom. */
+  const KC={hero:[PC.ink,PC.paper,[190,198,194]],good:[PC.pineBg,PC.pine,PC.pine],bad:[PC.brickBg,PC.brick,PC.brick],'':[PC.card,PC.ink,PC.ink3]};
+  function kpis(L,cols){cols=cols||3;const g=3;
+    for(let i=0;i<L.length;i+=cols){const R=L.slice(i,i+cols),w=(CW-g*(R.length-1))/R.length;font(7.5,false);const subs=R.map(k=>doc.splitTextToSize(T(k.small||''),w-8));
+      const h=16+Math.max(1,...subs.map(s=>s.length))*lh(7.5)+(R.some(k=>k.bar!=null)?4:0);need(h+g);
+      R.forEach((k,j)=>{const x=M+j*(w+g),[bg,fg,sub]=KC[k.kind||''];fill(bg);stroke(k.kind?bg:PC.rule);lw(0.25);doc.roundedRect(x,y,w,h,2,2,'FD');
+        font(7.5,false);color(k.kind==='hero'?sub:k.kind?fg:PC.ink2);doc.text(doc.splitTextToSize(T(k.label),w-8)[0],x+4,y+5.6);
+        font(13.5,true);color(fg);doc.text(T(k.value),x+4,y+12.2);
+        font(7.5,false);color(sub);doc.text(subs[j],x+4,y+16.6);
+        if(k.bar!=null){const by=y+h-4.6;fill(k.kind==='hero'?[62,72,69]:PC.rule);doc.roundedRect(x+4,by,w-8,1.8,0.9,0.9,'F');
+          if(k.bar>0){fill(k.kind==='hero'?PC.pineBg:PC.pine);doc.roundedRect(x+4,by,Math.max(1.8,(w-8)*Math.min(1,k.bar)),1.8,0.9,0.9,'F')}}});
+      y+=h+g}}
+  /* Table in the page's style: white, thin rules, grey header text. Rows: array, or {cells, cat|tot|style}. */
+  function table(head,body,o){o=o||{};const R=o.right||[];need(16);
+    const cell=c=>c&&typeof c==='object'?Object.assign({},c,{content:T(c.content)}):{content:T(c)};
+    const rows=body.map(r=>{if(Array.isArray(r))return r.map(cell);
+      const st=r.cat?{fontStyle:'bold',fillColor:PC.paper}:r.tot?{fontStyle:'bold',lineWidth:{top:0.35,bottom:0.2}}:(r.style||{});
+      return r.cells.map(c=>{const x=cell(c);x.styles=Object.assign({},st,x.styles||{});return x})});
+    doc.autoTable({startY:y,margin:{left:M,right:M,top:TOP,bottom:H-BOT},head:[head.map(T)],body:rows,theme:'plain',
+      styles:{font:'helvetica',fontSize:o.fs||8,cellPadding:{top:1.7,bottom:1.7,left:2.2,right:2.2},textColor:PC.ink,lineColor:PC.rule,lineWidth:{bottom:0.2},fillColor:PC.card,overflow:'linebreak',valign:'top'},
+      headStyles:{fontStyle:'normal',textColor:PC.ink2,fontSize:(o.fs||8)-0.5,lineWidth:{bottom:0.35}},
+      columnStyles:Object.assign(Object.fromEntries(R.map(i=>[i,{halign:'right'}])),o.cs||{}),tableLineColor:PC.rule,tableLineWidth:0.25,
+      didParseCell:d=>{if(d.section==='head'&&R.includes(d.column.index))d.cell.styles.halign='right'},
+      didDrawCell:o.draw,willDrawPage:d=>{if(d.pageNumber>1)decor()}});
+    y=doc.lastAutoTable.finalY+4}
+  function legend(L){font(7.5,false);let x=M;L.forEach(([c,t,kind])=>{t=T(t);
+    if(kind==='line'){stroke(c);lw(0.8);doc.line(x,y+1.7,x+4,y+1.7)}
+    else if(kind==='dash'){stroke(PC.ink3);lw(0.3);doc.setLineDashPattern([0.8,0.6],0);doc.rect(x,y+0.3,2.8,2.8);doc.setLineDashPattern([],0)}
+    else{fill(c);doc.roundedRect(x,y+0.3,2.8,2.8,0.6,0.6,'F')}
+    color(PC.ink2);const tx=x+(kind==='line'?5.5:4.2);doc.text(t,tx,y+2.7);x=tx+doc.getTextWidth(t)+5});y+=6}
+  function grid(x0,x1,y0,y1,vals,Y){font(6.5,false);vals.forEach(v=>{stroke(PC.rule);lw(0.15);doc.line(x0,Y(v),x1,Y(v));color(PC.ink3);doc.text(kfmt(v),x0-1.5,Y(v)+1,{align:'right'})})}
+  /* Card contents as blocks; measured with draw=false, then drawn. */
+  function blocks(B,x,y0,w,draw){let cy=y0+6;const iw=w-8,ix=x+4;
+    B.forEach(b=>{
+      if(b.t==='title'){if(draw){font(10.5,true);color(PC.ink);if(b.dot){fill(b.dot);doc.roundedRect(ix,cy-2.7,2.8,2.8,0.7,0.7,'F')}doc.text(T(b.text),ix+(b.dot?4.4:0),cy)}
+        cy+=4.4;if(b.sub){if(draw){font(7.5,false);color(PC.ink3);doc.text(T(b.sub),ix,cy)}cy+=4.4}else cy+=1}
+      else if(b.t==='kv'){b.rows.forEach(([l,v,c])=>{if(draw){font(8,false);color(PC.ink2);doc.text(T(l),ix,cy);color(c||PC.ink);doc.text(T(v),ix+iw,cy,{align:'right'})}cy+=4.5});cy+=1}
+      else if(b.t==='bars'){const mx=Math.max(1,b.max);b.rows.forEach(([l,v,c])=>{if(draw){font(7.5,false);color(PC.ink2);doc.text(T(l),ix,cy);const tx=ix+8,tw=iw-8-24;
+          if(v>0){fill(c);doc.roundedRect(tx,cy-2.6,Math.max(0.8,tw*v/mx),3,0.6,0.6,'F')}font(8,false);color(PC.ink);doc.text(K(v),ix+iw,cy,{align:'right'})}cy+=4.9});cy+=0.6}
+      else if(b.t==='big'){if(draw){font(16,true);color(b.color||PC.ink);doc.text(T(b.text),ix,cy+3)}cy+=7;if(b.note){font(7.5,false);const L=doc.splitTextToSize(T(b.note),iw);if(draw){color(PC.ink3);doc.text(L,ix,cy)}cy+=L.length*lh(7.5)+2}}
+      else if(b.t==='amt'){if(draw){font(16,true);color(PC.pine);const t=T(b.text);doc.text(t,ix,cy+3);const tw=doc.getTextWidth(t);font(8,false);color(PC.ink2);doc.text(T(b.small),ix+tw+2,cy+3)}cy+=8}
+      else if(b.t==='verdict'){font(8,false);const L=doc.splitTextToSize(T(b.text),iw-6),h=L.length*lh(8)+3.6;if(draw){const [bg,fg]=VK[b.kind];fill(bg);doc.roundedRect(ix,cy-2.2,iw,h,1.4,1.4,'F');color(fg);doc.text(L,ix+3,cy+1.4)}cy+=h+1.2}
+      else if(b.t==='progress'){if(draw){fill(PC.rule);doc.roundedRect(ix,cy-2,iw,2,1,1,'F');if(b.pct>0){fill(b.color||PC.pine);doc.roundedRect(ix,cy-2,Math.max(2,iw*Math.min(1,b.pct)),2,1,1,'F')}}
+        cy+=3.6;if(b.note){font(7.5,false);const L=doc.splitTextToSize(T(b.note),iw);if(draw){color(PC.ink3);doc.text(L,ix,cy)}cy+=L.length*lh(7.5)+1.6}}
+      else if(b.t==='note'){font(7.5,false);const L=doc.splitTextToSize(T(b.text),iw);if(draw){color(b.color||PC.ink3);doc.text(L,ix,cy)}cy+=L.length*lh(7.5)+1.6}});
+    return cy-y0}
+  function cards(list,cols){const g=4,w=(CW-g*(cols-1))/cols;
+    for(let i=0;i<list.length;i+=cols){const R=list.slice(i,i+cols),h=Math.max(...R.map(B=>blocks(B,0,0,w,false)));need(h+g);
+      R.forEach((B,j)=>{const x=M+j*(w+g);fill(PC.card);stroke(PC.rule);lw(0.25);doc.roundedRect(x,y,w,h,2,2,'FD');blocks(B,x,y,w,true)});y+=h+g}}
+
+  /* charts */
+  function planChart(id){const a=S.accounts.find(x=>x.id===id);if(!a)return;
+    const M0=monthly(id), sd=saldoFor(id), st=planStart(sd), IX=[...Array(12)].map((_,k)=>st+k), Mo=IX.map(i=>M0[((i%12)+12)%12]), LB=IX.map(i=>idxLbl(i,true));
+    if(!Mo.some(x=>x.i||x.o))return;
+    let s=sd.amount;const sal=Mo.map(x=>(s+=x.i-x.o)), ch=50;
+    h3(a.name,'Saldo '+kr(sd.amount)+' pr. '+fmtDate(sd.date)+(sd.legacy?'. Ikke gemt endnu, så saldoen regnes fra 1. januar.':''),ch+22);
+    legend([[PC.pine,'Ind'],[PC.ink3,'Ud'],[PC.ochre,'Saldo','line']]);
+    const x0=M+12,x1=W-M,y0=y+1,y1=y+ch-7, vals=[...Mo.map(x=>x.i),...Mo.map(x=>-x.o),...sal,sd.amount,0], mx=Math.max(...vals), mn=Math.min(...vals), rg=(mx-mn)||1;
+    const Y=v=>y0+(mx-v)/rg*(y1-y0), cw=(x1-x0)/12, bw=Math.min(4.2,cw*0.32);
+    grid(x0,x1,y0,y1,[0,1,2,3,4].map(t=>mn+rg*t/4),Y);stroke(PC.ink3);lw(0.25);doc.line(x0,Y(0),x1,Y(0));
+    Mo.forEach((m,i)=>{const cx=x0+cw*i+cw/2;fill(PC.pine);if(m.i>0)doc.rect(cx-bw-0.2,Y(m.i),bw,Y(0)-Y(m.i),'F');fill(PC.ink3);if(m.o>0)doc.rect(cx+0.2,Y(0),bw,Y(-m.o)-Y(0),'F');
+      font(6.5,false);color(PC.ink2);doc.text(T(LB[i]),cx,y1+4.5,{align:'center'})});
+    stroke(PC.ochre);lw(0.7);for(let i=1;i<12;i++)doc.line(x0+cw*(i-0.5),Y(sal[i-1]),x0+cw*(i+0.5),Y(sal[i]));
+    sal.forEach((v,i)=>{fill(v<0?PC.brick:PC.ochre);stroke(PC.paper);lw(0.4);doc.circle(x0+cw*(i+0.5),Y(v),1,'FD')});
+    y=y1+8;const low=Math.min(...sal), lowM=idxLbl(IX[sal.indexOf(low)]).toLowerCase();
+    verdict(low<0?`Laveste saldo er ${kr(low)} i ${lowM}. Kontoen skal have ${kr(-low+sd.amount)} pr. ${fmtDate(sd.date)} for aldrig at gå i minus.`:`Laveste saldo er ${kr(low)} i ${lowM}. Saldo ultimo ${idxLbl(IX[11]).toLowerCase()}: ${kr(sal[11])}.`,low<0?'bad':'ok')}
+  function goalChartPdf(P){if(!P)return;const {C,a,b,N,val,xv,tot,xtot}=P, ch=56;need(ch+10);
+    legend(C.map(x=>[pgColor(x.g),x.g.name||'Mål']).concat(xtot.some(v=>v)?[[PC.ink3,'Ekstra indbetaling','dash']]:[]));
+    const x0=M+12,x1=W-M,y0=y+1,y1=y+ch-7, mx=Math.max(1,...tot.map((v,k)=>v+xtot[k])), Y=v=>y1-v/mx*(y1-y0), cw=(x1-x0)/N, bw=Math.max(0.3,cw*0.72), step=Math.max(1,Math.ceil(N/12));
+    grid(x0,x1,y0,y1,[0,1,2,3,4].map(t=>mx*t/4),Y);
+    for(let k=0;k<N;k++){const i=a+k,bx=x0+cw*k+(cw-bw)/2;let yb=y1;
+      C.forEach(x=>{const v=val(x,i);if(!v)return;const hh=v/mx*(y1-y0);yb-=hh;fill(pgColor(x.g));doc.rect(bx,yb,bw,hh,'F')});
+      C.forEach(x=>{const v=xv(x,i);if(!v)return;const hh=v/mx*(y1-y0);yb-=hh;const c=pgColor(x.g);fill(tint(c,0.65));stroke(c);lw(0.25);doc.setLineDashPattern([0.8,0.5],0);doc.rect(bx,yb,bw,hh,'FD');doc.setLineDashPattern([],0)});
+      if(k%step===0){font(6.5,false);color(PC.ink2);doc.text(T(idxLbl(i,true)),x0+cw*(k+0.5),y1+4.5,{align:'center'})}}
+    const nw=nowIdx();if(nw>=a&&nw<b){const xn=x0+cw*(nw-a);stroke(PC.ink);lw(0.3);doc.setLineDashPattern([1,1],0);doc.line(xn,y0,xn,y1);doc.setLineDashPattern([],0);font(6.5,false);color(PC.ink);doc.text('i dag',xn+1,y0+2.5)}
+    y=y1+8}
+  function loanChartPdf(L,nw){const a=nw, b=Math.min(a+144,Math.max(a+12,L[L.length-1].en.i+3)), tot=L.reduce((s,x)=>s+x.free,0), ch=50;need(ch+4);
+    const x0=M+12,x1=W-M-2,y0=y+2,y1=y+ch-6, X=i=>x0+(i-a)/(b-a)*(x1-x0), Y=v=>y1-v/Math.max(1,tot*1.18)*(y1-y0);
+    grid(x0,x1,y0,y1,[0,1,2,3,4].map(t=>tot*t/4),Y);
+    const ys=Math.max(1,Math.ceil((b-a)/144));font(6.5,false);for(let yr=Math.ceil(a/12);yr*12<=b;yr+=ys){const x=X(yr*12);stroke(PC.rule);lw(0.15);doc.setLineDashPattern([0.5,1],0);doc.line(x,y0,x,y1);doc.setLineDashPattern([],0);color(PC.ink2);doc.text(String(yr),x,y1+4.5,{align:'center'})}
+    let c2=0,px0=X(a);const pts=[[px0,Y(0)]], mk=[];
+    L.forEach((x,k)=>{const beyond=x.en.i>b, px=beyond?X(b):X(x.en.i);pts.push([px,Y(c2)]);c2+=x.free;pts.push([px,Y(c2)]);mk.push({px,py:Y(c2),k,beyond,x})});
+    pts.push([X(b),Y(c2)]);stroke(PC.pine);lw(0.8);for(let i=1;i<pts.length;i++)doc.line(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]);
+    let lastX=-99,lift=0;mk.forEach(m=>{lift=m.px-lastX<4.6?lift+4:0;m.by=Math.max(y0+2,m.py-3.4-lift);lastX=m.px});
+    mk.forEach(({px,py,by,k,beyond,x})=>{fill(PC.pine);doc.circle(px,py,0.8,'F');if(by<py-2.6){stroke(PC.pine);lw(0.2);doc.line(px,by+1.9,px,py-0.8)}
+      fill(PC.card);stroke(PC.pine);lw(0.3);doc.circle(px,by,1.9,'FD');font(6.5,true);color(PC.pine);doc.text(String(k+1),px,by+0.8,{align:'center'});
+      if(beyond){font(6,false);color(PC.ink3);doc.text('-> '+Math.floor(x.en.i/12),px-2.6,by+0.8,{align:'right'})}});
+    y=y1+8}
+  function flowPdf(TT){const froms=acctOrder().filter(a=>TT.some(e=>e.from===a.id)), tos=acctOrder().filter(a=>TT.some(e=>e.to===a.id));
+    const nh=11,gap=4,nw=52,rows=Math.max(froms.length,tos.length),hh=rows*(nh+gap)+gap;need(hh+4);
+    const y0=y, yOf=(L,i)=>y0+gap+i*(nh+gap)+((rows-L.length)*(nh+gap))/2, mx=Math.max(1,...TT.map(mAvg)), sw=v=>0.45+Math.sqrt(v/mx)*3.4;
+    const col=id=>PGC[Math.max(0,froms.findIndex(a=>a.id===id))%PGC.length], x1=M+nw, x2=W-M-nw, mxp=(x1+x2)/2, labels=[];
+    froms.forEach((a,i)=>{const out=TT.filter(e=>e.from===a.id).sort((p,q)=>tos.findIndex(t=>t.id===p.to)-tos.findIndex(t=>t.id===q.to));
+      out.forEach((e,k)=>{const j=tos.findIndex(t=>t.id===e.to);if(j<0)return;
+        const ya=yOf(froms,i)+nh*(k+1)/(out.length+1), inn=TT.filter(x=>x.to===e.to), kk=inn.indexOf(e), yb=yOf(tos,j)+nh*(kk+1)/(inn.length+1);
+        stroke(tint(col(a.id),0.3));lw(sw(mAvg(e)));doc.lines([[mxp-x1,0,mxp-x1,yb-ya,x2-x1,yb-ya]],x1,ya,[1,1],'S');
+        const f=0.22+0.56*(k+kk)/Math.max(1,out.length+inn.length-2);labels.push([x1+(x2-x1)*f,ya+(yb-ya)*f,kr(mAvg(e))])})});
+    labels.forEach(([lx,ly,t])=>{font(6.5,false);const tw=doc.getTextWidth(T(t))+4;fill(PC.card);stroke(PC.rule);lw(0.2);doc.roundedRect(lx-tw/2,ly-2.2,tw,4.4,0.8,0.8,'FD');color(PC.ink);doc.text(T(t),lx,ly+0.9,{align:'center'})});
+    const node=(a,x,yy,sum,side)=>{fill(PC.card);stroke(side==='l'?col(a.id):PC.ink3);lw(0.35);doc.roundedRect(x,yy,nw,nh,1.6,1.6,'FD');
+      font(8,true);color(PC.ink);doc.text(doc.splitTextToSize(T(a.name),nw-5)[0],x+2.8,yy+4.4);font(6.5,false);color(PC.ink2);doc.text(T((side==='l'?'Ud ':'Ind ')+kr(sum)+' pr. måned'),x+2.8,yy+8.4)};
+    froms.forEach((a,i)=>node(a,M,yOf(froms,i),TT.filter(e=>e.from===a.id).reduce((s,e)=>s+mAvg(e),0),'l'));
+    tos.forEach((a,j)=>node(a,W-M-nw,yOf(tos,j),TT.filter(e=>e.to===a.id).reduce((s,e)=>s+mAvg(e),0),'r'));
+    y=y0+hh+3}
+
+  /* ===== 1. Budget ===== */
+  const t=totals(), bk=bankCalc(), sh=shares(), sp=S.settings||{}, unplaced=act().filter(e=>e.type==='udgift'&&!e.account);
+  chapterStart('Budget');
+  const flagged=act().filter(e=>(devOf(e)||{}).flag).length, checks=cur().filter(e=>e.check).length;
+  hero(['Husstanden har ',[kr(t.inc),'b'],' i indtægter og ',[kr(t.exp),'b'],' i faste udgifter. Tilbage pr. måned: ',[kr(t.left),t.left>=0?'left':'neg'],'.',...(t.sav?[' Efter opsparing på '+kr(t.sav)+' er der ',[kr(t.afterSav),t.afterSav>=0?'left':'neg'],' tilbage.']:[])],
+    [S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening.':'Uden ekstra indtjening.'):'',checks?checks+' poster er markeret til tjek.':'',flagged?`${flagged} ${flagged===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år.`:'',unplaced.length?unplaced.length+' udgifter er ikke placeret på en konto endnu.':''].filter(Boolean).join(' '));
+  if(sc){h2('Holdt op mod nuværende budget',null,30);table(['Pr. måned','Nuværende','Scenarie','Forskel'],compareRows(sc).map(r=>[r[0],kr(r[1]),kr(r[2]),(r[3]>0.5?'+':'')+kr(r[3])]),{right:[1,2,3]});
+    const chg=scChanges(sc);if(chg.length)table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,kr(c.b),kr(c.n)]),{right:[2,3]})}
+  h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.',30);
+  const KB=[{label:'Nettoindtægt',value:kr(bk.inc+bk.extra),small:bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'},{label:'Faste udgifter',value:kr(bk.fixed),small:kr(bk.exclSum)+' er ikke medregnet'},{label:'Rådighedsbeløb',value:kr(bk.rad),small:'pr. måned',kind:'hero'},
+    {label:'Vejledende krav',value:kr(bk.req),small:`Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser`},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:kr(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'}];
+  const FR=loansFreedWithin(12).filter(x=>x.inB);
+  if(FR.length){const fr=FR.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=FR[FR.length-1].i;KB.push({label:(nb>=0?'Luft':'Under kravet')+' fra '+idxLbl(last).toLowerCase(),value:kr(Math.abs(nb)),small:'+'+kr(fr)+' frigives: '+FR.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '),kind:nb>=0?'good':'bad'})}
+  kpis(KB,3);
+  if(bk.excl.length)para('Ikke medregnet som faste udgifter: '+bk.excl.map(e=>e.desc+' '+kr(mAvg(e))).join(', ')+'.',8,PC.ink3);
+  const ids=S.accounts.map(a=>a.id);if(unplaced.length)ids.push('');
+  const maxv=Math.max(1,...ids.map(id=>{const c=accountCalc(id);return Math.max(c.in,c.out)}));
+  h2('Konti','Hvad løber ind og ud af hver konto, og hvad der er tilbage.',50);
+  cards(ids.map(id=>{const a=S.accounts.find(x=>x.id===id)||{id:'',name:'Ikke placeret',type:'',number:''}, c=accountCalc(id);
+    const kv=[['Indtægter',K(c.inc)],['Overført ind',K(c.tin)],['Faste udgifter',K(c.exp)],['Overført ud',K(c.tout)]];if(c.extra)kv.push(['Heraf ekstra indtjening',K(c.extra)]);if(c.sav)kv.push(['Opsparing',K(c.sav)]);
+    let v;if(id==='')v=[`${kr(c.exp)} i udgifter indgår i totalen, men ingen konto dækker dem. Vælg konto på posterne.`,'warn'];
+    else if(a.type==='faelles'){const gap=c.need-c.tin;v=[`Udgifterne er ${kr(c.out)}. Der bør overføres ${kr(c.need)}, og der overføres ${kr(c.tin)}. ${gap>0.5?'Der mangler '+kr(gap)+'.':Math.abs(gap)<0.5?'Dækket.':'Overskud '+kr(-gap)+'.'} Fordelt: ${S.persons.map(p=>p.name+' '+kr(recFor(p.id,id))).join(', ')}.`,gap>0.5?'bad':'ok']}
+    else v=c.left<0?[`Kontoen går ${kr(-c.left)} i minus pr. måned.`,'bad']:[`Tilbage på kontoen: ${kr(c.left)} pr. måned.`,'ok'];
+    return [{t:'title',text:a.name,sub:[a.number,a.type==='faelles'?'Fælles konto':a.owner?'Tilhører '+perName(a.owner):''].filter(Boolean).join(' · ')},{t:'kv',rows:kv},{t:'bars',max:maxv,rows:[['Ind',c.in,PC.pine],['Ud',c.out,PC.ink3]]},{t:'verdict',text:v[0],kind:v[1]}]}),2);
+  h2('Hvem betaler hvad','Fælles udgifter fordeles '+({indkomst:'efter fast indkomst',lige:'ligeligt',manuel:'manuelt'}[sp.split]||'ligeligt')+': '+S.persons.map(p=>p.name+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')+'.',60);
+  cards(S.persons.map(p=>{const c=personCalc(p.id);
+    const kv=[['Faste indtægter',K(c.own)],['Ekstra indtjening',K(c.extra)],['Andel af fælles indtægter',K(c.shInc)],['Egne faste udgifter',K(c.ownExp)],[`Andel af fælles udgifter (${Math.round(c.sh*100)} %)`,K(c.shExp)]];
+    S.accounts.filter(a=>a.type==='faelles').forEach(a=>{const tr=act().filter(e=>e.type==='overfoersel'&&e.auto&&e.to===a.id&&(autoInfo(e)||{}).owner===p.id).reduce((s,e)=>s+mAvg(e),0);if(tr)kv.push(['Overføres til '+a.name,K(tr)])});
+    const B=[{t:'title',text:p.name},{t:'kv',rows:kv},{t:'big',text:kr(c.left),color:c.left>=0?PC.pine:PC.brick,note:'til rådighed pr. måned efter faste udgifter. Det er det maksimale, der kan spares op.'},
+      {t:'kv',rows:[['Opsparingsfelt',K(c.psav)],['Opsparingsmål',K(c.gsav)],['Tilbage efter opsparing',K(c.afterSav),c.afterSav>=0?PC.pine:PC.brick]]}];
+    if(c.afterSav<0)B.push({t:'verdict',text:`Opsparingen er ${kr(-c.afterSav)} højere end rådighedsbeløbet.`,kind:'bad'});return B}),Math.min(3,Math.max(1,S.persons.length)));
+  h2('Måned for måned','Kvartals- og årsbetalinger lander i bestemte måneder. Her ses saldoen de næste 12 måneder fra den angivne saldo.',95);
+  S.accounts.forEach(a=>planChart(a.id));
+  h2('Poster','Beløb pr. md. er omregnet efter hyppighed. Overførsler mellem konti står under Faste overførsler.');
+  const PE=cur().filter(e=>e.type!=='overfoersel'), rowsP=[];
+  const grp=(label,L)=>{if(!L.length)return;L.sort((a,b)=>mAvg(b)-mAvg(a));
+    rowsP.push({cat:true,cells:[{content:label,colSpan:4},{content:kr(L.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0)),styles:{halign:'right'}},{content:'',colSpan:2}]});
+    L.forEach(e=>rowsP.push({style:e.active===false||(e._ovr&&e.removed)?{textColor:PC.ink3}:{},cells:[e.desc+(e._goal?' (opsparingsmål)':'')+(e._added?' (ny i scenariet)':e._ovr&&e.removed?' (fjernet i scenariet)':e._ovr?' (ændret i scenariet)':'')+(e.active===false?' (inaktiv)':'')+(e.check?' *':''),e.key||'',(FREQ[e.freq]||'')+((+e.freq||1)>1?' ('+monthsOf(e).join(', ')+')':''),kr(amtOf(e)),kr(mAvg(e)),e.account?accName(e.account):'Ikke placeret',perName(e.payer)]}))};
+  grp('Indtægter',PE.filter(e=>e.type==='indtaegt'));
+  const cats={};PE.filter(e=>e.type==='udgift').forEach(e=>{const c=e.category||'Uden kategori';(cats[c]=cats[c]||[]).push(e)});Object.keys(cats).forEach(c=>grp(c,cats[c]));
+  if(rowsP.length)table(['Beskrivelse','Nøgle','Hyppighed','Beløb','Pr. md.','Konto','Betaler'],rowsP,{right:[3,4],fs:7.5,cs:{2:{cellWidth:32}}});else para('Ingen poster endnu.',9);
+  if(PE.some(e=>e.check))para('* = markeret til tjek',7.5,PC.ink3);
+  const DL=act().map(e=>({e,d:devOf(e)})).filter(x=>x.d).sort((a,b)=>(b.d.pct??1e9)-(a.d.pct??1e9));
+  if(DL.length){const U=DL.filter(x=>x.e.type==='udgift'), flag=U.filter(x=>x.d.flag), sumD=U.reduce((a,x)=>a+x.d.d,0), sumB=U.reduce((a,x)=>a+x.d.base.m,0);
+    h2('Udvikling i poster',`"Før" er beløbet for cirka et år siden, eller det ældste kendte beløb. Udgifter, der er steget mindst ${devPct()} %, står med rødt.`,30);
+    kpis([{label:`Steget mindst ${devPct()} %`,value:String(flag.length),small:flag.length?flag.slice(0,3).map(x=>x.e.desc).join(', ')+(flag.length>3?' …':''):'Ingen udgifter over grænsen',kind:flag.length?'bad':'good'},
+      {label:'Udgifter med historik',value:(sumD>=0?'+':'-')+kr(Math.abs(sumD)),small:'pr. måned'+(sumB>0?', '+pctTxt(sumD/sumB*100)+' i forhold til før':'')},{label:'Svarer til pr. år',value:(sumD>=0?'+':'-')+kr(Math.abs(sumD*12)),small:U.length+' udgifter med historik'}],3);
+    table(['Post','Kategori','Før','Fra','Nu','Ændring','%'],DL.map(({e,d})=>({style:d.flag?{textColor:PC.brick}:{},cells:[e.desc+(e.type==='indtaegt'?' (indtægt)':''),e.category||'',kr(d.base.m),(d.base.unknown?'før ':'')+fmtDate(d.base.date),kr(d.now.m),(d.d>=0?'+':'-')+kr(Math.abs(d.d)),d.pct===null?'':pctTxt(d.pct)]})),{right:[2,4,5,6],fs:7.5})}
+
+  /* ===== 2. Overblik over lån ===== */
+  chapterStart('Overblik over lån');
+  const LL=(S.loans||[]).map((l,i)=>({l,i,c:loanCalc(l)}));
+  if(!LL.length)hero(['Ingen lån registreret endnu.'],'Lån tilføjes under fanen Overblik over lån.');
+  else{const IN=LL.filter(x=>x.l.include!==false), AC=IN.filter(x=>!x.l.paused), tO=IN.reduce((a,x)=>a+x.c.O,0), tP=IN.reduce((a,x)=>a+x.c.P,0), tA=AC.reduce((a,x)=>a+x.c.A,0), tI=AC.reduce((a,x)=>a+x.c.interest,0);
+    const wr=tP>0?IN.reduce((a,x)=>a+x.c.P*(+x.l.rate||0),0)/tP:0, selTxt=IN.length===LL.length?`alle ${LL.length} lån`:`${IN.length} af ${LL.length} lån`, soon=IN.filter(x=>x.c.n!==null&&x.c.n>0&&x.c.n<=18);
+    const pct=v=>(+v||0).toLocaleString('da-DK',{minimumFractionDigits:2,maximumFractionDigits:2})+' %';
+    hero([IN.length===LL.length?'I har ':'De valgte lån har ',[kr(tP),'b'],' i samlet restgæld fordelt på '+selTxt+'. Ydelserne er ',[kr(tA),'b'],' om måneden, og heraf er cirka ',[kr(tI),'b'],' renter.'],
+      (soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>x.l.desc+' ('+x.c.endTxt+', frigør '+kr(x.c.A)+'/md.)').join(', ')+'. ':'')+'Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.'+(S.loanUpdated?' Restgælden er senest opdateret '+fmtDate(S.loanUpdated)+'.':''));
+    h2('Overblik over lån',null,40);
+    kpis([{label:'Oprindeligt lånt',value:kr(tO),small:'alle lån'},{label:'Samlet restgæld'+(S.loanUpdated?' pr. '+fmtDate(S.loanUpdated):''),value:kr(tP),small:cap(selTxt)+'.'+(tO?' '+Math.round((1-tP/tO)*100)+' % af det oprindelige beløb er betalt af.':''),kind:'hero',bar:tO?1-tP/tO:0},{label:'Ydelse pr. måned',value:kr(tA),small:'uden lån på pause'},
+      {label:'Heraf renter pr. måned',value:kr(tI),small:kr(tI*12)+' om året'},{label:'Gennemsnitlig rente',value:pct(wr),small:'vægtet efter restgæld'}],3);
+    const paid=LL.map(x=>x.c.paid);
+    table(['Bank','Beskrivelse','Oprindeligt','Restgæld','Betalt af','Ydelse/md.','Rente','Renter/md.','Beregnet slut','I budgettet'],
+      LL.map(({l,c})=>({style:l.include===false?{textColor:PC.ink3}:{},cells:[l.bank||'',(l.desc||'')+(l.paused?' (pause)':'')+(l.include===false?' (ikke medtaget)':'')+(l.note?'\n'+l.note:''),kr(c.O),{content:kr(c.P),styles:{fontStyle:'bold'}},'',kr(c.A),l.rate!==''&&l.rate!=null?pct(l.rate):'-',l.rate?kr(c.interest):'-',
+        (l.paused?'På pause':c.n===null?(l.rate?'Ydelsen dækker ikke renten':'Angiv rente'):c.endTxt+(c.n>0?'\nfrigiver '+kr(c.budget!==null?c.budget:c.A)+'/md.':''))+(l.ends?'\nangivet: '+l.ends:''),
+        c.link?(c.budget!==null?kr(c.budget):'Inaktiv')+(c.budget!==null&&Math.abs(c.budget-c.A)>=1&&!l.paused?' ('+(c.budget>c.A?'+':'')+kr(c.budget-c.A)+')':'')+'\n'+c.link.desc:'Ikke tilknyttet']}))
+        .concat([{tot:true,cells:[{content:'I alt, '+selTxt,colSpan:2},kr(tO),kr(tP),'',kr(tA),pct(wr),kr(tI),'','']}]),
+      {right:[2,3,5,6,7,9],fs:7,cs:{4:{cellWidth:18}},draw:d=>{if(d.section!=='body'||d.column.index!==4||d.row.index>=paid.length)return;const p=paid[d.row.index],bx=d.cell.x+2,bw=d.cell.width-4,by=d.cell.y+2.2;
+        fill(PC.rule);doc.roundedRect(bx,by,bw,1.6,0.8,0.8,'F');if(p>0){fill(PC.pine);doc.roundedRect(bx,by,Math.max(1.6,bw*p),1.6,0.8,0.8,'F')}font(6.5,false);color(PC.ink3);doc.text(Math.round(p*100)+' %',bx,by+4.6)}});
+    const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
+    if(LE.length){const s12=LE.filter(x=>x.en.i-nw<=12), totF=LE.reduce((s,x)=>s+x.free,0);
+      h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden. Kurven viser det samlede frigivne beløb pr. md. over tid. Numrene svarer til tabellen.',100);
+      kpis([{label:'Frigives inden for 12 md.',value:kr(s12.reduce((s,x)=>s+x.free,0)),small:s12.length?s12.map(x=>x.l.desc||x.l.bank).join(', '):'Ingen lån udløber det næste år',kind:s12.length?'good':''},{label:'Næste udløb',value:idxLbl(LE[0].en.i),small:(LE[0].l.desc||LE[0].l.bank)+', frigiver '+kr(LE[0].free)+'/md.'},
+        {label:'Frigivet i alt, når alle er betalt',value:kr(totF),small:'pr. md. · '+kr(totF*12)+' pr. år · '+idxLbl(LE[LE.length-1].en.i).toLowerCase(),kind:'hero'}],3);
+      loanChartPdf(LE,nw);let cum=0;
+      table(['Lån','Udløber','Om','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map((x,k)=>{cum+=x.free;const m=x.en.i-nw;return [(k+1)+'. '+(x.l.desc||x.l.bank)+(x.l.bank&&x.l.desc?' ('+x.l.bank+')':'')+(x.l.paused?' · på pause':''),idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),m<=0?'denne måned':m<12?m+' md.':Math.floor(m/12)+' år'+(m%12?' '+(m%12)+' md.':''),{content:kr(x.free),styles:{fontStyle:'bold'}},kr(x.free*12),kr(cum)]}),{right:[2,3,4,5]});
+      para('Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb. Frigivet beløb er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen.',7.5,PC.ink3)}}
+
+  /* ===== 3. Faste overførsler ===== */
+  chapterStart('Faste overførsler');
+  const TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), totT=TR.reduce((a,e)=>a+mAvg(e),0), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
+  hero(TR.length?['Der overføres fast ',[kr(totT),'b'],` pr. måned i ${TR.length} ${TR.length===1?'overførsel':'overførsler'} mellem jeres konti${sc?' i '+(sc.name||'scenariet'):''}.`]:['Ingen faste overførsler endnu.'],
+    'Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.');
+  if(fixes.length){h2('Skal rettes i netbanken',null,30);verdict('Budgettet er ændret, fx af opsparingsmål eller nye poster. Disse faste overførsler passer ikke længere med det, der bør overføres. Ret dem i netbanken, og markér dem derefter som rettet i budgetr.','warn');
+    table(['Fra','Til','Beskrivelse','Sat op nu','Bør være','Ændring'],fixes.map(({e,rec})=>{const d=rec-setupAmt(e);return [accName(e.from),accName(e.to),e.desc,kr(setupAmt(e)),{content:kr(rec),styles:{fontStyle:'bold'}},{content:(d>0?'+':'-')+kr(Math.abs(d)),styles:{textColor:d>0?PC.brick:PC.pine}}]}),{right:[3,4,5]})}
+  if(TR.length){h2('Pengestrømme','Stregens tykkelse følger beløbet pr. måned.',50);flowPdf(TR)}
+  if(allT.length){h2('Overførsler pr. konto',null,30);
+    acctOrder().forEach(a=>{const out=allT.filter(e=>e.from===a.id).sort((x,z)=>mAvg(z)-mAvg(x)), inn=TR.filter(e=>e.to===a.id);if(!out.length&&!inn.length)return;
+      const sOut=out.filter(e=>e.active!==false).reduce((s,e)=>s+mAvg(e),0), sIn=inn.reduce((s,e)=>s+mAvg(e),0);
+      h3('Fra '+a.name,[a.number,a.type==='faelles'?'Fælles konto':a.owner?'Tilhører '+perName(a.owner):''].filter(Boolean).join(' · '),20);
+      if(out.length)table(['Til konto','Beskrivelse','Hyppighed','Sat op','Bør være','Pr. md. i budgettet'],out.map(e=>{const f=e.auto?1:(+e.freq||1),rc=transferRec(e),d=rc===null?0:rc-setupAmt(e);
+        return {style:e.active===false||(e._ovr&&e.removed)?{textColor:PC.ink3}:{},cells:[accName(e.to),e.desc+(e._goal?' (opsparingsmål)':'')+(e.auto?' (auto)':'')+(e._added?' (ny i scenariet)':e._ovr&&e.removed?' (fjernet i scenariet)':e._ovr?' (ændret i scenariet)':'')+(e.active===false&&!e.removed?' (inaktiv)':''),(FREQ[f]||'')+(f>1?' ('+monthsOf(e).join(', ')+')':''),kr(setupAmt(e)),
+          rc===null?'-':Math.abs(d)<1?{content:kr(rc)+' (passer)',styles:{textColor:PC.pine}}:{content:kr(rc)+' ('+(d>0?'+':'-')+kr(Math.abs(d))+')',styles:{fontStyle:'bold',textColor:d>0?PC.brick:PC.ochre}},kr(mAvg(e))]}}).concat([{tot:true,cells:[{content:'I alt ud',colSpan:5},kr(sOut)]}]),{right:[3,4,5]});
+      para((inn.length?`Modtager ${kr(sIn)} pr. måned fra ${[...new Set(inn.map(e=>accName(e.from)))].join(', ')}.`:'Modtager ingen faste overførsler.')+` Netto ${sIn-sOut>=0?'ind':'ud'}: ${kr(Math.abs(sIn-sOut))}.`,8,PC.ink2);y+=2})}
+
+  /* ===== 4. Opsparingsmål ===== */
+  chapterStart('Opsparingsmål');
+  const G=S.goals||[], GL=goalsFor(key), ctx=sc?(sc.name||'scenariet'):'det nuværende budget', gc=g=>goalCalc(g);
+  const mon=GL.reduce((a,g)=>a+gc(g).monthly,0), TG=GL.reduce((a,g)=>a+(gc(g).T||0),0), est=GL.reduce((a,g)=>a+gc(g).est,0), estT=GL.filter(g=>gc(g).T).reduce((a,g)=>a+gc(g).est,0), nOpen=GL.filter(g=>gc(g).open).length, xsum=GL.reduce((a,g)=>a+gc(g).xs,0);
+  hero(GL.length?[`I ${ctx} sparer I `,[kr(mon),'b'],` op pr. måned til ${GL.length} mål. Tilbage efter al opsparing: `,[kr(t.afterSav),t.afterSav>=0?'left':'neg'],'.']:[`Ingen opsparingsmål i ${ctx} endnu.`],
+    'Et mål er enten et fast beløb, hvor det månedlige beløb beregnes, eller en fast månedlig indbetaling, hvor slutbeløbet beregnes. Ekstra indbetalinger, fx feriepenge eller bonus, ligger uden for budgettet. Mål, der er nået måldatoen eller er inaktive, tæller ikke med.');
+  if(G.length){h2('Opsparingsmål',null,50);
+    cards(G.map(g=>{const c=gc(g),tr=g.to&&g.to!==g.from,off=!(goalIn(g,key)&&goalCounts(g));
+      const B=[{t:'title',text:g.name||'Mål',dot:pgColor(g),sub:[g.active===false?'Inaktiv':c.ended?(c.mode==='monthly'?'Slutdato':'Måldato')+' er passeret':c.future?'Starter '+idxLbl(c.s).toLowerCase():'',off&&g.active!==false&&!c.ended?'Ikke med i '+ctx:''].filter(Boolean).join(' · ')},{t:'amt',text:kr(c.monthly),small:'pr. md.'+(c.n?' i '+c.n+' md.':' · løbende')}];
+      if(c.xs)B.push({t:'note',text:c.mode==='monthly'?`Plus ${c.X.length} ekstra ${c.X.length===1?'indbetaling':'indbetalinger'} på i alt ${kr(c.xs)}.`:`Sænket fra ${kr(Math.ceil(c.rest0/c.n))} til ${kr(c.monthly)} pr. md. med ${c.X.length} ekstra ${c.X.length===1?'indbetaling':'indbetalinger'} på i alt ${kr(c.xs)}.`,color:PC.ink2});
+      B.push(c.T?{t:'progress',pct:c.pct,color:pgColor(g),note:`Skønnet opsparet ${kr(c.est)} af ${kr(c.T)} (${Math.round(c.pct*100)} %)`+(c.left!==null?` · ${c.left} md. tilbage`:'')}:{t:'note',text:`Skønnet opsparet ${kr(c.est)} indtil nu · om et år ${kr(c.est+c.monthly*12)}`});
+      const kv=c.mode==='monthly'?[['Type','Fast pr. md.'],['Forventet slutbeløb',c.T?K(c.T):'Løbende'],['Allerede opsparet',K(c.sv)]]:[['Type','Fast beløb'],['Målbeløb',K(c.T)],['Allerede opsparet',K(c.sv)],['Mangler ved start',K(c.rest0)]];
+      if(c.X.length)kv.push(['Ekstra indbetalinger',K(c.xs)]);
+      kv.push(['Periode',fmtDate(g.start)+' - '+(g.end?fmtDate(g.end):'løbende')],['Betales fra',accName(g.from)],['Sættes ind på',tr?accName(g.to):'Bliver på kontoen'],['Betaler',perName(g.payer||FAELLES)]);
+      B.push({t:'kv',rows:kv});if(c.xOut)B.push({t:'verdict',text:`${c.xOut} ekstra ${c.xOut===1?'indbetaling ligger':'indbetalinger ligger'} uden for perioden og tæller ikke med.`,kind:'warn'});if(g.note)B.push({t:'note',text:g.note});return B}),2)}
+  else para('Opret et mål, fx udbetaling til hus, under fanen Opsparingsmål.',9);
+  if(GL.length){
+    h2('Opsummering pr. måned','I '+ctx+'. Fælles mål fordeles med samme nøgle som de fælles udgifter.',40);
+    kpis([{label:'Til opsparingsmål',value:kr(mon),small:'pr. måned',kind:'hero'},{label:'Samlet målbeløb',value:kr(TG),small:(GL.length-nOpen)+' mål'+(nOpen?` + ${nOpen} løbende uden slutbeløb`:'')},...(xsum?[{label:'Ekstra indbetalinger',value:kr(xsum),small:'planlagt i perioderne, uden for budgettet'}]:[]),
+      {label:'Skønnet opsparet i dag',value:kr(est),small:TG?Math.round(estT/TG*100)+' % af målbeløbene, efter planen':'efter planen'},{label:'Andel af det, der er tilbage',value:(t.left>0?Math.round(mon/t.left*100):0)+' %',small:'af '+kr(t.left)+' efter faste udgifter'},
+      {label:'Tilbage efter al opsparing',value:kr(t.afterSav),small:'inkl. opsparingsfelter',kind:t.afterSav>=0?'good':'bad'}],3);
+    table(['Mål','Konto','Betaler','Ekstra','Pr. md.'],GL.map(g=>{const c=gc(g),tr=g.to&&g.to!==g.from;return [g.name||'Mål',accName(g.from)+(tr?' til '+accName(g.to):''),perName(g.payer||FAELLES),c.xs?kr(c.xs):'-',kr(c.monthly)]}).concat([{tot:true,cells:[{content:'I alt',colSpan:3},xsum?kr(xsum):'',kr(mon)]}]),
+      {right:[3,4],cs:{0:{cellPadding:{top:1.7,bottom:1.7,left:6,right:2.2}}},draw:d=>{if(d.section==='body'&&d.column.index===0&&d.row.index<GL.length){fill(pgColor(GL[d.row.index]));doc.roundedRect(d.cell.x+2.2,d.cell.y+1.9,2.4,2.4,0.6,0.6,'F')}}});
+    table(['Person','Egne mål','Andel af fælles','I alt','Tilbage efter opsparing'],S.persons.map(p=>{const c=personCalc(p.id);return [p.name,kr(c.gOwn),kr(c.gSh),{content:kr(c.gsav),styles:{fontStyle:'bold'}},{content:kr(c.afterSav),styles:{textColor:c.afterSav>=0?PC.pine:PC.brick}}]}),{right:[1,2,3,4]});
+    table(['Trækkes fra konto','Til mål','Tilbage på kontoen'],[...new Set(GL.map(g=>g.from||''))].map(id=>{const c=accountCalc(id);return [accName(id),kr(GL.filter(g=>(g.from||'')===id).reduce((a,g)=>a+gc(g).monthly,0)),{content:kr(c.left),styles:{textColor:c.left>=0?PC.pine:PC.brick}}]}),{right:[1,2]});
+    const GP=goalPlan(GL);if(GP){h2('Indbetalinger over tid','Hvad der sættes af til målene hver måned i hele perioden.',60);goalChartPdf(GP)}}
+
+  const n=doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetr. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
   return doc;
 }
 async function exportPdf(){
@@ -1743,37 +1968,163 @@ async function exportPdf(){
   else{try{doc.save(name)}catch(e){window.print()}}
 }
 /* ---------- Excel ---------- */
+/* One sheet per tab (Budget, Overblik over lån, Faste overførsler, Opsparingsmål) laid out like the page, plus all
+   entries as a filterable list. Styled with xlsx-js-style (SheetJS with cell styles); amounts stay numbers with a kr format. */
+const XC={pine:'1F5C4A',pineBg:'E3EEE9',ink:'18221F',ink2:'4D5A55',ink3:'7D8983',rule:'DCE0DA',paper:'F5F6F3',brick:'A8412C',brickBg:'F6E4DF',ochre:'9A6B12',ochreBg:'FBF0D9',white:'FFFFFF'};
+const XKR='#,##0 "kr";-#,##0 "kr";0 "kr"';
+const xm=(...L)=>{const r={};L.forEach(o=>{if(o)Object.keys(o).forEach(k=>{r[k]=o[k]&&typeof o[k]==='object'&&k!=='fill'?Object.assign({},r[k],o[k]):o[k]})});return r};
+const xbd=c=>({style:'thin',color:{rgb:c||XC.rule}});
+const XS={base:{font:{name:'Calibri',sz:11,color:{rgb:XC.ink}},alignment:{vertical:'center'}},
+  title:{font:{sz:18,bold:true}},sub:{font:{sz:10,color:{rgb:XC.ink3}}},h2:{font:{sz:13,bold:true,color:{rgb:XC.pine}},border:{bottom:xbd(XC.pine)}},hint:{font:{sz:9,color:{rgb:XC.ink3}}},
+  h3:{font:{sz:11,bold:true}},head:{font:{bold:true,color:{rgb:XC.white}},fill:{fgColor:{rgb:XC.pine}},alignment:{vertical:'center',wrapText:true}},
+  cell:{border:{bottom:xbd()},alignment:{vertical:'top',wrapText:true}},cat:{font:{bold:true},fill:{fgColor:{rgb:XC.paper}},border:{top:xbd(),bottom:xbd()}},tot:{font:{bold:true},border:{top:xbd(XC.ink),bottom:xbd(XC.ink)}},
+  kl:{font:{sz:9,color:{rgb:XC.ink2}},border:{top:xbd(),left:xbd(),right:xbd()},alignment:{wrapText:true,vertical:"top"}},kv:{font:{sz:13,bold:true},border:{left:xbd(),right:xbd()},alignment:{horizontal:'left'}},ks:{font:{sz:9,color:{rgb:XC.ink3}},border:{bottom:xbd(),left:xbd(),right:xbd()},alignment:{wrapText:true,vertical:'top'}}};
+const XK={'':{},hero:{fill:{fgColor:{rgb:XC.ink}},font:{color:{rgb:XC.paper}}},good:{fill:{fgColor:{rgb:XC.pineBg}},font:{color:{rgb:XC.pine}}},bad:{fill:{fgColor:{rgb:XC.brickBg}},font:{color:{rgb:XC.brick}}}};
+const XF={pine:{font:{color:{rgb:XC.pine}}},brick:{font:{color:{rgb:XC.brick}}},ochre:{font:{color:{rgb:XC.ochre}}},muted:{font:{color:{rgb:XC.ink3}}},bold:{font:{bold:true}}};
+/* Small layout builder. Cells are values or {v, s} where s is an extra style (XF.* or a style object). */
+function xlsxSheet(widths){
+  const R=[],ST=[],HT=[],MG=[],n=widths.length;let filter=null;
+  const put=(cells,styles,h)=>{R.push(cells);ST.push(styles);HT.push(h||null)};
+  const val=c=>c&&typeof c==='object'&&'v' in c?c.v:c, ext=c=>c&&typeof c==='object'&&'v' in c?c.s:null;
+  return {
+    gap(){put([],[])},
+    title(t,sub){put([t],[XS.title],30);if(sub)put([sub],[XS.sub]);put([],[])},
+    h2(t,hint){put([],[]);MG.push({s:{r:R.length,c:0},e:{r:R.length,c:n-1}});put([t,...Array(n-1).fill('')],Array(n).fill(XS.h2),24);if(hint)put([hint],[XS.hint]);put([],[])},
+    h3(t,sub){put([t],[XS.h3],18);if(sub)put([sub],[XS.hint])},
+    note(t){put([t],[XS.hint])},
+    /* rows: array of cells, or {cells, cat|tot, s}. o.pct: columns shown as %, o.plain: plain numbers. */
+    table(head,rows,o){o=o||{};const right=ci=>rows.some(r=>typeof val((Array.isArray(r)?r:r.cells)[ci])==='number');
+      if(o.filter)filter={s:R.length,cols:head.length};
+      put(head,head.map((_,ci)=>xm(XS.head,right(ci)?{alignment:{horizontal:'right'}}:null)),o.headH||(head.some(h=>String(h).length>13)?30:20));
+      rows.forEach(r=>{const cells=Array.isArray(r)?r:r.cells, kind=Array.isArray(r)?'cell':r.cat?'cat':r.tot?'tot':'cell', rs=Array.isArray(r)?null:r.s;
+        put(cells.map(c=>{const v=val(c);return v==null?'':v}),head.map((_,ci)=>{const v=val(cells[ci]);
+          return xm(XS[kind],rs,typeof v==='number'?{numFmt:(o.pct2||[]).includes(ci)?'0.00%':(o.pct||[]).includes(ci)?'0.0%':(o.plain||[]).includes(ci)?'0':(o.signed||[]).includes(ci)?'+#,##0 "kr";-#,##0 "kr";0 "kr"':XKR,alignment:{horizontal:'right'}}:null,ext(cells[ci]))}))});
+      if(o.filter)filter.e=R.length-1;put([],[])},
+    kpis(L){for(let i=0;i<L.length;i+=n){const P=L.slice(i,i+n);
+      put(P.map(k=>k.label),P.map(k=>xm(XS.kl,XK[k.kind||''],k.kind==='hero'?{font:{color:{rgb:'C8CFCB'}}}:null)),26);
+      put(P.map(k=>k.value),P.map(k=>xm(XS.kv,XK[k.kind||''],typeof k.value==='number'?{numFmt:k.fmt||XKR}:null)),26);
+      put(P.map(k=>k.small||''),P.map(k=>xm(XS.ks,XK[k.kind||''],k.kind==='hero'?{font:{color:{rgb:'C8CFCB'}}}:k.kind?{font:{color:XK[k.kind].font.color}}:null)),32)}put([],[])},
+    add(wb,name){const X=window.XLSX, ws=X.utils.aoa_to_sheet(R.map(r=>r.length?r:['']));
+      ST.forEach((row,ri)=>row.forEach((st,ci)=>{if(!st)return;const a=X.utils.encode_cell({r:ri,c:ci});if(!ws[a])ws[a]={t:'s',v:''};ws[a].s=xm(XS.base,st);if(st.numFmt)ws[a].z=st.numFmt}));
+      ws['!cols']=widths.map(w=>({wch:w}));ws['!rows']=HT.map(h=>h?{hpt:h}:{});if(MG.length)ws['!merges']=MG;
+      if(filter)ws['!autofilter']={ref:X.utils.encode_range({s:{r:filter.s,c:0},e:{r:filter.e,c:filter.cols-1}})};
+      X.utils.book_append_sheet(wb,ws,name)}};
+}
 function buildXlsx(){
-  const X=window.XLSX, wb=X.utils.book_new(), sc=curSc(), r0=v=>Math.round(v*100)/100;
-  const add=(name,rows,widths)=>{const ws=X.utils.aoa_to_sheet(rows);ws['!cols']=(widths||rows[0].map(()=>16)).map(w=>({wch:w}));if(rows.length>1)ws['!autofilter']={ref:X.utils.encode_range({s:{r:0,c:0},e:{r:rows.length-1,c:rows[0].length-1}})};X.utils.book_append_sheet(wb,ws,name)};
-  const t=totals(), bk=bankCalc();
-  add('Overblik',[['budgetr',sc?'Scenarie: '+(sc.name||'')+(sc.from?' fra '+sc.from:''):'Nuværende budget','Udskrevet '+new Date().toLocaleDateString('da-DK')],['Nøgletal','Pr. md.','Pr. år'],
-    ...metrics().map(r=>[r[0],r0(r[1]),r0(r[1]*12)]),['Opsparing i alt',r0(t.sav),r0(t.sav*12)],['Rådighedsbeløb (bankens beregning)',r0(bk.rad),r0(bk.rad*12)],['Vejledende krav',r0(bk.req),r0(bk.req*12)],[bk.buf>=0?'Luft over kravet':'Under kravet',r0(Math.abs(bk.buf)),r0(Math.abs(bk.buf)*12)]],[38,14,14]);
-  const TY={udgift:'Udgift',indtaegt:'Indtægt',overfoersel:'Overførsel'};
-  add('Poster',[['Type','Kategori','Beskrivelse','Nøgle','Hyppighed','Første betaling','Beløb pr. betaling','Pr. md.','Pr. år','Konto / fra','Til konto','Betaler','Aktiv','Tjek','Bankens faste udg.','Udvikling %','Kilde','Note'],
-    ...cur().map(e=>{const d=devOf(e),f=e.type==='overfoersel'&&e.auto?1:(+e.freq||1);return [TY[e.type]||e.type,e.category||'',e.desc||'',e.key||'',FREQ[f]||'',f>1?MONTHS[(+e.start||1)-1]:'',r0(amtOf(e)),r0(mAvg(e)),r0(mAvg(e)*12),
-      e.type==='overfoersel'?accName(e.from):accName(e.account),e.type==='overfoersel'?accName(e.to):'',e.type==='overfoersel'?'':perName(e.payer),e.active!==false?'Ja':'Nej',e.check?'Ja':'',e.type==='udgift'?(inBank(e)?'Ja':'Nej'):'',d&&d.pct!==null?r0(d.pct):'',
-      e._goal?'Opsparingsmål':e.auto?'Auto':e._added?'Ny i scenariet':e._ovr?(e.removed?'Fjernet i scenariet':'Ændret i scenariet'):'',e.note||'']})],[11,18,34,16,14,10,14,12,12,22,22,12,7,7,10,11,16,40]);
-  add('Konti',[['Konto','Kontonr.','Type','Ejer','Indtægter','Overført ind','Faste udgifter','Overført ud','Opsparing','Ind i alt','Ud i alt','Tilbage','Bør overføres'],
-    ...S.accounts.map(a=>{const c=accountCalc(a.id);return [a.name,a.number||'',a.type==='faelles'?'Fælles':'Personlig',a.owner?perName(a.owner):'',r0(c.inc),r0(c.tin),r0(c.exp),r0(c.tout),r0(c.sav),r0(c.in),r0(c.out),r0(c.left),a.type==='faelles'?r0(c.need):'']})],[24,18,10,12,12,12,12,12,12,12,12,12,12]);
-  add('Personer',[['Person','Andel %','Faste indtægter','Ekstra indtjening','Andel af fælles indt.','Egne udgifter','Andel af fælles udg.','Til rådighed','Opsparingsmål','Anden opsparing','Tilbage efter opsparing'],
-    ...S.persons.map(p=>{const c=personCalc(p.id);return [p.name,Math.round(c.sh*100),r0(c.own),r0(c.extra),r0(c.shInc),r0(c.ownExp),r0(c.shExp),r0(c.left),r0(c.gsav),r0(c.psav),r0(c.afterSav)]})],[14,9,14,14,14,14,14,14,14,14,16]);
-  const T=trAll();
-  add('Overførsler',[['Fra konto','Til konto','Beskrivelse','Hyppighed','Beløb','Pr. md.','Sat op','Bør være','Auto'],
-    ...T.map(e=>{const rc=transferRec(e);return [accName(e.from),accName(e.to),e.desc||'',FREQ[e.auto?1:(+e.freq||1)]||'',r0(amtOf(e)),r0(mAvg(e)),r0(setupAmt(e)),rc===null?'':rc,e.auto?'Ja':'']})],[22,22,30,14,12,12,12,12,7]);
-  const G=goalsFor(sc?sc.id:'base');
-  add('Opsparingsmål',[['Mål','Type','Start','Slut','Målbeløb / slutbeløb','Allerede opsparet','Ekstra indbetalinger','Pr. md.','Antal md.','Skønnet opsparet','Fra konto','Til konto','Betaler'],
-    ...G.map(g=>{const c=goalCalc(g);return [g.name||'',c.mode==='monthly'?'Fast pr. md.':'Fast beløb',g.start||'',g.end||'løbende',c.T||'',c.sv,c.xs,c.monthly,c.n||'',Math.round(c.est),accName(g.from),g.to&&g.to!==g.from?accName(g.to):'',perName(g.payer||FAELLES)]})],[24,13,11,11,16,14,14,10,9,14,20,20,12]);
-  add('Lån',[['Bank','Beskrivelse','Oprindeligt','Restgæld','Ydelse pr. md.','Rente %','Renter pr. md.','Udløber (angivet)','Beregnet slut','Pause','Medtaget'],
-    ...(S.loans||[]).map(l=>{const c=loanCalc(l);return [l.bank||'',l.desc||'',r0(c.O),r0(c.P),r0(c.A),l.rate===''||l.rate==null?'':+l.rate,l.rate?r0(c.interest):'',l.ends||'',c.endTxt||'',l.paused?'Ja':'',l.include!==false?'Ja':'Nej']})],[20,26,13,13,13,9,13,14,14,7,9]);
+  const X=window.XLSX, wb=X.utils.book_new(), sc=curSc(), key=sc?sc.id:'base', r0=v=>Math.round(v*100)/100, title=(S.settings&&S.settings.title)||'budgetr';
+  const stamp='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'})+(sc?' · Scenarie: '+(sc.name||'')+(sc.from?' fra '+sc.from:''):' · Nuværende budget');
+  const pos=v=>v>=0?XF.pine:XF.brick, t=totals(), bk=bankCalc(), sh=shares(), sp=S.settings||{};
+  const accSub=a=>[a.number,a.type==='faelles'?'Fælles konto':a.owner?'Tilhører '+perName(a.owner):''].filter(Boolean).join(' · ');
+
+  /* Budget */
+  const B=xlsxSheet([36,...Array(12).fill(15)]);
+  B.title(title,'Budget · '+stamp);
+  B.kpis([{label:'Indtægter',value:r0(t.inc),small:exOn()&&t.extra?'inkl. ekstra indtjening':'pr. måned'},{label:'Faste udgifter',value:r0(t.exp),small:'pr. måned'},{label:'Tilbage efter faste udgifter',value:r0(t.left),small:'pr. måned',kind:t.left>=0?'good':'bad'},{label:'Opsparing',value:r0(t.sav),small:'opsparingsfelter og mål'},{label:'Tilbage efter opsparing',value:r0(t.afterSav),small:'pr. måned',kind:'hero'}]);
+  B.h2('Nøgletal');B.table(['','Pr. md.','Pr. år'],metrics().map(r=>[r[0],r0(r[1]),r0(r[1]*12)]).concat([['Opsparing i alt',r0(t.sav),r0(t.sav*12)]]));
+  if(sc){B.h2('Holdt op mod nuværende budget');B.table(['Pr. måned','Nuværende','Scenarie','Forskel'],compareRows(sc).map(r=>[r[0],r0(r[1]),r0(r[2]),{v:r0(r[3]),s:Math.abs(r[3])<0.5?null:XF.bold}]));
+    const chg=scChanges(sc);if(chg.length)B.table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,r0(c.b),r0(c.n)]))}
+  B.h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter.');
+  const FR=loansFreedWithin(12).filter(x=>x.inB), fr=FR.reduce((a,x)=>a+x.free,0);
+  B.kpis([{label:'Nettoindtægt',value:r0(bk.inc+bk.extra),small:bk.extra?'inkl. ekstra indtjening':'uden ekstra indtjening'},{label:'Faste udgifter',value:r0(bk.fixed),small:kr(bk.exclSum)+' er ikke medregnet'},{label:'Rådighedsbeløb',value:r0(bk.rad),small:'pr. måned',kind:'hero'},{label:'Vejledende krav',value:r0(bk.req),small:'tommelfingerregel'},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:r0(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'},
+    ...(FR.length?[{label:(bk.buf+fr>=0?'Luft':'Under kravet')+' fra '+idxLbl(FR[FR.length-1].i).toLowerCase(),value:r0(Math.abs(bk.buf+fr)),small:'+'+kr(fr)+' frigives fra lån',kind:bk.buf+fr>=0?'good':'bad'}]:[])]);
+  if(bk.excl.length)B.table(['Ikke medregnet som faste udgifter','Pr. md.'],bk.excl.map(e=>[e.desc,r0(mAvg(e))]).concat([{tot:true,cells:['I alt',r0(bk.exclSum)]}]));
+  const unplaced=act().some(e=>e.type==='udgift'&&!e.account), ids=S.accounts.map(a=>a.id).concat(unplaced?['']:[]);
+  B.h2('Konti','Hvad løber ind og ud af hver konto, og hvad der er tilbage, pr. måned.');
+  B.table(['Konto','Indtægter','Overført ind','Faste udgifter','Overført ud','Opsparing','Ind i alt','Ud i alt','Tilbage','Bør overføres','Overføres','Status'],ids.map(id=>{const a=S.accounts.find(x=>x.id===id)||{name:'Ikke placeret'},c=accountCalc(id),f=a.type==='faelles',gap=c.need-c.tin;
+    const st=id===''?{v:'Ingen konto dækker udgifterne',s:XF.ochre}:f?(gap>0.5?{v:'Mangler '+kr(gap),s:XF.brick}:{v:Math.abs(gap)<0.5?'Dækket':'Overskud '+kr(-gap),s:XF.pine}):c.left<0?{v:'Går i minus',s:XF.brick}:{v:'OK',s:XF.pine};
+    return [a.name+(a.number?' ('+a.number+')':''),r0(c.inc),r0(c.tin),r0(c.exp),r0(c.tout),r0(c.sav),r0(c.in),r0(c.out),{v:r0(c.left),s:pos(c.left)},f?r0(c.need):'',f?r0(c.tin):'',st]}),{headH:30});
+  const fa=S.accounts.filter(a=>a.type==='faelles');
+  if(fa.length&&S.persons.length)B.table(['Anbefalet indbetaling pr. md.',...S.persons.map(p=>p.name)],fa.map(a=>[a.name,...S.persons.map(p=>r0(recFor(p.id,a.id)))]));
+  B.h2('Hvem betaler hvad','Fælles udgifter fordeles '+({indkomst:'efter fast indkomst',lige:'ligeligt',manuel:'manuelt'}[sp.split]||'ligeligt')+': '+S.persons.map(p=>p.name+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')+'.');
+  const PR=[['Faste indtægter','own'],['Ekstra indtjening','extra'],['Andel af fælles indtægter','shInc'],['Egne faste udgifter','ownExp'],['Andel af fælles udgifter','shExp'],['Til rådighed','left'],['Opsparingsfelt','psav'],['Opsparingsmål','gsav'],['Tilbage efter opsparing','afterSav']], PCs=S.persons.map(p=>personCalc(p.id));
+  B.table(['Pr. måned',...S.persons.map((p,i)=>p.name+' ('+Math.round(PCs[i].sh*100)+' %)')],PR.map(([l,k])=>{const cells=[l,...PCs.map(c=>k==='left'||k==='afterSav'?{v:r0(c[k]),s:xm(pos(c[k]),XF.bold)}:r0(c[k]))];return k==='left'||k==='afterSav'?{cat:true,cells}:cells}));
+  const exR=[];S.persons.forEach(p=>extras(p).forEach((x,i)=>{if(+x.amount>0||x.desc)exR.push([p.name,x.desc||'Ekstra '+(i+1),r0(+x.amount||0)])}));
+  if(exR.length)B.table(['Ekstra indtjening','Beskrivelse','Pr. md.'],exR);
+  B.h2('Måned for måned','Ind, ud og saldo de næste 12 måneder fra kontoens angivne saldo. Kvartals- og årsbetalinger lander i bestemte måneder.');
+  S.accounts.forEach(a=>{const M0=monthly(a.id),sd=saldoFor(a.id),st=planStart(sd),IX=[...Array(12)].map((_,k)=>st+k),Mo=IX.map(i=>M0[((i%12)+12)%12]);if(!Mo.some(x=>x.i||x.o))return;
+    let s=sd.amount;const sal=Mo.map(x=>(s+=x.i-x.o));B.h3(a.name,'Saldo '+kr(sd.amount)+' pr. '+fmtDate(sd.date)+(sd.legacy?' (ikke gemt, regnet fra 1. januar)':''));
+    B.table(['',...IX.map(i=>idxLbl(i,true))],[['Ind',...Mo.map(x=>r0(x.i))],['Ud',...Mo.map(x=>r0(x.o))],{tot:true,cells:['Saldo ultimo',...sal.map(v=>({v:r0(v),s:v<0?XF.brick:null}))]}])});
+  const DL=act().map(e=>({e,d:devOf(e)})).filter(x=>x.d).sort((a,b)=>(b.d.pct??1e9)-(a.d.pct??1e9));
+  if(DL.length){B.h2('Udvikling i poster',`"Før" er beløbet for cirka et år siden. Udgifter, der er steget mindst ${devPct()} %, står med rødt.`);
+    B.table(['Post','Kategori','Før pr. md.','Fra','Nu pr. md.','Ændring','Ændring %'],DL.map(({e,d})=>({s:d.flag?XF.brick:null,cells:[e.desc+(e.type==='indtaegt'?' (indtægt)':''),e.category||'',r0(d.base.m),(d.base.unknown?'før ':'')+fmtDate(d.base.date),r0(d.now.m),r0(d.d),d.pct===null?'':r0(d.pct/100)]})),{pct:[6],signed:[5]})}
+  B.add(wb,'Budget');
+
+  /* Alle poster: one filterable list */
+  const TY={udgift:'Udgift',indtaegt:'Indtægt',overfoersel:'Overførsel'}, P=xlsxSheet([11,18,34,16,16,10,14,12,12,22,22,12,7,7,10,11,18,40]);
+  P.title('Alle poster',title+' · '+stamp);
+  P.table(['Type','Kategori','Beskrivelse','Nøgle','Hyppighed','Første betaling','Beløb pr. betaling','Pr. md.','Pr. år','Konto / fra','Til konto','Betaler','Aktiv','Tjek','Bankens faste udg.','Udvikling %','Kilde','Note'],
+    cur().slice().sort((a,b)=>(a.type+(a.category||'')).localeCompare(b.type+(b.category||''),'da')||mAvg(b)-mAvg(a)).map(e=>{const d=devOf(e),f=e.type==='overfoersel'&&e.auto?1:(+e.freq||1);
+      return {s:e.active===false?XF.muted:null,cells:[TY[e.type]||e.type,e.category||'',e.desc||'',e.key||'',FREQ[f]||'',f>1?MONTHS[(+e.start||1)-1]:'',r0(amtOf(e)),r0(mAvg(e)),r0(mAvg(e)*12),e.type==='overfoersel'?accName(e.from):accName(e.account),e.type==='overfoersel'?accName(e.to):'',e.type==='overfoersel'?'':perName(e.payer),
+        e.active!==false?'Ja':'Nej',e.check?'Ja':'',e.type==='udgift'?(inBank(e)?'Ja':'Nej'):'',d&&d.pct!==null?{v:r0(d.pct/100),s:d.flag?XF.brick:null}:'',e._goal?'Opsparingsmål':e.auto?'Auto':e._added?'Ny i scenariet':e._ovr?(e.removed?'Fjernet i scenariet':'Ændret i scenariet'):'',e.note||'']}}),{pct:[15],filter:true,headH:30});
+  P.add(wb,'Alle poster');
+
+  /* Overblik over lån */
+  const Lw=xlsxSheet([18,28,14,14,11,14,10,14,16,16,14,24]), LL=(S.loans||[]).map(l=>({l,c:loanCalc(l)}));
+  Lw.title('Overblik over lån',title+' · '+stamp+(S.loanUpdated?' · Restgæld opdateret '+fmtDate(S.loanUpdated):''));
+  if(!LL.length)Lw.note('Ingen lån registreret endnu.');
+  else{const IN=LL.filter(x=>x.l.include!==false), AC=IN.filter(x=>!x.l.paused), tO=IN.reduce((a,x)=>a+x.c.O,0), tP=IN.reduce((a,x)=>a+x.c.P,0), tA=AC.reduce((a,x)=>a+x.c.A,0), tI=AC.reduce((a,x)=>a+x.c.interest,0), wr=tP>0?IN.reduce((a,x)=>a+x.c.P*(+x.l.rate||0),0)/tP:0;
+    Lw.kpis([{label:'Oprindeligt lånt',value:r0(tO),small:'alle lån'},{label:'Samlet restgæld',value:r0(tP),small:(tO?Math.round((1-tP/tO)*100)+' % er betalt af':''),kind:'hero'},{label:'Ydelse pr. måned',value:r0(tA),small:'uden lån på pause'},{label:'Heraf renter pr. md.',value:r0(tI),small:kr(tI*12)+' om året'},{label:'Gennemsnitlig rente',value:wr/100,fmt:'0.00%',small:'vægtet efter restgæld'}]);
+    Lw.h2('Lån');
+    Lw.table(['Bank','Beskrivelse','Oprindeligt','Restgæld','Betalt af','Ydelse pr. md.','Rente','Renter pr. md.','Udløber (angivet)','Beregnet slut','I budgettet','Budgetpost'],
+      LL.map(({l,c})=>({s:l.include===false?XF.muted:null,cells:[l.bank||'',(l.desc||'')+(l.paused?' (pause)':'')+(l.include===false?' (ikke medtaget)':''),r0(c.O),{v:r0(c.P),s:XF.bold},r0(c.paid),r0(c.A),l.rate===''||l.rate==null?'':(+l.rate)/100,l.rate?r0(c.interest):'',l.ends||'',l.paused?'På pause':c.endTxt||'',c.budget!==null?r0(c.budget):'',c.link?c.link.desc:'']}))
+        .concat([{tot:true,cells:['I alt',IN.length===LL.length?'alle lån':IN.length+' af '+LL.length+' lån',r0(tO),r0(tP),tO?r0(1-tP/tO):'',r0(tA),wr/100,r0(tI),'','','','']}]),{pct:[4],pct2:[6]});
+    const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
+    if(LE.length){let cum=0;Lw.h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden.');
+      Lw.table(['Lån','Bank','Udløber','Om (md.)','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map(x=>{cum+=x.free;return [x.l.desc||x.l.bank,x.l.bank||'',idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),Math.max(0,x.en.i-nw),{v:r0(x.free),s:XF.bold},r0(x.free*12),r0(cum)]}),{plain:[3],headH:30})}}
+  Lw.add(wb,'Overblik over lån');
+
+  /* Faste overførsler */
+  const Ow=xlsxSheet([26,26,32,18,14,14,16,14]), TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
+  Ow.title('Faste overførsler',title+' · '+stamp);
+  Ow.kpis([{label:'Overføres i alt pr. md.',value:r0(TR.reduce((a,e)=>a+mAvg(e),0)),small:'mellem jeres egne konti',kind:'hero'},{label:'Antal overførsler',value:TR.length,fmt:'0',small:'aktive'},{label:'Skal rettes i netbanken',value:fixes.length,fmt:'0',small:fixes.length?'se tabellen nedenfor':'alle passer',kind:fixes.length?'bad':'good'}]);
+  if(fixes.length){Ow.h2('Skal rettes i netbanken','Disse faste overførsler passer ikke længere med det, der bør overføres.');
+    Ow.table(['Fra','Til','Beskrivelse','Sat op nu','Bør være','Ændring'],fixes.map(({e,rec})=>{const d=rec-setupAmt(e);return [accName(e.from),accName(e.to),e.desc||'',r0(setupAmt(e)),{v:rec,s:XF.bold},{v:r0(d),s:d>0?XF.brick:XF.pine}]}),{signed:[5]})}
+  if(TR.length){const fr_=acctOrder().filter(a=>TR.some(e=>e.from===a.id)), to_=acctOrder().filter(a=>TR.some(e=>e.to===a.id)), sum=(f,tt)=>r0(TR.filter(e=>e.from===f&&e.to===tt).reduce((s,e)=>s+mAvg(e),0));
+    Ow.h2('Pengestrømme','Fra konto (rækker) til konto (kolonner), pr. måned.');
+    Ow.table(['Fra \\ til',...to_.map(a=>a.name),'I alt ud'],fr_.map(f=>[f.name,...to_.map(tt=>sum(f.id,tt.id)||''),{v:r0(TR.filter(e=>e.from===f.id).reduce((s,e)=>s+mAvg(e),0)),s:XF.bold}]).concat([{tot:true,cells:['I alt ind',...to_.map(tt=>r0(TR.filter(e=>e.to===tt.id).reduce((s,e)=>s+mAvg(e),0))),r0(TR.reduce((s,e)=>s+mAvg(e),0))]}]))}
+  Ow.h2('Overførsler pr. konto');
+  acctOrder().forEach(a=>{const out=allT.filter(e=>e.from===a.id).sort((x,z)=>mAvg(z)-mAvg(x)), inn=TR.filter(e=>e.to===a.id);if(!out.length&&!inn.length)return;
+    const sOut=out.filter(e=>e.active!==false).reduce((s,e)=>s+mAvg(e),0), sIn=inn.reduce((s,e)=>s+mAvg(e),0);
+    Ow.h3('Fra '+a.name,[accSub(a),`Modtager ${kr(sIn)} pr. md. · Netto ${sIn-sOut>=0?'ind':'ud'} ${kr(Math.abs(sIn-sOut))}`].filter(Boolean).join(' · '));
+    if(out.length)Ow.table(['Til konto','Beskrivelse','Hyppighed','Sat op','Bør være','Pr. md.','Pr. år','Type'],out.map(e=>{const f=e.auto?1:(+e.freq||1),rc=transferRec(e),d=rc===null?0:rc-setupAmt(e);
+      return {s:e.active===false||(e._ovr&&e.removed)?XF.muted:null,cells:[accName(e.to),e.desc||'',(FREQ[f]||'')+(f>1?' ('+monthsOf(e).join(', ')+')':''),r0(setupAmt(e)),rc===null?'':{v:rc,s:Math.abs(d)<1?XF.pine:xm(XF.bold,d>0?XF.brick:XF.ochre)},r0(mAvg(e)),r0(mAvg(e)*12),[e.auto?'Auto':'',e._goal?'Opsparingsmål':'',e._added?'Ny i scenariet':e._ovr?(e.removed?'Fjernet i scenariet':'Ændret i scenariet'):'',e.active===false&&!e.removed?'Inaktiv':''].filter(Boolean).join(', ')]}})
+      .concat([{tot:true,cells:['I alt ud','','','','',r0(sOut),r0(sOut*12),'']}]))});
+  Ow.add(wb,'Faste overførsler');
+
+  /* Opsparingsmål */
+  const Gw=xlsxSheet([26,15,15,15,15,15,15,13,10,15,20,20,12]), G=S.goals||[], GL=goalsFor(key), gc=g=>goalCalc(g), mon=GL.reduce((a,g)=>a+gc(g).monthly,0), TG=GL.reduce((a,g)=>a+(gc(g).T||0),0), est=GL.reduce((a,g)=>a+gc(g).est,0);
+  Gw.title('Opsparingsmål',title+' · '+stamp);
+  Gw.kpis([{label:'Til opsparingsmål pr. md.',value:r0(mon),small:GL.length+' mål i '+(sc?(sc.name||'scenariet'):'det nuværende budget'),kind:'hero'},{label:'Samlet målbeløb',value:r0(TG),small:'mål med slutbeløb'},{label:'Skønnet opsparet i dag',value:Math.round(est),small:'efter planen'},{label:'Andel af det, der er tilbage',value:t.left>0?mon/t.left:0,fmt:'0%',small:'af '+kr(t.left)+' efter faste udgifter'},{label:'Tilbage efter al opsparing',value:r0(t.afterSav),small:'inkl. opsparingsfelter',kind:t.afterSav>=0?'good':'bad'}]);
+  Gw.h2('Mål');
+  if(!G.length)Gw.note('Ingen opsparingsmål endnu.');
+  else Gw.table(['Mål','Type','Start','Slut','Målbeløb / slutbeløb','Allerede opsparet','Ekstra indbetalinger','Pr. md.','Antal md.','Skønnet opsparet','Fra konto','Til konto','Betaler'],G.map(g=>{const c=gc(g),on=goalIn(g,key)&&goalCounts(g);
+    return {s:on?null:XF.muted,cells:[(g.name||'Mål')+(g.active===false?' (inaktiv)':c.ended?' (afsluttet)':!on?' (ikke med)':''),c.mode==='monthly'?'Fast pr. md.':'Fast beløb',g.start?fmtDate(g.start):'',g.end?fmtDate(g.end):'løbende',c.T?r0(c.T):'',r0(c.sv),c.xs?r0(c.xs):'',{v:r0(c.monthly),s:XF.bold},c.n||'',Math.round(c.est),accName(g.from),g.to&&g.to!==g.from?accName(g.to):'',perName(g.payer||FAELLES)]}})
+    .concat(GL.length?[{tot:true,cells:['I alt, med i budgettet','','','',r0(TG),r0(GL.reduce((a,g)=>a+gc(g).sv,0)),r0(GL.reduce((a,g)=>a+gc(g).xs,0)),r0(mon),'',Math.round(est),'','','']}]:[]),{plain:[8],headH:30});
+  if(GL.length){
+    Gw.h2('Fordeling','Fælles mål fordeles med samme nøgle som de fælles udgifter.');
+    Gw.table(['Person','Egne mål','Andel af fælles','I alt','Tilbage efter opsparing'],S.persons.map(p=>{const c=personCalc(p.id);return [p.name,r0(c.gOwn),r0(c.gSh),{v:r0(c.gsav),s:XF.bold},{v:r0(c.afterSav),s:pos(c.afterSav)}]}));
+    Gw.table(['Trækkes fra konto','Til mål pr. md.','Tilbage på kontoen'],[...new Set(GL.map(g=>g.from||''))].map(id=>{const c=accountCalc(id);return [accName(id),r0(GL.filter(g=>(g.from||'')===id).reduce((a,g)=>a+gc(g).monthly,0)),{v:r0(c.left),s:pos(c.left)}]}));
+    const GP=goalPlan(GL);
+    if(GP){const {C,a,N,val,xv,xd,tot,xtot}=GP, nw=nowIdx(), rows=[];let cum=C.reduce((s,x)=>s+x.c.sv,0),yr=null;
+      for(let k=0;k<N;k++){const i=a+k,Y=Math.floor(i/12);
+        if(Y!==yr){yr=Y;let ys=0;for(let j=i;j<Math.min(a+N,(Y+1)*12);j++)ys+=tot[j-a]+xtot[j-a];rows.push({cat:true,cells:[String(Y),...C.map(()=>''),'',r0(ys),'']})}
+        cum+=tot[k]+xtot[k];const xs_=C.filter(x=>xv(x,i)).map(x=>kr(xv(x,i))+' '+(x.g.name||'Mål')+(xd(x,i)?' ('+xd(x,i)+')':'')).join(', ');
+        rows.push({s:i===nw?XF.bold:null,cells:[idxLbl(i)+(i===nw?' (i dag)':''),...C.map(x=>val(x,i)?r0(val(x,i)):''),xs_,r0(tot[k]+xtot[k]),r0(cum)]})}
+      Gw.h2('Måned for måned','Samlet opsparet starter med det, der allerede er sparet op, og lægger planens indbetalinger til. Det er ikke den faktiske saldo.');
+      Gw.table(['Måned',...C.map(x=>x.g.name||'Mål'),'Ekstra','I alt','Samlet opsparet'],rows,{headH:30})}}
+  Gw.add(wb,'Opsparingsmål');
   return wb;
 }
+/* SheetJS can't turn gridlines off, so set it in each sheet's XML inside the zip. Falls back to the file as written. */
+function xlsxNoGrid(buf){try{const C=window.XLSX.CFB, z=C.read(new Uint8Array(buf),{type:'array'});
+  z.FileIndex.forEach((f,i)=>{if(!/xl\/worksheets\/sheet\d+\.xml$/.test(z.FullPaths[i]))return;const x=new TextDecoder().decode(f.content);f.content=new TextEncoder().encode(x.replace('<sheetView workbookViewId="0"/>','<sheetView showGridLines="0" workbookViewId="0"/>'));f.size=f.content.length});
+  return C.write(z,{fileType:'zip',type:'array'})}catch(e){return buf}}
 async function exportXlsx(){
   if(!S)return;if(!window.XLSX){toast('Excel-modulet kunne ikke indlæses');return}
   const sc=curSc(), name='budgetr-'+(sc?(sc.name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-')+'-':'')+new Date().toISOString().slice(0,10)+'.xlsx';
-  const wb=buildXlsx(), data=new Blob([window.XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const wb=buildXlsx(), data=new Blob([xlsxNoGrid(window.XLSX.write(wb,{bookType:'xlsx',type:'array'}))],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   if(downloads){try{await downloads.save({filename:name,data});toast('Excel-fil gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('Excel-filen kunne ikke gemmes her')}}
-  else{try{window.XLSX.writeFile(wb,name)}catch(e){toast('Excel-filen kunne ikke gemmes her')}}
+  else{try{saveBlob(data,name)}catch(e){toast('Excel-filen kunne ikke gemmes her')}}
 }
 function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));if(o)menu.querySelector('button').focus()};

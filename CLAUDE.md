@@ -7,7 +7,7 @@ Language: code and comments in English; UI text in Danish (du-form, calm, no exc
 ## Architecture
 
 - `/` landing page (Next.js, `components/landing/`), `/login` test-user login (Next.js), `/app` = the ORIGINAL budgetr app from the prototype, a single vanilla-JS file at `public/budgetr-app/index.html` (rewritten in `next.config.ts`). The user chose to keep that app 1:1 instead of a React rebuild; change features by editing that file directly, and keep its behaviour and look.
-- Vendor libs for the app live in `public/budgetr-app/vendor/` (jsPDF, AutoTable, SheetJS). Don't edit them.
+- Vendor libs for the app live in `public/budgetr-app/vendor/` (jsPDF, AutoTable, xlsx-js-style = SheetJS 0.18.5 with cell styles). Don't edit them.
 - Test-user layer: `lib/users.ts` (KBJ, TEST1–TEST5, no password). `/login` writes the user id to `localStorage["budgetr:session"]`; the prelude script at the top of the app's `<head>` reads it, redirects to `/login` without it, and stores the budget under `budgetr-app:<userId>`. To add a user, append to `USERS`. Do not add real auth or a backend without being asked.
 
 ## Private data (the repo is public)
