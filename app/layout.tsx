@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 
 const geist = Geist({
@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+// Wordmark fonts: "budget" in Bricolage Grotesque 200, "pro" in Instrument Sans 600 (components/Logo.tsx).
+const brand = Bricolage_Grotesque({ subsets: ["latin"], weight: ["200"], variable: "--font-brand", display: "swap" });
+const brandPro = Instrument_Sans({ subsets: ["latin"], weight: ["600"], variable: "--font-brand-pro", display: "swap" });
+
 export const metadata: Metadata = {
   title: "budgetpro – gratis budget for dig, par og familier",
   description:
@@ -29,7 +33,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="da" className={`${geist.variable} ${geistMono.variable}`}>
+    <html lang="da" className={`${geist.variable} ${geistMono.variable} ${brand.variable} ${brandPro.variable}`}>
       <body>{children}</body>
     </html>
   );

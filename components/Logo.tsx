@@ -1,49 +1,44 @@
 /**
- * budgetpro brand ("Skov" design): the wordmark is "budget" in light weight with a PRO badge, the icon is a dark
- * rounded square with a "b" and a green dot. Sizes are in em, so the wordmark scales with fontSize.
+ * budgetpro brand (logo 11a3): the wordmark is "budget" in Bricolage Grotesque 200 + "pro" in Instrument Sans 600
+ * + a green dot; the icon is the green dot alone on a dark rounded square. Sizes are in em, so the wordmark
+ * scales with fontSize. The text takes the surrounding colour; `dark` picks the dot colour for dark backgrounds.
  */
 const PINE = { light: "#2c6a4d", dark: "#7ed4a8" };
 
 export function Wordmark({ fontSize = 19, dark = false }: { fontSize?: number; dark?: boolean }) {
   return (
     <span
-      style={{ font: `300 ${fontSize}px/1 var(--font)`, letterSpacing: "-0.02em", whiteSpace: "nowrap" }}
+      style={{ display: "inline-flex", alignItems: "baseline", fontSize, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap" }}
       aria-label="budgetpro"
       role="img"
     >
-      budget
+      <span aria-hidden="true" style={{ font: "200 1em/1 var(--font-brand)" }}>
+        budget
+      </span>
+      <span aria-hidden="true" style={{ font: "600 1em/1 var(--font-brand-pro)" }}>
+        pro
+      </span>
       <span
         aria-hidden="true"
         style={{
-          // overflow hidden makes an inline-block's baseline its bottom edge, so the box sits on the text baseline.
           display: "inline-block",
-          overflow: "hidden",
-          verticalAlign: "baseline",
-          boxSizing: "border-box",
-          font: "700 0.4em/1.58 var(--font)",
-          height: "1.58em",
-          marginLeft: "0.65em",
-          padding: "0 0.45em 0 0.57em",
-          letterSpacing: "0.12em",
-          borderRadius: "0.28em",
-          color: dark ? "#0e1a13" : "#ffffff",
+          width: "0.33em",
+          height: "0.33em",
+          marginLeft: "0.09em",
+          borderRadius: "50%",
           background: dark ? PINE.dark : PINE.light,
         }}
-      >
-        PRO
-      </span>
+      />
     </span>
   );
 }
 
-/** App icon: "b" drawn as paths so it looks the same without the web font (also used for public/icon.svg). */
+/** App icon: the green dot on a dark rounded square (also used for public/icon.svg). */
 export function AppIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" aria-hidden="true">
       <rect width="120" height="120" rx="27" fill="#121513" />
-      <path d="M22 22h15v72H22z" fill="#e9ece9" />
-      <circle cx="55" cy="70" r="19" fill="none" stroke="#e9ece9" strokeWidth="15" />
-      <rect x="84" y="78" width="16" height="16" rx="4" fill="#7ed4a8" />
+      <circle cx="60" cy="60" r="26" fill="#7ed4a8" />
     </svg>
   );
 }

@@ -30,7 +30,7 @@
 <title>budgetpro · Budget</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@500;700&family=Bricolage+Grotesque:opsz,wght@12..96,200&family=Instrument+Sans:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
@@ -451,8 +451,11 @@ td.act{width:1%;white-space:nowrap}
 /* ---------- budgetpro "Skov" layout: app bar, tab row, hero and KPI cards ---------- */
 .appbar{background:var(--card);border-bottom:1px solid var(--rule);position:relative;z-index:30}
 .appbar-in{max-width:1520px;margin:0 auto;padding:0 clamp(12px,2vw,28px);height:72px;display:flex;align-items:center;gap:14px}
-.logo{font:300 22px/1 var(--font);letter-spacing:-.02em;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
-.logo .pro{display:inline-block;overflow:hidden;vertical-align:baseline;box-sizing:border-box;font:700 .4em/1.58 var(--font);height:1.58em;margin-left:.65em;padding:0 .45em 0 .57em;letter-spacing:.12em;border-radius:.28em;color:var(--on-pine);background:var(--pine)}
+/* Wordmark (logo 11a3): "budget" Bricolage Grotesque 200 + "pro" Instrument Sans 600 + green dot */
+.logo{display:inline-flex;align-items:baseline;font-size:22px;line-height:1;letter-spacing:-.02em;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
+.logo .lb{font:200 1em/1 "Bricolage Grotesque",var(--font)}
+.logo .lp{font:600 1em/1 "Instrument Sans",var(--font)}
+.logo .ld{display:inline-block;width:.33em;height:.33em;margin-left:.09em;border-radius:50%;background:var(--pine)}
 .abr{margin-left:auto;display:flex;align-items:center;gap:14px}
 .appbar .status{display:flex;align-items:center;gap:6px;font:400 13px var(--font);color:var(--ink2);white-space:nowrap}
 .appbar .status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--pine);flex:0 0 auto}
@@ -520,6 +523,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
 .kpi b{font:500 19px var(--mono);letter-spacing:0}
 .kpi small{font-size:11px;line-height:1.4;color:var(--ink2)}
 .kpi.hero2 span,.kpi.hero2 small{color:var(--hero-sub);opacity:1}
+.kpi.hero2 b{font-weight:700}
 .kpi.good b,.kpi.good span,.kpi.good small{color:var(--pine-ink)}
 .kpi.bad small{color:var(--brick)}
 .big,.gamt{font-family:var(--mono);font-weight:500}
@@ -536,7 +540,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
 <body>
 <header class="appbar">
   <div class="appbar-in">
-    <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden">budget<span class="pro" aria-hidden="true">PRO</span></a>
+    <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><span class="lb" aria-hidden="true">budget</span><span class="lp" aria-hidden="true">pro</span><span class="ld" aria-hidden="true"></span></a>
     <div class="abr">
       <span class="status" id="status" role="status">Indlæser…</span>
       <div class="expwrap"><button type="button" class="uchip" id="btnUserMenu" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu" aria-label="Profil, eksport og import"><span class="av" id="bxUser"></span><span class="caret" aria-hidden="true">▾</span></button>
@@ -601,7 +605,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <div class="field">
         <label for="fFreq">Hvor ofte</label>
         <select id="fFreq">
-          <option value="1">Hver måned</option><option value="2">Hver 2. måned</option><option value="3">Hvert kvartal</option>
+          <option value="1">Hver måned</option><option value="0">Uregelmæssig – gennemsnit pr. md.</option><option value="2">Hver 2. måned</option><option value="3">Hvert kvartal</option>
           <option value="4">Hver 4. måned</option><option value="6">Hvert halve år</option><option value="12">En gang om året</option>
         </select>
       </div>
@@ -644,6 +648,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <label class="check"><input type="checkbox" id="fActive" checked> Aktiv</label>
       <label class="check"><input type="checkbox" id="fCheck"> Skal tjekkes</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
+      <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
       <label class="check" id="wSplit" style="grid-column:1/-1"><input type="checkbox" id="fSplit"> Tæller med i fordelingsnøglen (fast indkomst). Fjern fluebenet for fx børnefamilieydelse, der går direkte til en fælles konto</label>
       <div class="preview" id="preview"></div>
     </div>
@@ -779,7 +784,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
 <script>
 (function(){
 const MONTHS=['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
-const FREQ={1:'Hver måned',2:'Hver 2. md.',3:'Kvartalsvis',4:'Hver 4. md.',6:'Halvårlig',12:'Årlig'};
+const FREQ={0:'Uregelmæssig',1:'Hver måned',2:'Hver 2. md.',3:'Kvartalsvis',4:'Hver 4. md.',6:'Halvårlig',12:'Årlig'};
 const FAELLES='faelles';
 let page='budget', loanSort='input', loanEdit=null, loanDelArmed=false, bankOpen=false, loaded=false, S=null, view='md', dbRef=null, downloads=null, saving=false, dirty=false, localMode=false, editingId=null, delArmed=false;
 const F={type:'alle',account:'alle',payer:'alle',q:''};
@@ -795,9 +800,9 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');cle
 
 /* ---------- beregning ---------- */
 let ENT=null, SC=null;
-const FIELDS=['auto','type','desc','key','category','freq','start','amount','account','payer','from','to','active','check','note','bank','split','cover'];
+const FIELDS=['auto','type','desc','key','category','freq','start','amount','account','payer','from','to','active','check','note','bank','split','cover','extra'];
 /* Does an income count in the split key "efter fast indkomst"? It is still an income everywhere else. */
-const inSplit=e=>e.split!==undefined?!!e.split:!/b(ø|oe)rne(familie)?ydelse|b(ø|oe)rnepenge|b(ø|oe)rnecheck/i.test(e.desc||'');
+const inSplit=e=>e.extra?false:e.split!==undefined?!!e.split:!/b(ø|oe)rne(familie)?ydelse|b(ø|oe)rnepenge|b(ø|oe)rnecheck/i.test(e.desc||'');
 const curSc=()=>SC&&(S.scenarios||[]).find(x=>x.id===SC)||null;
 /* opsparingsmål: omsættes til virtuelle poster pr. kontekst ('base' eller scenarie-id) */
 const GC=['var(--pine)','var(--ochre)','var(--focus)','var(--brick)','var(--ink3)'];
@@ -836,7 +841,9 @@ function entriesFor(sc){if(!sc)return baseEntries();const O=sc.overrides||{};
 const cur=()=>ENT||baseEntries();
 function syncENT(){const sc=curSc();if(!sc)SC=null;ENT=entriesFor(sc)}
 function calcWith(list,fn){const prev=ENT;ENT=list;try{return fn()}finally{ENT=prev}}
-const act=()=>cur().filter(e=>e.active!==false);
+// Incomes marked extra (fritidsjob o.l.) only count while "Medregn ekstra indtjening" is on.
+const exCounts=e=>!e.extra||exOn();
+const act=()=>cur().filter(e=>e.active!==false&&exCounts(e));
 let _auto=0;
 function autoInfo(e){const to=S.accounts.find(a=>a.id===e.to),from=S.accounts.find(a=>a.id===e.from);
   if(!to||to.type!=='faelles'||!from||!from.owner)return null;return {to,owner:from.owner}}
@@ -914,16 +921,17 @@ function shares(){
   const r={};P.forEach(p=>r[p.id]=1/n);return r;
 }
 const pNum=(p,f)=>Math.max(0,+(p&&p[f])||0);
-const extras=p=>{const L=Array.isArray(p&&p.extras)?p.extras.slice(0,2):[];while(L.length<2)L.push({desc:'',amount:0});return L};
-const extraSum=p=>extras(p).reduce((a,x)=>a+Math.max(0,+x.amount||0),0);
+// Extra income is income posts with extra:true (older budgets kept two fields on the person; normalize() moves them).
+const exPosts=pid=>cur().filter(e=>e.type==='indtaegt'&&e.extra&&e.active!==false&&(pid===undefined||e.payer===pid));
+const extraSum=p=>exPosts(p&&p.id).reduce((a,e)=>a+mAvg(e),0);
 const homeAcct=pid=>(S.accounts.find(a=>a.type!=='faelles'&&a.owner===pid)||{}).id;
 const exOn=()=>S.settings.withExtra!==false;
 const extraOn=p=>exOn()?extraSum(p):0;
 // Where "ekstra indtjening" comes from, in words: the fields on each person's card under Hvem betaler hvad.
-function exSrc(){const L=S.persons.flatMap(p=>extras(p).filter(x=>+x.amount>0).map(x=>`${esc(x.desc||'Ekstra')} ${kr(+x.amount)} (${esc(p.name)})`)), t=S.persons.reduce((a,p)=>a+extraSum(p),0);
-  return L.length?`Ekstra indtjening er det, der står under <b>Ekstra indtjening pr. md.</b> på personkortene under Hvem betaler hvad: ${L.join(', ')}. I alt ${kr(t)} pr. måned.`
-    :'Der er ingen ekstra indtjening skrevet ind. Den skrives under <b>Ekstra indtjening pr. md.</b> på personkortene under Hvem betaler hvad, fx et fritidsjob.'}
-function personFlows(id){let x=0,sv=0;S.persons.forEach(p=>{if(id&&homeAcct(p.id)===id){x+=extraOn(p);sv+=pNum(p,'savings')}});return {x,sv}}
+function exSrc(){const L=exPosts().map(e=>`${esc(e.desc)} ${kr(mAvg(e))} (${esc(perName(e.payer))})`), t=exPosts().reduce((a,e)=>a+mAvg(e),0);
+  return L.length?`Ekstra indtjening er de indtægter, der er markeret som <b>Ekstra</b> under Indtægter: ${L.join(', ')}. I alt ${kr(t)} pr. måned i gennemsnit.`
+    :'Der er ingen ekstra indtjening. En indtægt bliver ekstra med fluebenet <b>Ekstra indtjening</b> på posten, fx et fritidsjob.'}
+function personFlows(id){let sv=0;S.persons.forEach(p=>{if(id&&homeAcct(p.id)===id)sv+=pNum(p,'savings')});return {x:0,sv}}
 function accountCalc(id){
   const E=act(), pf=personFlows(id);
   const inc=E.filter(e=>e.type==='indtaegt'&&(e.account||'')===id).reduce((a,e)=>a+mAvg(e),0);
@@ -931,7 +939,8 @@ function accountCalc(id){
   const exp=E.filter(e=>e.type==='udgift'&&!e._goal&&(e.account||'')===id).reduce((a,e)=>a+mAvg(e),0);
   const gs=E.filter(e=>e.type==='udgift'&&e._goal&&(e.account||'')===id).reduce((a,e)=>a+mAvg(e),0);
   const tout=E.filter(e=>e.type==='overfoersel'&&e.from===id).reduce((a,e)=>a+mAvg(e),0);
-  return {inc:inc+pf.x,extra:pf.x,sav:pf.sv+gs,gsav:gs,tin,exp,tout,in:inc+pf.x+tin,out:exp+tout+pf.sv+gs,left:inc+pf.x+tin-exp-tout-pf.sv-gs,need:Math.max(0,exp+gs+tout-inc)};
+  const exA=E.filter(e=>e.type==='indtaegt'&&e.extra&&(e.account||'')===id).reduce((a,e)=>a+mAvg(e),0);
+  return {inc:inc+pf.x,extra:exA,sav:pf.sv+gs,gsav:gs,tin,exp,tout,in:inc+pf.x+tin,out:exp+tout+pf.sv+gs,left:inc+pf.x+tin-exp-tout-pf.sv-gs,need:Math.max(0,exp+gs+tout-inc)};
 }
 function monthly(id){
   const E=act(),r=[],pf=personFlows(id);
@@ -950,8 +959,8 @@ const BANK_OUT=['husholdning','opsparing'];
 const inBank=e=>e.bank!==undefined?!!e.bank:!(BANK_OUT.includes((e.category||'').toLowerCase())||/gave/i.test(e.desc||''));
 function bankCalc(){
   const E=act(), b=Object.assign({adults:12000,children:3,childRate:3000,withExtra:false},S.settings.bank||{});
-  const inc=E.filter(e=>e.type==='indtaegt').reduce((a,e)=>a+mAvg(e),0);
-  const extra=S.persons.reduce((a,p)=>a+extraOn(p),0);
+  const inc=E.filter(e=>e.type==='indtaegt'&&!e.extra).reduce((a,e)=>a+mAvg(e),0);
+  const extra=E.filter(e=>e.type==='indtaegt'&&e.extra).reduce((a,e)=>a+mAvg(e),0);
   const fixed=E.filter(e=>e.type==='udgift'&&inBank(e)).reduce((a,e)=>a+mAvg(e),0);
   const excl=E.filter(e=>e.type==='udgift'&&!inBank(e));
   const disp_=inc+extra-fixed, req=(+b.adults||0)+(+b.children||0)*(+b.childRate||0);
@@ -964,20 +973,20 @@ function exclNote(bk){if(!bk.excl.length)return 'Alle faste udgifter er medregne
   return 'Ikke medregnet: '+(shown.length>1?shown.slice(0,-1).join(', ')+(rest>0?', ':' og ')+shown[shown.length-1]:shown[0])+(rest>0?' m.fl. ':'. ')+'I alt '+nb(bk.exclSum)}
 function totals(){
   const E=act();
-  const inc=E.filter(e=>e.type==='indtaegt').reduce((a,e)=>a+mAvg(e),0);
+  const inc=E.filter(e=>e.type==='indtaegt'&&!e.extra).reduce((a,e)=>a+mAvg(e),0);
   const exp=E.filter(e=>e.type==='udgift'&&!e._goal).reduce((a,e)=>a+mAvg(e),0);
   const gsav=E.filter(e=>e._goal).reduce((a,e)=>a+mAvg(e),0);
-  const extra=S.persons.reduce((a,p)=>a+extraOn(p),0), sav=S.persons.reduce((a,p)=>a+pNum(p,'savings'),0)+gsav;
+  const extra=E.filter(e=>e.type==='indtaegt'&&e.extra).reduce((a,e)=>a+mAvg(e),0), sav=S.persons.reduce((a,p)=>a+pNum(p,'savings'),0)+gsav;
   return {inc:inc+extra,extra,exp,sav,gsav,left:inc+extra-exp,afterSav:inc+extra-exp-sav};
 }
 function personCalc(pid){
   const E=act(), sh=shares()[pid]||0;
-  const own=E.filter(e=>e.type==='indtaegt'&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0);
+  const own=E.filter(e=>e.type==='indtaegt'&&!e.extra&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0);
   const shInc=E.filter(e=>e.type==='indtaegt'&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
   const ownExp=E.filter(e=>e.type==='udgift'&&!e._goal&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0);
   const shExp=E.filter(e=>e.type==='udgift'&&!e._goal&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
   const gOwn=E.filter(e=>e._goal&&e._gpayer===pid).reduce((a,e)=>a+mAvg(e),0), gSh=E.filter(e=>e._goal&&e._gpayer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
-  const p=S.persons.find(x=>x.id===pid), extra=extraOn(p), psav=pNum(p,'savings'), gsav=gOwn+gSh, sav=psav+gsav;
+  const p=S.persons.find(x=>x.id===pid), extra=E.filter(e=>e.type==='indtaegt'&&e.extra&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0), psav=pNum(p,'savings'), gsav=gOwn+gSh, sav=psav+gsav;
   const left=own+extra+shInc-ownExp-shExp;
   return {own,extra,shInc,ownExp,shExp,sh,left,psav,gOwn,gSh,gsav,sav,afterSav:left-sav};
 }
@@ -1009,7 +1018,7 @@ function render(){
   const bk=bankCalc();
   h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.</span></div>
    <div class="kpis">
-    <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),exRows(S.persons.map(p=>p.id)),'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
+    <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),null,'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
     <div class="kpi"><span>Faste udgifter ${ib(catInfo('Faste udgifter i bankens beregning',act().filter(e=>e.type==='udgift'&&inBank(e)),'Mad, opsparing og gaver er trukket ud.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
     <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>pr. måned</small></div>
     <div class="kpi"><span>Vejledende krav ${ib(`<b>Vejledende krav</b>${tbl([['2 voksne','',kr(+bk.b.adults||0)],[`${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}`,'',kr((+bk.b.children||0)*(+bk.b.childRate||0))],['= Krav','',kr(bk.req)]])}<p>En tommelfingerregel, ikke bankens egne satser. Bankerne har hver deres interne krav. Satserne kan rettes under "Juster det vejledende krav".</p>`)}</span><b>${kr(bk.req)}</b><small>Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser</small></div>
@@ -1052,13 +1061,13 @@ function render(){
       verdict=c.left<0?`<div class="verdict bad">Kontoen går ${disp(-c.left)} i minus ${per()}.</div>`:`<div class="verdict ok">Tilbage på kontoen: <b>${disp(c.left)}</b> ${per()}.</div>`;
     }
     const w=v=>Math.round(v/maxv*100), E_=act(), owners=id?S.persons.filter(p=>homeAcct(p.id)===id).map(p=>p.id):[];
-    const accEx=id?S.persons.filter(p=>homeAcct(p.id)===id).reduce((s,p)=>s+extraSum(p),0):0;
+    const accEx=id?exPosts().filter(e=>(e.account||'')===id).reduce((s,e)=>s+mAvg(e),0):0;
     const exTog=accEx?`<label class="extog small"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening (${disp(accEx)})</label>`:'';
     const sumTxt=id===''?`<span class="bad">${disp(c.exp)} ikke placeret</span>`:a.type==='faelles'?(()=>{const gp=c.need-c.tin;return `<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span>${gp>0.5?`<span class="bad">Mangler <b style="color:inherit">${disp(gp)}</b></span>`:(Math.abs(gp)<0.5?`<span class="ok">Dækket</span>`:`<span class="ok">Dækket, overskud ${disp(-gp)}</span>`)}`})()
       :`<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span><span class="${c.left>=0?'ok':'bad'}">Tilbage <b style="color:inherit">${disp(c.left)}</b></span>`;
     h+=`<details class="acctd" data-acc="${esc(id)}" ${isFolded(id)?'':'open'}><summary><div>${id?`<span class="dragh" draggable="true" role="button" tabindex="0" data-drag="${esc(id)}" aria-label="Flyt ${esc(a.name)}. Træk, eller brug pil op og ned" title="Træk for at flytte kontoen">⋮⋮</span>`:''}<h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><div class="asum">${sumTxt}</div></summary>`;
     h+=`<div class="acct"><div><h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div>
-      <div class="kv"><span>Indtægter ${ib(listInfo('Indtægter direkte på kontoen',E_.filter(e=>e.type==='indtaegt'&&(e.account||'')===id),exRows(owners),'Kvartals- og årsbeløb er omregnet til et gennemsnit pr. måned.'))}</span><span>${disp(c.inc)}</span>
+      <div class="kv"><span>Indtægter ${ib(listInfo('Indtægter direkte på kontoen',E_.filter(e=>e.type==='indtaegt'&&(e.account||'')===id),null,'Kvartals- og årsbeløb er omregnet til et gennemsnit pr. måned.'))}</span><span>${disp(c.inc)}</span>
       <span>Overført ind ${ib(listInfo('Overført ind fra andre konti',E_.filter(e=>e.type==='overfoersel'&&e.to===id),null,E_.some(e=>e.type==='overfoersel'&&e.to===id&&e.auto)?'Auto-beløb følger den anbefalede andel og rundes op til nærmeste 100 kr.':''))}</span><span>${disp(c.tin)}</span>
       <span>Faste udgifter ${ib(catInfo('Faste udgifter betalt fra kontoen',E_.filter(e=>e.type==='udgift'&&!e._goal&&(e.account||'')===id)))}</span><span>${disp(c.exp)}</span>
       <span>Overført ud ${ib(listInfo('Overført ud til andre konti',E_.filter(e=>e.type==='overfoersel'&&e.from===id)))}</span><span>${disp(c.tout)}</span>
@@ -1078,8 +1087,8 @@ function render(){
   S.persons.forEach(p=>{
     const c=personCalc(p.id);
     h+=`<div class="person"><h3>${esc(p.name)}</h3><div class="kv">
-      <span>Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&e.payer===p.id)))}</span><span>${disp(c.own)}</span>
-      <span>Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(extras(p).map((x,i)=>[esc(x.desc||'Ekstra '+(i+1)),'',disp(+x.amount||0)]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu. Slå det til med fluebenet.'} Indgår ikke i fordelingen af fælles udgifter.</p>`)}</span><span>${disp(c.extra)}</span>
+      <span>Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&!e.extra&&e.payer===p.id)))}</span><span>${disp(c.own)}</span>
+      <span>Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu. Slå det til med fluebenet.'} Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}</span><span>${disp(c.extra)}</span>
       <span>Andel af fælles indtægter</span><span>${disp(c.shInc)}</span>
       <span>Egne faste udgifter ${ib(catInfo('Egne faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===p.id)))}</span><span>${disp(c.ownExp)}</span>
       <span>Andel af fælles udgifter (${Math.round(c.sh*100)} %) ${ib(`<b>Andel af fælles udgifter</b>${tbl([['Fælles udgifter i alt','',disp(act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0))],['× Andel','',Math.round(c.sh*100)+' %'],['= Andel','',disp(c.shExp)]])}<p>${shareNote()}</p>`)}</span><span>${disp(c.shExp)}</span></div>
@@ -1092,9 +1101,8 @@ function render(){
           return `<span>Overføres til ${esc(a.name)} ${ib(`<b>Overførsel til ${esc(a.name)}</b>${tbl(rows)}<p>Derfor er beløbet ikke det samme som "Andel af fælles udgifter": egne poster på fælleskontoen betales fuldt af ${esc(p.name)}, og fælles udgifter betalt fra en personkonto udlignes her.</p>`)}</span><span>${disp(tr)}</span>`}).join('')+`</div>`})()}
       <div class="big" style="color:${c.left>=0?'var(--pine)':'var(--brick)'}">${disp(c.left)}</div><div class="muted" style="font-size:13px">til rådighed ${per()} efter faste udgifter. Det er det maksimale, der kan spares op.</div>
       ${extraSum(p)?`<label class="extog small"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening i beregningen</label>`:''}
-      <div class="pin"><span>Ekstra indtjening pr. md.</span>${extras(p).map((x,i)=>`<div class="exrow">
-        <input data-pid="${p.id}" data-ex="${i}" data-exf="desc" value="${esc(x.desc||'')}" placeholder="Ekstra ${i+1}, fx ${i?'hobbyvirksomhed':'fritidsjob'}" aria-label="Beskrivelse, ekstra ${i+1}">
-        <input data-pid="${p.id}" data-ex="${i}" data-exf="amount" inputmode="decimal" value="${+x.amount?nf.format(+x.amount):''}" placeholder="0" aria-label="Beløb pr. md., ekstra ${i+1}"></div>`).join('')}${extraSum(p)?`<div class="psum ex"><span>I alt</span><b>${disp(extraSum(p))}</b></div>`:''}</div>
+      <div class="psav"><span class="ph">Ekstra indtjening</span>${exPosts(p.id).map(e=>`<div class="psrow click" data-open="${e.id}" tabindex="0" role="button" title="Ret posten"><span class="nm">${esc(e.desc)}<small>${esc(howOf(e))}${exOn()?'':' · ikke medregnet'}</small></span><span class="v">${disp(mAvg(e))}</span></div>`).join('')||'<span class="muted" style="font-size:13px">Ingen ekstra indtjening.</span>'}${extraSum(p)?`<div class="psum ex"><span>I alt</span><b>${disp(extraSum(p))}</b></div>`:''}
+        <button type="button" class="ghost" data-exnew="${p.id}" style="align-self:flex-start">Tilføj ekstra indtjening</button></div>
       ${psavHtml(p,c)}
       <div class="kv"><span>Tilbage efter opsparing</span><span style="color:${c.afterSav>=0?'var(--pine)':'var(--brick)'}">${disp(c.afterSav)}</span></div>
       ${c.afterSav<0?`<div class="verdict bad">Opsparingen er ${disp(-c.afterSav)} højere end rådighedsbeløbet.</div>`:''}</div>`;
@@ -1154,7 +1162,7 @@ function compareHtml(sc){
 }
 let INFO=[];
 function ib(html){INFO.push(html);return `<button type="button" class="info" data-i="${INFO.length-1}" aria-label="Vis forklaring" aria-expanded="false">i</button>`}
-const howOf=e=>{const f=e.type==='overfoersel'&&e.auto?1:(+e.freq||1);return f===1?'hver måned':`${kr(amtOf(e))} ${(FREQ[f]||'').toLowerCase()} (${monthsOf(e).join(', ')})`};
+const howOf=e=>{const f=e.type==='overfoersel'&&e.auto?1:(+e.freq||1);return String(e.freq)==='0'&&!e.auto?'uregelmæssig, gennemsnit':f===1?'hver måned':`${kr(amtOf(e))} ${(FREQ[f]||'').toLowerCase()} (${monthsOf(e).join(', ')})`};
 function tbl(rows,total){return `<table class="itbl"><tbody>${rows.map(r=>`<tr${r[4]?` class="oprow" data-open="${r[4]}" title="Åbn posten"`:''}><td>${r[0]}</td><td class="muted">${r[1]||''}</td><td class="r">${r[2]}</td></tr>`).join('')}${total!==undefined?`<tr class="sum"><td colspan="2">I alt</td><td class="r">${disp(total)}</td></tr>`:''}</tbody></table>`}
 function listInfo(title,list,extraRows,note){
   const rows=list.sort((a,b)=>mAvg(b)-mAvg(a)).map(e=>[esc(e.desc)+(e.auto?' <span class="badge auto">Auto</span>':''),howOf(e),disp(mAvg(e)),0,e.id]).concat(extraRows||[]);
@@ -1167,7 +1175,6 @@ function catInfo(title,list,note){
   const rows=Object.entries(c).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[esc(k),list.filter(e=>(e.category||'Uden kategori')===k).length+' poster',disp(v)]);
   return `<b>${title}</b>${tbl(rows,list.reduce((a,e)=>a+mAvg(e),0))}<p class="muted">${note?note+' ':''}Se de enkelte poster under Poster med filteret for kontoen.</p>`;
 }
-const exRows=pids=>exOn()?S.persons.filter(p=>pids.includes(p.id)).flatMap(p=>extras(p).filter(x=>+x.amount>0).map((x,i)=>[esc(x.desc||'Ekstra '+(i+1))+' ('+esc(p.name)+')','ekstra indtjening',disp(+x.amount),+x.amount])):[];
 function shareNote(){const sp=S.settings.split, sh=shares();
   const parts=S.persons.map(p=>`${esc(p.name)} ${Math.round((sh[p.id]||0)*100)} %`).join(', ');
   const out=act().filter(e=>e.type==='indtaegt'&&!inSplit(e));
@@ -1660,7 +1667,7 @@ function helpHtml(){
       <tr class="sum"><td>= Til rådighed. Det er det, der højst kan spares op</td></tr><tr><td>− Opsparingsfelt og opsparingsmål (egne mål fuldt, fælles mål efter nøglen)</td></tr>
       <tr class="sum"><td>= Tilbage efter opsparing</td></tr></tbody></table>
       <p class="muted">Tallet afhænger ikke af, hvilken konto pengene står på. Det er fordelingen, der tæller. Overførslen til ${bn} er et andet tal, fordi den kun handler om den ene konto.</p>`)
-  +sec('konti','Kontokortene',`<ul><li><b>Ind</b> = indtægter direkte på kontoen + overført ind + ekstra indtjening, hvis kontoen er ejerens egen.</li>
+  +sec('konti','Kontokortene',`<ul><li><b>Ind</b> = indtægter direkte på kontoen + overført ind. Ekstra indtjening tæller kun med, når den er slået til.</li>
       <li><b>Ud</b> = faste udgifter + overført ud + opsparing fra kontoen.</li>
       <li>En <b>fælles konto</b> viser <b>Bør overføres</b> = udgifter + opsparingsmål + overført ud − indtægter direkte på kontoen, og om den er dækket af det, der overføres.</li>
       <li>En <b>privat konto</b> viser, hvad der er tilbage på kontoen.</li>
@@ -1676,6 +1683,7 @@ function helpHtml(){
       <p>Mad og husholdning, opsparing og gaver er som udgangspunkt <b>ikke</b> faste udgifter, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Faste udgifter viser, hvad der er holdt ude.</p>
       <p class="muted">Kravet er en tommelfingerregel, ikke bankens egne satser. Luft fra en senere måned lægger ydelsen fra lån, der udløber inden for 12 måneder, til igen.</p>`)
   +sec('ovrigt','Øvrigt',`<ul><li>Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.</li>
+      <li><b>Ekstra indtjening</b> er indtægter med fluebenet Ekstra indtjening, fx et fritidsjob. De står under Indtægter og tæller kun med, når Medregn ekstra indtjening er slået til. De indgår ikke i fordelingsnøglen. Kommer de ikke fast, vælges hyppigheden Uregelmæssig, og beløbet er et gennemsnit pr. måned over året.</li>
       <li>Inaktive poster og mål tæller ikke med. Mål, der er nået måldatoen, tæller heller ikke.</li>
       <li>Et scenarie regner på samme måde, bare med scenariets ændringer. Det nuværende budget røres ikke.</li></ul>`);
 }
@@ -1706,9 +1714,9 @@ const byOrd=(a,b)=>((a.ord??1e9)-(b.ord??1e9))||(mAvg(b)-mAvg(a));
 const postCat=e=>e.type==='udgift'?(e.category||NOCAT):'';
 function rowHtml(e){
   const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
-  const freq=FREQ[e.freq]||'', when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:'';
+  const freq=FREQ[+e.freq||0]||'', when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:String(e.freq)==='0'?' (gennemsnit)':'';
   const hd=e._goal?'<span class="dragh off" aria-hidden="true"></span>':`<span class="dragh" data-dragpost="${e.id}" role="button" tabindex="0" aria-label="Flyt ${esc(e.desc)}. Træk, eller brug pil op og ned" title="Træk for at flytte posten">⋮⋮</span>`;
-  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.type==='indtaegt'&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
+  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.extra?`<span class="badge mute" title="Ekstra indtjening">${exOn()?'Ekstra':'Ekstra · ikke medregnet'}</span>`:''}${e.type==='indtaegt'&&!e.extra&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
         <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`}
 function rowsHtml(){
   const L=filtered(), plain=F.type==='alle'&&F.account==='alle'&&F.payer==='alle'&&!F.q.trim();
@@ -1719,7 +1727,7 @@ function rowsHtml(){
   [['indtaegt','Indtægter','in'],['udgift','Faste udgifter','out']].forEach(([type,label,cls])=>{
     const G=L.filter(e=>e.type===type);if(!G.length&&!plain)return;
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
-    const gsum=G.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0);
+    const gsum=G.filter(e=>e.active!==false&&exCounts(e)).reduce((a,e)=>a+mAvg(e),0);
     h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+type,label)}${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${type==='udgift'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
     if(PFOLD['g:'+type])return;
     if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
@@ -1846,10 +1854,9 @@ function bindMain(){
   $('bkC').onchange=e=>bset('children',Math.max(0,Math.round(+e.target.value||0)));
   $('bkR').onchange=e=>bset('childRate',Math.max(0,Math.round(parseAmt(e.target.value)||0)));
   const det=document.querySelector('.bankdet'); if(bankOpen)det.open=true; det.ontoggle=()=>{bankOpen=det.open};
-  document.querySelectorAll('[data-ex]').forEach(inp=>inp.onchange=()=>{const p=S.persons.find(x=>x.id===inp.dataset.pid);if(!p)return;
-    const L=extras(p).map(x=>({desc:x.desc||'',amount:+x.amount||0})), i=+inp.dataset.ex;
-    if(inp.dataset.exf==='desc')L[i].desc=inp.value.trim();else{const v=parseAmt(inp.value);L[i].amount=v>0?Math.round(v):0}
-    p.extras=L;delete p.extra;commit()});
+  document.querySelectorAll('[data-exnew]').forEach(b=>b.onclick=()=>{const pid=b.dataset.exnew;
+    openEntry(null,{type:'indtaegt',extra:true,split:false,payer:pid,account:homeAcct(pid)||S.accounts[0]?.id||'',freq:0,desc:''})});
+  document.querySelectorAll('.person .psrow[data-open]').forEach(r=>r.onkeydown=ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target===r){ev.preventDefault();openEntry(r.dataset.open)}});
   document.querySelectorAll('[data-pf]').forEach(inp=>inp.onchange=()=>{const p=S.persons.find(x=>x.id===inp.dataset.pid);if(!p)return;const v=parseAmt(inp.value);p[inp.dataset.pf]=v>0?Math.round(v):0;commit()});
   const ss=$('splitSel'); ss.value=S.settings?.split||'indkomst';
   ss.onchange=()=>{S.settings.split=ss.value;commit()};
@@ -1888,17 +1895,18 @@ function syncType(){
   $('wTo').style.display=t==='overfoersel'?'':'none';
   $('lAccount').textContent=t==='indtaegt'?'Udbetales til konto':'Betales fra konto';
   $('lPayer').textContent=t==='indtaegt'?'Hvis indtægt':'Hvem betaler';
-  $('wStart').style.display=$('fFreq').value==='1'?'none':'';
+  $('wStart').style.display=+$('fFreq').value>1?'':'none';
   $('wBank').style.display=t==='udgift'?'':'none';$('wCover').style.display=t==='overfoersel'?'none':'';
   {const inc=t==='indtaegt',v=$('fCover').value;$('lCover').textContent=inc?'Flyttes videre til konto':'Dækkes af fast overførsel fra';
     $('nCover').textContent=inc?'Fx børnepenge, der kommer ind på lønkontoen og fast flyttes til budgetkontoen. Overførslen følger indtægtens beløb og står under Faste overførsler.':'Fx en madkonto, der fyldes op fra budgetkontoen. Overførslen følger udgiftens beløb og står under Faste overførsler.';
     opts($('fCover'),[['',inc?'Ingen, bliver på kontoen':'Ingen, betales direkte fra kontoen'],...S.accounts.map(a=>[a.id,a.name])],v)}
-  $('wSplit').style.display=t==='indtaegt'&&(S.settings||{}).split==='indkomst'?'':'none';
+  $('wExtra').style.display=t==='indtaegt'?'':'none';
+  $('wSplit').style.display=t==='indtaegt'&&!$('fExtra').checked&&(S.settings||{}).split==='indkomst'?'':'none';
   const ai=t==='overfoersel'?autoInfo({from:$('fFrom').value,to:$('fTo').value}):null;
   $('wAuto').style.display=ai?'':'none'; if(!ai)$('fAuto').checked=false;
   const au=$('fAuto').checked; $('fFreq').disabled=au; if(au){$('fFreq').value='1';$('wStart').style.display='none'}
   if(!curSc())$('wHist').style.display=au?'none':'';
-  document.querySelector('label[for="fAmount"]').textContent=au?'Beløb sat op i banken (kr.)':'Beløb pr. betaling (kr.)';
+  document.querySelector('label[for="fAmount"]').textContent=au?'Beløb sat op i banken (kr.)':$('fFreq').value==='0'?'Gennemsnit pr. måned (kr.)':'Beløb pr. betaling (kr.)';
   updPreview();
 }
 function updPreview(){
@@ -1921,14 +1929,14 @@ function openEntry(id,preset){
   const e=id?cur().find(x=>x.id===id):Object.assign({type:'udgift',desc:'',key:'',category:'',freq:1,start:1,amount:'',account:S.accounts[0]?.id||'',payer:FAELLES,from:S.accounts[1]?.id||'',to:S.accounts[0]?.id||'',active:true,check:false,note:''},preset||{});
   $('dlgTitle').textContent=id?'Ret post':'Ny post';
   $('fType').value=e.type;$('fDesc').value=e.desc||'';$('fKey').value=e.key||'';$('fCat').value=e.category||'';
-  $('fAmount').value=e.amount===''?'':nf.format(+e.amount||0);$('fFreq').value=String(e.freq||1);
+  $('fAmount').value=e.amount===''?'':nf.format(+e.amount||0);$('fFreq').value=String(e.freq)==='0'?'0':String(e.freq||1);
   opts($('fStart'),MONTHS.map((m,i)=>[String(i+1),m]),String(e.start||1));
   const accs=S.accounts.map(a=>[a.id,a.name]);
   opts($('fAccount'),[...accs,['','Ikke placeret']],e.account||'');
   opts($('fPayer'),[[FAELLES,'Fælles'],...S.persons.map(p=>[p.id,p.name])],e.payer||FAELLES);
   opts($('fFrom'),accs,e.from);opts($('fTo'),accs,e.to);
   opts($('fCover'),[['',''],...accs],e.cover||'');
-  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fAuto').checked=!!e.auto;
+  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fAuto').checked=!!e.auto;
   {const base=id?S.entries.find(x=>x.id===id):null, scx=curSc();$('fHist').innerHTML='';$('fSince').value=base?(base.since||''):'';
     ((base&&base.history)||[]).slice().sort((a,b)=>a.date<b.date?-1:1).forEach(x=>addHist(x));
     $('wHist').style.display=scx?'none':'';
@@ -1941,7 +1949,7 @@ function openEntry(id,preset){
   $('dlgTitle').textContent=(id?'Ret post':'Ny post')+(sc?' i '+(sc.name||'scenarie'):'');
   syncType();$('dlg').showModal();$('fDesc').focus();
 }
-$('fType').onchange=syncType;$('fAuto').onchange=syncType;$('fFreq').onchange=syncType;$('fStart').onchange=updPreview;$('fAmount').oninput=()=>{$('eAmount').textContent='';updPreview()};
+$('fType').onchange=syncType;$('fExtra').onchange=syncType;$('fAuto').onchange=syncType;$('fFreq').onchange=syncType;$('fStart').onchange=updPreview;$('fAmount').oninput=()=>{$('eAmount').textContent='';updPreview()};
 $('fDesc').oninput=()=>$('eDesc').textContent='';$('fTo').onchange=()=>{$('eTo').textContent='';syncType()};$('fFrom').onchange=()=>{$('eTo').textContent='';syncType()};
 $('fCover').onchange=$('fAccount').onchange=()=>$('eCover').textContent='';
 $('btnCancel').onclick=()=>$('dlg').close();
@@ -1972,7 +1980,7 @@ $('frm').addEventListener('submit',ev=>{
     active:$('fActive').checked,check:$('fCheck').checked,note:$('fNote').value.trim()};
   if(t==='udgift')d.bank=$('fBank').checked;
   if(t!=='overfoersel')d.cover=$('fCover').value;
-  if(t==='indtaegt'&&$('wSplit').style.display!=='none')d.split=$('fSplit').checked;
+  if(t==='indtaegt'){d.extra=$('fExtra').checked;if(d.extra)d.split=false;else if($('wSplit').style.display!=='none')d.split=$('fSplit').checked}
   if(t==='overfoersel'){d.auto=isAuto;if(isAuto){d.freq=1;const prev=cur().find(x=>x.id===editingId);d.amount=amt>=0?Math.round(amt):(prev?(+prev.amount||0):0)}}
   const sc=curSc();
   if(sc){
@@ -2407,7 +2415,7 @@ function buildXlsx(){
   B.h2('Hvem betaler hvad','Fælles udgifter fordeles '+({indkomst:'efter fast indkomst',lige:'ligeligt',manuel:'manuelt'}[sp.split]||'ligeligt')+': '+S.persons.map(p=>p.name+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')+'.');
   const PR=[['Faste indtægter','own'],['Ekstra indtjening','extra'],['Andel af fælles indtægter','shInc'],['Egne faste udgifter','ownExp'],['Andel af fælles udgifter','shExp'],['Til rådighed','left'],['Opsparingsfelt','psav'],['Opsparingsmål','gsav'],['Tilbage efter opsparing','afterSav']], PCs=S.persons.map(p=>personCalc(p.id));
   B.table(['Pr. måned',...S.persons.map((p,i)=>p.name+' ('+Math.round(PCs[i].sh*100)+' %)')],PR.map(([l,k])=>{const cells=[l,...PCs.map(c=>k==='left'||k==='afterSav'?{v:r0(c[k]),s:xm(pos(c[k]),XF.bold)}:r0(c[k]))];return k==='left'||k==='afterSav'?{cat:true,cells}:cells}));
-  const exR=[];S.persons.forEach(p=>extras(p).forEach((x,i)=>{if(+x.amount>0||x.desc)exR.push([p.name,x.desc||'Ekstra '+(i+1),r0(+x.amount||0)])}));
+  const exR=exPosts().map(e=>[perName(e.payer),e.desc,r0(mAvg(e))]);
   if(exR.length)B.table(['Ekstra indtjening','Beskrivelse','Pr. md.'],exR);
   B.h2('Måned for måned','Ind, ud og saldo de næste 12 måneder fra kontoens angivne saldo. Kvartals- og årsbetalinger lander i bestemte måneder.');
   S.accounts.forEach(a=>{const M0=monthly(a.id),sd=saldoFor(a.id),st=planStart(sd),IX=[...Array(12)].map((_,k)=>st+k),Mo=IX.map(i=>M0[((i%12)+12)%12]);if(!Mo.some(x=>x.i||x.o))return;
@@ -2746,7 +2754,9 @@ $('btnNew').onclick=()=>{if(!S){S=blank();commit()}openEntry(null)};
 
 /* ---------- opstart ---------- */
 function loadLocal(){try{const v=localStorage.getItem(window.BUDGETR_KEY);if(v)return JSON.parse(v)}catch(e){}try{return window.BUDGETR_SEED?JSON.parse(window.BUDGETR_SEED):null}catch(e){return null}}
-function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=Array.isArray(x.scenarios)?x.scenarios:[];x.loans=Array.isArray(x.loans)?x.loans:[];x.goals=Array.isArray(x.goals)?x.goals:[];x.goals.forEach(g=>{if(!Array.isArray(g.scopes))g.scopes=['base']});(x.persons||[]).forEach(p=>{if(!Array.isArray(p.extras)){p.extras=[{desc:'',amount:+p.extra||0},{desc:'',amount:0}]}});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};return x}
+function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=Array.isArray(x.scenarios)?x.scenarios:[];x.loans=Array.isArray(x.loans)?x.loans:[];x.goals=Array.isArray(x.goals)?x.goals:[];x.goals.forEach(g=>{if(!Array.isArray(g.scopes))g.scopes=['base']});(x.persons||[]).forEach(p=>{if(!Array.isArray(p.extras)&&p.extra===undefined)return;const L=Array.isArray(p.extras)?p.extras:[{desc:'',amount:+p.extra||0}],acc=((x.accounts||[]).find(a=>a.type!=='faelles'&&a.owner===p.id)||{}).id||'';
+  L.filter(v=>+v.amount>0).forEach((v,i)=>x.entries.push({id:'x'+p.id+i+Date.now().toString(36),type:'indtaegt',desc:v.desc||'Ekstra indtjening',key:'',category:'',freq:0,start:1,amount:Math.round(+v.amount),account:acc,payer:p.id,extra:true,split:false,active:true,check:false,note:'',since:DAY()}));
+  delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};return x}
 render();
 (async()=>{
   let db=null;
