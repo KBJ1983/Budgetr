@@ -75,7 +75,7 @@ try {
   await loginAs("KBJ");
   check((await page.locator("#bxUser").textContent()) === "KBJ", "app shows the logged-in test user");
   if (HAS_PRIVATE) {
-    await page.getByText("Hvem betaler hvad").first().waitFor();
+    await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
     for (const t of ["Måned for måned", "Udvikling i poster", "Rådighedsbeløb som banken regner det", "Ekstra indtjening"]) {
       check((await page.getByText(t).count()) > 0, `KBJ budget shows “${t}”`);
     }
@@ -111,7 +111,7 @@ try {
   check((await page.getByText("Intet budget endnu").count()) === 0, "TEST1's budget is saved");
   await loginAs("KBJ");
   if (HAS_PRIVATE) {
-    await page.getByText("Hvem betaler hvad").first().waitFor();
+    await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
     check((await page.getByText(kbjName).count()) > 0, "KBJ still has the real budget");
   }
   const keys = await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("budgetr-app:")).sort());

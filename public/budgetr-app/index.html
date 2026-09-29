@@ -35,7 +35,7 @@
 <style>
 :root{
   /* budgetpro "Skov" palette */
-  --paper:#F4F6F2; --card:#FFFFFF; --ink:#17211B; --ink2:#5F6B63; --ink3:#838D86; --rule:#DFE5DC;
+  --paper:#F4F6F2; --card:#FFFFFF; --ink:#17211B; --ink2:#5F6B63; --ink3:#838D86; --rule:#DFE5DC; --rule2:#B7C3BA; --band:#E6ECE5;
   --pine:#2C6A4D; --pine-bg:#E3EEE6; --pine-ink:#235A40; --brick:#A8382A; --brick-bg:#F8E7E2; --ochre:#9A6B12; --ochre-bg:#FBF0D9;
   --hero-sub:#A7B3AA; --on-pine:#FFFFFF;
   --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
@@ -44,10 +44,10 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28;
+  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28; --rule2:#48534C; --band:#1F2621;
   --pine:#7ED4A8; --pine-bg:#1C2E24; --pine-ink:#7ED4A8; --brick:#F08A78; --brick-bg:#3A221E; --hero-sub:#5A625C; --on-pine:#0E1A13; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28;
+  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28; --rule2:#48534C; --band:#1F2621;
   --pine:#7ED4A8; --pine-bg:#1C2E24; --pine-ink:#7ED4A8; --brick:#F08A78; --brick-bg:#3A221E; --hero-sub:#5A625C; --on-pine:#0E1A13; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -221,12 +221,9 @@ details.acctd .acct>div:first-child>h3,details.acctd .acct>div:first-child>.num{
 .restcol{background:var(--pine-bg)!important;color:var(--pine)}
 th.restcol{color:var(--pine)}
 td.restcol b{font-size:15px}
-.kpi.wide{grid-column:span 2}
-.loanbar.big{height:10px;margin-top:8px;background:rgba(255,255,255,.2)} .kpi.hero2 .loanbar.big div{background:var(--pine-bg)}
 .upd{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;color:var(--ink2);margin:-4px 0 14px}
 .upd input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:5px 8px;font:inherit;color:var(--ink)}
 .upd.old{background:var(--ochre-bg);color:var(--ochre);padding:8px 12px;border-radius:8px;margin-top:0}
-@media (max-width:560px){.kpi.wide{grid-column:auto}}
 tr.excl td:not(.chk){opacity:.45}
 tr.excl td.restcol{background:transparent!important}
 td.chk{width:28px}
@@ -278,7 +275,11 @@ tr.grp td{padding:14px 8px 10px;font-size:15px;font-weight:700;border-bottom:2px
 tr.grp.in td{border-bottom-color:var(--pine);color:var(--pine-ink)}
 tr.grp.out td{border-bottom-color:var(--ink3);color:var(--ink)}
 tr.grp+tr.cat td{padding-top:8px}
-tbody tr.grp:not(:first-child) td{padding-top:26px}
+tbody tr.grp:not(:first-child) td{padding-top:14px;border-top:18px solid var(--paper)}
+/* Indtægter and Faste udgifter as tinted bands, separated by a strip of page background */
+tr.grp td{font-size:17px}
+tr.grp.in td{background:var(--pine-bg)}
+tr.grp.out td{background:var(--plum-bg)}
 .pfold{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin:0 8px 0 -2px;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;vertical-align:-3px;cursor:pointer}
 .pfold::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:translateY(-2px) rotate(45deg);transition:transform .15s}
 .pfold[aria-expanded="false"]::before{transform:rotate(-45deg)}
@@ -424,7 +425,7 @@ dialog h2{margin-bottom:16px}
 .gxhint{grid-column:1/-1;font-size:12px;color:var(--pine);margin-top:-2px}
 .gxrow.out .gxhint{color:var(--ochre)}
 @media (max-width:560px){.gxrow{grid-template-columns:1fr 1fr}.gxrow input[data-gx="desc"]{grid-column:1/-1}}
-.tcards{display:grid;gap:12px}
+.tcards{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .tcard{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px 18px}
 .tcard .ghead{margin-bottom:6px}
 .tcard .num{font-size:13px;color:var(--ink3)}
@@ -480,7 +481,7 @@ button.primary{color:var(--on-pine)!important}
 .scrow{display:flex;align-items:center;gap:4px;border-radius:8px;padding-right:4px;border:1px solid transparent}
 .scrow+.scrow{margin-top:4px}
 .scrow:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
-.scrow.on{background:var(--pine-bg);border-color:color-mix(in srgb,var(--pine) 35%,transparent);box-shadow:inset 3px 0 0 var(--pine)}
+.scrow.on{background:var(--pine-bg);border-color:color-mix(in srgb,var(--pine) 35%,transparent)}
 .scrow>button:first-child{flex:1;min-width:0;background:transparent!important;padding:9px 10px 9px 12px}
 .scrow.on>button:first-child b{color:var(--pine-ink)}
 #scnMenu button[aria-checked] b::after{content:none}
@@ -508,6 +509,12 @@ button.primary{color:var(--on-pine)!important}
 .hero b{font-weight:600}
 .hero small{font-size:14px;color:var(--ink2);margin-top:12px}
 h2{font-size:17px;font-weight:600;letter-spacing:0}
+/* Page sections: the heading is the divider – a firm pine line with the heading on a tinted band under it. */
+#app>section,#app>.tflow{padding:36px 0 28px;border-bottom:0}
+#app>section>.sechead{margin-bottom:18px;padding:14px 16px;background:var(--band);border-top:3px solid var(--pine);border-radius:0 0 8px 8px;align-items:center}
+#app>section>.sechead h2,#app>section>h2{font-size:21px;font-weight:600;letter-spacing:-.01em}
+#app>section>h2{padding:14px 16px;background:var(--band);border-top:3px solid var(--pine);border-radius:0 0 8px 8px}
+@media (max-width:560px){#app>section{padding:28px 0 22px}#app>section>.sechead{padding:12px}#app>section>.sechead h2,#app>section>h2{font-size:19px}}
 .kpi{border-radius:10px;padding:14px;gap:6px}
 .kpi span{font-size:12px;color:var(--ink2)}
 .kpi b{font:500 19px var(--mono);letter-spacing:0}
@@ -609,6 +616,11 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <div class="field" id="wPayer">
         <label for="fPayer" id="lPayer">Hvem betaler</label>
         <select id="fPayer"></select>
+      </div>
+      <div class="field full" id="wCover">
+        <label for="fCover" id="lCover">Dækkes af fast overførsel fra</label>
+        <select id="fCover"></select>
+        <span class="err" id="eCover"></span><span class="note" id="nCover"></span>
       </div>
       <div class="field" id="wFrom">
         <label for="fFrom">Fra konto</label>
@@ -717,7 +729,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <div class="field"><label for="gEnd" id="lEnd">Måldato</label><input id="gEnd" type="date"><span class="err" id="egEnd"></span></div>
       <div class="field"><label for="gFrom">Betales fra konto</label><select id="gFrom"></select></div>
       <div class="field"><label for="gPayer">Hvem betaler</label><select id="gPayer"></select></div>
-      <div class="field full"><label for="gTo">Sættes ind på</label><select id="gTo"></select><span class="err" id="egTo"></span></div>
+      <div class="field full"><label for="gTo">Sættes ind på</label><select id="gTo"></select><input id="gToNew" autocomplete="off" placeholder="Navn på den nye konto" aria-label="Navn på den nye konto" style="display:none;margin-top:6px"><span class="err" id="egTo"></span></div>
       <div class="field full"><span class="flabel">Ekstra indbetalinger i perioden</span><div class="gxlist" id="gExtras"></div>
         <div><button type="button" id="btnGxAdd">Tilføj ekstra indbetaling</button></div>
         <span class="note" id="gxNote">Fx feriepenge, bonus eller en gave. Beløbene trækkes fra det, der skal spares op hver måned. De skal ligge mellem startdato og måldato.</span></div>
@@ -783,7 +795,7 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');cle
 
 /* ---------- beregning ---------- */
 let ENT=null, SC=null;
-const FIELDS=['auto','type','desc','key','category','freq','start','amount','account','payer','from','to','active','check','note','bank','split'];
+const FIELDS=['auto','type','desc','key','category','freq','start','amount','account','payer','from','to','active','check','note','bank','split','cover'];
 /* Does an income count in the split key "efter fast indkomst"? It is still an income everywhere else. */
 const inSplit=e=>e.split!==undefined?!!e.split:!/b(ø|oe)rne(familie)?ydelse|b(ø|oe)rnepenge|b(ø|oe)rnecheck/i.test(e.desc||'');
 const curSc=()=>SC&&(S.scenarios||[]).find(x=>x.id===SC)||null;
@@ -812,9 +824,15 @@ const goalsFor=key=>(S.goals||[]).filter(g=>goalIn(g,key)&&goalCounts(g));
 function goalEntries(key){return goalsFor(key).map(g=>{const c=goalCalc(g),tr=!!g.to&&g.to!==g.from;
   return {id:'g_'+g.id,_goal:g.id,_gpayer:g.payer||FAELLES,type:tr?'overfoersel':'udgift',desc:'Opsparing: '+(g.name||'Mål'),key:'',category:'Opsparing',freq:1,start:1,amount:c.monthly,
     account:tr?'':(g.from||''),payer:tr?'':(g.payer||FAELLES),from:tr?g.from:'',to:tr?g.to:'',active:true,check:false,bank:false,note:g.note||''}})}
-const baseEntries=()=>S.entries.concat(goalEntries('base'));
+// e.cover links a post to a second account: an expense is refilled from it ("Dækkes af fast overførsel fra"),
+// an income is moved on to it ("Flyttes videre til konto"). Either way a matching transfer is derived, same amount and rhythm.
+const covered=e=>(e.type==='udgift'||e.type==='indtaegt')&&!!e.cover&&!!e.account&&e.cover!==e.account&&S.accounts.some(a=>a.id===e.cover);
+const coverEntries=L=>L.filter(covered).map(e=>({id:'c_'+e.id,_cover:e.id,_cpayer:e.payer||FAELLES,_cinc:e.type==='indtaegt',type:'overfoersel',desc:e.desc,key:'',category:'',freq:+e.freq||1,start:+e.start||1,amount:+e.amount||0,
+  account:'',payer:'',from:e.type==='udgift'?e.cover:e.account,to:e.type==='udgift'?e.account:e.cover,active:e.active!==false,removed:e.removed,check:false,note:''}));
+const withCover=L=>L.concat(coverEntries(L));
+const baseEntries=()=>withCover(S.entries).concat(goalEntries('base'));
 function entriesFor(sc){if(!sc)return baseEntries();const O=sc.overrides||{};
-  return S.entries.map(e=>O[e.id]?Object.assign({},e,O[e.id],{_ovr:true}):e).concat((sc.added||[]).map(e=>Object.assign({},e,{_added:true}))).concat(goalEntries(sc.id))}
+  return withCover(S.entries.map(e=>O[e.id]?Object.assign({},e,O[e.id],{_ovr:true}):e).concat((sc.added||[]).map(e=>Object.assign({},e,{_added:true})))).concat(goalEntries(sc.id))}
 const cur=()=>ENT||baseEntries();
 function syncENT(){const sc=curSc();if(!sc)SC=null;ENT=entriesFor(sc)}
 function calcWith(list,fn){const prev=ENT;ENT=list;try{return fn()}finally{ENT=prev}}
@@ -871,13 +889,13 @@ function oblParts(pid,id){
     if(e.type==='udgift'&&(e.account||'')===id)add(e._goal?e._gpayer:e.payer,mAvg(e));
     else if(e.type==='indtaegt'&&(e.account||'')===id)add(e.payer,-mAvg(e));
     else if(e.type==='overfoersel'&&!e.auto){
-      if(e.from===id&&e.to!==id){const pay=e._goal?e._gpayer:ownerOf(e.to);r.other+=w(pay)*mAvg(e)}
-      if(e.to===id&&e.from!==id){r.other-=w(ownerOf(e.from))*mAvg(e)}}});
+      if(e.from===id&&e.to!==id){const pay=e._goal?e._gpayer:e._cover?e._cpayer:ownerOf(e.to);r.other+=w(pay)*mAvg(e)}
+      if(e.to===id&&e.from!==id){r.other-=w(e._cover?e._cpayer:ownerOf(e.from))*mAvg(e)}}});
   return r;
 }
 function compFor(pid){ // udligning: poster på personkonti, hvor betaler ikke er kontoens ejer
   const sh=shares()[pid]||0, w=pay=>pay===pid?1:pay===FAELLES?sh:0; let v=0;
-  act().forEach(e=>{if(e.type!=='udgift'&&e.type!=='indtaegt')return;const o=ownerOf(e.account||'');if(o===FAELLES||!(e.account))return;
+  act().forEach(e=>{if(e.type!=='udgift'&&e.type!=='indtaegt'||covered(e))return;const o=ownerOf(e.account||'');if(o===FAELLES||!(e.account))return;
     const pay=e._goal?e._gpayer:e.payer; if(pay===o)return; const m=mAvg(e), sg=e.type==='udgift'?1:-1;
     v+=sg*(w(pay)*m-(o===pid?m:0))});
   return v;
@@ -901,6 +919,10 @@ const extraSum=p=>extras(p).reduce((a,x)=>a+Math.max(0,+x.amount||0),0);
 const homeAcct=pid=>(S.accounts.find(a=>a.type!=='faelles'&&a.owner===pid)||{}).id;
 const exOn=()=>S.settings.withExtra!==false;
 const extraOn=p=>exOn()?extraSum(p):0;
+// Where "ekstra indtjening" comes from, in words: the fields on each person's card under Hvem betaler hvad.
+function exSrc(){const L=S.persons.flatMap(p=>extras(p).filter(x=>+x.amount>0).map(x=>`${esc(x.desc||'Ekstra')} ${kr(+x.amount)} (${esc(p.name)})`)), t=S.persons.reduce((a,p)=>a+extraSum(p),0);
+  return L.length?`Ekstra indtjening er det, der står under <b>Ekstra indtjening pr. md.</b> på personkortene under Hvem betaler hvad: ${L.join(', ')}. I alt ${kr(t)} pr. måned.`
+    :'Der er ingen ekstra indtjening skrevet ind. Den skrives under <b>Ekstra indtjening pr. md.</b> på personkortene under Hvem betaler hvad, fx et fritidsjob.'}
 function personFlows(id){let x=0,sv=0;S.persons.forEach(p=>{if(id&&homeAcct(p.id)===id){x+=extraOn(p);sv+=pNum(p,'savings')}});return {x,sv}}
 function accountCalc(id){
   const E=act(), pf=personFlows(id);
@@ -1000,8 +1022,9 @@ function render(){
      <label>Voksne i alt, kr./md.<input id="bkA" inputmode="decimal" value="${nf.format(+bk.b.adults||0)}"></label>
      <label>Antal børn<input id="bkC" type="number" min="0" max="10" step="1" value="${+bk.b.children||0}"></label>
      <label>Pr. barn, kr./md.<input id="bkR" inputmode="decimal" value="${nf.format(+bk.b.childRate||0)}"></label>
-     <label class="check"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening</label>
+     <label class="check"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening${(()=>{const t=S.persons.reduce((a,p)=>a+extraSum(p),0);return t?' ('+kr(t)+' pr. md.)':''})()}</label>
     </div>
+    <p class="muted" style="font-size:13px;margin:8px 0 0">${exSrc()}</p>
     <p class="muted" style="font-size:13px;margin:8px 0">Bankerne har hver deres interne satser. Som tommelfingerregel for 2026 ligger kravet for et par på 11.000–12.500 kr. pr. måned. Hertil kommer cirka 2.500–3.500 kr. pr. barn, og beløbet stiger med barnets alder. Ekstra indtjening medregnes typisk kun, hvis den kan dokumenteres over flere år. Fluebenet følger det fælles flueben øverst på siden.</p>
     <p style="font-size:14px;margin:8px 0 4px"><b>Ikke medregnet som faste udgifter</b></p>
     <ul class="excl">${bk.excl.map(e=>`<li><button type="button" class="exlink" data-open="${e.id}" title="Åbn posten"><span>${esc(e.desc)}</span><span>${kr(mAvg(e))}</span></button></li>`).join('')||'<li class="muted">Ingen</li>'}</ul>
@@ -1255,7 +1278,8 @@ function openGoal(id,preset){
   const accs=S.accounts.map(a=>[a.id,a.name]);
   opts($('gFrom'),[...accs,['','Ikke placeret']],g.from||'');
   opts($('gPayer'),[[FAELLES,'Fælles'],...S.persons.map(p=>[p.id,p.name])],g.payer||FAELLES);
-  opts($('gTo'),[['','Bliver på kontoen (ingen overførsel)'],...accs],g.to||'');
+  opts($('gTo'),[['','Bliver på kontoen (ingen overførsel)'],...accs,['__new','Ny konto …']],g.to||'');
+  $('gToNew').value='';$('gToNew').style.display='none';
   $('gExtras').innerHTML='';(g.extras||[]).forEach(x=>addGx(x));
   $('gScopes').innerHTML=[['base','Nuværende'],...(S.scenarios||[]).map(x=>[x.id,x.name||'Scenarie'])].map(([k,n])=>`<label class="chip"><input type="checkbox" data-gs="${esc(k)}" ${goalIn(g,k)?'checked':''}>${esc(n)}</label>`).join('');
   ['egName','egTarget','egEnd','egTo'].forEach(k=>$(k).textContent='');
@@ -1296,11 +1320,15 @@ function updGoalPreview(){
     if(c.xs)$('gPreview').textContent+=` Ekstra indbetalinger på ${kr(c.xs)} sænker beløbet fra ${kr(base0)} til ${kr(c.monthly)} pr. måned (−${kr(base0-c.monthly)}).`;
   }
   if(c.xOut)$('gPreview').textContent+=` ${c.xOut} ekstra ${c.xOut===1?'indbetaling':'indbetalinger'} ligger uden for perioden og tæller ikke med.`;
-  const tr=$('gTo').value&&$('gTo').value!==$('gFrom').value;
-  $('gPreview').textContent+=tr?` Bogføres som overførsel fra ${accName($('gFrom').value)} til ${accName($('gTo').value)}.`:` Trækkes fra ${accName($('gFrom').value)} og regnes som opsparing, ikke som fast udgift.`;
+  const tr=$('gTo').value&&$('gTo').value!==$('gFrom').value, toN=$('gTo').value==='__new'?($('gToNew').value.trim()||'den nye konto'):accName($('gTo').value);
+  $('gPreview').textContent+=tr?` Bogføres som overførsel fra ${accName($('gFrom').value)} til ${toN}.`:` Trækkes fra ${accName($('gFrom').value)} og regnes som opsparing, ikke som fast udgift.`;
 }
 ['gTarget','gSaved','gStart','gEnd'].forEach(k=>$(k).addEventListener('input',()=>{$('egTarget').textContent='';$('egEnd').textContent='';updGoalPreview()}));
 ['gFrom','gTo'].forEach(k=>$(k).addEventListener('change',()=>{$('egTo').textContent='';updGoalPreview()}));
+// "Ny konto …" in Sættes ind på: ask for a name here; the account is only created when the goal is saved.
+$('gTo').addEventListener('change',()=>{const nw=$('gTo').value==='__new',n=$('gToNew');n.style.display=nw?'':'none';
+  if(nw){if(!n.value)n.value=$('gName').value.trim();n.focus();n.select()}});
+$('gToNew').addEventListener('input',()=>{$('egTo').textContent='';updGoalPreview()});
 $('gStart').addEventListener('change',()=>{if((goalMode==='target'&&!$('gEnd').value)||($('gEnd').value&&mIdx($('gEnd').value)<=mIdx($('gStart').value))){$('gEnd').value=addM($('gStart').value,12);updGoalPreview()}});
 $('gName').oninput=()=>$('egName').textContent='';
 $('btnGoalCancel').onclick=()=>{goalConvPid=null;$('dlgGoal').close()};
@@ -1319,12 +1347,15 @@ $('frmGoal').addEventListener('submit',ev=>{ev.preventDefault();
   else if(mon&&e!==null&&e<=s)bad('gEnd','egEnd','Slutdatoen skal ligge efter startdatoen, eller lad den stå tom.');
   if(to&&to===from)bad('gTo','egTo','Vælg en anden konto end den, der betales fra.');
   if(to&&!from)bad('gTo','egTo','Vælg hvilken konto der betales fra.');
+  const newAcc=to==='__new'?$('gToNew').value.trim():'';
+  if(to==='__new'&&!newAcc)bad('gToNew','egTo','Skriv et navn til den nye konto.');
   const gx=readGx(), gxBad=[...$('gExtras').querySelectorAll('.gxrow')].filter(r=>{const d=r.querySelector('[data-gx="date"]').value,a=parseAmt(r.querySelector('[data-gx="amount"]').value),t=r.querySelector('[data-gx="desc"]').value.trim();return (d||a>0||t)&&!(d&&a>0)});
   if(gxBad.length){gxBad.forEach(r=>r.classList.add('out'));errs.push({el:gxBad[0].querySelector('input'),msg:'Hver ekstra indbetaling skal have både dato og beløb, eller fjernes.'})}
   if(errs.length){const g=$('gErr');g.innerHTML='<b>Målet kan ikke gemmes endnu:</b> '+errs.map(x=>esc(x.msg)).join(' ');g.hidden=false;
     const el=errs[0].el||$(errs[0].fid);if(el){el.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>el.focus(),150)}return}
   const d={mode:goalMode,monthly:mon?Math.round(M):0,extras:gx,name,target:mon?0:Math.round(T),saved:sv>0?Math.round(sv):0,start:$('gStart').value,end:$('gEnd').value,from,to,payer:$('gPayer').value,note:$('gNote').value.trim(),active:$('gActive').checked,
     scopes:[...$('gScopes').querySelectorAll('[data-gs]')].filter(c=>c.checked).map(c=>c.dataset.gs)};
+  if(newAcc){const pay=d.payer,acc={id:'k'+uid(),name:newAcc,number:'',type:'personlig',owner:pay!==FAELLES&&S.persons.some(p=>p.id===pay)?pay:'',startSaldo:0};S.accounts.push(acc);d.to=acc.id}
   S.goals=S.goals||[];
   if(!goalEdit&&goalConvPid){const pp=S.persons.find(x=>x.id===goalConvPid);if(pp)pp.savings=0;goalConvPid=null}
   if(goalEdit)Object.assign(S.goals.find(x=>x.id===goalEdit),d);else S.goals.push(Object.assign({id:'g'+uid()},d));
@@ -1355,12 +1386,7 @@ function bindPsav(){
 /* ---------- faste overførsler ---------- */
 const trAll=()=>act().filter(e=>e.type==='overfoersel');
 function acctOrder(){const P=S.persons.map(p=>p.id);return S.accounts.slice().sort((a,b)=>{const r=x=>x.type==='faelles'?1:P.includes(x.owner)?0:2;const ra=r(a),rb=r(b);return ra!==rb?ra-rb:(ra===0?P.indexOf(a.owner)-P.indexOf(b.owner):0)})}
-let FLOWL=[], flowSel=null, flowView=(()=>{try{return localStorage.getItem('hb-flow-view')||'diagram'}catch(e){return 'diagram'}})();
-function flowList(T){const rows=acctOrder().flatMap(a=>T.filter(e=>e.from===a.id).sort((x,y)=>mAvg(y)-mAvg(x)));
-  let h=`<div class="tablewrap"><table><thead><tr><th>Fra konto</th><th>Til konto</th><th>Beskrivelse</th><th>Hyppighed</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th></tr></thead><tbody>`,last=null;
-  rows.forEach(e=>{if(e.from!==last){last=e.from;const sum=T.filter(x=>x.from===e.from).reduce((s,x)=>s+mAvg(x),0);h+=`<tr class="cat"><td colspan="4">Fra ${esc(accName(e.from))}</td><td class="r">${disp(sum)}</td></tr>`}
-    const f=e.auto?1:(+e.freq||1);h+=`<tr class="row" data-tid="${e.id}" tabindex="0"><td>${esc(accName(e.from))}</td><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.auto?'<span class="badge auto">Auto</span>':''}</td><td>${FREQ[f]||''}</td><td class="r">${disp(mAvg(e))}</td></tr>`});
-  return h+`<tr class="cat"><td colspan="4">I alt</td><td class="r">${disp(T.reduce((s,e)=>s+mAvg(e),0))}</td></tr></tbody></table></div>`}
+let FLOWL=[], flowSel=null;
 function flowSvg(T){
   if(!T.length)return '';
   const froms=acctOrder().filter(a=>T.some(e=>e.from===a.id)), tos=acctOrder().filter(a=>T.some(e=>e.to===a.id));
@@ -1392,25 +1418,26 @@ function overfHtml(){
    <div class="tablewrap"><table><thead><tr><th>Fra</th><th>Til</th><th>Beskrivelse</th><th class="r">Sat op nu</th><th class="r">Bør være</th><th class="r">Ændring</th><th></th></tr></thead><tbody>${fixes.map(({e,rec})=>{const d=rec-setupAmt(e);
      return `<tr><td>${esc(accName(e.from))}</td><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}</td><td class="r">${kr(setupAmt(e))}</td><td class="r"><b>${kr(rec)}</b></td><td class="r" style="color:${d>0?'var(--brick)':'var(--pine)'};font-weight:500">${d>0?'+':'−'}${kr(Math.abs(d))}</td><td class="act"><button type="button" data-tfix="${e.id}" data-v="${rec}">Markér som rettet</button></td></tr>`}).join('')}</tbody></table></div>
    <p class="muted" style="font-size:13px;margin-top:8px">"Bør være" følger jeres fordeling efter betaler og rundes op til nærmeste 100 kr. "Sat op nu" er det beløb, der er registreret som overførslens beløb.</p></section>`;
-  if(T.length)h+=`<section class="tflow"><div class="sechead"><div class="fhead"><h2>Pengestrømme</h2><div class="seg" role="group" aria-label="Visning"><button type="button" data-fv="diagram" aria-pressed="${flowView!=='liste'}">Diagram</button><button type="button" data-fv="liste" aria-pressed="${flowView==='liste'}">Liste</button></div></div><span class="hint">${flowView==='liste'?`Alle faste overførsler grupperet efter fra-konto, ${per()}.`:`Klik på en streg eller en konto for at fremhæve den. Stregens tykkelse følger beløbet ${per()}.`}</span></div>${flowView==='liste'?flowList(T):flowSvg(T)+'<div class="flowinfo" id="flowInfo" aria-live="polite"></div>'}</section>`;
-  h+=`<section><div class="sechead"><h2>Overførsler pr. konto</h2><span class="hint">Klik på en række for at rette den.</span></div><div class="tcards">`;
-  acctOrder().forEach(a=>{
-    const out=all.filter(e=>e.from===a.id).sort((x,y)=>mAvg(y)-mAvg(x)), inn=T.filter(e=>e.to===a.id);
-    const sOut=out.filter(e=>e.active!==false).reduce((s,e)=>s+mAvg(e),0), sIn=inn.reduce((s,e)=>s+mAvg(e),0);
-    h+=`<div class="tcard"><div class="ghead"><div><h3 style="margin:0;font-size:16px">Fra ${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><button type="button" data-tnew="${a.id}">Ny overførsel</button></div>`;
-    h+=out.length?`<div class="tablewrap"><table><thead><tr><th>Til konto</th><th>Beskrivelse</th><th>Hyppighed</th><th class="r">Sat op</th><th class="r">Bør være</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'} i budgettet</th><th></th></tr></thead><tbody>${out.map(e=>{
-      const f=e.auto?1:(+e.freq||1), when=f>1?` <span class="muted">(${monthsOf(e).join(', ')})</span>`:'';
-      return `<tr class="row ${e.active===false?'off':''}" data-tid="${e.id}" tabindex="0"><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.auto?'<span class="badge auto">Auto</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.active===false&&!e.removed?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
-        <td>${FREQ[f]||''}${when}</td><td class="r">${kr(setupAmt(e))}</td>${(()=>{const rc=transferRec(e);if(rc===null)return '<td class="r muted">–</td>';const d=rc-setupAmt(e);return `<td class="r">${Math.abs(d)<1?`<span style="color:var(--pine)">${kr(rc)} ✓</span>`:`<b>${kr(rc)}</b><span class="badge ${d>0?'un':'chk'}">${d>0?'+':'−'}${kr(Math.abs(d))}</span>`}</td>`})()}<td class="r">${disp(mAvg(e))}</td><td class="act">${e._goal||(e._ovr&&e.removed)?'':`<button type="button" class="ghost danger" data-tdel="${e.id}">Fjern</button>`}</td></tr>`}).join('')}
-      <tr class="cat"><td colspan="5">I alt ud</td><td class="r">${disp(sOut)}</td><td></td></tr></tbody></table></div>`:`<p class="muted" style="font-size:14px;margin:4px 0">Ingen faste overførsler fra kontoen.</p>`;
-    h+=`<div class="tfoot"><span>${inn.length?`Modtager ${disp(sIn)} ${per()} fra ${[...new Set(inn.map(e=>accName(e.from)))].map(esc).join(', ')}.`:'Modtager ingen faste overførsler.'}</span><span>Netto ${sIn-sOut>=0?'ind':'ud'}: <b>${disp(Math.abs(sIn-sOut))}</b></span></div></div>`;
+  if(T.length)h+=`<section class="tflow"><div class="sechead"><h2>Pengestrømme</h2><span class="hint">Klik på en streg eller en konto for at fremhæve den. Stregens tykkelse følger beløbet ${per()}.</span></div>${flowSvg(T)}<div class="flowinfo" id="flowInfo" aria-live="polite"></div></section>`;
+  const fixIds=new Set(fixes.map(x=>x.e.id)), nf0=(S.accounts.find(a=>a.type==='faelles')||S.accounts[0]||{}).id||'';
+  h+=`<section><div class="sechead"><h2>Overførsler pr. konto</h2><button type="button" class="primary" data-tnew="${nf0}">Ny overførsel</button></div><div class="tcards">`;
+  const src=acctOrder().filter(a=>all.some(e=>e.from===a.id));
+  if(!src.length)h+=`<p class="muted" style="font-size:14px;margin:4px 0">Ingen faste overførsler endnu.</p>`;
+  src.forEach(a=>{
+    const out=all.filter(e=>e.from===a.id).sort((x,y)=>mAvg(y)-mAvg(x)), sOut=out.filter(e=>e.active!==false).reduce((s,e)=>s+mAvg(e),0);
+    h+=`<div class="tcard"><div class="ghead"><div><h3 style="margin:0;font-size:16px">Fra ${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div></div>`;
+    h+=`<div class="tablewrap"><table><thead><tr><th>Til konto</th><th>Beskrivelse</th><th>Hyppighed</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th></th></tr></thead><tbody>${out.map(e=>{
+      const f=e.auto?1:(+e.freq||1), when=f>1?` <span class="muted">(${kr(amtOf(e))} i ${monthsOf(e).join(', ')})</span>`:'';
+      return `<tr class="row ${e.active===false?'off':''}" data-tid="${e.id}" tabindex="0"><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._cover?`<span class="badge gtag">${e._cinc?'Flytter indtægt':'Dækker udgift'}</span>`:''}${e.auto?'<span class="badge auto">Auto</span>':''}${fixIds.has(e.id)?'<span class="badge un">Skal rettes</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.active===false&&!e.removed?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
+        <td>${FREQ[f]||''}${when}</td><td class="r">${disp(mAvg(e))}</td><td class="act">${e._goal||e._cover||(e._ovr&&e.removed)?'':`<button type="button" class="ghost danger" data-tdel="${e.id}">Fjern</button>`}</td></tr>`}).join('')}
+      <tr class="cat"><td colspan="3">I alt ud</td><td class="r">${disp(sOut)}</td><td></td></tr></tbody></table></div></div>`;
   });
   h+=`</div></section>`;
   return h;
 }
 function transferRec(e){
   const to=S.accounts.find(a=>a.id===e.to), p=ownerOf(e.from);
-  if(!to||to.type!=='faelles'||p===FAELLES||e._goal||(e._ovr&&e.removed)||e.active===false)return null;
+  if(!to||to.type!=='faelles'||p===FAELLES||e._goal||e._cover||(e._ovr&&e.removed)||e.active===false)return null;
   if(!e.auto&&(+e.freq||1)!==1)return null;
   return Math.ceil((recFor(p,e.to)+(e.auto?0:mAvg(e)))/100)*100;
 }
@@ -1434,7 +1461,7 @@ function applyFlow(sel,pinned){const svg=$('flowSvg');if(!svg)return;const info=
     svg.querySelectorAll(`[data-n="${side}:${CSS.escape(id)}"]`).forEach(x=>x.classList.add('on'));
     const L=FLOWL.filter(e=>(side==='l'?e.from:e.to)===id);L.forEach(e=>svg.querySelectorAll(`[data-n="${side==='l'?'r':'l'}:${CSS.escape(side==='l'?e.to:e.from)}"]`).forEach(x=>x.classList.add('on')));
     info.innerHTML=`<span><b>${esc(accName(id))}</b> ${side==='l'?'sender':'modtager'} <b>${disp(L.reduce((s,e)=>s+mAvg(e),0))}</b> ${per()} ${side==='l'?'til':'fra'} ${L.map(e=>esc(accName(side==='l'?e.to:e.from))+' ('+disp(mAvg(e))+')').join(', ')}.</span>`+(pinned?`<button type="button" class="ghost" id="flowClr">Ryd</button>`:'')}
-  const ed=$('flowEdit');if(ed)ed.onclick=()=>{const e=FLOWL[+sel.slice(2)];if(e)openEntry(e.id)};
+  const ed=$('flowEdit');if(ed)ed.onclick=()=>{const e=FLOWL[+sel.slice(2)];if(e)openEntry(e._cover||e.id)};
   const cl=$('flowClr');if(cl)cl.onclick=()=>{flowSel=null;applyFlow(null)};
 }
 function bindFlow(){const svg=$('flowSvg');if(!svg)return;
@@ -1445,7 +1472,6 @@ function bindFlow(){const svg=$('flowSvg');if(!svg)return;
   if(flowSel&&!svg.querySelector(flowSel.startsWith('k:')?`[data-k="${flowSel.slice(2)}"]`:`[data-n="${CSS.escape(flowSel)}"]`))flowSel=null;
   applyFlow(flowSel,true)}
 function bindOverf(){
-  document.querySelectorAll('[data-fv]').forEach(b=>b.onclick=()=>{flowView=b.dataset.fv;try{localStorage.setItem('hb-flow-view',flowView)}catch(e){}render()});
   bindFlow();
   document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{SC=b.dataset.sc||null;render()});
   document.querySelectorAll('[data-tnew]').forEach(b=>b.onclick=()=>{const f=b.dataset.tnew, to=(S.accounts.find(a=>a.id!==f&&a.type==='faelles')||S.accounts.find(a=>a.id!==f)||{}).id||'';
@@ -1488,7 +1514,7 @@ function loansHtml(){
     <span>${S.loanUpdated?(updOld?`Opdateret for ${updMonths} måneder siden. Tjek restgælden i netbanken.`:`Senest opdateret ${fmtDate(S.loanUpdated)}.`):'Angiv hvornår restgælden sidst er tjekket.'}</span></div>
    <div class="kpis" style="margin-bottom:14px">
     <div class="kpi"><span>Oprindeligt lånt</span><b>${kr(tO)}</b><small>alle lån</small></div>
-    <div class="kpi hero2 wide"><span>Samlet restgæld${S.loanUpdated?' pr. '+fmtDate(S.loanUpdated):''}</span><b>${kr(tP)}</b><small>${selTxt[0].toUpperCase()+selTxt.slice(1)}. ${tO?Math.round((1-tP/tO)*100)+' % af det oprindelige beløb er betalt af':''}</small><div class="loanbar big"><div style="width:${tO?Math.round((1-tP/tO)*100):0}%"></div></div></div>
+    <div class="kpi hero2"><span>Samlet restgæld${S.loanUpdated?' pr. '+fmtDate(S.loanUpdated):''}</span><b>${kr(tP)}</b><small>${selTxt[0].toUpperCase()+selTxt.slice(1)}. ${tO?Math.round((1-tP/tO)*100)+' % af det oprindelige beløb er betalt af':''}</small></div>
     <div class="kpi"><span>Ydelse pr. måned</span><b>${kr(tA)}</b><small>uden lån på pause</small></div>
     <div class="kpi"><span>Heraf renter pr. måned ${ib('<b>Renter pr. måned</b><p>Restgæld × rente ÷ 12 for hvert lån. Det er et skøn: den faktiske rente afhænger af bankens beregning, gebyrer og bidrag.</p>')}</span><b>${kr(tI)}</b><small>${kr(tI*12)} om året</small></div>
     <div class="kpi"><span>Gennemsnitlig rente</span><b>${pct(wr)}</b><small>vægtet efter restgæld</small></div>
@@ -1515,8 +1541,10 @@ function loanEnd(l,c){ // {i, txt, est}
   if(c.n!==null&&c.n>0&&!l.paused){const d=S.loanUpdated?new Date(S.loanUpdated+'T00:00:00'):new Date();const i=d.getFullYear()*12+d.getMonth()+c.n;return {i,est:true}}
   const m=/(\d{4})(?:\s*[-–/ ]\s*([a-zæøå]{3}))?/i.exec(l.ends||'');if(!m)return null;
   const mi=m[2]?MSHORT.indexOf(m[2].toLowerCase()):11;return {i:(+m[1])*12+(mi<0?11:mi),est:false}}
+// Loans ending within `months` whose payment is still in the budget being shown (a scenario can already have removed the post).
 function loansFreedWithin(months){const nw=nowIdx();return (S.loans||[]).filter(l=>l.include!==false).map(l=>{const c=loanCalc(l),en=loanEnd(l,c);if(!en||en.i<nw||en.i-nw>months)return null;
-  const inB=c.link?inBank(c.link):true;return {l,i:en.i,free:c.budget!==null?c.budget:c.A,inB}}).filter(Boolean).sort((a,b)=>a.i-b.i)}
+  const ln=l.link?cur().find(e=>e.id===l.link):null;if(ln&&ln.active===false)return null;
+  return {l,i:en.i,free:ln?mAvg(ln):c.A,inB:ln?inBank(ln):true}}).filter(Boolean).sort((a,b)=>a.i-b.i)}
 function loanEndsHtml(){
   const nw=nowIdx(), L=(S.loans||[]).filter(l=>l.include!==false).map(l=>{const c=loanCalc(l),en=loanEnd(l,c);return en&&en.i>=nw?{l,c,en,free:c.budget!==null?c.budget:c.A}:null}).filter(Boolean).sort((a,b)=>a.en.i-b.en.i);
   if(!L.length)return '';
@@ -1635,7 +1663,9 @@ function helpHtml(){
   +sec('konti','Kontokortene',`<ul><li><b>Ind</b> = indtægter direkte på kontoen + overført ind + ekstra indtjening, hvis kontoen er ejerens egen.</li>
       <li><b>Ud</b> = faste udgifter + overført ud + opsparing fra kontoen.</li>
       <li>En <b>fælles konto</b> viser <b>Bør overføres</b> = udgifter + opsparingsmål + overført ud − indtægter direkte på kontoen, og om den er dækket af det, der overføres.</li>
-      <li>En <b>privat konto</b> viser, hvad der er tilbage på kontoen.</li></ul>`)
+      <li>En <b>privat konto</b> viser, hvad der er tilbage på kontoen.</li>
+      <li>En <b>fast overførsel</b> flytter penge mellem jeres egne konti. Den er ikke en udgift og tæller ikke med i faste udgifter, til rådighed eller bankens beregning. Betales fx mad fra en madkonto, så læg Mad som en udgift på madkontoen og vælg <b>Dækkes af fast overførsel fra</b> på posten. Så laves en overførsel af samme beløb til madkontoen, og den følger med, når beløbet ændres. Overførslen deles efter udgiftens betaler, så en fælles udgift deles efter nøglen.</li>
+      <li>Kommer en indtægt ind på én konto og flyttes fast videre, fx børnepenge fra lønkontoen til budgetkontoen, så vælg <b>Flyttes videre til konto</b> på indtægten. Overførslen laves af sig selv, og den sænker din overførsel til budgetkontoen tilsvarende.</li></ul>`)
   +sec('opsparing','Opsparing og opsparingsmål',`<ul><li>Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.</li>
       <li>I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så I kan se, hvad der er tilbage.</li>
       <li>Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.</li>
@@ -1859,7 +1889,10 @@ function syncType(){
   $('lAccount').textContent=t==='indtaegt'?'Udbetales til konto':'Betales fra konto';
   $('lPayer').textContent=t==='indtaegt'?'Hvis indtægt':'Hvem betaler';
   $('wStart').style.display=$('fFreq').value==='1'?'none':'';
-  $('wBank').style.display=t==='udgift'?'':'none';
+  $('wBank').style.display=t==='udgift'?'':'none';$('wCover').style.display=t==='overfoersel'?'none':'';
+  {const inc=t==='indtaegt',v=$('fCover').value;$('lCover').textContent=inc?'Flyttes videre til konto':'Dækkes af fast overførsel fra';
+    $('nCover').textContent=inc?'Fx børnepenge, der kommer ind på lønkontoen og fast flyttes til budgetkontoen. Overførslen følger indtægtens beløb og står under Faste overførsler.':'Fx en madkonto, der fyldes op fra budgetkontoen. Overførslen følger udgiftens beløb og står under Faste overførsler.';
+    opts($('fCover'),[['',inc?'Ingen, bliver på kontoen':'Ingen, betales direkte fra kontoen'],...S.accounts.map(a=>[a.id,a.name])],v)}
   $('wSplit').style.display=t==='indtaegt'&&(S.settings||{}).split==='indkomst'?'':'none';
   const ai=t==='overfoersel'?autoInfo({from:$('fFrom').value,to:$('fTo').value}):null;
   $('wAuto').style.display=ai?'':'none'; if(!ai)$('fAuto').checked=false;
@@ -1883,6 +1916,7 @@ function addHist(x){x=x||{date:'',amount:'',desc:''};const r=document.createElem
 function readHist(freq){return [...$('fHist').querySelectorAll('.gxrow')].map(r=>{const v=f=>r.querySelector(`[data-h="${f}"]`).value;const a=parseAmt(v('amount'));return {date:v('date'),amount:a>=0?Math.round(a*100)/100:NaN,desc:v('desc').trim(),freq:+r.dataset.freq||freq,unknown:r.dataset.unk==='1'&&v('date')===r.dataset.odate}}).filter(x=>x.date||!isNaN(x.amount)||x.desc)}
 $('btnHistAdd').onclick=()=>{const r=addHist({});r.dataset.freq=$('fFreq').value;r.querySelector('input').focus()};
 function openEntry(id,preset){
+  if(id&&id.startsWith('c_'))id=id.slice(2); // a cover transfer is edited on its expense
   editingId=id||null; delArmed=false;
   const e=id?cur().find(x=>x.id===id):Object.assign({type:'udgift',desc:'',key:'',category:'',freq:1,start:1,amount:'',account:S.accounts[0]?.id||'',payer:FAELLES,from:S.accounts[1]?.id||'',to:S.accounts[0]?.id||'',active:true,check:false,note:''},preset||{});
   $('dlgTitle').textContent=id?'Ret post':'Ny post';
@@ -1893,13 +1927,14 @@ function openEntry(id,preset){
   opts($('fAccount'),[...accs,['','Ikke placeret']],e.account||'');
   opts($('fPayer'),[[FAELLES,'Fælles'],...S.persons.map(p=>[p.id,p.name])],e.payer||FAELLES);
   opts($('fFrom'),accs,e.from);opts($('fTo'),accs,e.to);
+  opts($('fCover'),[['',''],...accs],e.cover||'');
   $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fAuto').checked=!!e.auto;
   {const base=id?S.entries.find(x=>x.id===id):null, scx=curSc();$('fHist').innerHTML='';$('fSince').value=base?(base.since||''):'';
     ((base&&base.history)||[]).slice().sort((a,b)=>a.date<b.date?-1:1).forEach(x=>addHist(x));
     $('wHist').style.display=scx?'none':'';
     const dv=id?devOf(e):null;$('histNote').textContent=dv?`Fra ${kr(dv.base.m)} til ${kr(dv.now.m)} pr. md. ${dv.base.unknown?'fra før':'siden'} ${fmtDate(dv.base.date)} (${dv.pct===null?kr(dv.d):pctTxt(dv.pct)}). Når du retter beløbet, gemmes det gamle automatisk her.`:'Når du retter beløbet, gemmes det gamle beløb automatisk her med datoen, så udviklingen kan følges.'}
   $('cats').innerHTML=catList().map(c=>`<option value="${esc(c)}">`).join('');
-  ['eDesc','eAmount','eTo'].forEach(k=>$(k).textContent='');
+  ['eDesc','eAmount','eTo','eCover'].forEach(k=>$(k).textContent='');
   const sc=curSc(), isBase=id&&S.entries.some(x=>x.id===id);
   $('btnDel').style.display=id?'':'none';$('btnDel').textContent=sc?(isBase?'Fjern i scenariet':'Slet fra scenariet'):'Slet post';
   $('btnReset').style.display=sc&&isBase&&sc.overrides&&sc.overrides[id]?'':'none';
@@ -1908,6 +1943,7 @@ function openEntry(id,preset){
 }
 $('fType').onchange=syncType;$('fAuto').onchange=syncType;$('fFreq').onchange=syncType;$('fStart').onchange=updPreview;$('fAmount').oninput=()=>{$('eAmount').textContent='';updPreview()};
 $('fDesc').oninput=()=>$('eDesc').textContent='';$('fTo').onchange=()=>{$('eTo').textContent='';syncType()};$('fFrom').onchange=()=>{$('eTo').textContent='';syncType()};
+$('fCover').onchange=$('fAccount').onchange=()=>$('eCover').textContent='';
 $('btnCancel').onclick=()=>$('dlg').close();
 $('btnDel').onclick=()=>{
   const sc=curSc();
@@ -1928,11 +1964,14 @@ $('frm').addEventListener('submit',ev=>{
   const isAuto=t==='overfoersel'&&$('fAuto').checked;
   if(!isAuto&&!(amt>=0)||isAuto&&$('fAmount').value.trim()&&!(amt>=0)){$('eAmount').textContent='Skriv et beløb, fx 1.250 eller 1250,50.';ok=false}
   if(t==='overfoersel'&&$('fFrom').value===$('fTo').value){$('eTo').textContent='Vælg to forskellige konti.';ok=false}
+  if(t!=='overfoersel'&&$('fCover').value&&$('fCover').value===$('fAccount').value){$('eCover').textContent=t==='udgift'?'Vælg en anden konto end den, udgiften betales fra.':'Vælg en anden konto end den, indtægten udbetales til.';ok=false}
+  if(t!=='overfoersel'&&$('fCover').value&&!$('fAccount').value){$('eCover').textContent=t==='udgift'?'Vælg først hvilken konto udgiften betales fra.':'Vælg først hvilken konto indtægten udbetales til.';ok=false}
   if(!ok)return;
   const d={type:t,desc,key:$('fKey').value.trim(),category:$('fCat').value.trim(),freq:+$('fFreq').value,start:+$('fStart').value||1,amount:Math.round(amt*100)/100,
     account:t==='overfoersel'?'':$('fAccount').value,payer:t==='overfoersel'?'':$('fPayer').value,from:t==='overfoersel'?$('fFrom').value:'',to:t==='overfoersel'?$('fTo').value:'',
     active:$('fActive').checked,check:$('fCheck').checked,note:$('fNote').value.trim()};
   if(t==='udgift')d.bank=$('fBank').checked;
+  if(t!=='overfoersel')d.cover=$('fCover').value;
   if(t==='indtaegt'&&$('wSplit').style.display!=='none')d.split=$('fSplit').checked;
   if(t==='overfoersel'){d.auto=isAuto;if(isAuto){d.freq=1;const prev=cur().find(x=>x.id===editingId);d.amount=amt>=0?Math.round(amt):(prev?(+prev.amount||0):0)}}
   const sc=curSc();
@@ -1969,7 +2008,7 @@ function renderAccts(){
   $('acctList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.del, used=S.entries.filter(e=>e.account===id||e.from===id||e.to===id).length;
     if(used&&b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent=`${used} poster flyttes til Ikke placeret. Slet?`;return}
-    S.entries.forEach(e=>{if(e.account===id)e.account='';if(e.from===id||e.to===id)e.active=false});
+    S.entries.forEach(e=>{if(e.account===id)e.account='';if(e.cover===id)e.cover='';if(e.from===id||e.to===id)e.active=false});
     (S.goals||[]).forEach(g=>{if(g.from===id)g.from='';if(g.to===id)g.to=''});
     S.accounts=S.accounts.filter(a=>a.id!==id);commit();renderAccts();
   });
