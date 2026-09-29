@@ -288,6 +288,8 @@ tr.cat .gcount{margin-left:8px}
 .catbtn,.catdots{display:inline-flex!important;align-items:center;margin-left:8px;padding:2px 9px!important;font:500 12.5px var(--font)!important;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:6px!important;vertical-align:1px}
 .catdots{letter-spacing:.1em;padding:1px 7px!important}
 .ptools{display:flex;gap:8px;margin-left:auto;align-items:center}
+.shtools{display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.shtools .hint{margin-right:4px}
 .tbtn,.catbtn{gap:6px}
 .tbtn{display:inline-flex!important;align-items:center;padding:7px 12px!important;font:500 13.5px var(--font)!important;color:var(--ink2)!important;background:var(--card)!important}
 .tbtn:hover{color:var(--ink)!important;border-color:var(--ink3)!important}
@@ -907,6 +909,11 @@ function bankCalc(){
   const disp_=inc+extra-fixed, req=(+b.adults||0)+(+b.children||0)*(+b.childRate||0);
   return {b,inc,extra,fixed,excl,exclSum:excl.reduce((a,e)=>a+mAvg(e),0),rad:disp_,req,buf:disp_-req};
 }
+/* Short note for the Faste udgifter card: what the bank calculation leaves out, by category, largest first. */
+function exclNote(bk){if(!bk.excl.length)return 'Alle faste udgifter er medregnet';
+  const g={};bk.excl.forEach(e=>{const k=e._goal?'Opsparingsmål':(e.category||(/gave/i.test(e.desc||'')?'Gaver':'Uden kategori'));g[k]=(g[k]||0)+mAvg(e)});
+  const L=Object.entries(g).sort((a,b)=>b[1]-a[1]), nb=v=>kr(v).replace(/ /g,'\u00a0'), shown=L.slice(0,3).map(([k,v])=>k+' '+nb(v)), rest=L.length-3;
+  return 'Ikke medregnet: '+(shown.length>1?shown.slice(0,-1).join(', ')+(rest>0?', ':' og ')+shown[shown.length-1]:shown[0])+(rest>0?' m.fl. ':'. ')+'I alt '+nb(bk.exclSum)}
 function totals(){
   const E=act();
   const inc=E.filter(e=>e.type==='indtaegt').reduce((a,e)=>a+mAvg(e),0);
@@ -955,7 +962,7 @@ function render(){
   h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det</h2><span class="hint">Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.</span></div>
    <div class="kpis">
     <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),exRows(S.persons.map(p=>p.id)),'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
-    <div class="kpi"><span>Faste udgifter ${ib(catInfo('Faste udgifter i bankens beregning',act().filter(e=>e.type==='udgift'&&inBank(e)),'Mad, opsparing og gaver er trukket ud.'))}</span><b>${kr(bk.fixed)}</b><small>${kr(bk.exclSum)} er ikke medregnet</small></div>
+    <div class="kpi"><span>Faste udgifter ${ib(catInfo('Faste udgifter i bankens beregning',act().filter(e=>e.type==='udgift'&&inBank(e)),'Mad, opsparing og gaver er trukket ud.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
     <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>pr. måned</small></div>
     <div class="kpi"><span>Vejledende krav ${ib(`<b>Vejledende krav</b>${tbl([['2 voksne','',kr(+bk.b.adults||0)],[`${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}`,'',kr((+bk.b.children||0)*(+bk.b.childRate||0))],['= Krav','',kr(bk.req)]])}<p>En tommelfingerregel, ikke bankens egne satser. Bankerne har hver deres interne krav. Satserne kan rettes under "Juster det vejledende krav".</p>`)}</span><b>${kr(bk.req)}</b><small>Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser</small></div>
     <div class="kpi ${bk.buf>=0?'good':'bad'}"><span>${bk.buf>=0?'Luft over kravet':'Under kravet'}</span><b>${kr(Math.abs(bk.buf))}</b><small>pr. måned</small></div>
@@ -978,7 +985,7 @@ function render(){
   // konti
   const ids=S.accounts.map(a=>a.id); if(unplaced.length)ids.push('');
   const maxv=Math.max(1,...ids.map(id=>{const c=accountCalc(id);return Math.max(c.in,c.out)}));
-  h+=`<section><div class="sechead"><h2>Konti</h2><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span><button type="button" id="btnFoldAll">${ids.every(id=>isFolded(id))?'Fold alle ud':'Fold alle sammen'}</button><button type="button" id="btnAccts">Konti og personer</button></div></div><div class="accounts">`;
+  h+=`<section><div class="sechead"><h2>Konti</h2><div class="shtools"><span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti og personer</span></button></div></div><div class="accounts">`;
   ids.forEach(id=>{
     const a=S.accounts.find(x=>x.id===id)||{id:'',name:'Ikke placeret',type:'',number:''};
     const c=accountCalc(id);
@@ -1561,7 +1568,8 @@ function filtered(){
 }
 /* ---------- kategorier og rækkefølge i Poster ---------- */
 let PFOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-post-fold')||'{}')||{}}catch(e){return {}}})();
-const foldAllHtml=()=>{const f=Object.values(PFOLD).some(Boolean);return `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${f?'M5 5.2 8 2.2l3 3M5 10.8l3 3 3-3M3 8h10':'M5 2.2 8 5.2l3-3M5 13.8l3-3 3 3M3 8h10'}"/></svg><span>${f?'Fold alle ud':'Fold alle sammen'}</span>`};
+const foldLbl=f=>`<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${f?'M5 5.2 8 2.2l3 3M5 10.8l3 3 3-3M3 8h10':'M5 2.2 8 5.2l3-3M5 13.8l3-3 3 3M3 8h10'}"/></svg><span>${f?'Fold alle ud':'Fold alle sammen'}</span>`;
+const foldAllHtml=()=>foldLbl(Object.values(PFOLD).some(Boolean));
 const savePFold=()=>{try{localStorage.setItem('hb-post-fold',JSON.stringify(PFOLD))}catch(e){}};
 const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!PFOLD[key]}" aria-label="${PFOLD[key]?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${PFOLD[key]?'Fold ud':'Fold sammen'}"></button>`;
 // Expense categories: S.settings.categories holds their order and categories without posts; names used on posts are added.
@@ -1697,8 +1705,8 @@ function bindAcctDrag(){
         if(e.type==='pointerup'&&tgt&&moveAcct(id,tgt,after))commit()}}});
 }
 function bindMain(){
-  document.querySelectorAll('details.acctd').forEach(d=>d.addEventListener('toggle',()=>{FOLD[d.dataset.acc]=!d.open;saveFold();const all=[...document.querySelectorAll('details.acctd')];const b=$('btnFoldAll');if(b)b.textContent=all.every(x=>!x.open)?'Fold alle ud':'Fold alle sammen'}));
-  const bf=$('btnFoldAll');if(bf)bf.onclick=()=>{const all=[...document.querySelectorAll('details.acctd')],open=!all.every(x=>!x.open)?false:true;all.forEach(x=>{x.open=open;FOLD[x.dataset.acc]=!open});saveFold();bf.textContent=open?'Fold alle sammen':'Fold alle ud'};
+  document.querySelectorAll('details.acctd').forEach(d=>d.addEventListener('toggle',()=>{FOLD[d.dataset.acc]=!d.open;saveFold();const all=[...document.querySelectorAll('details.acctd')];const b=$('btnFoldAll');if(b)b.innerHTML=foldLbl(all.every(x=>!x.open))}));
+  const bf=$('btnFoldAll');if(bf)bf.onclick=()=>{const all=[...document.querySelectorAll('details.acctd')],open=!all.every(x=>!x.open)?false:true;all.forEach(x=>{x.open=open;FOLD[x.dataset.acc]=!open});saveFold();bf.innerHTML=foldLbl(!open)};
   $('btnAccts').onclick=openAccts;
   bindAcctDrag();
   document.querySelectorAll('[data-extog]').forEach(c=>c.onchange=()=>{S.settings.withExtra=c.checked;commit()});
@@ -2071,7 +2079,7 @@ function buildPdf(){
   if(sc){h2('Holdt op mod nuværende budget',null,30);table(['Pr. måned','Nuværende','Scenarie','Forskel'],compareRows(sc).map(r=>[r[0],kr(r[1]),kr(r[2]),(r[3]>0.5?'+':'')+kr(r[3])]),{right:[1,2,3]});
     const chg=scChanges(sc);if(chg.length)table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,kr(c.b),kr(c.n)]),{right:[2,3]})}
   h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.',30);
-  const KB=[{label:'Nettoindtægt',value:kr(bk.inc+bk.extra),small:bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'},{label:'Faste udgifter',value:kr(bk.fixed),small:kr(bk.exclSum)+' er ikke medregnet'},{label:'Rådighedsbeløb',value:kr(bk.rad),small:'pr. måned',kind:'hero'},
+  const KB=[{label:'Nettoindtægt',value:kr(bk.inc+bk.extra),small:bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'},{label:'Faste udgifter',value:kr(bk.fixed),small:exclNote(bk)},{label:'Rådighedsbeløb',value:kr(bk.rad),small:'pr. måned',kind:'hero'},
     {label:'Vejledende krav',value:kr(bk.req),small:`Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser`},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:kr(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'}];
   const FR=loansFreedWithin(12).filter(x=>x.inB);
   if(FR.length){const fr=FR.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=FR[FR.length-1].i;KB.push({label:(nb>=0?'Luft':'Under kravet')+' fra '+idxLbl(last).toLowerCase(),value:kr(Math.abs(nb)),small:'+'+kr(fr)+' frigives: '+FR.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '),kind:nb>=0?'good':'bad'})}
@@ -2254,7 +2262,7 @@ function buildXlsx(){
     const chg=scChanges(sc);if(chg.length)B.table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,r0(c.b),r0(c.n)]))}
   B.h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter.');
   const FR=loansFreedWithin(12).filter(x=>x.inB), fr=FR.reduce((a,x)=>a+x.free,0);
-  B.kpis([{label:'Nettoindtægt',value:r0(bk.inc+bk.extra),small:bk.extra?'inkl. ekstra indtjening':'uden ekstra indtjening'},{label:'Faste udgifter',value:r0(bk.fixed),small:kr(bk.exclSum)+' er ikke medregnet'},{label:'Rådighedsbeløb',value:r0(bk.rad),small:'pr. måned',kind:'hero'},{label:'Vejledende krav',value:r0(bk.req),small:'tommelfingerregel'},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:r0(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'},
+  B.kpis([{label:'Nettoindtægt',value:r0(bk.inc+bk.extra),small:bk.extra?'inkl. ekstra indtjening':'uden ekstra indtjening'},{label:'Faste udgifter',value:r0(bk.fixed),small:exclNote(bk)},{label:'Rådighedsbeløb',value:r0(bk.rad),small:'pr. måned',kind:'hero'},{label:'Vejledende krav',value:r0(bk.req),small:'tommelfingerregel'},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:r0(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'},
     ...(FR.length?[{label:(bk.buf+fr>=0?'Luft':'Under kravet')+' fra '+idxLbl(FR[FR.length-1].i).toLowerCase(),value:r0(Math.abs(bk.buf+fr)),small:'+'+kr(fr)+' frigives fra lån',kind:bk.buf+fr>=0?'good':'bad'}]:[])]);
   if(bk.excl.length)B.table(['Ikke medregnet som faste udgifter','Pr. md.'],bk.excl.map(e=>[e.desc,r0(mAvg(e))]).concat([{tot:true,cells:['I alt',r0(bk.exclSum)]}]));
   const unplaced=act().some(e=>e.type==='udgift'&&!e.account), ids=S.accounts.map(a=>a.id).concat(unplaced?['']:[]);
