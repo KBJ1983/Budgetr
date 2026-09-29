@@ -21,6 +21,8 @@ Language: code and comments in English; UI text in Danish (du-form, calm, no exc
 - Landing design source of truth: `docs/design/HANDOFF.md` + the two facit HTML files; tokens in `app/globals.css`.
 - Brand is **budgetpro** ("Skov" design, Sept 2026): wordmark "budget" (Geist Light) + PRO badge on the baseline, and the "b." app icon in `components/Logo.tsx` / `public/icon.svg`, font Geist (+ Geist Mono for KPI amounts), pine `#2C6A4D` (dark `#7ED4A8`). The app's copy of the palette is the `:root` block in `public/budgetr-app/index.html`; keep both in step. Storage keys and paths keep the old `budgetr` name – don't rename them (saved data would be lost).
 
+- The app's "Sådan regnes det" dialog (`helpHtml()` in `public/budgetr-app/index.html`) explains the calculation rules in plain Danish. When you change how anything is calculated (shares, transfers, udligning, rådighed, opsparing), update that text in the same change.
+
 ## Checks before committing
 
 `pnpm test`, `pnpm typecheck`, `pnpm build`; for UI changes also `pnpm dev` + `pnpm smoke` (no horizontal scroll at 390 px).

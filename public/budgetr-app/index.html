@@ -288,6 +288,18 @@ tr.cat .gcount{margin-left:8px}
 .catbtn,.catdots{display:inline-flex!important;align-items:center;margin-left:8px;padding:2px 9px!important;font:500 12.5px var(--font)!important;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:6px!important;vertical-align:1px}
 .catdots{letter-spacing:.1em;padding:1px 7px!important}
 .ptools{display:flex;gap:8px;margin-left:auto;align-items:center}
+/* Sådan regnes det */
+.helphead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.helphead h2{margin:0}
+.helpbody{max-height:72vh;overflow:auto;padding-right:6px;font-size:14px;line-height:1.55}
+.htoc{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;background:var(--card);padding:4px 0 10px;border-bottom:1px solid var(--rule);z-index:1}
+.htoc a{font-size:12.5px;padding:3px 9px;border:1px solid var(--rule);border-radius:14px;color:var(--ink2);text-decoration:none}
+.htoc a:hover{color:var(--ink);border-color:var(--ink3)}
+.hsec{padding:14px 0 6px;border-bottom:1px solid var(--rule);scroll-margin-top:var(--toc-h,60px)}.hsec:last-child{border-bottom:0}
+.hsec h3{font-size:15.5px;margin:0 0 6px}.hsec p{margin:6px 0}.hsec ul{margin:6px 0;padding-left:20px}.hsec li{margin:3px 0}
+.hsec .itbl{margin:8px 0}.hsec .itbl td{padding:5px 8px}
+.hex{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;margin:8px 0}.hex ul{margin-bottom:0}
+.helplink{border:0!important;background:transparent!important;padding:0 0 0 8px!important;font:400 13px var(--font)!important;color:var(--pine)!important;text-decoration:underline;vertical-align:1px}
+.split .tbtn{margin-right:6px}
 .shtools{display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .shtools .hint{margin-right:4px}
 .tbtn,.catbtn{gap:6px}
@@ -526,6 +538,8 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
           <hr class="mhr"><div class="mh">Importér</div>
           <button type="button" role="menuitem" data-imp="stmt"><b>Kontoudskrift …</b><span>CSV eller Excel fra netbanken. Opdaterer ydelser og beløb</span></button>
           <button type="button" role="menuitem" data-imp="json"><b>Sikkerhedskopi …</b><span>Gendan budgettet fra en JSON-fil</span></button>
+          <hr class="mhr">
+          <button type="button" role="menuitem" data-um="help"><b>Sådan regnes det</b><span>Fordeling, overførsler, rådighed og opsparing</span></button>
           <hr class="mhr"><div class="mh">Testbruger</div>
           <div class="mrow"><span>Tema</span><div class="seg" role="group" aria-label="Tema"><button type="button" data-thm="light">Lyst</button><button type="button" data-thm="dark">Mørkt</button></div></div>
           <hr class="mhr">
@@ -714,6 +728,12 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
   </form>
 </dialog>
 
+<dialog id="dlgHelp" class="wide">
+  <form method="dialog" style="padding:20px 24px">
+    <div class="helphead"><h2>Sådan regnes det</h2><button type="button" id="btnHelpClose" class="ghost" aria-label="Luk">Luk</button></div>
+    <div id="helpBody" class="helpbody"></div>
+  </form>
+</dialog>
 <dialog id="dlgCat">
   <form method="dialog" id="frmCat" style="padding:20px 22px">
     <h2>Kategorier</h2>
@@ -959,7 +979,7 @@ function render(){
 
   if(sc)h+=compareHtml(sc);
   const bk=bankCalc();
-  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det</h2><span class="hint">Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.</span></div>
+  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.</span></div>
    <div class="kpis">
     <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),exRows(S.persons.map(p=>p.id)),'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
     <div class="kpi"><span>Faste udgifter ${ib(catInfo('Faste udgifter i bankens beregning',act().filter(e=>e.type==='udgift'&&inBank(e)),'Mad, opsparing og gaver er trukket ud.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
@@ -1024,7 +1044,7 @@ function render(){
   // personer
   const sp=S.settings||{};
   h+=`<section><div class="sechead"><h2>Hvem betaler hvad</h2>
-    <div class="split"><label for="splitSel">Fælles udgifter fordeles</label><select id="splitSel"><option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${S.persons.length===2?'<option value="manuel">manuelt</option>':''}</select>
+    <div class="split"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button><label for="splitSel">Fælles udgifter fordeles</label><select id="splitSel"><option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${S.persons.length===2?'<option value="manuel">manuelt</option>':''}</select>
     ${sp.split==='manuel'&&S.persons.length===2?`<input type="number" id="manPct" min="0" max="100" step="1" value="${+sp.manualPct||50}" aria-label="Andel for ${esc(S.persons[0].name)} i procent"> % til ${esc(S.persons[0].name)}`:''}</div></div><div class="people">`;
   S.persons.forEach(p=>{
     const c=personCalc(p.id);
@@ -1566,6 +1586,69 @@ function filtered(){
     if(q&&!((e.desc||'').toLowerCase().includes(q)||(e.key||'').toLowerCase().includes(q)))return false;
     return true;});
 }
+/* ---------- Sådan regnes det ---------- */
+/* Plain-language description of the calculation rules (oblParts, compFor, recFor, personCalc, accountCalc, bankCalc,
+   goalEntries). Keep it in step when those change. Examples use the household's own names and split. */
+function helpHtml(){
+  const P=S.persons, sh=shares(), sp=(S.settings||{}).split, ba=S.accounts.find(a=>a.type==='faelles'), bn=ba?esc(ba.name):'budgetkontoen';
+  const A=P[0], B=P[1], pa=A?Math.round((sh[A.id]||0)*100):50, pb=B?Math.round((sh[B.id]||0)*100):50, nA=A?esc(A.name):'Person 1', nB=B?esc(B.name):'Person 2';
+  const ex=1000, aPart=Math.round(ex*pa/100), bPart=ex-aPart;
+  const key=sp==='indkomst'?'efter fast indkomst':sp==='manuel'?'manuelt':'ligeligt';
+  const sec=(id,t,body)=>`<section class="hsec" id="help-${id}"><h3>${t}</h3>${body}</section>`;
+  return `<nav class="htoc" aria-label="Indhold"><a href="#help-fordeling">Fordeling</a><a href="#help-overforsel">Overførsel til ${bn}</a><a href="#help-privat">Fælles betaling fra privat konto</a><a href="#help-person">Til rådighed</a><a href="#help-konti">Kontokort</a><a href="#help-opsparing">Opsparing</a><a href="#help-bank">Bankens rådighedsbeløb</a><a href="#help-ovrigt">Øvrigt</a></nav>`
+  +sec('fordeling','Fordeling af fælles poster',`<p>Hver post har en betaler: <b>Fælles</b> eller en bestemt person.</p><ul>
+      <li><b>Fælles</b> poster deles efter nøglen. Nu fordeles de ${key}: ${P.map(p=>esc(p.name)+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')||'ingen personer endnu'}.</li>
+      <li>En post med en <b>bestemt person</b> som betaler lægges fuldt på den person, uanset hvilken konto den trækkes fra.</li>
+      <li>Efter fast indkomst betyder: hver persons faste indtægter (poster med personen som betaler) i forhold til husstandens samlede. Ekstra indtjening er ikke med i nøglen.</li></ul>`)
+  +sec('overforsel',`Hvad hver skal overføre til ${bn}`,`<p>For hver fælles konto regnes det ud, hvad hver person bør overføre pr. måned:</p><table class="itbl"><tbody>
+      <tr><td>+ Din andel af de fælles poster, der trækkes fra kontoen</td></tr>
+      <tr><td>+ Dine egne poster, der trækkes fra kontoen, fuldt</td></tr>
+      <tr><td>− Dine egne indtægter, der går direkte ind på kontoen, fx børnefamilieydelse</td></tr>
+      <tr><td>− Din andel af fælles indtægter, der går direkte ind på kontoen</td></tr>
+      <tr><td>± Faste overførsler fra og til kontoen. En overførsel videre til din egen konto er din; en til en fælles konto deles efter nøglen</td></tr>
+      <tr><td>± Udligning for fælles poster på private konti (se næste afsnit)</td></tr>
+      <tr class="sum"><td>= Bør overføres. En auto-overførsel runder op til nærmeste 100 kr, så der typisk er et lille overskud</td></tr></tbody></table>
+      <p class="muted">Opsparingsmål, der betales fra kontoen, tæller med som poster med den betaler, du har valgt på målet.</p>`)
+  +sec('privat','Fælles betaling fra en privat konto',`<p>Nogle fælles regninger trækkes fra den enes egen konto. Så betaler den person hele beløbet, men skal kun bære sin andel. Forskellen udlignes i overførslen til ${bn}:</p>
+      <div class="hex"><b>Eksempel:</b> En fælles udgift på ${kr(ex)} trækkes fra ${nA}s lønkonto. Nøglen er ${nA} ${pa} % og ${nB} ${pb} %.<ul>
+      <li>${nA} betaler ${kr(ex)} fra sin konto, men skal kun bære ${kr(aPart)}. ${nA}s overførsel til ${bn} bliver derfor <b>${kr(bPart)} lavere</b>.</li>
+      <li>${nB} skal bære ${kr(bPart)} og overfører <b>${kr(bPart)} mere</b> til ${bn}.</li>
+      <li>Resultat: ${nA} betaler ${kr(aPart)} og ${nB} ${kr(bPart)}, præcis som nøglen siger.</li></ul></div>
+      <ul><li>En <b>egen</b> udgift på egen konto (betaler = kontoens ejer) påvirker ikke overførslen.</li>
+      <li>En udgift på ${nA}s konto med ${nB} som betaler lægges fuldt på ${nB}: ${nB} overfører hele beløbet mere, og ${nA} tilsvarende mindre.</li>
+      <li>Fælles indtægter på en privat konto udlignes den anden vej: ejeren af kontoen overfører mere.</li>
+      <li>Udligningen lægges på den fælles konto, som personen har sin auto-overførsel til (ellers den første fælles konto).</li></ul>`)
+  +sec('person','Til rådighed pr. person',`<table class="itbl"><tbody>
+      <tr><td>Faste indtægter (poster med personen som betaler)</td></tr><tr><td>+ Ekstra indtjening, hvis den er slået til</td></tr><tr><td>+ Andel af fælles indtægter</td></tr>
+      <tr><td>− Egne faste udgifter (personen som betaler, fra alle konti)</td></tr><tr><td>− Andel af fælles faste udgifter</td></tr>
+      <tr class="sum"><td>= Til rådighed. Det er det, der højst kan spares op</td></tr><tr><td>− Opsparingsfelt og opsparingsmål (egne mål fuldt, fælles mål efter nøglen)</td></tr>
+      <tr class="sum"><td>= Tilbage efter opsparing</td></tr></tbody></table>
+      <p class="muted">Tallet afhænger ikke af, hvilken konto pengene står på. Det er fordelingen, der tæller. Overførslen til ${bn} er et andet tal, fordi den kun handler om den ene konto.</p>`)
+  +sec('konti','Kontokortene',`<ul><li><b>Ind</b> = indtægter direkte på kontoen + overført ind + ekstra indtjening, hvis kontoen er ejerens egen.</li>
+      <li><b>Ud</b> = faste udgifter + overført ud + opsparing fra kontoen.</li>
+      <li>En <b>fælles konto</b> viser <b>Bør overføres</b> = udgifter + opsparingsmål + overført ud − indtægter direkte på kontoen, og om den er dækket af det, der overføres.</li>
+      <li>En <b>privat konto</b> viser, hvad der er tilbage på kontoen.</li></ul>`)
+  +sec('opsparing','Opsparing og opsparingsmål',`<ul><li>Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.</li>
+      <li>I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så I kan se, hvad der er tilbage.</li>
+      <li>Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.</li>
+      <li>Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.</li></ul>`)
+  +sec('bank','Rådighedsbeløb som banken regner det',`<table class="itbl"><tbody><tr><td>Nettoindtægt (alle indtægter, ekstra indtjening kun hvis den er slået til)</td></tr>
+      <tr><td>− Faste udgifter, der er markeret "Medregnes i bankens faste udgifter"</td></tr><tr class="sum"><td>= Rådighedsbeløb</td></tr>
+      <tr><td>− Vejledende krav: voksne + antal børn × sats pr. barn</td></tr><tr class="sum"><td>= Luft over kravet (eller under kravet)</td></tr></tbody></table>
+      <p>Mad og husholdning, opsparing og gaver er som udgangspunkt <b>ikke</b> faste udgifter, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Faste udgifter viser, hvad der er holdt ude.</p>
+      <p class="muted">Kravet er en tommelfingerregel, ikke bankens egne satser. Luft fra en senere måned lægger ydelsen fra lån, der udløber inden for 12 måneder, til igen.</p>`)
+  +sec('ovrigt','Øvrigt',`<ul><li>Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.</li>
+      <li>Inaktive poster og mål tæller ikke med. Mål, der er nået måldatoen, tæller heller ikke.</li>
+      <li>Et scenarie regner på samme måde, bare med scenariets ændringer. Det nuværende budget røres ikke.</li></ul>`);
+}
+function openHelp(section){$('helpBody').innerHTML=helpHtml();$('dlgHelp').showModal();
+  const b=$('helpBody'),toc=b.querySelector('.htoc');b.scrollTop=0;
+  // Sections scroll to just below the sticky contents bar, however many lines it wraps to.
+  setTimeout(()=>{b.style.setProperty('--toc-h',(toc.offsetHeight+8)+'px');const t=section&&section!=='fordeling'&&$('help-'+section);if(t)t.scrollIntoView({block:'start'})},0)}
+$('btnHelpClose').onclick=()=>$('dlgHelp').close();
+$('helpBody').addEventListener('click',ev=>{const a=ev.target.closest('.htoc a');if(!a)return;ev.preventDefault();const t=$(a.getAttribute('href').slice(1));if(t)t.scrollIntoView({block:'start',behavior:'smooth'})});
+document.addEventListener('click',ev=>{const h=ev.target.closest('[data-help]');if(h){ev.preventDefault();openHelp(h.dataset.help)}});
+
 /* ---------- kategorier og rækkefølge i Poster ---------- */
 let PFOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-post-fold')||'{}')||{}}catch(e){return {}}})();
 const foldLbl=f=>`<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${f?'M5 5.2 8 2.2l3 3M5 10.8l3 3 3-3M3 8h10':'M5 2.2 8 5.2l3-3M5 13.8l3-3 3 3M3 8h10'}"/></svg><span>${f?'Fold alle ud':'Fold alle sammen'}</span>`;
@@ -2372,7 +2455,7 @@ function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>
 menuSetup('btnUserMenu','userMenu',b=>{const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
   if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
   else if(y==='stmt'){if(!S){toast('Opret først et budget');return}openImp()}else if(y==='json')$('jsonFile').click();
-  else if(u==='home')location.href='/';else if(u==='user'){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'}});
+  else if(u==='help')openHelp();else if(u==='home')location.href='/';else if(u==='user'){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'}});
 /* Scenario picker in the tab row (replaces the Nuværende/scenario buttons on each page). Items change, so it binds by delegation. */
 function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
   if(page!=='budget'){document.querySelector('[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
