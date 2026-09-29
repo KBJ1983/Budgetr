@@ -1,19 +1,19 @@
 /* budgetr app. Dark theme = the product cut-outs from HANDOFF §3; light theme uses the site palette. */
 .bx {
-  --bg: #121816;
+  --bg: #121513;
   --bar: #0e1311;
-  --card: #1a2220;
+  --card: #1a1e1b;
   --card-2: #212a27;
-  --tx: #e7ece9;
-  --tx-2: #b3beb9;
+  --tx: #e9ece9;
+  --tx-2: #9aa39d;
   --tx-3: #8e9a94;
-  --rule: #2c3633;
+  --rule: #262c28;
   --field: #0e1311;
-  --pos: #6cc2a2;
-  --pos-bg: #1d3129;
+  --pos: #7ed4a8;
+  --pos-bg: #1c2e24;
   --pos-rule: #2b4a3e;
-  --neg: #ee8f78;
-  --neg-bg: #3a231d;
+  --neg: #f08a78;
+  --neg-bg: #3a221e;
   --neg-rule: #5a3228;
   --warn: #e4b758;
   --warn-bg: #352a14;
@@ -22,10 +22,10 @@
   --slate: #a7b4c8;
   --slate-bg: #212831;
   --slate-rule: #36404d;
-  --accent: #6cc2a2;
-  --accent-tx: #121816;
-  --hi-bg: #e7ece9;
-  --hi-tx: #121816;
+  --accent: #7ed4a8;
+  --accent-tx: #121513;
+  --hi-bg: #e9ece9;
+  --hi-tx: #121513;
   --hi-tx-2: #3a4642;
   --overlay: rgba(5, 8, 7, 0.7);
 
@@ -38,17 +38,17 @@
 }
 
 .bx[data-theme="light"] {
-  --bg: #f4f5f1;
+  --bg: #f4f6f2;
   --bar: #ffffff;
   --card: #ffffff;
   --card-2: #f7f8f5;
-  --tx: #16201d;
+  --tx: #17211b;
   --tx-2: #46534e;
   --tx-3: #5f6b66;
-  --rule: #dce0da;
+  --rule: #dfe5dc;
   --field: #ffffff;
-  --pos: #1f5c4a;
-  --pos-bg: #e3eee9;
+  --pos: #2c6a4d;
+  --pos-bg: #e3eee6;
   --pos-rule: #c3dcd1;
   --neg: #a8432b;
   --neg-bg: #f8e6e0;
@@ -60,10 +60,10 @@
   --slate: #4f5d73;
   --slate-bg: #e8ecf2;
   --slate-rule: #cfd6e1;
-  --accent: #1f5c4a;
+  --accent: #2c6a4d;
   --accent-tx: #ffffff;
-  --hi-bg: #16201d;
-  --hi-tx: #f4f5f1;
+  --hi-bg: #17211b;
+  --hi-tx: #f4f6f2;
   --hi-tx-2: #c9d1cd;
   --overlay: rgba(22, 32, 29, 0.45);
   color-scheme: light;
@@ -85,6 +85,7 @@
   border-bottom: 1px solid var(--rule);
 }
 .bx-top-row {
+  min-height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -356,7 +357,7 @@
 .bx-chip.is-scenario[aria-pressed="true"] {
   background: var(--slate);
   border-color: var(--slate);
-  color: #121816;
+  color: #121513;
 }
 .bx-pill {
   display: inline-flex;
@@ -946,7 +947,7 @@
     --tx-2: #333;
     --tx-3: #555;
     --rule: #ccc;
-    --pos: #1f5c4a;
+    --pos: #2c6a4d;
     --neg: #a8432b;
     background: #fff;
     color: #000;

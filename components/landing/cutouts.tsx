@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Wordmark } from "@/components/Logo";
 import styles from "./landing.module.css";
 import { CheckIcon } from "./icons";
 
@@ -74,20 +75,22 @@ const ACCOUNTS = [
 
 export function HeroWindow() {
   return (
-    <figure className={styles.appWindow} aria-label="Eksempel: budgettet for Anna og Jonas i budgetr">
+    <figure className={styles.appWindow} aria-label="Eksempel: budgettet for Anna og Jonas i budgetpro">
       <div className={styles.titleBar} aria-hidden="true">
         <span className={styles.dot} />
         <span className={styles.dot} />
         <span className={styles.dot} />
-        <span className={styles.urlPill}>app.budgetr.dk</span>
+        <span className={styles.urlPill}>app.budgetpro.dk</span>
       </div>
       <div className={styles.appTop}>
         <div className={styles.appTitle}>
-          <b>Anna og Jonas’ budget</b>
-          <span className={styles.muted11}>Gemt · delt med Jonas</span>
+          <Wordmark fontSize={14} dark />
+          <span className={styles.muted11}>Anna og Jonas’ budget</span>
         </div>
-        <span className={styles.muted11}>
-          Indstillinger · Tema: Lyst / <b className={styles.strongLight}>Mørkt</b>
+        <span className={styles.appUser}>
+          <span className={styles.savedDot} />
+          <span className={styles.muted11}>Gemt og delt med Jonas</span>
+          <span className={styles.avatar}>AJ</span>
         </span>
       </div>
       <div className={styles.appTabsRow}>
@@ -98,17 +101,14 @@ export function HeroWindow() {
           <span className={styles.appTab}>Opsparingsmål</span>
         </div>
         <div className={styles.appActions}>
-          <span className={styles.chip}>Importér ▾</span>
-          <span className={styles.chip}>Eksportér ▾</span>
+          <span className={styles.chip}>
+            <span className={styles.valDim}>Scenarie</span> Nuværende ▾
+          </span>
+          <span className={styles.chip}>···</span>
           <span className={styles.chipPrimary}>+ Ny budgetpost</span>
         </div>
       </div>
       <div className={styles.appBody}>
-        <div className={styles.segRow}>
-          <span className={cx(styles.seg, styles.segActive)}>Nuværende</span>
-          <span className={styles.seg}>Nyt hus fra 2027</span>
-          <span className={styles.seg}>Nyt scenarie</span>
-        </div>
         <p className={styles.summary}>
           Husstanden har <b>64.200 kr</b> i indtægter og <b>47.850 kr</b> i faste udgifter. Tilbage pr. måned:{" "}
           <b className={styles.valPos}>16.350 kr</b>. Efter opsparing på 5.400 kr er der{" "}
@@ -179,7 +179,7 @@ export function HeroFloatScenario() {
 
 export function HeroMobileCutout() {
   return (
-    <Product label="Eksempel: et budget for én person i budgetr" className={styles.productCompact}>
+    <Product label="Eksempel: et budget for én person i budgetpro" className={styles.productCompact}>
       <div className={styles.segRow}>
         <span className={cx(styles.seg, styles.segActive)}>Nuværende</span>
         <span className={styles.seg}>Ny bolig 2027</span>

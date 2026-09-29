@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LoginForm } from "@/components/app/LoginForm";
 import "./app.css";
 
-export const metadata: Metadata = { title: "budgetr – log ind", robots: { index: false } };
+export const metadata: Metadata = { title: "budgetpro – log ind", robots: { index: false } };
 
 type Params = { next?: string | string[]; email?: string | string[] };
 const one = (v: string | string[] | undefined) => (typeof v === "string" ? v.slice(0, 200) : undefined);

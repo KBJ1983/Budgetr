@@ -93,6 +93,7 @@ try {
   await page.screenshot({ path: `${OUT}/kbj.png` });
 
   // Switch to TEST1: empty budget → the app's own guide / empty budget
+  await page.locator("#btnUserMenu").click();
   await page.locator("#btnUser").click();
   await page.waitForURL(/\/login/);
   await page.getByLabel("E-mail eller initialer").fill("TEST1");

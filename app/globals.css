@@ -1,33 +1,33 @@
-/* Design tokens from docs/design/HANDOFF.md §3. Landing page is always light; the app has a light and a dark theme. */
+/* Design tokens from docs/design/HANDOFF.md §3, recoloured to the budgetpro "Skov" palette. Landing page is always light; the app has a light and a dark theme. */
 :root {
   /* Site (light) */
-  --paper: #f4f5f1;
+  --paper: #f4f6f2;
   --card: #ffffff;
   --stone: #edefea;
-  --ink: #16201d;
+  --ink: #17211b;
   --ink-2: #46534e;
   --ink-3: #5f6b66;
-  --rule: #dce0da;
+  --rule: #dfe5dc;
   --field-border: #c9cfc8;
-  --pine: #1f5c4a;
-  --pine-hover: #163f33;
-  --pine-bg: #e3eee9;
-  --pine-light: #6cc2a2;
+  --pine: #2c6a4d;
+  --pine-hover: #21523b;
+  --pine-bg: #e3eee6;
+  --pine-light: #7ed4a8;
   --focus: #2f6fb3;
 
   /* Product (dark app theme, used for cut-outs on the landing page) */
-  --d-bg: #121816;
+  --d-bg: #121513;
   --d-bar: #0e1311;
-  --d-card: #1a2220;
-  --d-text: #e7ece9;
-  --d-text-2: #b3beb9;
+  --d-card: #1a1e1b;
+  --d-text: #e9ece9;
+  --d-text-2: #9aa39d;
   --d-text-3: #8e9a94;
-  --d-rule: #2c3633;
-  --d-pos: #6cc2a2;
-  --d-pos-bg: #1d3129;
+  --d-rule: #262c28;
+  --d-pos: #7ed4a8;
+  --d-pos-bg: #1c2e24;
   --d-pos-rule: #2b4a3e;
-  --d-neg: #ee8f78;
-  --d-neg-bg: #3a231d;
+  --d-neg: #f08a78;
+  --d-neg-bg: #3a221e;
   --d-warn: #e4b758;
   --d-warn-bg: #352a14;
   --d-warn-rule: #5a4718;
@@ -37,7 +37,8 @@
   --d-slate-rule: #36404d;
 
   --shadow-product: 0 40px 80px -30px rgba(18, 24, 22, 0.45), 0 12px 24px -12px rgba(18, 24, 22, 0.35);
-  --font: var(--font-schibsted), "Schibsted Grotesk", ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  --font: var(--font-geist), "Geist", ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
 *,

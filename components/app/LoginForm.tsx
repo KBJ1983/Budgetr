@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import { LogoMark } from "@/components/Logo";
+import { Wordmark } from "@/components/Logo";
 import { login, logout, useSession } from "@/lib/store";
 
 /** Only allow in-app redirects. */
@@ -30,9 +30,8 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
     <div className="bx" data-theme="light">
       <header className="bx-top">
         <div className="bx-wrap bx-top-row">
-          <Link href="/" className="bx-brand" aria-label="budgetr – til forsiden">
-            <LogoMark size={26} />
-            <b style={{ fontSize: 19, letterSpacing: "-0.03em" }}>budgetr</b>
+          <Link href="/" className="bx-brand" aria-label="budgetpro – til forsiden">
+            <Wordmark fontSize={20} />
           </Link>
         </div>
       </header>

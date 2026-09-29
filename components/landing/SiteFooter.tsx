@@ -1,4 +1,4 @@
-import { LogoMark } from "@/components/Logo";
+import { Wordmark } from "@/components/Logo";
 import styles from "./landing.module.css";
 
 const LEGAL_LINKS = ["Vilkår", "Privatlivspolitik", "Cookies", "Kontakt"] as const;
@@ -8,8 +8,9 @@ export function SiteFooter() {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerBrand}>
-        <LogoMark size={24} />
-        <b className={styles.footerName}>budgetr</b>
+        <span className={styles.footerName}>
+          <Wordmark fontSize={18} dark />
+        </span>
         <span className={styles.companyWide}>{COMPANY}</span>
       </div>
       <nav aria-label="Sidefod" className={styles.footerNav}>

@@ -27,29 +27,33 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>budgetr</title>
+<title>budgetpro · Budget</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
-  --paper:#F5F6F3; --card:#FFFFFF; --ink:#18221F; --ink2:#4D5A55; --ink3:#7D8983; --rule:#DCE0DA;
-  --pine:#1F5C4A; --pine-bg:#E3EEE9; --brick:#A8412C; --brick-bg:#F6E4DF; --ochre:#9A6B12; --ochre-bg:#FBF0D9;
+  /* budgetpro "Skov" palette */
+  --paper:#F4F6F2; --card:#FFFFFF; --ink:#17211B; --ink2:#5F6B63; --ink3:#838D86; --rule:#DFE5DC;
+  --pine:#2C6A4D; --pine-bg:#E3EEE6; --pine-ink:#235A40; --brick:#A8382A; --brick-bg:#F8E7E2; --ochre:#9A6B12; --ochre-bg:#FBF0D9;
+  --hero-sub:#A7B3AA; --on-pine:#FFFFFF;
+  --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
   --bar:#C9D2CD; --focus:#2F6FB3; --sky:#2B63A6; --sky-bg:#E1EBF7; --plum:#4E5D73; --plum-bg:#E9ECF1;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#121816; --card:#1A2220; --ink:#E7ECE9; --ink2:#B3BEB9; --ink3:#86928C; --rule:#2C3633;
-  --pine:#6CC2A2; --pine-bg:#1D3129; --brick:#EE8F78; --brick-bg:#3A231D; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}}
+  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28;
+  --pine:#7ED4A8; --pine-bg:#1C2E24; --pine-ink:#7ED4A8; --brick:#F08A78; --brick-bg:#3A221E; --hero-sub:#5A625C; --on-pine:#0E1A13; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#121816; --card:#1A2220; --ink:#E7ECE9; --ink2:#B3BEB9; --ink3:#86928C; --rule:#2C3633;
-  --pine:#6CC2A2; --pine-bg:#1D3129; --brick:#EE8F78; --brick-bg:#3A231D; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}
+  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28;
+  --pine:#7ED4A8; --pine-bg:#1C2E24; --pine-ink:#7ED4A8; --brick:#F08A78; --brick-bg:#3A221E; --hero-sub:#5A625C; --on-pine:#0E1A13; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--font)}
 td.r,.kv span,.kpi b,.big,.barrow .v{font-variant-numeric:tabular-nums}
-.wrap{max-width:1520px;margin:0 auto;padding:20px clamp(12px,2vw,28px) 64px}
+.wrap{max-width:1520px;margin:0 auto;padding:0 clamp(12px,2vw,28px) 64px}
 header.topbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:4px 0 12px;margin-bottom:12px;border-bottom:1px solid color-mix(in srgb,var(--rule) 60%,transparent)}
 .tbl{display:flex;gap:10px;align-items:baseline;min-width:0;flex-wrap:wrap}
 .tbl h1{font-size:15px!important;margin:0;font-weight:700;letter-spacing:0;cursor:pointer}
@@ -115,7 +119,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .expmenu button b{font-size:14px} .expmenu button span{font-size:12px;color:var(--ink3);font-weight:400}
 @media (max-width:640px){.tsec{border-right:0;padding-right:0}}
 button,select,input{font:inherit;color:inherit}
-button{cursor:pointer;border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:7px 14px;font-weight:500}
+button{cursor:pointer;border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:7px 14px;font-weight:500;font-size:14px}
 button:hover{border-color:var(--ink3)}
 button.primary{background:var(--pine);border-color:var(--pine);color:var(--paper)}
 button.ghost{border-color:transparent;background:transparent;padding:4px 8px}
@@ -374,7 +378,50 @@ td.act{width:1%;white-space:nowrap}
   .acctedit{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ---------- budgetpro "Skov" layout: app bar, tab row, hero and KPI cards ---------- */
+.appbar{background:var(--card);border-bottom:1px solid var(--rule);position:relative;z-index:30}
+.appbar-in{max-width:1520px;margin:0 auto;padding:0 clamp(12px,2vw,28px);height:72px;display:flex;align-items:center;gap:14px}
+.logo{font:700 19px/1 var(--font);letter-spacing:-.03em;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
+.logo .pro{display:inline-block;vertical-align:baseline;box-sizing:border-box;margin-left:4px;height:10px;padding:1px 2.5px 0 3.5px;font:700 6px/7.5px var(--font);letter-spacing:.12em;color:var(--on-pine);background:var(--pine);border-radius:2px}
+.btitle{border:0!important;background:transparent!important;padding:4px 10px!important;font:400 14px var(--font)!important;color:var(--ink2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-left:1px solid var(--rule)!important;border-radius:0!important}
+.btitle:hover{color:var(--ink)}
+.abr{margin-left:auto;display:flex;align-items:center;gap:14px}
+.appbar .status{display:flex;align-items:center;gap:6px;font:400 13px var(--font);color:var(--ink2);white-space:nowrap}
+.appbar .status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--pine);flex:0 0 auto}
+.uchip{display:flex!important;align-items:center;gap:6px;padding:3px 8px 3px 3px!important;border:1px solid var(--rule)!important;border-radius:20px!important;background:transparent!important}
+.uchip .av{min-width:28px;height:28px;padding:0 6px;border-radius:14px;background:var(--ink);color:var(--paper);font:600 11px var(--font);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.uchip .caret,.scnbtn .caret{font-size:11px;color:var(--ink2)}
+.appbar .expmenu{right:0;left:auto}
+.expmenu .mrow .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.navrow{min-height:64px;align-items:stretch!important;gap:8px 12px!important;margin-bottom:0}
+.navrow .tabs{gap:0;align-items:stretch}
+.tabs button{padding:0 14px!important;font:400 16px var(--font)!important;color:var(--ink2);border-bottom:2px solid transparent!important;min-height:62px}
+.tabs button[aria-selected="true"]{font-weight:500!important;color:var(--ink);border-bottom-color:var(--pine)!important}
+.navrow .tools{padding:0!important;margin-left:auto;align-items:center;gap:10px}
+.scnbtn,.morebtn{background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:8px!important;font:500 14px var(--font)!important;color:var(--ink)!important}
+.scnbtn{display:inline-flex!important;align-items:center;gap:8px;padding:8px 12px!important}
+.scnbtn .lbl{color:var(--ink2);font-weight:400}
+.scnbtn.on{border-color:var(--plum)!important;box-shadow:0 0 0 3px var(--plum-bg)}
+.morebtn{font-size:16px!important;padding:6px 12px!important;letter-spacing:.1em;line-height:1.3}
+#btnNew{padding:9px 14px!important;font:600 14px var(--font)!important;box-shadow:none!important}
+button.primary{color:var(--on-pine)!important}
+.expmenu button[aria-checked="true"] b::after{content:" ✓";color:var(--pine)}
+.hero{padding:40px 0 32px}
+.hero p{font:400 clamp(24px,3.2vw,34px)/1.25 var(--font);letter-spacing:-.01em;max-width:680px}
+.hero b{font-weight:600}
+.hero small{font-size:14px;color:var(--ink2);margin-top:12px}
+h2{font-size:17px;font-weight:600;letter-spacing:0}
+.kpi{border-radius:10px;padding:14px;gap:6px}
+.kpi span{font-size:12px;color:var(--ink2)}
+.kpi b{font:500 19px var(--mono);letter-spacing:0}
+.kpi small{font-size:11px;line-height:1.4;color:var(--ink2)}
+.kpi.hero2 span,.kpi.hero2 small{color:var(--hero-sub);opacity:1}
+.kpi.good b,.kpi.good span,.kpi.good small{color:var(--pine-ink)}
+.kpi.bad small{color:var(--brick)}
+.big,.gamt{font-family:var(--mono);font-weight:500}
+@media (max-width:760px){.appbar-in{height:60px;gap:10px}.appbar .status{font-size:0;gap:0}.btitle{display:none}.navrow .tools{margin-left:0;padding-bottom:10px!important;flex-wrap:wrap}.tabs button{min-height:50px;font-size:15px!important;padding:0 10px!important}}
 @media print{
+  .appbar,.navrow{display:none!important}
   header.top .tools,.filters,button,.plan .ctrl{display:none!important}
   body{background:#fff;color:#000}
   section{break-inside:avoid-page}
@@ -383,34 +430,39 @@ td.act{width:1%;white-space:nowrap}
 <script>try{const t=localStorage.getItem('hb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
-<div class="wrap">
-  <header class="topbar">
-    <div class="tbl"><h1 id="appTitle">budgetr</h1><span class="status" id="status">Indlæser…</span></div>
-    <div class="tbr">
-      <a class="tb" href="/" title="Til forsiden">Forside</a>
-      <span class="tsep" aria-hidden="true"></span>
-      <span class="tb" title="Testbruger"><b id="bxUser"></b></span>
-      <button type="button" class="tb" id="btnUser">Skift bruger</button>
-      <span class="tsep" aria-hidden="true"></span>
-      <button type="button" class="tb" id="btnSet"><span aria-hidden="true">⚙</span> Indstillinger</button>
-      <span class="tsep" aria-hidden="true"></span>
-      <span class="thmtxt" role="group" aria-label="Tema">Tema: <button type="button" data-thm="light">Lyst</button> / <button type="button" data-thm="dark">Mørkt</button></span>
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden">budget<span class="pro" aria-hidden="true">PRO</span></a>
+    <button type="button" class="btitle" id="appTitle">Mit budget</button>
+    <div class="abr">
+      <span class="status" id="status" role="status">Indlæser…</span>
+      <div class="expwrap"><button type="button" class="uchip" id="btnUserMenu" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu" aria-label="Bruger og indstillinger"><span class="av" id="bxUser"></span><span class="caret" aria-hidden="true">▾</span></button>
+        <div class="expmenu" id="userMenu" role="menu" hidden>
+          <div class="mh">Testbruger</div>
+          <button type="button" role="menuitem" data-um="set"><b>Indstillinger</b><span>Navn, fordeling, visning og ekstra indtjening</span></button>
+          <div class="mrow"><span>Tema</span><div class="seg" role="group" aria-label="Tema"><button type="button" data-thm="light">Lyst</button><button type="button" data-thm="dark">Mørkt</button></div></div>
+          <hr class="mhr">
+          <button type="button" role="menuitem" data-um="user" id="btnUser"><b>Skift bruger</b><span>Log ind som en anden testbruger</span></button>
+          <button type="button" role="menuitem" data-um="home"><b>Til forsiden</b><span>budgetpro.dk</span></button>
+        </div></div>
     </div>
-  </header>
-
+  </div>
+</header>
+<div class="wrap">
   <div class="navrow">
     <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Budget</button><button type="button" role="tab" data-page="laan" aria-selected="false">Overblik over lån</button><button type="button" role="tab" data-page="overf" aria-selected="false">Faste overførsler</button><button type="button" role="tab" data-page="maal" aria-selected="false">Opsparingsmål</button></nav>
     <div class="tools">
-      <div class="expwrap"><button type="button" id="btnImp" aria-haspopup="menu" aria-expanded="false" aria-controls="impMenu">Importér <span aria-hidden="true">▾</span></button>
-        <div class="expmenu" id="impMenu" role="menu" hidden>
-          <button type="button" role="menuitem" data-imp="stmt"><b>Kontoudskrift …</b><span>CSV eller Excel fra netbanken. Opdaterer ydelser og beløb</span></button>
-          <button type="button" role="menuitem" data-imp="json"><b>Sikkerhedskopi …</b><span>Gendan budgettet fra en JSON-fil</span></button>
-        </div></div>
-      <div class="expwrap"><button type="button" id="btnExp" aria-haspopup="menu" aria-expanded="false" aria-controls="expMenu">Eksportér <span aria-hidden="true">▾</span></button>
+      <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Scenarie</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
+        <div class="expmenu" id="scnMenu" role="menu" hidden></div></div>
+      <div class="expwrap"><button type="button" class="morebtn" id="btnExp" aria-haspopup="menu" aria-expanded="false" aria-controls="expMenu" aria-label="Importér og eksportér" title="Importér og eksportér">···</button>
         <div class="expmenu" id="expMenu" role="menu" hidden>
+          <div class="mh">Eksportér</div>
           <button type="button" role="menuitem" data-exp="pdf"><b>PDF</b><span>Rapport til udskrift eller banken</span></button>
           <button type="button" role="menuitem" data-exp="xlsx"><b>Excel</b><span>Alle data i ark, klar til egne beregninger</span></button>
           <button type="button" role="menuitem" data-exp="json"><b>Sikkerhedskopi (JSON)</b><span>Alle data i én fil, som kan indlæses igen</span></button>
+          <hr class="mhr"><div class="mh">Importér</div>
+          <button type="button" role="menuitem" data-imp="stmt"><b>Kontoudskrift …</b><span>CSV eller Excel fra netbanken. Opdaterer ydelser og beløb</span></button>
+          <button type="button" role="menuitem" data-imp="json"><b>Sikkerhedskopi …</b><span>Gendan budgettet fra en JSON-fil</span></button>
         </div></div>
       <button type="button" id="btnNew" class="primary">+ Ny budgetpost</button>
     </div>
@@ -795,7 +847,7 @@ function personCalc(pid){
 function render(){
   const app=$('app');
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
-  $('appTitle').textContent=(S&&S.settings&&S.settings.title)||'budgetr';$('appTitle').title='Klik for at omdøbe eller ændre indstillinger';
+  $('appTitle').textContent=(S&&S.settings&&S.settings.title)||'Mit budget';renderScn();document.title='budgetpro · '+({budget:'Budget',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');$('appTitle').title='Klik for at omdøbe eller ændre indstillinger';
   if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling og opsparingsmål. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button></div>`;
     $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();return}
   syncENT();
@@ -986,7 +1038,8 @@ function scDiffHtml(sc){
     return `<span class="dchip ${good===null?'':good?'g':'r'}">${a[0]} <b>${d>0?'+':'−'}${disp(Math.abs(d))}</b></span>`}).filter(Boolean);
   return `<div class="scdiff"><span class="lbl">Holdt op mod nuværende budget${n?` · ${n} ${n===1?'ændring':'ændringer'}`:''}</span>${ch.length?ch.join(''):'<span class="dchip z"><b>Ingen forskel endnu</b></span>'}<button type="button" class="ghost" data-cmp>Se sammenligning</button></div>`;
 }
-function scBarHtml(withNew){const sc=curSc();return (withNew||!sc?'':'')+`<div class="scbar"><div class="seg" role="group" aria-label="Vælg scenarie"><button type="button" data-sc="" aria-pressed="${!sc}">Nuværende</button>${(S.scenarios||[]).map(x=>`<button type="button" data-sc="${x.id}" aria-pressed="${sc&&sc.id===x.id}">${esc(x.name||'Scenarie')}</button>`).join('')}</div>${withNew?'<button type="button" id="btnNewSc">Nyt scenarie</button>':''}</div>${!withNew&&sc?`<div class="scwrap">${scDiffHtml(sc)}</div>`:''}`}
+/* The scenario is picked in the tab row (renderScn); pages only show how the chosen scenario differs. */
+function scBarHtml(withNew){const sc=curSc();return !withNew&&sc?`<div class="scwrap">${scDiffHtml(sc)}</div>`:''}
 function scopeChips(g){return `<div class="gscope"><span>Med i</span><label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="base" ${goalIn(g,'base')?'checked':''}>Nuværende</label>${(S.scenarios||[]).map(x=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${x.id}" ${goalIn(g,x.id)?'checked':''}>${esc(x.name||'Scenarie')}</label>`).join('')}</div>`}
 function goalChart(L){
   const C=L.map(g=>({g,c:goalCalc(g)})).filter(x=>x.c.s!==null&&(x.c.e!==null||x.c.open)&&(x.c.monthly>0||x.c.xs>0));
@@ -1486,7 +1539,7 @@ function bindMain(){
   bindScopes();bindPsav();
   {const a=$('scSaldo'),d=$('scSaldoD');if(a&&d){const sv=()=>{setSaldo(a.dataset.acc,parseAmt(a.value)||0,d.value||(curSc()&&curSc().from&&parseDateX('01.'+curSc().from))||DAY(),true);commit()};a.onchange=sv;d.onchange=sv}}
   document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{const t=document.querySelector(`[data-page="${b.dataset.goto}"]`);if(t)t.click()});
-  $('btnNewSc').onclick=()=>{S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)};
+  if($('btnNewSc'))$('btnNewSc').onclick=newScenario;
   if($('scName')){const sc=curSc();
     $('scName').onchange=e=>{sc.name=e.target.value.trim()||sc.name;commit()};
     $('scFrom').onchange=e=>{sc.from=e.target.value.trim();commit()};
@@ -1688,7 +1741,7 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
 /* The report follows the app's four tabs – Budget, Overblik over lån, Faste overførsler, Opsparingsmål – with the
    same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
 function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ')}
-const PC={paper:[245,246,243],card:[255,255,255],ink:[24,34,31],ink2:[77,90,85],ink3:[125,137,131],rule:[220,224,218],pine:[31,92,74],pineBg:[227,238,233],brick:[168,65,44],brickBg:[246,228,223],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
+const PC={paper:[244,246,242],card:[255,255,255],ink:[23,33,27],ink2:[95,107,99],ink3:[131,141,134],rule:[223,229,220],pine:[44,106,77],pineBg:[227,238,230],brick:[168,56,42],brickBg:[248,231,226],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
 const PGC=[PC.pine,PC.ochre,PC.focus,PC.brick,PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
 const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
 /* Month-by-month plan for the goals chart (same rules as goalChart on the page). */
@@ -1704,7 +1757,7 @@ function goalPlan(L){
 }
 function buildPdf(){
   const {jsPDF}=window.jspdf, doc=new jsPDF({unit:'mm',format:'a4'}), W=210,H=297,M=14,CW=W-2*M,TOP=24,BOT=H-16,PT=0.3528;
-  const sc=curSc(), key=sc?sc.id:'base', title=(S.settings&&S.settings.title)||'budgetr';
+  const sc=curSc(), key=sc?sc.id:'base', title=(S.settings&&S.settings.title)||'budgetpro';
   const stamp='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'})+(sc?' · Scenarie: '+(sc.name||'')+(sc.from?' fra '+sc.from:''):'');
   const T=pdfTxt, K=v=>T(kr(v)), cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
   const fill=c=>doc.setFillColor(...c), stroke=c=>doc.setDrawColor(...c), color=c=>doc.setTextColor(...c), lw=v=>doc.setLineWidth(v);
@@ -1917,7 +1970,7 @@ function buildPdf(){
   const TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), totT=TR.reduce((a,e)=>a+mAvg(e),0), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   hero(TR.length?['Der overføres fast ',[kr(totT),'b'],` pr. måned i ${TR.length} ${TR.length===1?'overførsel':'overførsler'} mellem jeres konti${sc?' i '+(sc.name||'scenariet'):''}.`]:['Ingen faste overførsler endnu.'],
     'Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.');
-  if(fixes.length){h2('Skal rettes i netbanken',null,30);verdict('Budgettet er ændret, fx af opsparingsmål eller nye poster. Disse faste overførsler passer ikke længere med det, der bør overføres. Ret dem i netbanken, og markér dem derefter som rettet i budgetr.','warn');
+  if(fixes.length){h2('Skal rettes i netbanken',null,30);verdict('Budgettet er ændret, fx af opsparingsmål eller nye poster. Disse faste overførsler passer ikke længere med det, der bør overføres. Ret dem i netbanken, og markér dem derefter som rettet i budgetpro.','warn');
     table(['Fra','Til','Beskrivelse','Sat op nu','Bør være','Ændring'],fixes.map(({e,rec})=>{const d=rec-setupAmt(e);return [accName(e.from),accName(e.to),e.desc,kr(setupAmt(e)),{content:kr(rec),styles:{fontStyle:'bold'}},{content:(d>0?'+':'-')+kr(Math.abs(d)),styles:{textColor:d>0?PC.brick:PC.pine}}]}),{right:[3,4,5]})}
   if(TR.length){h2('Pengestrømme','Stregens tykkelse følger beløbet pr. måned.',50);flowPdf(TR)}
   if(allT.length){h2('Overførsler pr. konto',null,30);
@@ -1957,20 +2010,20 @@ function buildPdf(){
     const GP=goalPlan(GL);if(GP){h2('Indbetalinger over tid','Hvad der sættes af til målene hver måned i hele perioden.',60);goalChartPdf(GP)}}
 
   const n=doc.getNumberOfPages();
-  for(let i=1;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetr. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
+  for(let i=1;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetpro. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
   return doc;
 }
 async function exportPdf(){
   if(!S)return;
   if(!window.jspdf){toast('PDF-modulet kunne ikke indlæses');return}
-  const doc=buildPdf(), name='budgetr-'+new Date().toISOString().slice(0,10)+'.pdf';
+  const doc=buildPdf(), name='budgetpro-'+new Date().toISOString().slice(0,10)+'.pdf';
   if(downloads){try{await downloads.save({filename:name,data:doc.output('blob')});toast('PDF gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('PDF kunne ikke gemmes her')}}
   else{try{doc.save(name)}catch(e){window.print()}}
 }
 /* ---------- Excel ---------- */
 /* One sheet per tab (Budget, Overblik over lån, Faste overførsler, Opsparingsmål) laid out like the page, plus all
    entries as a filterable list. Styled with xlsx-js-style (SheetJS with cell styles); amounts stay numbers with a kr format. */
-const XC={pine:'1F5C4A',pineBg:'E3EEE9',ink:'18221F',ink2:'4D5A55',ink3:'7D8983',rule:'DCE0DA',paper:'F5F6F3',brick:'A8412C',brickBg:'F6E4DF',ochre:'9A6B12',ochreBg:'FBF0D9',white:'FFFFFF'};
+const XC={pine:'2C6A4D',pineBg:'E3EEE6',ink:'17211B',ink2:'5F6B63',ink3:'838D86',rule:'DFE5DC',paper:'F4F6F2',brick:'A8382A',brickBg:'F8E7E2',ochre:'9A6B12',ochreBg:'FBF0D9',white:'FFFFFF'};
 const XKR='#,##0 "kr";-#,##0 "kr";0 "kr"';
 const xm=(...L)=>{const r={};L.forEach(o=>{if(o)Object.keys(o).forEach(k=>{r[k]=o[k]&&typeof o[k]==='object'&&k!=='fill'?Object.assign({},r[k],o[k]):o[k]})});return r};
 const xbd=c=>({style:'thin',color:{rgb:c||XC.rule}});
@@ -2011,7 +2064,7 @@ function xlsxSheet(widths){
       X.utils.book_append_sheet(wb,ws,name)}};
 }
 function buildXlsx(){
-  const X=window.XLSX, wb=X.utils.book_new(), sc=curSc(), key=sc?sc.id:'base', r0=v=>Math.round(v*100)/100, title=(S.settings&&S.settings.title)||'budgetr';
+  const X=window.XLSX, wb=X.utils.book_new(), sc=curSc(), key=sc?sc.id:'base', r0=v=>Math.round(v*100)/100, title=(S.settings&&S.settings.title)||'budgetpro';
   const stamp='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'})+(sc?' · Scenarie: '+(sc.name||'')+(sc.from?' fra '+sc.from:''):' · Nuværende budget');
   const pos=v=>v>=0?XF.pine:XF.brick, t=totals(), bk=bankCalc(), sh=shares(), sp=S.settings||{};
   const accSub=a=>[a.number,a.type==='faelles'?'Fælles konto':a.owner?'Tilhører '+perName(a.owner):''].filter(Boolean).join(' · ');
@@ -2121,7 +2174,7 @@ function xlsxNoGrid(buf){try{const C=window.XLSX.CFB, z=C.read(new Uint8Array(bu
   return C.write(z,{fileType:'zip',type:'array'})}catch(e){return buf}}
 async function exportXlsx(){
   if(!S)return;if(!window.XLSX){toast('Excel-modulet kunne ikke indlæses');return}
-  const sc=curSc(), name='budgetr-'+(sc?(sc.name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-')+'-':'')+new Date().toISOString().slice(0,10)+'.xlsx';
+  const sc=curSc(), name='budgetpro-'+(sc?(sc.name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-')+'-':'')+new Date().toISOString().slice(0,10)+'.xlsx';
   const wb=buildXlsx(), data=new Blob([xlsxNoGrid(window.XLSX.write(wb,{bookType:'xlsx',type:'array'}))],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   if(downloads){try{await downloads.save({filename:name,data});toast('Excel-fil gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('Excel-filen kunne ikke gemmes her')}}
   else{try{saveBlob(data,name)}catch(e){toast('Excel-filen kunne ikke gemmes her')}}
@@ -2131,15 +2184,26 @@ function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>
   menu.querySelectorAll('button[role=menuitem]').forEach(b=>b.onclick=()=>{close();onPick(b)});
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#'+bid)&&!ev.target.closest('#'+mid))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}});}
-menuSetup('btnExp','expMenu',b=>{const x=b.dataset.exp;x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x)});
-menuSetup('btnImp','impMenu',b=>{const x=b.dataset.imp;if(x==='stmt'){if(!S){toast('Opret først et budget');return}openImp()}else if(x==='json')$('jsonFile').click();else openWiz()});
+menuSetup('btnExp','expMenu',b=>{const x=b.dataset.exp,y=b.dataset.imp;
+  if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
+  else if(y==='stmt'){if(!S){toast('Opret først et budget');return}openImp()}else if(y==='json')$('jsonFile').click();else openWiz()});
+menuSetup('btnUserMenu','userMenu',b=>{const x=b.dataset.um;if(x==='set')openSet();else if(x==='home')location.href='/';else if(x==='user'){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'}});
+/* Scenario picker in the tab row (replaces the Nuværende/scenario buttons on each page). Items change, so it binds by delegation. */
+function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
+  if(page!=='budget'){document.querySelector('[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
+function renderScn(){const sc=curSc(),b=$('btnScn');if(!b)return;b.hidden=!S;$('scnName').textContent=sc?(sc.name||'Scenarie'):'Nuværende';b.classList.toggle('on',!!sc);
+  $('scnMenu').innerHTML=`<div class="mh">Vis budget</div><button type="button" role="menuitem" data-scn="" aria-checked="${!sc}"><b>Nuværende</b><span>Det budget, I lever efter i dag</span></button>`+(S&&S.scenarios||[]).map(x=>`<button type="button" role="menuitem" data-scn="${x.id}" aria-checked="${!!sc&&sc.id===x.id}"><b>${esc(x.name||'Scenarie')}</b><span>${x.from?'Fra '+esc(x.from):'Scenarie'}</span></button>`).join('')+`<hr class="mhr"><button type="button" role="menuitem" data-scnew><b>Nyt scenarie</b><span>Prøv en ændring uden at røre det nuværende budget</span></button>`}
+{const btn=$('btnScn'),menu=$('scnMenu'),close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
+  btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});renderScn();const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));if(o)menu.querySelector('button').focus()};
+  menu.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;close();if(b.hasAttribute('data-scnew')){newScenario();return}SC=b.dataset.scn||null;render();window.scrollTo(0,0)};
+  document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnScn')&&!ev.target.closest('#scnMenu'))close()});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}})}
 function openSet(){if(!S){openWiz();return}const P=S.persons, sp=S.settings||{};
-  $('setName').value=sp.title||'budgetr';
+  $('setName').value=sp.title||'Mit budget';
   $('setSplit').innerHTML=`<option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${P.length===2?'<option value="manuel">fast procent</option>':''}`;$('setSplit').value=sp.split||'indkomst';
   $('lSetPct').textContent=P[0]?P[0].name+' betaler, %':'Andel i procent';$('setPct').value=+sp.manualPct||50;$('wSetPct').style.display=$('setSplit').value==='manuel'?'':'none';
   $('exAll').checked=exOn();$('dlgSet').showModal()}
-$('btnSet').onclick=openSet;
-$('setName').onchange=()=>{S.settings.title=$('setName').value.trim()||'budgetr';commit()};
+$('setName').onchange=()=>{S.settings.title=$('setName').value.trim()||'Mit budget';commit()};
 $('setSplit').onchange=()=>{S.settings.split=$('setSplit').value;$('wSetPct').style.display=$('setSplit').value==='manuel'?'':'none';commit()};
 $('setPct').onchange=()=>{S.settings.manualPct=Math.min(100,Math.max(0,Math.round(+$('setPct').value||0)));commit()};
 $('setAccts').onclick=()=>{$('dlgSet').close();openAccts()};
@@ -2148,7 +2212,7 @@ $('setDone').onclick=()=>$('dlgSet').close();
 
 /* ---------- sikkerhedskopi ---------- */
 function saveBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
-async function exportJson(){if(!S)return;const name='budgetr-sikkerhedskopi-'+new Date().toISOString().slice(0,10)+'.json',data=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+async function exportJson(){if(!S)return;const name='budgetpro-sikkerhedskopi-'+new Date().toISOString().slice(0,10)+'.json',data=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
   if(downloads){try{await downloads.save({filename:name,data});toast('Sikkerhedskopi gemt');return true}catch(e){if(e&&e.code==='declined')return false;toast('Sikkerhedskopien kunne ikke gemmes her');return false}}
   saveBlob(data,name);toast('Sikkerhedskopi gemt');return true}
 $('jsonFile').onchange=async ev=>{const f=ev.target.files[0];ev.target.value='';if(!f)return;
@@ -2247,10 +2311,10 @@ $('btnImpApply').onclick=()=>{const b=$('impBody'),unchk=$('impUnchk').checked;l
 const WZ_EXP=[['Husleje / boliglån','Bolig & forsyning'],['El','Bolig & forsyning'],['Varme','Bolig & forsyning'],['Vand','Bolig & forsyning'],['Internet','Bolig & forsyning'],['Mobil','Kommunikation'],['Forsikringer','Forsikring'],['Bil (lån, forsikring, afgift)','Transport'],['Brændstof / transport','Transport'],['Institution / SFO','Børn'],['Streaming og abonnementer','Abonnementer'],['Fagforening / a-kasse','Forsikring'],['Mad og husholdning','Husholdning']];
 let W=null,WS=0;
 const WSTEPS=['Navn','Personer','Konti','Faste udgifter','Fordeling','Opsparingsmål','Opret'];
-function openWiz(){W={title:'budgetr',persons:[{name:'',salary:''},{name:'',salary:''}],acc:{budget:true,budgetName:'Budgetkonto',personal:true,savings:true,savingsName:'Fælles opsparing'},
+function openWiz(){W={title:'Mit budget',persons:[{name:'',salary:''},{name:'',salary:''}],acc:{budget:true,budgetName:'Budgetkonto',personal:true,savings:true,savingsName:'Fælles opsparing'},
   exp:WZ_EXP.map(([d,c])=>({desc:d,cat:c,amount:'',freq:1})),split:'indkomst',manualPct:50,auto:true,goals:[{name:'',mode:'target',amount:'',end:''}],replace:false};WS=0;renderWiz();$('dlgWiz').showModal()}
 function wzCollect(){const b=$('wzBody'),v=id=>{const el=b.querySelector('#'+id);return el?el.value:''};
-  if(WS===0)W.title=v('wzName').trim()||'budgetr';
+  if(WS===0)W.title=v('wzName').trim()||'Mit budget';
   if(WS===1)W.persons=[...b.querySelectorAll('[data-wp]')].map(r=>({name:r.querySelector('[data-f=name]').value.trim(),salary:r.querySelector('[data-f=sal]').value}));
   if(WS===2){W.acc={saldo:v('wzSal'),saldoDate:v('wzSalD')||DAY(),budget:$('wzAB').checked,budgetName:v('wzABn').trim()||'Budgetkonto',personal:$('wzAP').checked,savings:$('wzAS').checked,savingsName:v('wzASn').trim()||'Fælles opsparing'}}
   if(WS===3)W.exp=[...b.querySelectorAll('[data-we]')].map(r=>({desc:r.querySelector('[data-f=desc]').value.trim(),cat:r.dataset.cat||'Andet',amount:r.querySelector('[data-f=amt]').value,freq:+r.querySelector('[data-f=freq]').value}));
