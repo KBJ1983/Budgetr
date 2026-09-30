@@ -2,8 +2,8 @@ import type { NextRequest } from "next/server";
 import { isBudget, MAX_BYTES, readBudget, writeBudget } from "@/lib/budget-file";
 import { canAccess, SESSION_COOKIE } from "@/lib/session";
 
-// Local-disk storage. Test users need no auth (same trust level as the test-user login); a real account only
-// with its own session cookie (lib/session.ts). 401 sends the app back to /login.
+// Stored through lib/kv.ts (local disk, or Upstash Redis on Vercel). Test users need no auth (same trust level
+// as the test-user login); a real account only with its own session cookie (lib/session.ts). 401 sends the app back to /login.
 const denied = async (req: NextRequest, user: string) =>
   !(await canAccess(user, req.cookies.get(SESSION_COOKIE)?.value));
 

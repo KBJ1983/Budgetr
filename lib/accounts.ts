@@ -3,15 +3,14 @@
  * Danish mobile number; the account can only be used once the e-mail is confirmed through the link we send.
  * There are no passwords: logging in later also goes through a link sent by e-mail.
  *
- *   <dir>/accounts/<id>.json   { id, firstName, lastName, email, phone, createdAt, verifiedAt?, token?, lastMailAt? }
- *   <dir>/profiles/<id>.json   e-mail + phone for reminders (lib/profile.ts), written when the e-mail is confirmed
+ *   accounts/<id>.json   { id, firstName, lastName, email, phone, createdAt, verifiedAt?, token?, lastMailAt? }
+ *   profiles/<id>.json   e-mail + phone for reminders (lib/profile.ts), written when the e-mail is confirmed
  *
- * <dir> is BUDGETR_DATA_DIR or ./data (git-ignored). A link holds "<id>.<random>"; only a hash of the random part
- * is stored, it works once, and a new link replaces the previous one.
+ * in the store (lib/kv.ts; on disk under BUDGETR_DATA_DIR or ./data, git-ignored). A link holds "<id>.<random>";
+ * only a hash of the random part is stored, it works once, and a new link replaces the previous one.
  */
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { openStore } from "./kv";
 import { writeProfile } from "./profile";
 import { normalizeEmail, type SignupInput } from "./signup";
 import { isAccountId } from "./users";
@@ -45,38 +44,25 @@ export interface Link {
   token: string;
 }
 
-const dataDir = () => process.env.BUDGETR_DATA_DIR || path.join(process.cwd(), "data");
-const accountsDir = (dir: string) => path.join(dir, "accounts");
-
 export const displayName = (a: Pick<Account, "firstName" | "lastName">) => `${a.firstName} ${a.lastName}`;
 
-export async function readAccount(id: string, dir = dataDir()): Promise<Account | null> {
+export async function readAccount(id: string, dir?: string): Promise<Account | null> {
   if (!isAccountId(id)) return null;
   try {
-    const a = JSON.parse(await readFile(path.join(accountsDir(dir), `${id}.json`), "utf8"));
+    const a = JSON.parse((await openStore(dir).get(`accounts/${id}.json`)) ?? "null");
     return a && a.id === id ? (a as Account) : null;
   } catch {
     return null;
   }
 }
 
-async function saveAccount(a: Account, dir: string): Promise<void> {
-  await mkdir(accountsDir(dir), { recursive: true });
-  const file = path.join(accountsDir(dir), `${a.id}.json`);
-  const tmp = `${file}.${process.pid}.tmp`;
-  await writeFile(tmp, JSON.stringify(a, null, 1), "utf8");
-  await rename(tmp, file);
+async function saveAccount(a: Account, dir: string | undefined): Promise<void> {
+  await openStore(dir).set(`accounts/${a.id}.json`, JSON.stringify(a, null, 1));
 }
 
-export async function findByEmail(email: string, dir = dataDir()): Promise<Account | null> {
+export async function findByEmail(email: string, dir?: string): Promise<Account | null> {
   const key = normalizeEmail(email);
-  let names: string[];
-  try {
-    names = await readdir(accountsDir(dir));
-  } catch {
-    return null;
-  }
-  for (const n of names) {
+  for (const n of await openStore(dir).list("accounts")) {
     if (!n.endsWith(".json")) continue;
     const a = await readAccount(n.slice(0, -5), dir);
     if (a && a.email === key) return a;
@@ -92,7 +78,7 @@ const throttled = (a: Account, now: Date) =>
   !!a.lastMailAt && now.getTime() - Date.parse(a.lastMailAt) < RESEND_GAP_MS;
 
 /** Gives the account a fresh link (replacing any earlier one) and saves it. */
-async function issue(a: Account, purpose: Purpose, now: Date, dir: string): Promise<Link> {
+async function issue(a: Account, purpose: Purpose, now: Date, dir: string | undefined): Promise<Link> {
   const secret = randomBytes(24).toString("base64url");
   const ttl = purpose === "verify" ? VERIFY_TTL_MS : LOGIN_TTL_MS;
   a.token = { hash: hash(secret), purpose, expires: new Date(now.getTime() + ttl).toISOString() };
@@ -106,7 +92,7 @@ async function issue(a: Account, purpose: Purpose, now: Date, dir: string): Prom
  * gets a login link (its details are not changed), an unconfirmed one takes the new details and a new confirm
  * link. Returns null when a mail went out to that account less than RESEND_GAP_MS ago.
  */
-export async function signup(input: SignupInput, now = new Date(), dir = dataDir()): Promise<Link | null> {
+export async function signup(input: SignupInput, now = new Date(), dir?: string): Promise<Link | null> {
   const existing = await findByEmail(input.email, dir);
   if (existing) {
     if (throttled(existing, now)) return null;
@@ -119,7 +105,7 @@ export async function signup(input: SignupInput, now = new Date(), dir = dataDir
 }
 
 /** A login link for this e-mail (a confirm link while it isn't confirmed yet), or null for no account / throttled. */
-export async function requestLogin(email: string, now = new Date(), dir = dataDir()): Promise<Link | null> {
+export async function requestLogin(email: string, now = new Date(), dir?: string): Promise<Link | null> {
   const a = await findByEmail(email, dir);
   if (!a || throttled(a, now)) return null;
   return issue(a, a.verifiedAt ? "login" : "verify", now, dir);
@@ -129,7 +115,7 @@ export async function requestLogin(email: string, now = new Date(), dir = dataDi
  * Uses a link. On success the link is spent, a first use confirms the e-mail (and writes the profile the reminders
  * read), and the account is returned. An unknown, used or expired link gives null.
  */
-export async function redeem(token: unknown, now = new Date(), dir = dataDir()): Promise<Account | null> {
+export async function redeem(token: unknown, now = new Date(), dir?: string): Promise<Account | null> {
   if (typeof token !== "string") return null;
   const dot = token.indexOf(".");
   const id = token.slice(0, dot), secret = token.slice(dot + 1);
