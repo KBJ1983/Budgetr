@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./landing.module.css";
 import { HeroPhone, HeroShowcase } from "./Shots";
-import { ArrowRightIcon, CheckIcon, PeopleIcon, ShieldIcon } from "./icons";
+import { ArrowRightIcon, CheckIcon, PeopleIcon } from "./icons";
 
 const PROMISES = ["Gratis", "Ingen adgang til netbank", "Klar på 10 minutter"] as const;
 
@@ -47,16 +47,8 @@ export function Hero() {
         <div className={styles.heroVisual}>
           <div className={styles.heroDots} aria-hidden="true" />
           <HeroShowcase />
-          {/* Floating notes, as in the design. The goal matches the fictional budget in the screenshots. */}
-          <div className={styles.floatPill} aria-hidden="true">
-            <span className={styles.floatPillIcon}>
-              <ShieldIcon size={15} strokeWidth={2} />
-            </span>
-            <span className={styles.floatPillText}>
-              <b>Ingen adgang til netbank</b>
-              <span>Du uploader selv</span>
-            </span>
-          </div>
+          {/* One floating note over the window (the design's netbank pill is left out: the promises already say it).
+              The goal matches the fictional budget in the screenshots. */}
           <div className={styles.floatGoal} aria-hidden="true">
             <div className={styles.floatGoalHead}>
               <span className={styles.floatGoalDot} />

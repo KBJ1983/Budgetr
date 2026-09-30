@@ -129,11 +129,11 @@ export function HeroShowcase() {
             </div>
           ))}
         </div>
-        <p key={i} className={styles.showNote}>
-          <span className={styles.showDot} aria-hidden="true" />
-          {SLIDES[i]?.note}
-        </p>
       </div>
+      <p key={i} className={styles.showNote}>
+        <span className={styles.showDot} aria-hidden="true" />
+        {SLIDES[i]?.note}
+      </p>
     </div>
   );
 }

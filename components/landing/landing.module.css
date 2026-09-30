@@ -516,7 +516,7 @@
 .heroVisual {
   position: relative;
   min-width: 0;
-  padding: 34px 0 64px;
+  padding: 8px 0 0;
 }
 .heroDots {
   position: absolute;
@@ -531,46 +531,10 @@
   display: none;
 }
 
-/* Floating notes over the hero window */
-.floatPill {
-  position: absolute;
-  top: 74px;
-  right: -22px;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--v-ink);
-  background: var(--v-white);
-  border: 1px solid var(--v-rule);
-  border-radius: 999px;
-  box-shadow: var(--float-shadow);
-  padding: 8px 16px 8px 8px;
-}
-.floatPillIcon {
-  display: flex;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--v-pine-bg);
-  color: var(--v-pine);
-  align-items: center;
-  justify-content: center;
-}
-.floatPillText {
-  display: flex;
-  flex-direction: column;
-  font-size: 11.5px;
-  color: var(--v-ink-3);
-}
-.floatPillText b {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--v-ink);
-}
+/* The one floating note: a savings goal hanging off the window's bottom left corner, next to the caption. */
 .floatGoal {
   position: absolute;
-  bottom: 18px;
+  bottom: 0;
   left: -40px;
   z-index: 3;
   width: 236px;
@@ -590,8 +554,10 @@
   gap: 7px;
   font-size: 12.5px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .floatGoalDot {
+  flex-shrink: 0;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -676,7 +642,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
   /* Window colours follow the shots' theme. */
   --chrome: var(--v-white);
   --chrome-rule: var(--v-rule);
@@ -800,21 +766,17 @@
 .showSlide[data-on="true"] {
   opacity: 1;
 }
+/* Caption below the window, on the right, so the goal card on the left has room. */
 .showNote {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  max-width: min(290px, calc(100% - 32px));
-  margin: 0;
+  align-self: flex-end;
+  max-width: min(320px, 56%);
+  min-height: 42px;
+  margin: -10px 0 0;
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  padding: 11px 14px;
-  border-radius: 12px;
-  background: var(--note-bg);
-  color: var(--note-ink);
-  font: 500 13px/1.45 var(--font);
-  box-shadow: var(--float-shadow);
+  color: var(--v-dark-2);
+  font: 500 14px/1.45 var(--font);
 }
 .showDot {
   flex: 0 0 auto;
@@ -913,12 +875,13 @@
   color: var(--v-dark-text);
   --section-y: 112px;
 }
+/* Sits behind the cards, not behind the text: the cards cover its middle and it shows around them. */
 .trustCircle {
   position: absolute;
-  right: -300px;
-  top: -320px;
-  width: 760px;
-  height: 760px;
+  right: max(-120px, calc((100% - 1400px) / 2));
+  bottom: -260px;
+  width: 640px;
+  height: 640px;
   border-radius: 50%;
   background: var(--v-pine);
 }
@@ -1478,9 +1441,6 @@
   .featureCards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .floatPill {
-    right: -8px;
-  }
   .floatGoal {
     width: 200px;
     left: -24px;
@@ -1641,8 +1601,8 @@
   .trustCircle {
     width: 420px;
     height: 420px;
-    right: -220px;
-    top: -200px;
+    right: -180px;
+    bottom: -140px;
   }
   .trustBandGrid,
   .featureCards {
@@ -1893,12 +1853,8 @@
   .heroVisual {
     animation: fadeIn 0.9s ease-out 0.2s both;
   }
-  .floatPill,
   .floatGoal {
-    animation: noteIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.7s both;
-  }
-  .floatGoal {
-    animation-delay: 0.85s;
+    animation: noteIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.8s both;
   }
   .heroMobile {
     animation: riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
