@@ -58,8 +58,10 @@ export function authMail(purpose: Purpose, firstName: string, link: string) {
 
 /** Sends the mail. Returns false when no mail provider is set up (the link is then only in the server log). */
 export async function sendAuthMail(to: string, mail: { subject: string; text: string }, link: string): Promise<boolean> {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.MAIL_FROM || process.env.REMINDER_MAIL_FROM;
+  // Trimmed (and stray quotes dropped): a pasted key often brings a space, line break or quotes along.
+  const clean = (s?: string) => s?.trim().replace(/^["']|["']$/g, "").trim();
+  const key = clean(process.env.RESEND_API_KEY);
+  const from = clean(process.env.MAIL_FROM || process.env.REMINDER_MAIL_FROM);
   if (!key || !from) {
     // A login link is a key to the account: only print it in development.
     console.warn(`[budgetr] RESEND_API_KEY / MAIL_FROM mangler – mail til ${to} er ikke sendt.${DEV ? ` Link: ${link}` : ""}`);
