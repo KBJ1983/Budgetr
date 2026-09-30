@@ -32,7 +32,7 @@ export function HowItWorks() {
           <div className={styles.sectionHeadTitle}>
             <span className={styles.eyebrow}>Sådan virker det</span>
             <h2 id="saadan-title" className={styles.h2}>
-              Fra tomt ark til fuldt overblik på 30 min.
+              Fra tomt ark til fuldt overblik på 29 min.
             </h2>
           </div>
           <p className={styles.headBody}>
@@ -75,7 +75,7 @@ export function PhotoBanner() {
         />
         <div className={styles.bannerShade} aria-hidden="true" />
         <div className={styles.bannerText}>
-          <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Invester 30 minutter</span>
+          <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Invester 29 minutter</span>
           <h2 id="banner-title" className={styles.bannerTitle}>
             Ro i økonomien. Ro i livet.
           </h2>
