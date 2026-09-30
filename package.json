@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "smoke": "node scripts/smoke.mjs",
     "shots": "node scripts/landing-shots.mjs",
+    "reminders": "node scripts/send-reminders.mjs",
     "extract:app": "node scripts/extract-original-app.mjs",
     "typecheck": "next typegen && tsc --noEmit"
   },

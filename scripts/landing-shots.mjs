@@ -40,6 +40,7 @@ for (const theme of ["light", "dark"]) {
     await page.addInitScript((t) => {
       localStorage.setItem("budgetr:session", "test5");
       localStorage.setItem("hb-theme", t);
+      sessionStorage.setItem("budgetr:quiet", "1"); // no login note over the screenshot
     }, theme);
     await page.goto(`${BASE}/app`);
     await page.getByRole("heading", { name: "Hvem betaler hvad" }).waitFor();

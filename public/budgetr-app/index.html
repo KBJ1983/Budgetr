@@ -105,6 +105,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .wzopt{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;margin-bottom:6px;font-size:14px}
 .wzopt input[type=text]{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:5px 9px;font:inherit;font-size:14px;color:var(--ink);flex:1;min-width:0}
 .wzsum{font-size:14px;line-height:1.6;margin:0;padding-left:18px}
+#dlgWiz .dlgfoot .rgt{flex-wrap:wrap;justify-content:flex-end}
 .imptbl{max-height:52vh;overflow:auto;margin-top:8px}
 .imptbl input.amt{width:110px;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 7px;font:inherit;font-size:13px;color:var(--ink);text-align:right}
 .imptbl select{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 7px;font:inherit;font-size:13px;color:var(--ink);max-width:260px}
@@ -667,8 +668,27 @@ dialog#dlgData{width:min(700px,94vw)}
 #dlgData .dhead{display:flex;align-items:flex-start;gap:16px}
 #dlgData .dhead h2{margin:0 0 6px;font-size:22px;font-weight:600}
 #dlgData .dhead p{margin:0;font-size:15px;color:var(--ink2)}
-#dlgData .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent}
-#dlgData .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#dlgData .dx,#dlgNote .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
+#dlgData .dx svg,#dlgNote .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+/* Notes shown at login: goal milestones and the update reminder */
+dialog#dlgNote{width:min(520px,94vw)}
+#dlgNote form{padding:28px;display:flex;flex-direction:column;gap:18px}
+#dlgNote .nhead{display:flex;align-items:flex-start;gap:16px}
+#dlgNote .nhead h2{margin:0 0 4px;font-size:22px;font-weight:600}
+#dlgNote .nhead p{margin:0;font-size:15px;color:var(--ink2)}
+#dlgNote .dlgfoot{margin:0}
+.ntlist{display:flex;flex-direction:column;gap:10px}
+.ntrow{display:flex;gap:14px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:12px;min-width:0}
+.ntrow>div{min-width:0}
+.ntrow b{font-size:15px;font-weight:600}
+.ntrow p{margin:2px 0 0;font-size:14px;line-height:1.45}
+.ntrow small{display:block;margin-top:3px;font-size:13px;color:var(--ink2)}
+.ntring{--p:0;--c:var(--pine);flex:0 0 auto;width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--band) 0);display:flex;align-items:center;justify-content:center;position:relative}
+.ntring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card)}
+.ntring b{position:relative;font:700 12px var(--mono);white-space:nowrap}
+.ntico{flex:0 0 auto;width:56px;height:56px;border-radius:50%;background:var(--band);display:flex;align-items:center;justify-content:center}
+.ntico svg{width:22px;height:22px;fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ntfoot{margin:0;font-size:13px;line-height:1.45;color:var(--ink2)}
 #dlgData .dcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
 #dlgData .dcol{display:flex;flex-direction:column;gap:10px}
 #dlgData .dcol h3{margin:0;font:600 12px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
@@ -913,14 +933,14 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
     <div id="wzBody"></div>
     <div class="verdict bad" id="wzErr" hidden style="margin:10px 0 0"></div>
     <div class="dlgfoot"><button type="button" id="wzBack">Tilbage</button>
-      <div class="rgt"><button type="button" id="wzCancel">Annullér</button><button type="button" class="primary" id="wzNext">Næste</button></div></div>
+      <div class="rgt"><button type="button" id="wzCancel">Annullér</button><button type="button" id="wzSkip" hidden>Spring over</button><button type="button" class="primary" id="wzNext">Næste</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgSet" class="setdlg" aria-labelledby="setTitle">
   <form method="dialog" id="frmSet">
     <div class="sethead"><h2 id="setTitle">Indstillinger</h2><button type="button" class="primary" id="setDone">Færdig</button></div>
     <div class="setbody">
-      <nav class="setnav" aria-label="Indstillinger"><button type="button" data-sp="hus"><b>Husstand</b><span>Navn og personer</span></button><button type="button" data-sp="konti"><b>Konti</b><span>Navn, nummer og ejer</span></button><button type="button" data-sp="fordeling"><b>Fordeling</b><span>Sådan deles fælles udgifter</span></button><button type="button" data-sp="indtaegter"><b>Indtægter</b><span>Ekstra og bundne indtægter</span></button><button type="button" data-sp="bank"><b>Bankens krav</b><span>Vejledende rådighedsbeløb</span></button><button type="button" data-sp="visning"><b>Visning</b><span>Beløb, tema og markeringer</span></button><button type="button" data-sp="nyt"><b>Nyt budget</b><span>Start forfra med guiden</span></button></nav>
+      <nav class="setnav" aria-label="Indstillinger"><button type="button" data-sp="hus"><b>Husstand</b><span>Navn og personer</span></button><button type="button" data-sp="konti"><b>Konti</b><span>Navn, nummer og ejer</span></button><button type="button" data-sp="fordeling"><b>Fordeling</b><span>Sådan deles fælles udgifter</span></button><button type="button" data-sp="indtaegter"><b>Indtægter</b><span>Ekstra og bundne indtægter</span></button><button type="button" data-sp="bank"><b>Bankens krav</b><span>Vejledende rådighedsbeløb</span></button><button type="button" data-sp="paamind"><b>Påmindelser</b><span>Beskeder, mail og sms</span></button><button type="button" data-sp="visning"><b>Visning</b><span>Beløb, tema og markeringer</span></button><button type="button" data-sp="nyt"><b>Nyt budget</b><span>Start forfra med guiden</span></button></nav>
       <div class="setmain" id="setMain">
         <section class="setsec" id="set-hus"><h3>Husstand</h3>
           <p class="setnote">Budgettets navn og de personer, der deler budgettet. Personerne bruges som betalere på poster, mål og konti.</p>
@@ -952,6 +972,16 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
             <div class="field"><label for="setBkC">Antal børn</label><input id="setBkC" type="number" min="0" max="10" step="1"></div>
             <div class="field"><label for="setBkR">Pr. barn, kr./md.</label><input id="setBkR" inputmode="decimal"></div>
           </div></section>
+        <section class="setsec" id="set-paamind"><h3>Påmindelser</h3>
+          <p class="setnote">Beskeder, når du logger ind, og en påmindelse, når budgettet ikke er rettet i et stykke tid.</p>
+          <div class="setgrp"><label class="check"><input type="checkbox" id="setMile"> Vis en besked, når et opsparingsmål når 10, 25, 50, 75 og 100 %</label>
+          <p class="setnote">budgetpro er ikke forbundet til netbanken. Beskeden bygger på, at indbetalingerne er gået ind som planlagt.</p></div>
+          <div class="grid2"><div class="field"><label for="setEvery">Påmind mig om at opdatere budgettet</label><select id="setEvery"><option value="0">Aldrig</option><option value="1">Hver måned</option><option value="3">Hver 3. måned</option><option value="6">Hvert halve år</option><option value="12">En gang om året</option></select></div></div>
+          <div class="setgrp" id="wRemind"><span class="flabel">Send også påmindelsen</span>
+            <label class="check"><input type="checkbox" id="setRmMail"> På mail <span class="muted" id="setRmMailTo"></span></label>
+            <label class="check"><input type="checkbox" id="setRmSms"> På sms <span class="muted" id="setRmSmsTo"></span></label>
+            <p class="setnote" id="setRmTo"></p>
+            <p class="setnote" id="setRmNote"></p></div></section>
         <section class="setsec" id="set-visning"><h3>Visning</h3>
           <p class="setnote">Visning og tema gælder kun på denne enhed. Markeringen af stigende udgifter gælder budgettet.</p>
           <div class="grid2">
@@ -962,8 +992,9 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
             <div class="field"><label for="setDev">Markér udgifter, der er steget mindst (%)</label><input id="setDev" type="number" min="1" max="100" step="1"></div>
           </div></section>
         <section class="setsec" id="set-nyt"><h3>Nyt budget</h3>
-          <p class="setnote">Guiden tager dig igennem personer, konti, faste udgifter, fordeling og opsparingsmål. Tag en sikkerhedskopi først, hvis du vil gemme det nuværende budget.</p>
-          <div><button type="button" id="setWiz">Start nyt budget …</button></div></section>
+          <p class="setnote">Guiden tager dig igennem personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser.</p>
+          <div class="verdict warn" style="margin:0 0 12px">Et nyt budget overskriver det budget, du har nu, også for alle andre, der bruger det. Poster, konti, opsparingsmål og indstillinger bliver erstattet. Gem en sikkerhedskopi først, hvis du vil kunne gå tilbage.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" id="setWizBackup">Gem sikkerhedskopi</button><button type="button" id="setWiz">Start nyt budget …</button></div></section>
       </div>
     </div>
   </form>
@@ -1010,6 +1041,13 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
         <button type="button" class="dtile" data-imp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Gendan et budget fra en gemt fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
     </div>
+  </form>
+</dialog>
+<dialog id="dlgNote" aria-labelledby="noteTitle">
+  <form method="dialog">
+    <div class="nhead"><div><h2 id="noteTitle">Tillykke</h2><p id="noteSub"></p></div><button type="button" class="dx" id="btnNoteClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="ntlist" id="noteBody"></div>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnNoteGo">Se opsparingsmål</button><button type="submit" class="primary" autofocus>Luk</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgHelp" class="howdlg" aria-labelledby="helpTitle">
@@ -1086,6 +1124,16 @@ function goalCalc(g){
   const done=s===null?0:Math.max(0,n?Math.min(n,nw-s):nw-s), estRaw=sv+monthly*done+xDone, est=T?Math.min(T,estRaw):estRaw;
   return {mode,open:!n,s,e,n,T,sv,rest0,rest,monthly,X,xs,xOut:XA.length-X.length,done,left:n?n-done:null,est,pct:T?est/T:null,ended:e!==null&&nw>=e,future:s!==null&&nw<s};
 }
+/* Milestones shown at login. The estimate assumes the planned payments were made (there is no bank connection).
+   g.hit is the last milestone shown for the goal, so each one is shown once. */
+const MILES=[10,25,50,75,100];
+const mileOf=c=>c&&c.T&&c.pct!==null&&!c.future?MILES.filter(m=>c.pct*100+1e-9>=m).pop()||0:0;
+/* Update reminder (same rule as lib/reminders.ts): due `every` months after the later of the last change to the
+   budget (settings.touched) and the last reminder shown here (settings.remindSeen). */
+const rmOf=()=>Object.assign({every:0,mail:false,sms:false},(S.settings||{}).remind||{});
+const isoAddM=(iso,n)=>{const d=new Date(iso+'T00:00:00');d.setMonth(d.getMonth()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+function rmDue(){const r=rmOf(),sp=S.settings||{};if(!(+r.every>0))return null;
+  return isoAddM([sp.touched,sp.remindSeen].filter(Boolean).sort().pop()||DAY(),+r.every)}
 const goalIn=(g,key)=>(g.scopes||[]).includes(key);
 const goalCounts=g=>g.active!==false&&!goalCalc(g).ended;
 const goalsFor=key=>(S.goals||[]).filter(g=>goalIn(g,key)&&goalCounts(g));
@@ -1264,7 +1312,7 @@ function render(){
   const app=$('app');
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
   renderScn();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
-  if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling og opsparingsmål. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button></div>`;
+  if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button></div>`;
     $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();return}
   syncENT();
   INFO=[];closePop();
@@ -1639,6 +1687,8 @@ $('frmGoal').addEventListener('submit',ev=>{ev.preventDefault();
   if(newAcc){const pay=d.payer,acc={id:'k'+uid(),name:newAcc,number:'',type:'personlig',owner:pay!==FAELLES&&S.persons.some(p=>p.id===pay)?pay:'',startSaldo:0};S.accounts.push(acc);d.to=acc.id}
   S.goals=S.goals||[];
   if(!goalEdit&&goalConvPid){const pp=S.persons.find(x=>x.id===goalConvPid);if(pp)pp.savings=0;goalConvPid=null}
+  // Milestones already passed when the goal is saved are not celebrated at the next login.
+  d.hit=mileOf(goalCalc(d));
   if(goalEdit)Object.assign(S.goals.find(x=>x.id===goalEdit),d);else S.goals.push(Object.assign({id:'g'+uid()},d));
   $('dlgGoal').close();commit();toast(goalEdit?'Opsparingsmål gemt':'Opsparingsmål oprettet');
 });
@@ -1968,7 +2018,9 @@ function helpHtml(){
       +ul([`Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.`,
         `I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så I kan se, hvad der er tilbage.`,
         `Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.`,
-        `Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.`]))
+        `Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.`,
+        `<b>Skønnet opsparet</b> = det, der allerede var sparet op, + den månedlige indbetaling for hver måned siden startdatoen + ekstra indbetalinger, hvis dato er passeret. budgetpro kan ikke se netbanken, så tallet forudsætter, at indbetalingerne er gået ind som planlagt.`,
+        `Når skønnet når 10, 25, 50, 75 og 100 % af målbeløbet, får du en besked, næste gang du logger ind. Hver milepæl vises én gang. Mål med fast månedlig indbetaling og uden måldato har intet målbeløb og giver ingen besked. Beskederne kan slås fra under Indstillinger, Påmindelser.`]))
   +sec('bank','Rådighedsbeløb som banken regner det',steps([['','Nettoindtægt (alle indtægter, ekstra indtjening kun hvis den er slået til)'],['m','Bankens faste udgifter: de faste udgifter, der er markeret "Medregnes i bankens faste udgifter"'],['t','Rådighedsbeløb'],['m','Vejledende krav: voksne + antal børn × sats pr. barn'],['t','Luft over kravet (eller under kravet)']])
       +panel('Jeres tal lige nu',wfB)
       +`<p>Bankens faste udgifter er de faste udgifter i sætningen øverst, minus mad og husholdning, opsparing og gaver. Dem regner banken ikke med, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Bankens faste udgifter viser, hvad der er holdt ude. Derfor er rådighedsbeløbet som regel højere end Tilbage øverst.</p>
@@ -2326,7 +2378,10 @@ $('btnAddAcct').onclick=()=>{S.accounts.push({id:'k'+uid(),name:'Ny konto',numbe
 
 /* ---------- gem ---------- */
 function blank(){return {version:1,persons:[{id:'p1',name:'Person 1'},{id:'p2',name:'Person 2'}],accounts:[{id:'budget',name:'Budgetkonto',number:'',type:'faelles',owner:'',startSaldo:0}],entries:[],goals:[],settings:{split:'indkomst',manualPct:50}}}
-function commit(){render();dirty=true;clearTimeout(commit._t);commit._t=setTimeout(flush,500)}
+// settings.touched = the day the budget was last changed; the update reminder counts from it.
+function commit(){if(S&&S.settings)S.settings.touched=DAY();render();saveSoon()}
+// Saves without counting as a change to the budget (seen notes, reminder settings).
+function saveSoon(){dirty=true;clearTimeout(commit._t);commit._t=setTimeout(flush,500)}
 async function flush(){
   if(!dirty||saving)return; dirty=false; saving=true;
   const body=JSON.parse(JSON.stringify(S));
@@ -2848,7 +2903,31 @@ function fillSet(){const P=S.persons, sp=S.settings||{}, bk=Object.assign({adult
   $('setBound').checked=boundOn();const bt=boundTxt();
   $('setBoundNote').innerHTML=(bt?`Bundne indtægter lige nu: ${bt}. `:'Ingen indtægter er markeret som bundne. ')+'Slået fra holdes de ude af Til rådighed på personkortene. Tallene øverst og bankens beregning tæller dem altid med. En indtægt bliver bundet med fluebenet på posten; børnefamilieydelse er det som udgangspunkt.';
   $('setBkA').value=nf.format(+bk.adults||0);$('setBkC').value=+bk.children||0;$('setBkR').value=nf.format(+bk.childRate||0);
-  $('setDev').value=devPct();renderAccts()}
+  $('setDev').value=devPct();fillRemind();renderAccts()}
+/* Mail and SMS always go to the e-mail and mobile number on the user's profile (lib/profile.ts); the budget only
+   holds the choice of channels. /api/profile gives them masked, or null while the profile has none. */
+let PROFILE=null;
+function loadProfile(done){if(PROFILE){done();return}
+  fetch('/api/profile/'+encodeURIComponent(window.BUDGETR_USER),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
+    .then(p=>{PROFILE={email:p.email||null,phone:p.phone||null};done()})}
+function rmToTxt(mail,sms){const P=PROFILE||{},base='Mail og sms sendes til den e-mail og det mobilnummer, du opgav, da du oprettede din profil.';
+  if(!PROFILE||(!mail&&!sms))return base;
+  const noM=mail&&!P.email,noS=sms&&!P.phone,miss=noM&&noS?'ingen e-mail eller mobilnummer':noM?'ingen e-mail':noS?'intet mobilnummer':'';
+  const still=mail&&!noM?'på mail og her i appen':sms&&!noS?'på sms og her i appen':'her i appen';
+  return base+(miss?` Din profil har endnu ${miss}, så indtil da får du påmindelsen ${still}.`:'')}
+const rmToLbl=v=>v?'· '+v:'';
+function fillRemind(){const sp=S.settings||{},r=rmOf(),due=rmDue();
+  $('setMile').checked=sp.milestones!==false;$('setEvery').value=String(+r.every||0);
+  $('setRmMail').checked=!!r.mail;$('setRmSms').checked=!!r.sms;
+  $('wRemind').style.display=+r.every>0?'':'none';
+  const to=()=>{$('setRmMailTo').textContent=rmToLbl(PROFILE&&PROFILE.email);$('setRmSmsTo').textContent=rmToLbl(PROFILE&&PROFILE.phone);$('setRmTo').textContent=rmToTxt(r.mail,r.sms)};to();loadProfile(to);
+  $('setRmNote').textContent=(sp.touched?`Budgettet blev sidst rettet ${fmtDate(sp.touched)}. `:'')
+    +(due?`Næste påmindelse kommer omkring ${fmtDate(due)}, hvis budgettet ikke er rettet inden da. Du får den også her i appen, når du logger ind.`:'')}
+{const rset=(k,v)=>{S.settings.remind=Object.assign(rmOf(),{[k]:v});saveSoon();fillRemind()};
+  $('setMile').onchange=e=>{S.settings.milestones=e.target.checked;saveSoon()};
+  $('setEvery').onchange=e=>rset('every',+e.target.value||0);
+  $('setRmMail').onchange=e=>rset('mail',e.target.checked);
+  $('setRmSms').onchange=e=>rset('sms',e.target.checked);}
 // One page per group; the last page opened is shown again next time.
 let setPage='hus';
 function setShow(sec){if(!$('set-'+sec))sec='hus';setPage=sec;
@@ -2867,6 +2946,7 @@ $('setBound').onchange=()=>{S.settings.withBound=$('setBound').checked;setCommit
   $('setBkR').onchange=e=>bset('childRate',Math.max(0,Math.round(parseAmt(e.target.value)||0)));}
 $('setDev').onchange=()=>{const v=Math.round(+$('setDev').value||0);S.settings.devPct=v>0?Math.min(100,v):10;setCommit()};
 $('setWiz').onclick=()=>{$('dlgSet').close();openWiz()};
+$('setWizBackup').onclick=()=>exportJson();
 $('setDone').onclick=()=>$('dlgSet').close();
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-set]');if(!b)return;ev.preventDefault();openSet(b.dataset.set)});
 
@@ -2970,28 +3050,36 @@ $('btnImpApply').onclick=()=>{const b=$('impBody'),unchk=$('impUnchk').checked;l
 /* ---------- guide: nyt budget ---------- */
 const WZ_EXP=[['Husleje / boliglån','Bolig & forsyning'],['El','Bolig & forsyning'],['Varme','Bolig & forsyning'],['Vand','Bolig & forsyning'],['Internet','Bolig & forsyning'],['Mobil','Kommunikation'],['Forsikringer','Forsikring'],['Bil (lån, forsikring, afgift)','Transport'],['Brændstof / transport','Transport'],['Institution / SFO','Børn'],['Streaming og abonnementer','Abonnementer'],['Fagforening / a-kasse','Forsikring'],['Mad og husholdning','Husholdning']];
 let W=null,WS=0;
-const WSTEPS=['Navn','Personer','Konti','Faste udgifter','Fordeling','Opsparingsmål','Opret'];
+const WSTEPS=['Navn','Personer','Konti','Faste udgifter','Fordeling','Opsparingsmål','Bankens udgifter','Påmindelser','Opret'];
+const WS_BANK=6,WS_REM=7,WS_END=8,WZ_OPTIONAL=[WS_BANK,WS_REM];
+const wzRemDef=()=>({every:0,mail:false,sms:false,milestones:true});
+// Whether an expense from the guide counts in the bank's fixed expenses: the choice on the bank step, else the app's default rule.
+const wzInBank=x=>x.bank!==undefined?!!x.bank:x.cat!=='Husholdning';
 function openWiz(){W={title:'Mit budget',persons:[{name:'',salary:''},{name:'',salary:''}],acc:{budget:true,budgetName:'Budgetkonto',personal:true,savings:true,savingsName:'Fælles opsparing'},
-  exp:WZ_EXP.map(([d,c])=>({desc:d,cat:c,amount:'',freq:1})),split:'indkomst',manualPct:50,auto:true,goals:[{name:'',mode:'target',amount:'',end:''}],replace:false};WS=0;renderWiz();$('dlgWiz').showModal()}
+  exp:WZ_EXP.map(([d,c])=>({desc:d,cat:c,amount:'',freq:1})),split:'indkomst',manualPct:50,auto:true,goals:[{name:'',mode:'target',amount:'',end:''}],
+  bank:{adults:12000,children:0,childRate:3000},bankSet:false,rem:wzRemDef(),replace:false};WS=0;renderWiz();$('dlgWiz').showModal()}
 function wzCollect(){const b=$('wzBody'),v=id=>{const el=b.querySelector('#'+id);return el?el.value:''};
   if(WS===0)W.title=v('wzName').trim()||'Mit budget';
   if(WS===1)W.persons=[...b.querySelectorAll('[data-wp]')].map(r=>({name:r.querySelector('[data-f=name]').value.trim(),salary:r.querySelector('[data-f=sal]').value}));
   if(WS===2){W.acc={saldo:v('wzSal'),saldoDate:v('wzSalD')||DAY(),budget:$('wzAB').checked,budgetName:v('wzABn').trim()||'Budgetkonto',personal:$('wzAP').checked,savings:$('wzAS').checked,savingsName:v('wzASn').trim()||'Fælles opsparing'}}
-  if(WS===3)W.exp=[...b.querySelectorAll('[data-we]')].map(r=>({desc:r.querySelector('[data-f=desc]').value.trim(),cat:r.dataset.cat||'Andet',amount:r.querySelector('[data-f=amt]').value,freq:+r.querySelector('[data-f=freq]').value}));
+  if(WS===3)W.exp=[...b.querySelectorAll('[data-we]')].map(r=>{const o=W.exp[+r.dataset.we]||{},x={desc:r.querySelector('[data-f=desc]').value.trim(),cat:r.dataset.cat||'Andet',amount:r.querySelector('[data-f=amt]').value,freq:+r.querySelector('[data-f=freq]').value};if(o.bank!==undefined)x.bank=o.bank;return x});
   if(WS===4){W.split=(b.querySelector('[name=wzSplit]:checked')||{}).value||'indkomst';W.manualPct=+v('wzPct')||50;const a=$('wzAuto');W.auto=a?a.checked:false}
   if(WS===5)W.goals=[...b.querySelectorAll('[data-wg]')].map(r=>({name:r.querySelector('[data-f=name]').value.trim(),mode:r.querySelector('[data-f=mode]').value,amount:r.querySelector('[data-f=amt]').value,end:r.querySelector('[data-f=end]').value}));
-  if(WS===6){const c=$('wzRepl');W.replace=c?c.checked:true}}
+  if(WS===WS_BANK){b.querySelectorAll('[data-wb]').forEach(c=>{W.exp[+c.dataset.wb].bank=c.checked});
+    const n=id=>Math.max(0,Math.round(parseAmt(v(id))||0));W.bank={adults:n('wzBkA'),children:Math.min(10,n('wzBkC')),childRate:n('wzBkR')};W.bankSet=true}
+  if(WS===WS_REM)W.rem={every:+v('wzEvery')||0,mail:$('wzRmMail').checked,sms:$('wzRmSms').checked,milestones:$('wzMile').checked};
+  if(WS===WS_END){const c=$('wzRepl');W.replace=c?c.checked:true}}
 function wzValidate(){const e=[];
   if(WS===1){const P=W.persons.filter(p=>p.name);if(!P.length)e.push('Skriv mindst ét navn.');if(new Set(P.map(p=>p.name.toLowerCase())).size!==P.length)e.push('To personer har samme navn.')}
   if(WS===2&&!W.acc.budget&&!W.acc.personal)e.push('Vælg mindst én konto.');
   if(WS===5)W.goals.forEach(g=>{if(!g.name&&!g.amount)return;if(!g.name)e.push('Giv hvert opsparingsmål et navn.');if(!(parseAmt(g.amount)>0))e.push(`Skriv et beløb for "${g.name||'målet'}".`);if(g.mode==='target'&&!g.end)e.push(`Vælg en måldato for "${g.name||'målet'}".`)});
-  if(WS===6&&S&&!W.replace)e.push('Sæt flueben for at erstatte det nuværende budget.');
+  if(WS===WS_END&&S&&!W.replace)e.push('Sæt flueben for at erstatte det nuværende budget.');
   return e}
 function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;
   $('wzSteps').innerHTML=WSTEPS.map((n,i)=>`<span class="${i===WS?'on':i<WS?'done':''}" title="${n}">${i+1}</span>`).join('')+`<b style="margin-left:6px;color:var(--ink2)">${WSTEPS[WS]}</b>`;
-  $('wzBack').style.visibility=WS?'visible':'hidden';$('wzNext').textContent=WS===WSTEPS.length-1?'Opret budget':'Næste';
+  $('wzBack').style.visibility=WS?'visible':'hidden';$('wzNext').textContent=WS===WSTEPS.length-1?'Opret budget':'Næste';$('wzSkip').hidden=!WZ_OPTIONAL.includes(WS);
   const P=W.persons.filter(p=>p.name);
-  if(WS===0)b.innerHTML=`<p class="wzp">Hvad skal budgettet hedde? Navnet står øverst på siden og i eksporten.</p><div class="wzgrid"><input id="wzName" value="${esc(W.title)}" placeholder="fx Budget for Anna og Jonas" autocomplete="off"></div>`;
+  if(WS===0)b.innerHTML=(S?'<div class="verdict warn" style="margin:0 0 12px">Du har allerede et budget. Når du opretter et nyt her, overskriver det det nuværende. Gem en sikkerhedskopi først, hvis du vil kunne gå tilbage.<div style="margin-top:8px"><button type="button" id="wzBackup0">Gem sikkerhedskopi</button></div></div>':'')+`<p class="wzp">Hvad skal budgettet hedde? Navnet står øverst på siden og i eksporten.</p><div class="wzgrid"><input id="wzName" value="${esc(W.title)}" placeholder="fx Budget for Anna og Jonas" autocomplete="off"></div>`;
   if(WS===1)b.innerHTML=`<p class="wzp">Hvem er med i budgettet? Skriv den løn, der udbetales efter skat hver måned. Beløbet kan springes over og tilføjes senere.</p>
     <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 180px auto"><span class="hd">Navn</span><span class="hd">Udbetalt løn pr. md.</span><span></span>
     ${W.persons.map((p,i)=>`<div style="display:contents" data-wp="${i}"><input data-f="name" value="${esc(p.name)}" placeholder="Person ${i+1}" autocomplete="off"><input data-f="sal" inputmode="decimal" value="${esc(p.salary)}" placeholder="fx 32.000"><button type="button" class="ghost danger" data-wpx="${i}" ${W.persons.length<2?'disabled':''} aria-label="Fjern person">✕</button></div>`).join('')}</div>
@@ -3014,13 +3102,35 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;
     <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 170px 140px 160px"><span class="hd">Mål</span><span class="hd">Type</span><span class="hd">Beløb</span><span class="hd">Måldato</span>
     ${W.goals.map((g,i)=>`<div style="display:contents" data-wg="${i}"><input data-f="name" value="${esc(g.name)}" placeholder="fx Udbetaling til hus" autocomplete="off"><select data-f="mode"><option value="target" ${g.mode==='target'?'selected':''}>Fast beløb</option><option value="monthly" ${g.mode==='monthly'?'selected':''}>Beløb pr. md.</option></select><input data-f="amt" inputmode="decimal" value="${esc(g.amount)}" placeholder="0"><input data-f="end" type="date" value="${esc(g.end)}"></div>`).join('')}</div>
     ${W.goals.length<5?'<button type="button" id="wzAddG" style="margin-top:8px">Tilføj mål</button>':''}<p class="muted" style="font-size:13px;margin-top:8px">Målene starter næste måned og betales fælles${W.acc.savings?` til ${esc(W.acc.savingsName)}`:''}. Ved "Beløb pr. md." er måldatoen valgfri.</p>`;
-  if(WS===6){const ex=W.exp.filter(x=>parseAmt(x.amount)>0),G=W.goals.filter(g=>g.name&&parseAmt(g.amount)>0),sal=P.filter(p=>parseAmt(p.salary)>0);
+  if(WS===WS_BANK){const ex=W.exp.map((x,i)=>[x,i]).filter(([x])=>x.desc&&parseAmt(x.amount)>0),inp='style="max-width:100%"';
+    b.innerHTML=`<p class="wzp">Når banken regner rådighedsbeløbet ud, trækker den de faste udgifter fra indtægterne. Sæt flueben ved de udgifter, din bank tager med. Mad og husholdning er som regel ikke med, fordi det ligger i bankens eget krav. Du kan springe trinnet over og rette det senere.</p>
+    ${ex.length?ex.map(([x,i])=>`<label class="wzopt"><input type="checkbox" data-wb="${i}" ${wzInBank(x)?'checked':''}><span style="flex:1;min-width:0">${esc(x.desc)}</span><span class="muted" style="white-space:nowrap">${kr(parseAmt(x.amount)/(+x.freq||1))} pr. md.</span></label>`).join('')
+      :'<p class="muted" style="font-size:13.5px">Du har ikke skrevet nogen faste udgifter. Når du opretter dem, kan du på hver post vælge, om banken tager den med.</p>'}
+    <p class="wzp" style="margin-top:14px">Bankens vejledende krav til rådighedsbeløbet. Som tommelfingerregel for 2026 ligger det for et par på 11.000–12.500 kr. pr. måned, og hertil kommer cirka 2.500–3.500 kr. pr. barn.</p>
+    <div class="wzgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))"><span class="hd">Voksne i alt, kr./md.</span><span class="hd">Antal børn</span><span class="hd">Pr. barn, kr./md.</span>
+    <input id="wzBkA" inputmode="decimal" value="${nf.format(+W.bank.adults||0)}" ${inp}><input id="wzBkC" type="number" min="0" max="10" step="1" value="${+W.bank.children||0}" ${inp}><input id="wzBkR" inputmode="decimal" value="${nf.format(+W.bank.childRate||0)}" ${inp}></div>`}
+  if(WS===WS_REM){const r=W.rem;
+    b.innerHTML=`<p class="wzp">Vil du have besked, når det er tid til at se budgettet igennem? Påmindelsen kommer, når budgettet ikke er rettet i den valgte periode, og vises her, når du logger ind. Du kan også få den på mail eller sms. Du kan springe trinnet over og slå det til senere.</p>
+    <div class="wzgrid" style="grid-template-columns:minmax(0,280px)"><span class="hd">Påmind mig om at opdatere budgettet</span><select id="wzEvery">${[[0,'Aldrig'],[1,'Hver måned'],[3,'Hver 3. måned'],[6,'Hvert halve år'],[12,'En gang om året']].map(([k,t])=>`<option value="${k}" ${+r.every===k?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div id="wzRmMore" style="margin-top:10px${+r.every>0?'':';display:none'}">
+      <label class="wzopt"><input type="checkbox" id="wzRmMail" ${r.mail?'checked':''}> Også på mail <span class="muted" id="wzRmMailTo"></span></label>
+      <label class="wzopt"><input type="checkbox" id="wzRmSms" ${r.sms?'checked':''}> Også på sms <span class="muted" id="wzRmSmsTo"></span></label>
+      <p class="muted" id="wzRmTo" style="font-size:13px;margin:6px 0 0"></p></div>
+    <label class="wzopt" style="margin-top:10px"><input type="checkbox" id="wzMile" ${r.milestones?'checked':''}> Vis en besked, når et opsparingsmål når 10, 25, 50, 75 og 100 %</label>`;
+    const to=()=>{if(!$('wzRmTo'))return;$('wzRmMailTo').textContent=rmToLbl(PROFILE&&PROFILE.email);$('wzRmSmsTo').textContent=rmToLbl(PROFILE&&PROFILE.phone);$('wzRmTo').textContent=rmToTxt($('wzRmMail').checked,$('wzRmSms').checked)};
+    to();loadProfile(to);$('wzRmMail').onchange=to;$('wzRmSms').onchange=to;
+    $('wzEvery').onchange=e=>{$('wzRmMore').style.display=+e.target.value>0?'':'none'}}
+  if(WS===WS_END){const ex=W.exp.filter(x=>parseAmt(x.amount)>0),G=W.goals.filter(g=>g.name&&parseAmt(g.amount)>0),sal=P.filter(p=>parseAmt(p.salary)>0);
+    const exB=ex.filter(x=>x.desc&&wzInBank(x)),r=W.rem,rTxt={1:'hver måned',3:'hver 3. måned',6:'hvert halve år',12:'en gang om året'}[r.every],
+      bk=W.bank,req=(+bk.adults||0)+(+bk.children||0)*(+bk.childRate||0);
     const accN=[W.acc.budget&&W.acc.budgetName,W.acc.personal&&P.length+' lønkonti',W.acc.savings&&W.acc.savingsName].filter(Boolean);
     b.innerHTML=`<p class="wzp">Det bliver oprettet:</p><ul class="wzsum">
       <li><b>${esc(W.title)}</b></li><li>${P.length} ${P.length===1?'person':'personer'}: ${P.map(p=>esc(p.name)).join(', ')}${sal.length?` · løn for ${sal.map(p=>esc(p.name)).join(', ')}`:''}</li>
       <li>Konti: ${accN.map(esc).join(', ')}${W.acc.budget&&parseAmt(W.acc.saldo)?` · saldo ${kr(parseAmt(W.acc.saldo))} pr. ${esc(fmtDate(W.acc.saldoDate))}`:''}</li><li>${ex.length} faste udgifter, i alt ${kr(ex.reduce((a,x)=>a+parseAmt(x.amount)/(+x.freq||1),0))} pr. md.</li>
       <li>Fordeling: ${W.split==='lige'?'ligeligt':W.split==='manuel'?`${esc(P[0]?.name||'')} ${W.manualPct} %`:'efter indkomst'}${W.auto&&W.acc.budget&&W.acc.personal?' · automatiske overførsler':''}</li>
-      <li>${G.length?G.length+' opsparingsmål: '+G.map(g=>esc(g.name)).join(', '):'Ingen opsparingsmål'}</li></ul>
+      <li>${G.length?G.length+' opsparingsmål: '+G.map(g=>esc(g.name)).join(', '):'Ingen opsparingsmål'}</li>
+      <li>Bankens faste udgifter: ${ex.length?`${exB.length} af ${ex.length} udgifter, ${kr(exB.reduce((a,x)=>a+parseAmt(x.amount)/(+x.freq||1),0))} pr. md.`:'ingen endnu'}${W.bankSet?` · krav ${kr(req)} pr. md.`:' · standardkrav'}</li>
+      <li>${rTxt?`Påmindelse ${rTxt}${[r.mail&&'på mail',r.sms&&'på sms'].filter(Boolean).map(t=>' · også '+t).join('')}`:'Ingen påmindelser om opdatering'}${r.milestones?' · besked ved milepæle':''}</li></ul>
       ${S?`<div class="verdict warn" style="margin-top:12px">Der findes allerede et budget. Det nye budget erstatter det, også for alle andre, der bruger det. Gem en sikkerhedskopi først, hvis du vil kunne gå tilbage.</div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px"><button type="button" id="wzBackup">Gem sikkerhedskopi</button><label class="check"><input type="checkbox" id="wzRepl" ${W.replace?'checked':''}> Erstat det nuværende budget</label></div>`:''}`}
   const on=(id,f)=>{const el=b.querySelector('#'+id);if(el)el.onclick=f};
@@ -3028,7 +3138,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;
   b.querySelectorAll('[data-wpx]').forEach(x=>x.onclick=()=>{wzCollect();W.persons.splice(+x.dataset.wpx,1);renderWiz()});
   on('wzAddE',()=>{wzCollect();W.exp.push({desc:'',cat:'Andet',amount:'',freq:1});renderWiz()});
   on('wzAddG',()=>{wzCollect();W.goals.push({name:'',mode:'target',amount:'',end:''});renderWiz()});
-  on('wzBackup',()=>exportJson());
+  on('wzBackup',()=>exportJson());on('wzBackup0',()=>exportJson());
   const rc=b.querySelector('#wzRepl');if(rc)rc.onchange=()=>{$('wzErr').hidden=true};
   const f=b.querySelector('input,select');if(f)setTimeout(()=>f.focus(),30)}
 function wzBuild(){const id=()=>uid(), P=W.persons.filter(p=>p.name).map(p=>({id:id(),name:p.name,salary:parseAmt(p.salary)}));
@@ -3038,13 +3148,20 @@ function wzBuild(){const id=()=>uid(), P=W.persons.filter(p=>p.name).map(p=>({id
   if(W.acc.savings){sav={id:id(),name:W.acc.savingsName,number:'',type:'faelles',owner:'',startSaldo:0};A.push(sav)}
   const main=(bud||A[0]||{}).id||'',E=[],today=DAY();
   P.forEach(p=>{if(p.salary>0)E.push({id:id(),type:'indtaegt',desc:'Udbetalt løn '+p.name,key:'',category:'Løn',freq:1,start:1,amount:Math.round(p.salary),account:pAcc[p.id]||main,payer:p.id,active:true,check:false,bank:true,note:'',since:today})});
-  W.exp.forEach(x=>{const a=parseAmt(x.amount);if(!(a>0)||!x.desc)return;E.push({id:id(),type:'udgift',desc:x.desc,key:'',category:x.cat||'Andet',freq:+x.freq||1,start:1,amount:Math.round(a),account:main,payer:FAELLES,active:true,check:false,bank:x.cat!=='Husholdning',note:'',since:today})});
+  W.exp.forEach(x=>{const a=parseAmt(x.amount);if(!(a>0)||!x.desc)return;E.push({id:id(),type:'udgift',desc:x.desc,key:'',category:x.cat||'Andet',freq:+x.freq||1,start:1,amount:Math.round(a),account:main,payer:FAELLES,active:true,check:false,bank:wzInBank(x),note:'',since:today})});
   if(W.auto&&bud&&W.acc.personal)P.forEach(p=>E.push({id:id(),type:'overfoersel',auto:true,desc:p.name+' til '+bud.name.toLowerCase(),key:'',category:'',freq:1,start:1,amount:0,from:pAcc[p.id],to:bud.id,active:true,note:''}));
   const d=new Date(),nx=d.getFullYear()*12+d.getMonth()+1,st=`${Math.floor(nx/12)}-${String(nx%12+1).padStart(2,'0')}-01`;
   const G=W.goals.filter(g=>g.name&&parseAmt(g.amount)>0).map(g=>({id:'g'+id(),name:g.name,mode:g.mode,target:g.mode==='target'?Math.round(parseAmt(g.amount)):0,monthly:g.mode==='monthly'?Math.round(parseAmt(g.amount)):0,saved:0,start:st,end:g.end||'',from:main,to:sav&&sav.id!==main?sav.id:'',payer:FAELLES,note:'',active:true,scopes:['base'],extras:[]}));
-  return normalize({version:1,persons:P.map(p=>({id:p.id,name:p.name})),accounts:A,entries:E,goals:G,loans:[],scenarios:[],settings:{split:W.split,manualPct:W.manualPct,title:W.title}})}
+  const R=W.rem,settings={split:W.split,manualPct:W.manualPct,title:W.title,milestones:R.milestones};
+  if(W.bankSet)settings.bank=Object.assign({withExtra:false},W.bank);
+  if(R.every>0)settings.remind={every:R.every,mail:R.mail,sms:R.sms};
+  return normalize({version:1,persons:P.map(p=>({id:p.id,name:p.name})),accounts:A,entries:E,goals:G,loans:[],scenarios:[],settings})}
 $('wzBack').onclick=()=>{wzCollect();if(WS>0){WS--;renderWiz()}};
 $('wzCancel').onclick=()=>$('dlgWiz').close();
+// Skipping an optional step drops what was typed there, so the budget gets the defaults (can be set later in Indstillinger).
+$('wzSkip').onclick=()=>{if(WS===WS_BANK){W.bankSet=false;W.bank={adults:12000,children:0,childRate:3000};W.exp.forEach(x=>{delete x.bank})}
+  if(WS===WS_REM)W.rem=wzRemDef();
+  if(WZ_OPTIONAL.includes(WS)){WS++;renderWiz()}};
 $('wzNext').onclick=()=>{wzCollect();const e=wzValidate();if(e.length){$('wzErr').innerHTML=e.map(esc).join(' ');$('wzErr').hidden=false;return}
   if(WS<WSTEPS.length-1){WS++;renderWiz();return}
   const N=wzBuild();if(!N){toast('Budgettet kunne ikke oprettes');return}S=N;SC=null;$('dlgWiz').close();commit();toast('Nyt budget oprettet');
@@ -3079,18 +3196,46 @@ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cmp]');i
 $('exAll').onchange=e=>{if(!S)return;S.settings.withExtra=e.target.checked;commit();fillSet()};
 $('btnNew').onclick=()=>{if(!S){S=blank();commit()}openEntry(null)};
 
+/* ---------- beskeder ved login ---------- */
+// Goals in the current budget that passed a new milestone, and the update reminder when it is due.
+function loginNotes(){const sp=S.settings||{},N=[];
+  if(sp.milestones!==false)(S.goals||[]).forEach(g=>{if(g.active===false||!goalIn(g,'base'))return;const c=goalCalc(g),m=mileOf(c),h=+g.hit||0;
+    if(m>h)N.push({g,c,m});else if(m<h)g.hit=m}); // the goal was changed so it is further from the target; celebrate again later
+  const due=rmDue();return {N,rem:!!due&&due<=DAY()}}
+let NOTES=null;
+function showNotes(){if(!S)return;
+  // Screenshot and smoke scripts set this, so they neither show nor use up a note.
+  try{if(sessionStorage.getItem('budgetr:quiet')==='1')return}catch(e){}
+  const {N,rem}=loginNotes();if(!N.length&&!rem)return;NOTES={N,rem};
+  const sp=S.settings||{},mo=sp.touched?Math.max(1,nowIdx()-mIdx(sp.touched)):0;
+  $('noteTitle').textContent=N.length?'Tillykke':'Tid til at se budgettet igennem';
+  $('noteSub').textContent=N.length?(N.length===1?'Du er nået en milepæl i din opsparing.':'Du er nået nogle milepæle i din opsparing.'):'';
+  $('noteBody').innerHTML=N.map(({g,c,m})=>`<div class="ntrow"><span class="ntring" style="--p:${m};--c:${gColor(g)}"><b>${m} %</b></span><div><b>${esc(g.name||'Mål')}</b>
+      <p>${m===100?'Du bør nu have nået hele dit opsparingsmål.':`Du bør nu have nået ${m} % af dit opsparingsmål.`}</p><small>Skønnet opsparet ${kr(c.est)} af ${kr(c.T)}</small></div></div>`).join('')
+    +(N.length?'<p class="ntfoot">budgetpro er ikke forbundet til din netbank. Tallet bygger på, at indbetalingerne er gået ind som planlagt.</p>':'')
+    +(rem?`<div class="ntrow"><span class="ntico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>${N.length?'Tid til at se budgettet igennem':'Påmindelse'}</b>
+      <p>${mo?`Det er ${mo===1?'en måned':mo+' måneder'} siden, du sidst rettede i budgettet.`:'Det er et stykke tid siden, du sidst rettede i budgettet.'} Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.</p></div></div>`:'');
+  $('btnNoteGo').textContent=N.length?'Se opsparingsmål':'Se budgetposter';$('btnNoteGo').dataset.go=N.length?'maal':'poster';
+  $('dlgNote').showModal()}
+// Closing the note in any way marks it as seen.
+$('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)S.settings.remindSeen=DAY();saveSoon()});
+$('btnNoteClose').onclick=()=>$('dlgNote').close();
+$('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close();const t=document.querySelector(`[data-page="${p}"]`);if(t)t.click()};
+
 /* ---------- opstart ---------- */
 function loadLocal(){try{const v=localStorage.getItem(window.BUDGETR_KEY);if(v)return JSON.parse(v)}catch(e){}try{return window.BUDGETR_SEED?JSON.parse(window.BUDGETR_SEED):null}catch(e){return null}}
 function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=Array.isArray(x.scenarios)?x.scenarios:[];x.loans=Array.isArray(x.loans)?x.loans:[];x.goals=Array.isArray(x.goals)?x.goals:[];x.goals.forEach(g=>{if(!Array.isArray(g.scopes))g.scopes=['base']});(x.persons||[]).forEach(p=>{if(!Array.isArray(p.extras)&&p.extra===undefined)return;const L=Array.isArray(p.extras)?p.extras:[{desc:'',amount:+p.extra||0}],acc=((x.accounts||[]).find(a=>a.type!=='faelles'&&a.owner===p.id)||{}).id||'';
   L.filter(v=>+v.amount>0).forEach((v,i)=>x.entries.push({id:'x'+p.id+i+Date.now().toString(36),type:'indtaegt',desc:v.desc||'Ekstra indtjening',key:'',category:'',freq:0,start:1,amount:Math.round(+v.amount),account:acc,payer:p.id,extra:true,split:false,active:true,check:false,note:'',since:DAY()}));
-  delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};return x}
+  delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};
+  // Contact details belong on the profile, not in the budget (an early version kept them here).
+  const rm=x.settings.remind;if(rm&&typeof rm==='object'){delete rm.email;delete rm.phone}return x}
 render();
 (async()=>{
   let db=null;
   db=null;
   downloads=null;
   if(!db){localMode=true;loaded=true;S=normalize(loadLocal());setStatus(window.BUDGETR_DISK?'Gemmes på denne computer':'Gemmes kun i denne browser – kan ikke nå computeren');render();
-    if(S&&window.BUDGETR_PUSH)saveDisk(JSON.parse(JSON.stringify(S)));return}
+    if(S&&window.BUDGETR_PUSH)saveDisk(JSON.parse(JSON.stringify(S)));showNotes();return}
   dbRef=db.doc('budget/state');
   let first=true;
   dbRef.onSnapshot(snap=>{
