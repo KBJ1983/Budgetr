@@ -151,7 +151,7 @@ const FAQ = [
   },
   {
     q: "Skal jeg give adgang til min netbank?",
-    a: "Nej. Du henter selv en kontoudskrift som CSV eller Excel og uploader den. Beløbene kan også skrives ind i hånden.",
+    a: "Nej. Du henter selv en kontoudskrift som CSV, Excel eller PDF og uploader den. Beløbene kan også skrives ind i hånden.",
   },
   {
     q: "Hvordan virker påmindelserne?",
@@ -209,7 +209,7 @@ export function FinalCta() {
         <div className={styles.ctaInner} data-reveal-group>
           <Wordmark fontSize={40} dark />
           <h2 id="cta-title" className={styles.ctaTitle}>
-            Giv din økonomi et hjem. Det tager ti minutter.
+            Giv din økonomi et hjem. Det tager 29 minutter.
           </h2>
           <p className={styles.ctaBody}>Prøv gratis i 30 dage, følg guiden, og se med det samme, hvad du har til rådighed.</p>
           <div className={styles.ctaForm}>

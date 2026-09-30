@@ -10,17 +10,17 @@ const STEPS = [
   {
     icon: <PeopleIcon size={22} strokeWidth={1.7} />,
     title: "Start din gratis prøveperiode",
-    body: "Kun e-mail og en adgangskode. 30 dage gratis. Bor I flere sammen, kan du invitere dem til det samme budget.",
+    body: "Navn, e-mail og mobilnummer. Ingen adgangskode, du logger ind med en kode på mail. 30 dage gratis. Bor I flere sammen, kan du invitere dem til det samme budget.",
   },
   {
     icon: <WandIcon size={22} strokeWidth={1.7} />,
-    title: "Følg guiden i 7 trin",
+    title: "Følg guiden i 9 trin",
     body: "Dig og dem, du deler økonomi med, konti, faste udgifter og opsparingsmål. Korte svar, som kan rettes bagefter.",
   },
   {
     icon: <UploadIcon size={22} strokeWidth={1.7} />,
     title: "Importér en kontoudskrift",
-    body: "Upload CSV eller Excel fra netbanken. Ydelser opdateres, og stigninger bliver markeret.",
+    body: "Upload CSV, Excel eller PDF fra netbanken. Ydelser opdateres, og stigninger bliver markeret.",
   },
 ] as const;
 
