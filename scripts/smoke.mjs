@@ -177,7 +177,37 @@ try {
     await todos.locator(".tdok").first().click();
     await p2.waitForTimeout(900);
     check(!(await todos.isHidden()) && (await todos.locator(".tdrow").count()) === 2 && (await p2.locator("#todoN").textContent()) === "2", "Klar removes the task and keeps the list open");
-    check(saved?.accounts?.[0]?.todo === "" && saved?.entries?.[0]?.todo, "the cleared task is saved");
+    check(!saved?.accounts?.[0]?.todo && saved?.entries?.[0]?.todo && saved.entries[0].todoSince, "the cleared task is saved, the open one has a start day");
+    await ctx.close();
+  }
+  // A task open for 20 days gives a login note of its own (update reminder off), on a fictional TEST4 budget.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p4 = await ctx.newPage();
+    p4.on("pageerror", (e) => errors.push(e.message));
+    const d = new Date(), ymd = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    const old = ymd(new Date(d.getFullYear(), d.getMonth(), d.getDate() - 20));
+    const budget = {
+      version: 1, persons: [{ id: "p1", name: "Person 1" }], accounts: [{ id: "budget", name: "Budgetkonto", type: "faelles", owner: "", startSaldo: 0, todo: "Opret kontoen i banken", todoSince: old }],
+      entries: [], goals: [], settings: { split: "indkomst", touched: old },
+    };
+    let saved = null;
+    await p4.route("**/api/budget/**", (r) => {
+      if (r.request().method() === "GET") return r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(budget) });
+      saved = JSON.parse(r.request().postData() || "null");
+      return r.fulfill({ status: 204 });
+    });
+    await p4.route("**/private/**", (r) => r.fulfill({ status: 404, body: "" }));
+    await p4.addInitScript(() => localStorage.setItem("budgetr:session", "test4"));
+    await p4.goto(`${BASE}/app`);
+    const note = p4.locator("#dlgNote");
+    await note.waitFor();
+    check((await note.getByText("En opgave venter stadig").count()) > 0 && (await note.getByText(/mere end 14 dage/).count()) > 0, "a task open for 20 days shows a login note");
+    await p4.screenshot({ path: `${OUT}/todo-note.png` });
+    await p4.locator("#btnNoteGo").click();
+    await p4.waitForTimeout(900);
+    check(!(await p4.locator("#todoMenu").isHidden()), "the note's button opens the task list");
+    check(saved?.settings?.todoSeen && saved.settings.touched === old, "the task note is saved as seen without counting as a change");
     await ctx.close();
   }
   // The new-budget guide on a phone, with the optional bank and reminder steps (served by a route, nothing in data/).

@@ -1,4 +1,5 @@
-// Sends the update reminders users have chosen under Indstillinger > Påmindelser (lib/reminders.ts has the rule).
+// Sends the update reminders and the reminders about tasks left open, as users have chosen under
+// Indstillinger > Påmindelser (lib/reminders.ts has the rules).
 // Run it once a day, e.g. from Windows Task Scheduler:  pnpm reminders --send
 //
 // Without --send it only prints what it would send. Each channel also needs its provider in .env.local:
@@ -6,11 +7,11 @@
 //   sms:  GATEWAYAPI_TOKEN (gatewayapi.com), optional REMINDER_SMS_SENDER (max 11 characters, default budgetpro)
 //   REMINDER_APP_URL is the link in the message (default http://localhost:3200/app).
 // Mails and texts go to the e-mail and mobile number on the user's profile (data/profiles/<user>.json, see lib/profile.ts).
-// It reads data/<user>.json and keeps data/reminders.json ({ userId: { lastSent } }); it never changes a budget.
+// It reads data/<user>.json and keeps data/reminders.json ({ userId: { lastSent, todoSent } }); it never changes a budget.
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readProfile } from "../lib/profile.ts";
-import { dueReminder, parseDay, reminderText } from "../lib/reminders.ts";
+import { channels, dueReminder, dueTodos, parseDay, reminderText, todoDaysOf, todoReminderText } from "../lib/reminders.ts";
 import { openTodos } from "../lib/todos.ts";
 
 try {
@@ -69,13 +70,24 @@ for (const name of (await readdir(DIR)).filter((n) => n.endsWith(".json") && n !
     .filter(Boolean)
     .sort((a, b) => b - a)[0] || null;
   // Address and number always come from the profile (lib/profile.ts); without one nothing is sent.
-  const due = dueReminder(sp.remind, await readProfile(user, DIR), touched, last, now);
-  if (!due) continue;
-
-  const t = reminderText(sp.title || "", touched, now, URL_, openTodos(budget));
+  const contact = await readProfile(user, DIR);
+  const todos = openTodos(budget);
+  const lastTodo = [state[user]?.todoSent ? new Date(state[user].todoSent) : null, parseDay(sp.todoSeen)]
+    .filter(Boolean)
+    .sort((a, b) => b - a)[0] || null;
+  // The update reminder lists every open task, so it also counts as the task reminder.
+  let due = dueReminder(sp.remind, contact, touched, last, now), t, kind = "update";
+  if (due) t = reminderText(sp.title || "", touched, now, URL_, todos);
+  else {
+    const days = todoDaysOf(sp.remind), old = dueTodos(todos, days, lastTodo, now);
+    due = old && channels(sp.remind, contact);
+    if (!due) continue;
+    t = todoReminderText(sp.title || "", old, todos.length, days, URL_);
+    kind = "todo";
+  }
   const to = [due.email && `mail ${mask(due.email)}`, due.msisdn && `sms ${mask(due.msisdn)}`].filter(Boolean).join(", ");
   if (!SEND) {
-    console.log(`[prøve] ${user}: ville sende til ${to}`);
+    console.log(`[prøve] ${user}: ville sende ${kind === "todo" ? "påmindelse om opgaver" : "påmindelse"} til ${to}`);
     continue;
   }
   let ok = false;
@@ -94,7 +106,8 @@ for (const name of (await readdir(DIR)).filter((n) => n.endsWith(".json") && n !
   }
   // Only a delivered reminder moves the clock, so a failed one is tried again at the next run.
   if (ok) {
-    state[user] = { lastSent: now.toISOString() };
+    const at = now.toISOString();
+    state[user] = kind === "todo" ? { ...state[user], todoSent: at } : { ...state[user], lastSent: at, todoSent: at };
     sent++;
   }
 }

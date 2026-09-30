@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { addMonths, dueReminder, parseDay, reminderText, toMsisdn } from "./reminders";
+import type { Todo } from "./todos";
+import { addMonths, dueReminder, dueTodos, parseDay, reminderText, TODO_DAYS, todoDaysOf, todoReminderText, toMsisdn } from "./reminders";
 
 const day = (s: string) => parseDay(s)!;
 
@@ -58,5 +59,40 @@ describe("helpers", () => {
     expect(t.sms).toContain("Du har 12 opgaver.");
     expect(t.sms.length).toBeLessThanOrEqual(160);
     expect(reminderText("", day("2026-06-10"), day("2026-09-30"), "u").text).not.toContain("opgave");
+  });
+});
+
+describe("task reminder", () => {
+  const todos: Todo[] = [
+    { title: "Opsparing", text: "Opret kontoen i banken", since: "2026-09-10" },
+    { title: "Husleje", text: "Opret den faste overførsel i banken", since: "2026-09-25" },
+    { title: "Forsikring", text: "Tjek beløbet" },
+  ];
+
+  it("is due when a task has waited the chosen number of days", () => {
+    expect(dueTodos(todos, 14, null, day("2026-09-23"))).toBeNull();
+    expect(dueTodos(todos, 14, null, day("2026-09-24"))).toEqual(todos.slice(0, 1));
+    expect(dueTodos(todos, 0, null, day("2026-12-01"))).toBeNull();
+  });
+
+  it("waits the same number of days after the last task reminder", () => {
+    expect(dueTodos(todos, 14, day("2026-09-20"), day("2026-10-03"))).toBeNull();
+    expect(dueTodos(todos, 14, day("2026-09-20"), day("2026-10-04"))?.length).toBe(1);
+  });
+
+  it("defaults to 14 days and respects off", () => {
+    expect(todoDaysOf(undefined)).toBe(TODO_DAYS);
+    expect(todoDaysOf({ every: 3 })).toBe(14);
+    expect(todoDaysOf({ todoDays: 0 })).toBe(0);
+    expect(todoDaysOf({ todoDays: 30 })).toBe(30);
+  });
+
+  it("writes calm Danish texts", () => {
+    const t = todoReminderText("Vores budget", todos.slice(0, 1), 3, 14, "http://localhost:3200/app");
+    expect(t.subject).toBe("En opgave venter stadig");
+    expect(t.text).toContain("En opgave i Vores budget har ventet i mere end 14 dage:\n- Opsparing: Opret kontoen i banken\n");
+    expect(t.text).toContain("Du har også 2 opgaver mere, som er nyere.");
+    expect(t.sms.length).toBeLessThanOrEqual(160);
+    expect(`${t.subject}${t.text}${t.sms}`).not.toContain("!");
   });
 });

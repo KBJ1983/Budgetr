@@ -7,7 +7,8 @@
  * after the later of the last change to the budget (settings.touched) and the last reminder, whether sent
  * or shown in the app at login (settings.remindSeen).
  *
- * Open tasks (lib/todos.ts) are listed in the message, so they come along with the reminder.
+ * Open tasks (lib/todos.ts) are listed in the message, so they come along with the reminder. A task left
+ * open for `todoDays` days (default 14) sends a reminder of its own on the same channels (dueTodos).
  *
  * Plain TypeScript, so Node can run it directly from the .mjs script.
  */
@@ -19,7 +20,11 @@ export interface RemindSettings {
   every?: number;
   mail?: boolean;
   sms?: boolean;
+  /** Days a task may stay open before it sends a reminder of its own; 0 = off, missing = TODO_DAYS. */
+  todoDays?: number;
 }
+
+export const TODO_DAYS = 14;
 
 /** The contact details from the profile. */
 export interface Contact {
@@ -69,10 +74,39 @@ export function dueReminder(r: RemindSettings | undefined, contact: Contact, tou
   const from = lastSent && lastSent > touched ? lastSent : touched;
   const due = addMonths(from, every);
   if (due > now) return null;
-  const email = r.mail && isEmail(contact.email) ? contact.email!.trim() : undefined;
-  const msisdn = (r.sms && toMsisdn(contact.phone)) || undefined;
-  if (!email && !msisdn) return null;
-  return { due, email, msisdn };
+  const ch = channels(r, contact);
+  return ch && { due, ...ch };
+}
+
+/** The chosen channels the profile has a valid address for, or null when none is left. */
+export function channels(r: RemindSettings | undefined, contact: Contact): { email?: string; msisdn?: string } | null {
+  const email = r?.mail && isEmail(contact.email) ? contact.email!.trim() : undefined;
+  const msisdn = (r?.sms && toMsisdn(contact.phone)) || undefined;
+  return email || msisdn ? { email, msisdn } : null;
+}
+
+export function addDays(d: Date, n: number): Date {
+  const x = new Date(d.getTime());
+  x.setDate(x.getDate() + n);
+  return x;
+}
+
+/** The chosen number of days for the task reminder (0 = off). */
+export const todoDaysOf = (r: RemindSettings | undefined) =>
+  r?.todoDays === undefined || r.todoDays === null ? TODO_DAYS : Math.max(0, Math.round(Number(r.todoDays) || 0));
+
+/**
+ * The task reminder (the app uses the same rule for its login note): due when a task has been open at
+ * least `days` days and the last task reminder, sent or shown at login, is at least `days` days old.
+ * Returns the tasks that have waited that long, or null. Tasks without a start day never count.
+ */
+export function dueTodos(todos: Todo[], days: number, last: Date | null, now: Date): Todo[] | null {
+  if (!(days > 0) || (last && addDays(last, days) > now)) return null;
+  const old = todos.filter((t) => {
+    const d = parseDay(t.since);
+    return d && addDays(d, days) <= now;
+  });
+  return old.length ? old : null;
 }
 
 /** Whole calendar months from `a` to `b`, at least 1. */
@@ -87,13 +121,7 @@ export function reminderText(title: string, touched: Date, now: Date, url: strin
   const n = monthsBetween(touched, now);
   const since = `Det er ${n === 1 ? "en måned" : `${n} måneder`} siden, du sidst rettede i budgettet`;
   const name = title.trim() || "dit budget";
-  const more = todos.length - MAIL_TODOS;
-  const tasks = todos.length
-    ? `Du har ${todoCount(todos.length)}, der venter:\n` +
-      todos.slice(0, MAIL_TODOS).map((t) => `- ${t.title}: ${t.text}\n`).join("") +
-      (more > 0 ? `- og ${todoCount(more)} mere\n` : "") +
-      "\n"
-    : "";
+  const tasks = todos.length ? `Du har ${todoCount(todos.length)}, der venter:\n${todoLines(todos)}\n` : "";
   return {
     subject: "Tid til at se budgettet igennem",
     text:
@@ -101,5 +129,26 @@ export function reminderText(title: string, touched: Date, now: Date, url: strin
       tasks +
       `${url}\n\nDu kan ændre eller slå påmindelsen fra under Indstillinger, Påmindelser.\n\nbudgetpro`,
     sms: `budgetpro: ${since}.${todos.length ? ` Du har ${todoCount(todos.length)}.` : ""} Se det igennem, når du har tid: ${url}`,
+  };
+}
+
+const todoLines = (todos: Todo[]) => {
+  const more = todos.length - MAIL_TODOS;
+  return todos.slice(0, MAIL_TODOS).map((t) => `- ${t.title}: ${t.text}\n`).join("") + (more > 0 ? `- og ${todoCount(more)} mere\n` : "");
+};
+
+/** The task reminder: `old` are the tasks that have waited `days` days, `all` every open task. */
+export function todoReminderText(title: string, old: Todo[], all: number, days: number, url: string) {
+  const name = title.trim() || "dit budget";
+  const waited = `${old.length === 1 ? "En opgave" : `${old.length} opgaver`} i ${name} har ventet i mere end ${days} dage`;
+  const rest = all - old.length;
+  return {
+    subject: old.length === 1 ? "En opgave venter stadig" : "Nogle opgaver venter stadig",
+    text:
+      `Hej\n\n${waited}:\n${todoLines(old)}` +
+      (rest > 0 ? `\nDu har også ${todoCount(rest)} mere, som er nyere.\n` : "") +
+      `\nMarkér en opgave som klaret under klokken i topmenuen, når den er gjort.\n\n${url}\n\n` +
+      `Du kan ændre eller slå påmindelsen om opgaver fra under Indstillinger, Påmindelser.\n\nbudgetpro`,
+    sms: `budgetpro: ${old.length === 1 ? "En opgave" : `${old.length} opgaver`} har ventet i mere end ${days} dage. Se dem under klokken: ${url}`,
   };
 }

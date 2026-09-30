@@ -1102,11 +1102,12 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
             <div class="field"><label for="setBkR">Pr. barn, kr./md.</label><input id="setBkR" inputmode="decimal"></div>
           </div></section>
         <section class="setsec" id="set-paamind"><h3>Påmindelser</h3>
-          <p class="setnote">Beskeder, når du logger ind, og en påmindelse, når budgettet ikke er rettet i et stykke tid. Åbne opgaver fra klokken i topmenuen kommer med i påmindelsen.</p>
+          <p class="setnote">Beskeder, når du logger ind, og en påmindelse, når budgettet ikke er rettet i et stykke tid. Åbne opgaver fra klokken i topmenuen kommer med i påmindelsen, og en opgave, der har stået åben længe, giver en påmindelse for sig.</p>
           <div class="setgrp"><label class="check"><input type="checkbox" id="setMile"> Vis en besked, når et opsparingsmål når 10, 25, 50, 75 og 100 %</label>
           <p class="setnote">budgetpro er ikke forbundet til netbanken. Beskeden bygger på, at indbetalingerne er gået ind som planlagt.</p></div>
-          <div class="grid2"><div class="field"><label for="setEvery">Påmind mig om at opdatere budgettet</label><select id="setEvery"><option value="0">Aldrig</option><option value="1">Hver måned</option><option value="3">Hver 3. måned</option><option value="6">Hvert halve år</option><option value="12">En gang om året</option></select></div></div>
-          <div class="setgrp" id="wRemind"><span class="flabel">Send også påmindelsen</span>
+          <div class="grid2"><div class="field"><label for="setEvery">Påmind mig om at opdatere budgettet</label><select id="setEvery"><option value="0">Aldrig</option><option value="1">Hver måned</option><option value="3">Hver 3. måned</option><option value="6">Hvert halve år</option><option value="12">En gang om året</option></select></div>
+            <div class="field"><label for="setTodoDays">Påmind mig om opgaver, der har stået åbne i</label><select id="setTodoDays"><option value="0">Aldrig</option><option value="7">7 dage</option><option value="14">14 dage</option><option value="30">30 dage</option></select></div></div>
+          <div class="setgrp" id="wRemind"><span class="flabel">Send også påmindelserne</span>
             <label class="check"><input type="checkbox" id="setRmMail"> På mail <span class="muted" id="setRmMailTo"></span></label>
             <label class="check"><input type="checkbox" id="setRmSms"> På sms <span class="muted" id="setRmSmsTo"></span></label>
             <p class="setnote" id="setRmTo"></p>
@@ -1264,6 +1265,12 @@ const rmOf=()=>Object.assign({every:0,mail:false,sms:false},(S.settings||{}).rem
 const isoAddM=(iso,n)=>{const d=new Date(iso+'T00:00:00');d.setMonth(d.getMonth()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 function rmDue(){const r=rmOf(),sp=S.settings||{};if(!(+r.every>0))return null;
   return isoAddM([sp.touched,sp.remindSeen].filter(Boolean).sort().pop()||DAY(),+r.every)}
+/* Task reminder (same rule as dueTodos in lib/reminders.ts): the tasks open at least `todoDays` days (default 14,
+   0 = off), once the last task reminder shown here (settings.todoSeen) is as old. */
+const todoDays=()=>{const v=((S.settings||{}).remind||{}).todoDays;return v===undefined||v===null?14:Math.max(0,Math.round(+v||0))};
+const isoAddD=(iso,n)=>{const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+function todoDue(){const n=todoDays(),sp=S.settings||{},t=DAY();if(!(n>0)||sp.todoSeen&&isoAddD(sp.todoSeen,n)>t)return [];
+  return todoList().filter(x=>x.since&&isoAddD(x.since,n)<=t)}
 const goalIn=(g,key)=>(g.scopes||[]).includes(key);
 const goalCounts=g=>g.active!==false&&!goalCalc(g).ended;
 const goalsFor=key=>(S.goals||[]).filter(g=>goalIn(g,key)&&goalCounts(g));
@@ -2478,8 +2485,8 @@ $('frm').addEventListener('submit',ev=>{
       const b=editingId?S.entries.find(x=>x.id===editingId):null;
       if(b&&!b.auto&&(+b.amount!==d.amount||(+b.freq||1)!==d.freq)&&sinceIn===(b.since||'')){d.history.push({date:b.since||DAY(),amount:+b.amount||0,freq:+b.freq||1,desc:b.since?'Gemt ved rettelse':'Gemt ved rettelse, startdato ukendt',unknown:!b.since});d.since=DAY()}
       else d.since=sinceIn||(b?b.since||'':DAY());}
-    d.todo=$('fTodo').value.trim();
-    if(editingId){Object.assign(S.entries.find(x=>x.id===editingId),d)}else{S.entries.push(Object.assign({id:uid()},d))}}
+    let x;if(editingId){x=Object.assign(S.entries.find(x=>x.id===editingId),d)}else{x=Object.assign({id:uid()},d);S.entries.push(x)}
+    setTodo(x,$('fTodo').value)}
   $('dlg').close();commit();toast(editingId?'Post gemt':'Post oprettet');
 });
 
@@ -2501,7 +2508,7 @@ function renderAccts(){
     entryCopies().forEach(e=>{if(e.payer===id)e.payer=FAELLES});(S.goals||[]).forEach(g=>{if(g.payer===id)g.payer=FAELLES});S.accounts.forEach(a=>{if(a.owner===id)a.owner=''});
     S.persons=S.persons.filter(x=>x.id!==id);if(S.settings.split==='manuel'&&S.persons.length!==2)S.settings.split='indkomst';setCommit()});
   $('acctList').querySelectorAll('.acctedit').forEach(row=>{
-    row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);a[inp.dataset.f]=inp.dataset.f==='todo'?inp.value.trim():inp.value;commit()});
+    row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);if(inp.dataset.f==='todo')setTodo(a,inp.value);else a[inp.dataset.f]=inp.value;commit()});
   });
   $('acctList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.del, used=S.entries.filter(e=>e.account===id||e.from===id||e.to===id).length;
@@ -3064,14 +3071,15 @@ function rmToTxt(mail,sms){const P=PROFILE||{},base='Mail og sms sendes til den 
 const rmToLbl=v=>v?'· '+v:'';
 function fillRemind(){const sp=S.settings||{},r=rmOf(),due=rmDue();
   $('setMile').checked=sp.milestones!==false;$('setEvery').value=String(+r.every||0);
-  $('setRmMail').checked=!!r.mail;$('setRmSms').checked=!!r.sms;
-  $('wRemind').style.display=+r.every>0?'':'none';
+  $('setRmMail').checked=!!r.mail;$('setRmSms').checked=!!r.sms;$('setTodoDays').value=String(todoDays());
+  $('wRemind').style.display=+r.every>0||todoDays()>0?'':'none';
   const to=()=>{$('setRmMailTo').textContent=rmToLbl(PROFILE&&PROFILE.email);$('setRmSmsTo').textContent=rmToLbl(PROFILE&&PROFILE.phone);$('setRmTo').textContent=rmToTxt(r.mail,r.sms)};to();loadProfile(to);
   $('setRmNote').textContent=(sp.touched?`Budgettet blev sidst rettet ${fmtDate(sp.touched)}. `:'')
     +(due?`Næste påmindelse kommer omkring ${fmtDate(due)}, hvis budgettet ikke er rettet inden da. Du får den også her i appen, når du logger ind.`:'')}
 {const rset=(k,v)=>{S.settings.remind=Object.assign(rmOf(),{[k]:v});saveSoon();fillRemind()};
   $('setMile').onchange=e=>{S.settings.milestones=e.target.checked;saveSoon()};
   $('setEvery').onchange=e=>rset('every',+e.target.value||0);
+  $('setTodoDays').onchange=e=>rset('todoDays',+e.target.value||0);
   $('setRmMail').onchange=e=>rset('mail',e.target.checked);
   $('setRmSms').onchange=e=>rset('sms',e.target.checked);}
 /* Deling: up to three e-mails log in to one budget (lib/accounts.ts, /api/members). The primary adds and removes
@@ -3601,12 +3609,14 @@ $('btnNew').onclick=()=>{if(!S){S=blank();commit()}openEntry(null)};
 // Open tasks in the budget on screen (same rule as lib/todos.ts): the task text on accounts, then on entries,
 // and entries marked Skal tjekkes. The update reminder lists them for the primary budget.
 function todoList(B){B=B||S;if(!B)return [];const L=[],t=v=>typeof v==='string'?v.trim():'';
-  (B.accounts||[]).forEach(a=>{if(t(a.todo))L.push({k:'a',id:a.id,title:t(a.name)||'Konto',text:t(a.todo),kind:'Konto'})});
+  (B.accounts||[]).forEach(a=>{if(t(a.todo))L.push({k:'a',id:a.id,title:t(a.name)||'Konto',text:t(a.todo),kind:'Konto',since:a.todoSince})});
   (B.entries||[]).forEach(e=>{const title=t(e.desc)||'Budgetpost',kind=e.type==='overfoersel'?'Fast overførsel':e.type==='indtaegt'?'Indtægt':'Udgift';
-    if(t(e.todo))L.push({k:'e',id:e.id,f:'todo',title,text:t(e.todo),kind});
+    if(t(e.todo))L.push({k:'e',id:e.id,f:'todo',title,text:t(e.todo),kind,since:e.todoSince});
     if(e.check===true)L.push({k:'e',id:e.id,f:'check',title,text:'Tjek beløbet',kind})});
   return L}
 const todoCount=n=>n+(n===1?' opgave':' opgaver');
+// Keeps todoSince (the day a task was written, for the task reminder) in step with the task text on x.
+function setTodo(x,v){v=(v||'').trim();if(!v){delete x.todo;delete x.todoSince;return}if(!(x.todo||'').trim()||!x.todoSince)x.todoSince=DAY();x.todo=v}
 function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=L.length;
   btn.parentElement.hidden=!S;$('todoN').hidden=!n;$('todoN').textContent=n>99?'99+':String(n);
   btn.setAttribute('aria-label',n?'Opgaver, '+todoCount(n):'Opgaver, ingen åbne');
@@ -3620,7 +3630,7 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
     const [k,id,f]=(ok||op).dataset[ok?'tdok':'tdopen'].split(':');
     // The list is redrawn at once, so the click must not reach the close-on-outside-click handler.
     if(ok){ev.stopPropagation();const x=k==='a'?S.accounts.find(a=>a.id===id):S.entries.find(e=>e.id===id);if(!x)return;
-      if(f==='check')x.check=false;else x.todo='';commit();toast('Opgaven er klaret');
+      if(f==='check')x.check=false;else setTodo(x,'');commit();toast('Opgaven er klaret');
       const nx=menu.querySelector('button');if(nx)nx.focus();else btn.focus();return}
     close();
     if(k==='a'){openSet('konti');setTimeout(()=>{const r=document.querySelector(`.acctedit[data-id="${id}"] .acttodo`);if(r){r.scrollIntoView({block:'center'});r.focus()}},0)}
@@ -3633,32 +3643,38 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
 function loginNotes(){const sp=S.settings||{},N=[];
   if(sp.milestones!==false)(S.goals||[]).forEach(g=>{if(g.active===false||!goalIn(g,'base'))return;const c=goalCalc(g),m=mileOf(c),h=+g.hit||0;
     if(m>h)N.push({g,c,m});else if(m<h)g.hit=m}); // the goal was changed so it is further from the target; celebrate again later
-  const due=rmDue();return {N,rem:!!due&&due<=DAY()}}
+  const due=rmDue();return {N,rem:!!due&&due<=DAY(),td:todoDue()}}
 let NOTES=null;
 function showNotes(){if(!S)return;
   // Screenshot and smoke scripts set this, so they neither show nor use up a note.
   try{if(sessionStorage.getItem('budgetr:quiet')==='1')return}catch(e){}
-  const {N,rem}=loginNotes();if(!N.length&&!rem)return;NOTES={N,rem};
-  const sp=S.settings||{},mo=sp.touched?Math.max(1,nowIdx()-mIdx(sp.touched)):0;
-  $('noteTitle').textContent=N.length?'Tillykke':'Tid til at se budgettet igennem';
+  const {N,rem,td}=loginNotes();if(!N.length&&!rem&&!td.length)return;NOTES={N,rem,td};
+  const sp=S.settings||{},mo=sp.touched?Math.max(1,nowIdx()-mIdx(sp.touched)):0,tdn=todoDays();
+  // The update reminder already mentions the open tasks, so the task row only shows without it.
+  const tdRow=td.length&&!rem?`<div class="ntrow"><span class="ntico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></span><div><b>${td.length===1?'En opgave venter stadig':td.length+' opgaver venter stadig'}</b>
+      <p>${td.length===1?'Den har':'De har'} stået åben i mere end ${tdn} dage: ${td.slice(0,3).map(x=>esc(x.title)+' ('+esc(x.text)+')').join(', ')}${td.length>3?` og ${todoCount(td.length-3)} mere`:''}.</p><small>Markér en opgave som klaret under klokken i topmenuen, når den er gjort.</small></div></div>`:'';
+  $('noteTitle').textContent=N.length?'Tillykke':rem?'Tid til at se budgettet igennem':'Opgaver, der venter';
   $('noteSub').textContent=N.length?(N.length===1?'Du er nået en milepæl i din opsparing.':'Du er nået nogle milepæle i din opsparing.'):'';
   $('noteBody').innerHTML=N.map(({g,c,m})=>`<div class="ntrow"><span class="ntring" style="--p:${m};--c:${gColor(g)}"><b>${m} %</b></span><div><b>${esc(g.name||'Mål')}</b>
       <p>${m===100?'Du bør nu have nået hele dit opsparingsmål.':`Du bør nu have nået ${m} % af dit opsparingsmål.`}</p><small>Skønnet opsparet ${kr(c.est)} af ${kr(c.T)}</small></div></div>`).join('')
     +(N.length?'<p class="ntfoot">budgetpro er ikke forbundet til din netbank. Tallet bygger på, at indbetalingerne er gået ind som planlagt.</p>':'')
     +(rem?`<div class="ntrow"><span class="ntico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>${N.length?'Tid til at se budgettet igennem':'Påmindelse'}</b>
-      <p>${mo?`Det er ${mo===1?'en måned':mo+' måneder'} siden, du sidst rettede i budgettet.`:'Det er et stykke tid siden, du sidst rettede i budgettet.'} Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.${(n=>n?` Du har også ${todoCount(n)}, der venter under klokken øverst.`:'')(todoList().length)}</p></div></div>`:'');
-  $('btnNoteGo').textContent=N.length?'Se opsparingsmål':'Se budgetposter';$('btnNoteGo').dataset.go=N.length?'maal':'poster';
+      <p>${mo?`Det er ${mo===1?'en måned':mo+' måneder'} siden, du sidst rettede i budgettet.`:'Det er et stykke tid siden, du sidst rettede i budgettet.'} Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.${(n=>n?` Du har også ${todoCount(n)}, der venter under klokken øverst.`:'')(todoList().length)}</p></div></div>`:'')+tdRow;
+  $('btnNoteGo').textContent=N.length?'Se opsparingsmål':rem?'Se budgetposter':'Se opgaverne';$('btnNoteGo').dataset.go=N.length?'maal':rem?'poster':'todo';
   $('dlgNote').showModal()}
 // Closing the note in any way marks it as seen.
-$('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)rootS().settings.remindSeen=DAY();saveSoon()});
+$('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem,td}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)rootS().settings.remindSeen=DAY();
+  if(rem&&todoList().length||td.length)rootS().settings.todoSeen=DAY();saveSoon()});
 $('btnNoteClose').onclick=()=>$('dlgNote').close();
-$('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close();const t=document.querySelector(`[data-page="${p}"]`);if(t)t.click()};
+$('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close();if(p==='todo'){setTimeout(()=>$('btnTodo').click(),0);return}const t=document.querySelector(`[data-page="${p}"]`);if(t)t.click()};
 
 /* ---------- opstart ---------- */
 function loadLocal(){try{const v=localStorage.getItem(window.BUDGETR_KEY);if(v)return JSON.parse(v)}catch(e){}try{return window.BUDGETR_SEED?JSON.parse(window.BUDGETR_SEED):null}catch(e){return null}}
 function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=Array.isArray(x.scenarios)?x.scenarios:[];x.loans=Array.isArray(x.loans)?x.loans:[];x.goals=Array.isArray(x.goals)?x.goals:[];x.goals.forEach(g=>{if(!Array.isArray(g.scopes))g.scopes=['base']});(x.persons||[]).forEach(p=>{if(!Array.isArray(p.extras)&&p.extra===undefined)return;const L=Array.isArray(p.extras)?p.extras:[{desc:'',amount:+p.extra||0}],acc=((x.accounts||[]).find(a=>a.type!=='faelles'&&a.owner===p.id)||{}).id||'';
   L.filter(v=>+v.amount>0).forEach((v,i)=>x.entries.push({id:'x'+p.id+i+Date.now().toString(36),type:'indtaegt',desc:v.desc||'Ekstra indtjening',key:'',category:'',freq:0,start:1,amount:Math.round(+v.amount),account:acc,payer:p.id,extra:true,split:false,active:true,check:false,note:'',since:DAY()}));
   delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};
+  // Tasks written before todoSince existed count from today.
+  [...x.accounts,...x.entries].forEach(o=>{if(o&&typeof o.todo==='string'&&o.todo.trim()&&!o.todoSince)o.todoSince=DAY()});
   // Contact details belong on the profile, not in the budget (an early version kept them here).
   const rm=x.settings.remind;if(rm&&typeof rm==='object'){delete rm.email;delete rm.phone}
   // Drafts are whole budgets kept inside the primary one (one level deep).
