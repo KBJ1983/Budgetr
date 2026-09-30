@@ -14,6 +14,11 @@ export function ScrollReveal() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     document.querySelectorAll<HTMLElement>("[data-reveal-group]").forEach((group) => {
+      // A swipe strip (components/landing/Swipe.tsx) that scrolls sideways comes in as one piece.
+      if (group.hasAttribute("data-swipe") && group.scrollWidth > group.clientWidth + 1) {
+        group.dataset.reveal ??= "";
+        return;
+      }
       Array.from(group.children).forEach((child, i) => {
         const el = child as HTMLElement;
         el.dataset.reveal ??= "";

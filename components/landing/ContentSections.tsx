@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { ShotFrame, ThemeShot } from "./Shots";
+import { SwipeList } from "./Swipe";
 import { BellIcon, CalendarIcon, PeopleIcon, TargetIcon, UploadIcon, WandIcon } from "./icons";
 
 const STEPS = [
@@ -38,7 +39,7 @@ export function HowItWorks() {
             bygger sig selv.
           </p>
         </div>
-        <ol className={styles.stepGrid} data-reveal-group>
+        <SwipeList as="ol" className={styles.stepGrid} label="Trin">
           {STEPS.map((step, index) => (
             <li key={step.title} className={styles.step}>
               <div className={styles.stepTop}>
@@ -53,7 +54,7 @@ export function HowItWorks() {
               <p className={styles.stepBody}>{step.body}</p>
             </li>
           ))}
-        </ol>
+        </SwipeList>
       </div>
     </section>
   );

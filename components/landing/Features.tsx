@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import styles from "./landing.module.css";
+import { SwipeList } from "./Swipe";
 import { BranchIcon, CalendarIcon, LoanIcon, TargetIcon, TransferIcon, UploadIcon } from "./icons";
 
 const FEATURES: readonly { icon: ReactNode; title: string; body: string }[] = [
@@ -49,7 +50,7 @@ export function Features() {
           </div>
           <p className={styles.headBody}>Planlæg det næste skridt uden at røre det budget, du lever efter i dag.</p>
         </div>
-        <ul className={styles.featureCards} data-reveal-group>
+        <SwipeList className={styles.featureCards} label="Funktioner">
           {FEATURES.map((f) => (
             <li key={f.title} className={styles.featureCard}>
               <span className={styles.featureIcon} aria-hidden="true">
@@ -59,7 +60,7 @@ export function Features() {
               <p className={styles.featureCardBody}>{f.body}</p>
             </li>
           ))}
-        </ul>
+        </SwipeList>
       </div>
     </section>
   );

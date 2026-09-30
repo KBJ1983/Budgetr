@@ -1,7 +1,7 @@
 // Screenshots of the real app for the landing page, made from the fictional example budget in
 // scripts/demo-budget.mjs. Needs the dev server (`pnpm dev`), then `pnpm shots`.
 // The budget is served to the page by a Playwright route, so nothing is read from or saved to data/.
-// Output: public/landing/<name>-<light|dark>.jpg
+// Output: public/landing/<name>-<light|dark>.jpg (only some: SHOTS=name,name pnpm shots)
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 import { demoBudget } from "./demo-budget.mjs";
@@ -18,6 +18,10 @@ const SHOTS = [
   { name: "bank", viewport: [880, 900], el: "section.bank" },
   { name: "hvem", viewport: [940, 1000], el: "section:has(.people)" },
   { name: "mobil", viewport: [390, 780], mobile: true },
+  // The rest of the hero tour on a phone (swiped through in the mobile hero).
+  { name: "mobil-poster", viewport: [390, 780], mobile: true, tab: "poster" },
+  { name: "mobil-laan", viewport: [390, 780], mobile: true, tab: "laan" },
+  { name: "mobil-maal", viewport: [390, 780], mobile: true, tab: "maal" },
   // The login note (a goal milestone + the update reminder) and the reminder settings.
   { name: "besked", viewport: [760, 760], el: "#dlgNote", notes: true },
   { name: "paamind", viewport: [1100, 700], el: "#dlgSet", settings: "paamind" },
@@ -36,9 +40,12 @@ const withReminders = {
   settings: { ...demoBudget.settings, milestones: true, touched: monthsAgo(4), remind: { every: 3, mail: true, sms: false } },
 };
 
+// `SHOTS=mobil-laan,mobil-maal pnpm shots` makes only those.
+const only = process.env.SHOTS?.split(",").map((n) => n.trim());
+
 const browser = await chromium.launch({ channel: "chrome" });
 for (const theme of ["light", "dark"]) {
-  for (const s of SHOTS) {
+  for (const s of SHOTS.filter((x) => !only || only.includes(x.name))) {
     const ctx = await browser.newContext({
       viewport: { width: s.viewport[0], height: s.viewport[1] },
       deviceScaleFactor: 2,

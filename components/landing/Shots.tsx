@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import styles from "./landing.module.css";
+import { scrollToSlide, useSlideIndex } from "./Swipe";
 
 /*
  * Real screenshots of the app (public/landing/, made by `pnpm shots` from the fictional budget in
@@ -138,13 +139,74 @@ export function HeroShowcase() {
   );
 }
 
-/** Phone-sized hero for small screens: the app's overview on a phone, in the chosen theme. */
+/** The same four pages as the hero tour, shot on a phone (`mobil-<id>`; the overview is plain `mobil`). */
+const PHONE_SLIDES = [
+  { id: "overblik", shot: "mobil", tab: "Overblik" },
+  { id: "poster", shot: "mobil-poster", tab: "Poster" },
+  { id: "laan", shot: "mobil-laan", tab: "Lån" },
+  { id: "maal", shot: "mobil-maal", tab: "Opsparing" },
+] as const;
+
+/**
+ * Hero for small screens: the tour on a phone. Swipe the screen sideways or tap a tab; it moves on by itself
+ * until the visitor touches it.
+ */
 export function HeroPhone() {
+  const track = useRef<HTMLDivElement>(null);
+  const i = useSlideIndex(track);
+  const [auto, setAuto] = useState(true);
+  const go = (k: number) => track.current && scrollToSlide(track.current, k);
+  const slide = SLIDES.find((s) => s.id === PHONE_SLIDES[i]?.id);
+
   return (
-    <div className={styles.phone}>
-      <div className={styles.phoneScreen}>
-        <ThemeShot name="mobil" alt="budgetpro på en telefon: overblikket over måneden" width={780} height={1560} sizes="300px" />
+    <div className={styles.phoneTour}>
+      <div className={styles.phone}>
+        <div
+          ref={track}
+          id="hero-phone"
+          className={styles.phoneScreen}
+          onPointerDown={() => setAuto(false)}
+          onWheel={() => setAuto(false)}
+        >
+          {PHONE_SLIDES.map((s, k) => {
+            const text = SLIDES.find((x) => x.id === s.id);
+            return (
+              <div key={s.id} className={styles.phoneSlide} role="group" aria-roledescription="side" aria-label={`${k + 1} af ${PHONE_SLIDES.length}`}>
+                <ThemeShot name={s.shot} alt={`budgetpro på en telefon. ${text?.alt ?? ""}`} width={780} height={1560} sizes="300px" />
+              </div>
+            );
+          })}
+        </div>
       </div>
+      <div className={`${styles.showTabs} ${styles.phoneTabs}`} role="group" aria-label="Se appen">
+        {PHONE_SLIDES.map((s, k) => (
+          <button
+            key={s.id}
+            type="button"
+            aria-controls="hero-phone"
+            aria-current={k === i}
+            className={styles.showTab}
+            onClick={() => {
+              setAuto(false);
+              go(k);
+            }}
+          >
+            {s.tab}
+            {k === i && auto && (
+              <span
+                className={styles.showProgress}
+                style={{ "--slide-ms": `${SLIDE_MS}ms` } as CSSProperties}
+                onAnimationEnd={() => go((i + 1) % PHONE_SLIDES.length)}
+                aria-hidden="true"
+              />
+            )}
+          </button>
+        ))}
+      </div>
+      <p key={i} className={styles.showNote}>
+        <span className={styles.showDot} aria-hidden="true" />
+        {slide?.note}
+      </p>
     </div>
   );
 }

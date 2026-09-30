@@ -729,11 +729,54 @@
   border: 1px solid var(--v-dark-rule);
   box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
 }
+/* The screen is a sideways swipe strip of pages (Shots.tsx HeroPhone). */
 .phoneScreen {
+  display: flex;
   aspect-ratio: 780 / 1400;
   border-radius: 35px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
   background: var(--v-white);
+}
+.phoneScreen::-webkit-scrollbar {
+  display: none;
+}
+.phoneSlide {
+  flex: 0 0 100%;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.phoneTour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+.phoneTabs {
+  max-width: 100%;
+}
+.phoneTabs .showTab[aria-current="true"] {
+  color: var(--v-dark);
+  background: var(--v-dark-text);
+}
+.phoneTour .showNote {
+  margin: -4px 0 0;
+  max-width: 340px;
+  min-height: 42px;
+}
+
+/* ================= Swipe strips (Swipe.tsx) ================= */
+/* Card lists keep their grid on wide screens; on phones they become a sideways strip with dots. */
+
+.swipe {
+  min-width: 0;
+}
+.swipeDots {
+  display: none;
 }
 
 /* ================= Sådan virker det ================= */
@@ -1703,6 +1746,69 @@
   }
   .footerCompany {
     margin-left: 0;
+  }
+}
+
+/* Swipe strips on phones. After the mobile block, so the strip wins over the lists' own grid. */
+@media (max-width: 767.98px) {
+  .swipe > .swipeTrack {
+    display: flex;
+    gap: 12px;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 2px var(--gutter) 8px;
+    scroll-padding-inline: var(--gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .swipe > .swipeTrack::-webkit-scrollbar {
+    display: none;
+  }
+  .swipe > .swipeTrack > * {
+    flex: 0 0 min(84%, 340px);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  /* Room for the quote cards' shadow inside the strip. */
+  .swipe > .quoteGrid {
+    padding-bottom: 36px;
+    margin-bottom: -22px;
+  }
+  .swipeDots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .swipeDots button {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .swipeDots button::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #c9cfcb;
+    transition:
+      width 0.25s,
+      background-color 0.25s;
+  }
+  .swipeDots button[aria-current="true"]::before {
+    width: 20px;
+    background: var(--v-pine);
+  }
+  .swipeDark .swipeDots button::before {
+    background: #45484c;
+  }
+  .swipeDark .swipeDots button[aria-current="true"]::before {
+    background: var(--v-pine-light);
   }
 }
 

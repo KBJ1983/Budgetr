@@ -5,6 +5,7 @@ import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { DownloadIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon, UploadIcon } from "./icons";
 import { SignupForm } from "./SignupForm";
+import { SwipeList } from "./Swipe";
 
 const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string }[] = [
   {
@@ -49,7 +50,7 @@ export function Trust() {
             der kommer ud.
           </p>
         </div>
-        <ul className={styles.trustBandGrid} data-reveal-group>
+        <SwipeList className={styles.trustBandGrid} label="Tryghed" tone="dark">
           {TRUST_CARDS.map((card) => (
             <li key={card.title} className={styles.trustBandCard}>
               <span className={styles.trustBandIcon} aria-hidden="true">
@@ -59,7 +60,7 @@ export function Trust() {
               <p className={styles.trustBandCardBody}>{card.body}</p>
             </li>
           ))}
-        </ul>
+        </SwipeList>
       </div>
     </section>
   );
@@ -109,7 +110,7 @@ export function Quotes() {
             </h2>
           </div>
         </div>
-        <ul className={styles.quoteGrid} data-reveal-group>
+        <SwipeList className={styles.quoteGrid} label="Citater" tone="dark">
           {QUOTES.map((q) => (
             <li key={q.name}>
               <figure className={styles.quoteCard}>
@@ -126,7 +127,7 @@ export function Quotes() {
               </figure>
             </li>
           ))}
-        </ul>
+        </SwipeList>
       </div>
     </section>
   );
