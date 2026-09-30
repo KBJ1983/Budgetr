@@ -17,6 +17,7 @@ export function Hero() {
             </span>
             Alene, som par eller familie
           </span>
+          <p className={styles.tagline}>Dit overblik. Dine drømme.</p>
           <h1 id="hero-title" className={styles.h1}>
             Hele din økonomi. <span className={styles.accent}>Ét roligt overblik.</span>
           </h1>

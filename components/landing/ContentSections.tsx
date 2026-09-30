@@ -157,7 +157,7 @@ export function Sharing() {
             <Image src="/landing/foto-flytning.jpg" alt="Et par, der flytter sammen, med flyttekasser" fill sizes="(max-width: 1019px) 100vw, 560px" className={styles.photoCover} />
           </div>
           <div className={styles.shareShot}>
-            <ShotFrame name="hvem" alt="Hvem betaler hvad: to personkort med indtægter, udgifter, det, der er til rådighed, og overførslen til budgetkontoen" width={1808} height={2214} />
+            <ShotFrame name="hvem" alt="Hvem betaler hvad: to personkort med indtægter, udgifter og det, der er til rådighed hver måned" width={1808} height={2214} />
           </div>
         </div>
       }

@@ -440,6 +440,14 @@
   font-weight: 700;
   text-wrap: balance;
 }
+.tagline {
+  margin: -8px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--v-pine-light);
+}
 .accent {
   color: var(--v-pine-light);
 }
@@ -996,7 +1004,7 @@
 }
 .sharePhoto {
   position: relative;
-  height: 420px;
+  height: 300px;
   border-radius: 24px;
   overflow: hidden;
   background: #dcdad3;
@@ -1006,7 +1014,13 @@
 }
 .shareShot {
   position: relative;
-  margin: -120px 0 0 32px;
+  margin: -80px 0 0 32px;
+}
+/* Only the top of the shot (heading and the two person cards down to what is left each month); the rest fades out. */
+.shareShot .shotFrame {
+  aspect-ratio: 1808 / 1400;
+  -webkit-mask-image: linear-gradient(180deg, #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 84%, transparent 100%);
 }
 
 /* ================= Beskeder og påmindelser ================= */
@@ -1772,11 +1786,11 @@
   }
 
   .sharePhoto {
-    height: 260px;
+    height: 200px;
     border-radius: 16px;
   }
   .shareShot {
-    margin: -64px 0 0 16px;
+    margin: -48px 0 0 16px;
   }
 
   .photoCards {
@@ -2090,6 +2104,9 @@
   }
   .heroText > :nth-child(5) {
     animation-delay: 0.32s;
+  }
+  .heroText > :nth-child(6) {
+    animation-delay: 0.4s;
   }
   .heroVisual {
     animation: fadeIn 0.9s ease-out 0.2s both;
