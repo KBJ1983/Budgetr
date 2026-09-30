@@ -1,22 +1,22 @@
 import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
-import { ShotFrame } from "./Shots";
-import { PeopleIcon, UploadIcon, WandIcon } from "./icons";
+import { ShotFrame, ThemeShot } from "./Shots";
+import { BellIcon, CalendarIcon, PeopleIcon, TargetIcon, UploadIcon, WandIcon } from "./icons";
 
 const STEPS = [
   {
-    icon: <PeopleIcon size={24} />,
+    icon: <PeopleIcon size={22} strokeWidth={1.7} />,
     title: "Opret en gratis bruger",
     body: "Kun e-mail og en adgangskode. Bor I flere sammen, kan du invitere dem til det samme budget.",
   },
   {
-    icon: <WandIcon size={24} />,
+    icon: <WandIcon size={22} strokeWidth={1.7} />,
     title: "Følg guiden i 7 trin",
     body: "Dig og dem, du deler økonomi med, konti, faste udgifter og opsparingsmål. Korte svar, som kan rettes bagefter.",
   },
   {
-    icon: <UploadIcon size={24} />,
+    icon: <UploadIcon size={22} strokeWidth={1.7} />,
     title: "Importér en kontoudskrift",
     body: "Upload CSV eller Excel fra netbanken. Ydelser opdateres, og stigninger bliver markeret.",
   },
@@ -25,41 +25,36 @@ const STEPS = [
 export function HowItWorks() {
   return (
     <section id="saadan" className={`${styles.section} ${styles.steps}`} aria-labelledby="saadan-title">
-      <div className={styles.sectionHead} data-reveal>
-        <div className={styles.sectionHeadTitle}>
-          <span className={styles.eyebrow}>Sådan virker det</span>
-          <h2 id="saadan-title" className={styles.h2}>
-            Fra tomt ark til fuldt overblik på en aften.
-          </h2>
+      <div className={styles.sectionInner}>
+        <div className={styles.sectionHead} data-reveal>
+          <div className={styles.sectionHeadTitle}>
+            <span className={styles.eyebrow}>Sådan virker det</span>
+            <h2 id="saadan-title" className={styles.h2}>
+              Fra tomt ark til fuldt overblik på 30 min.
+            </h2>
+          </div>
+          <p className={styles.headBody}>
+            Ingen regneark at vedligeholde og ingen formler at forstå. Du svarer på nogle få spørgsmål, og budgettet
+            bygger sig selv.
+          </p>
         </div>
-        <p className={styles.headBody}>
-          Ingen regneark at vedligeholde og ingen formler at forstå. Du svarer på nogle få spørgsmål, og budgettet
-          bygger sig selv.
-        </p>
-      </div>
-      <ol className={styles.stepGrid} data-reveal-group>
-        {STEPS.map((step, index) => (
-          <li key={step.title} className={styles.step}>
-            <div className={styles.stepTop}>
-              <span className={styles.stepIcon} aria-hidden="true">
-                {step.icon}
-              </span>
-              <span className={styles.stepNum} aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-            </div>
-            <div className={styles.stepText}>
-              <h3 className={styles.stepTitle}>
-                <span className={styles.stepPrefix} aria-hidden="true">
-                  {index + 1}.{" "}
+        <ol className={styles.stepGrid} data-reveal-group>
+          {STEPS.map((step, index) => (
+            <li key={step.title} className={styles.step}>
+              <div className={styles.stepTop}>
+                <span className={styles.stepIcon} aria-hidden="true">
+                  {step.icon}
                 </span>
-                {step.title}
-              </h3>
+                <span className={styles.stepNum} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <h3 className={styles.stepTitle}>{step.title}</h3>
               <p className={styles.stepBody}>{step.body}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
@@ -71,33 +66,30 @@ type SplitProps = {
   body: string;
   bullets: readonly string[];
   visual: ReactNode;
-  /** Cut-out on the left on desktop (text still comes first when stacked). */
+  /** Visual on the left on desktop (text still comes first when stacked). */
   visualFirst?: boolean;
   tone?: "paper" | "stone";
 };
 
-/** Text + a screenshot of the app, side by side on desktop, stacked below 1280px. */
+/** Text + a screenshot of the app, side by side on desktop, stacked on narrow screens. */
 function SplitSection({ id, eyebrow, title, body, bullets, visual, visualFirst = false, tone = "paper" }: SplitProps) {
   const titleId = `${id}-title`;
   return (
-    <section
-      className={[styles.section, styles.split, tone === "stone" ? styles.stone : "", visualFirst ? styles.splitReverse : ""]
-        .filter(Boolean)
-        .join(" ")}
-      aria-labelledby={titleId}
-    >
-      <div className={styles.splitText} data-reveal>
-        <div className={styles.splitIntro}>
-          <span className={styles.eyebrow}>{eyebrow}</span>
-          <h2 id={titleId} className={styles.h2}>
-            {title}
-          </h2>
-          <p className={styles.bodyLg}>{body}</p>
+    <section id={id} className={`${styles.section} ${tone === "stone" ? styles.stone : ""}`} aria-labelledby={titleId}>
+      <div className={`${styles.sectionInner} ${styles.split} ${visualFirst ? styles.splitReverse : ""}`}>
+        <div className={styles.splitText} data-reveal>
+          <div className={styles.splitIntro}>
+            <span className={styles.eyebrow}>{eyebrow}</span>
+            <h2 id={titleId} className={styles.h2}>
+              {title}
+            </h2>
+            <p className={styles.bodyLg}>{body}</p>
+          </div>
+          <CheckList items={bullets} className={styles.splitList} />
         </div>
-        <CheckList items={bullets} className={styles.splitList} />
-      </div>
-      <div className={styles.splitVisual} data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties}>
-        {visual}
+        <div className={styles.splitVisual} data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties}>
+          {visual}
+        </div>
       </div>
     </section>
   );
@@ -106,7 +98,7 @@ function SplitSection({ id, eyebrow, title, body, bullets, visual, visualFirst =
 export function Availability() {
   return (
     <SplitSection
-      id="raadighed"
+      id="funktioner"
       eyebrow="Rådighed"
       title="Se, hvad du har til rådighed. Som banken ser det."
       body="Rådighedsbeløbet regnes, som banken gør, når I søger lån. Mad, opsparing og gaver holdes ude, så du kan se, om du ligger over eller under kravet."
@@ -136,5 +128,80 @@ export function Sharing() {
       visualFirst
       tone="stone"
     />
+  );
+}
+
+const NOTE_CARDS: readonly { icon: ReactNode; title: string; body: string }[] = [
+  {
+    icon: <TargetIcon size={20} strokeWidth={1.8} />,
+    title: "Milepæle i opsparingen",
+    body: "Når et opsparingsmål når 10, 25, 50, 75 og 100 %, får du en besked, næste gang du logger ind. Hver milepæl vises én gang.",
+  },
+  {
+    icon: <CalendarIcon size={20} strokeWidth={1.8} />,
+    title: "Påmindelse om budgetgennemgang",
+    body: "Vælg hver måned, hver 3. måned, hvert halve år eller en gang om året. Påmindelsen kommer kun, hvis budgettet ikke er rettet i perioden.",
+  },
+  {
+    icon: <BellIcon size={20} strokeWidth={1.8} />,
+    title: "I appen, på mail eller sms",
+    body: "Påmindelsen vises, når du logger ind. Vil du også have den på mail eller sms, slår du det til. Det hele er valgfrit og kan slås fra igen.",
+  },
+];
+
+/** Beskeder og påmindelser: the login note (goal milestone + review reminder) and the reminder settings. */
+export function Notifications() {
+  return (
+    <section id="beskeder" className={`${styles.section} ${styles.notes}`} aria-labelledby="beskeder-title">
+      <div className={styles.sectionInner}>
+        <div className={styles.sectionHead} data-reveal>
+          <div className={styles.sectionHeadTitle}>
+            <span className={styles.eyebrow}>Beskeder og påmindelser</span>
+            <h2 id="beskeder-title" className={styles.h2}>
+              Besked, når du når et mål. En påmindelse, når budgettet trænger.
+            </h2>
+          </div>
+          <p className={styles.headBody}>
+            budgetpro holder øje med dine opsparingsmål og med, hvornår du sidst så budgettet igennem. Du vælger selv,
+            hvad du vil have besked om.
+          </p>
+        </div>
+        <div className={styles.notesBody}>
+          <ul className={styles.notesCards} data-reveal-group>
+            {NOTE_CARDS.map((card) => (
+              <li key={card.title} className={styles.notesCard}>
+                <span className={styles.notesIcon} aria-hidden="true">
+                  {card.icon}
+                </span>
+                <div>
+                  <h3 className={styles.notesCardTitle}>{card.title}</h3>
+                  <p className={styles.notesCardBody}>{card.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className={styles.notesVisual} data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties}>
+            <figure className={`${styles.shotFrame} ${styles.notesSettings}`}>
+              <ThemeShot
+                name="paamind"
+                alt="Indstillinger, Påmindelser: besked ved milepæle i opsparingen, påmindelse hver 3. måned og også på mail"
+                width={1840}
+                height={1260}
+                sizes="(max-width: 760px) 100vw, 620px"
+              />
+            </figure>
+            <figure className={`${styles.shotFrame} ${styles.notesNote}`}>
+              <ThemeShot
+                name="besked"
+                alt="Beskeden ved login: Tillykke, Udbetaling til hus har nået 50 %, og det er tid til at se budgettet igennem"
+                width={1040}
+                height={928}
+                sizes="(max-width: 760px) 90vw, 380px"
+              />
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

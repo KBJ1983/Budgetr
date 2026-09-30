@@ -12,28 +12,31 @@ const NAV_LINKS: readonly NavLink[] = [
   { href: "#pris", label: "Pris" },
 ];
 
+/** Dark header at the top of the rounded hero card. */
 export function SiteHeader() {
   return (
     <header className={styles.header}>
-      <a href="#top" className={styles.brand}>
-        <Wordmark fontSize={23} />
-      </a>
-      <nav aria-label="Hovedmenu" className={styles.nav}>
-        {NAV_LINKS.map((link) => (
-          <a key={link.href} href={link.href}>
-            {link.label}
-          </a>
-        ))}
-      </nav>
-      <div className={styles.headerActions}>
-        {/* Test-user login (no password) until real accounts arrive. */}
-        <Link href="/login" className={styles.loginLink}>
-          Log ind
-        </Link>
-        <Link href="/login" className={styles.headerCta}>
-          Opret gratis bruger
-        </Link>
-        <MobileMenu links={NAV_LINKS} />
+      <div className={styles.headerInner}>
+        <a href="#top" className={styles.brand}>
+          <Wordmark fontSize={24} dark />
+        </a>
+        <nav aria-label="Hovedmenu" className={styles.nav}>
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        <div className={styles.headerActions}>
+          {/* Log ind goes to /login, the signup buttons to /opret. */}
+          <Link href="/login" className={styles.loginLink}>
+            Log ind
+          </Link>
+          <Link href="/opret" className={styles.headerCta}>
+            Opret gratis bruger
+          </Link>
+          <MobileMenu links={NAV_LINKS} />
+        </div>
       </div>
     </header>
   );

@@ -1,6 +1,6 @@
 import styles from "@/components/landing/landing.module.css";
-import { Pricing, FinalCta, Trust } from "@/components/landing/Closing";
-import { Availability, HowItWorks, Sharing } from "@/components/landing/ContentSections";
+import { FinalCta, Pricing, Quotes, Trust } from "@/components/landing/Closing";
+import { Availability, HowItWorks, Notifications, Sharing } from "@/components/landing/ContentSections";
 import { Features } from "@/components/landing/Features";
 import { Hero } from "@/components/landing/Hero";
 import { ScrollReveal } from "@/components/landing/ScrollReveal";
@@ -8,9 +8,9 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader } from "@/components/landing/SiteHeader";
 
 /**
- * Landing page, based on docs/design/HANDOFF.md §4 with later changes: Tryghed moved up right after
- * "Sådan virker det" in its own dark band, and only the hero, Rådighed and Deler I økonomi keep product
- * cut-outs (the other features are text cards). Title, description and lang come from app/layout.tsx.
+ * Landing page, layout from docs/design/forside-v2.html ("Forside v2"): header and hero share a dark rounded card,
+ * Tryghed follows "Sådan virker det", and the product is shown with real screenshots (`pnpm shots`), not mock-ups.
+ * Beskeder og påmindelser is our own addition to the design. Title, description and lang come from app/layout.tsx.
  */
 export default function HomePage() {
   return (
@@ -22,6 +22,8 @@ export default function HomePage() {
         <Trust />
         <Availability />
         <Sharing />
+        <Notifications />
+        <Quotes />
         <Features />
         <Pricing />
         <FinalCta />

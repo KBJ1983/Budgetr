@@ -1,27 +1,31 @@
 import { Wordmark } from "@/components/Logo";
 import styles from "./landing.module.css";
 
-const LEGAL_LINKS = ["Vilkår", "Privatlivspolitik", "Cookies", "Kontakt"] as const;
+const LINKS = [
+  { href: "#funktioner", label: "Funktioner" },
+  { href: "#tryghed", label: "Tryghed" },
+  { href: "#pris", label: "Pris" },
+  // Legal pages do not exist yet.
+  { href: "#", label: "Vilkår" },
+  { href: "#", label: "Privatlivspolitik" },
+  { href: "#", label: "Kontakt" },
+] as const;
 const COMPANY = "[Firmanavn · CVR]";
 
 export function SiteFooter() {
   return (
     <footer className={styles.footer}>
-      <div className={styles.footerBrand}>
-        <span className={styles.footerName}>
-          <Wordmark fontSize={21} dark />
-        </span>
-        <span className={styles.companyWide}>{COMPANY}</span>
+      <div className={styles.footerInner}>
+        <Wordmark fontSize={28} />
+        <nav aria-label="Sidefod" className={styles.footerNav}>
+          {LINKS.map((link) => (
+            <a key={link.label} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        <span className={styles.footerCompany}>© 2026 budgetpro · {COMPANY}</span>
       </div>
-      <nav aria-label="Sidefod" className={styles.footerNav}>
-        {/* Legal pages do not exist yet. */}
-        {LEGAL_LINKS.map((label) => (
-          <a key={label} href="#">
-            {label}
-          </a>
-        ))}
-      </nav>
-      <span className={styles.companyNarrow}>{COMPANY}</span>
     </footer>
   );
 }
