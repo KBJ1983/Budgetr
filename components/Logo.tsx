@@ -33,7 +33,7 @@ export function Wordmark({ fontSize = 19, dark = false }: { fontSize?: number; d
   );
 }
 
-/** App icon: the green dot on a dark rounded square (also used for public/icon.svg). */
+/** App icon: the green dot on a dark rounded square. The favicon (public/icon.svg) is the "b" icon instead. */
 export function AppIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" aria-hidden="true">
