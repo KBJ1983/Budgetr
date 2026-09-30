@@ -531,73 +531,6 @@
   display: none;
 }
 
-/* The one floating note: a savings goal hanging off the window's bottom left corner, next to the caption. */
-.floatGoal {
-  position: absolute;
-  bottom: 0;
-  left: -40px;
-  z-index: 3;
-  width: 236px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  color: var(--v-ink);
-  background: var(--v-white);
-  border: 1px solid var(--v-rule);
-  border-radius: 16px;
-  box-shadow: var(--float-shadow);
-  padding: 14px 16px;
-}
-.floatGoalHead {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12.5px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.floatGoalDot {
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #4f7d67;
-}
-.floatGoalDate {
-  margin-left: auto;
-  font-weight: 400;
-  color: var(--v-ink-3);
-}
-.floatGoalValue {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  font-size: 11px;
-  color: var(--v-ink-3);
-}
-.floatGoalValue b {
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--v-pine);
-}
-.floatGoalBar {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--v-rule-2);
-  overflow: hidden;
-}
-.floatGoalBar span {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: var(--v-pine);
-}
-.floatGoalNote {
-  font-size: 11px;
-  color: var(--v-ink-3);
-}
-
 /* ================= Screenshots ================= */
 /* Each shot exists in both themes. <html data-shots> (set by the hero switch) wins; until then the system theme decides. */
 
@@ -766,10 +699,9 @@
 .showSlide[data-on="true"] {
   opacity: 1;
 }
-/* Caption below the window, on the right, so the goal card on the left has room. */
+/* Caption below the window. */
 .showNote {
-  align-self: flex-end;
-  max-width: min(320px, 56%);
+  max-width: 520px;
   min-height: 42px;
   margin: -10px 0 0;
   display: flex;
@@ -1441,10 +1373,6 @@
   .featureCards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .floatGoal {
-    width: 200px;
-    left: -24px;
-  }
 }
 
 @media (max-width: 1019.98px) {
@@ -1852,9 +1780,6 @@
   }
   .heroVisual {
     animation: fadeIn 0.9s ease-out 0.2s both;
-  }
-  .floatGoal {
-    animation: noteIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.8s both;
   }
   .heroMobile {
     animation: riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;

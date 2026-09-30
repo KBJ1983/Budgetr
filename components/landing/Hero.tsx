@@ -46,23 +46,8 @@ export function Hero() {
         </div>
         <div className={styles.heroVisual}>
           <div className={styles.heroDots} aria-hidden="true" />
+          {/* No floating cards over the window (the design's pill and goal card are left out on purpose). */}
           <HeroShowcase />
-          {/* One floating note over the window (the design's netbank pill is left out: the promises already say it).
-              The goal matches the fictional budget in the screenshots. */}
-          <div className={styles.floatGoal} aria-hidden="true">
-            <div className={styles.floatGoalHead}>
-              <span className={styles.floatGoalDot} />
-              Udbetaling til hus<span className={styles.floatGoalDate}>jun 2029</span>
-            </div>
-            <div className={styles.floatGoalValue}>
-              <b>4.844 kr</b>
-              <span>pr. md.</span>
-            </div>
-            <div className={styles.floatGoalBar}>
-              <span style={{ width: "38%" }} />
-            </div>
-            <div className={styles.floatGoalNote}>95.000 af 250.000 kr · 38 %</div>
-          </div>
         </div>
         <div className={styles.heroMobile}>
           <HeroPhone />
