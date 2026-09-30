@@ -1,15 +1,15 @@
 /**
- * The confirm and login mails, each with a link and a 6-digit code. Sent through Resend (same provider as
+ * The confirm and login mails, each with a link and a 6-digit code, and the invite to a shared budget (link only). Sent through Resend (same provider as
  * scripts/send-reminders.mjs) when RESEND_API_KEY and MAIL_FROM (or REMINDER_MAIL_FROM) are set in .env.local.
  * Without them – e.g. in local development – nothing is sent and the link is written to the server log instead.
  */
-import type { Link, Purpose } from "./accounts";
+import { displayName, type Link, type Purpose } from "./accounts";
 
 const DEV = process.env.NODE_ENV !== "production";
 
 /** The page a mailed link opens (it asks for a click before the link is used, so mail scanners can't spend it). */
 export const linkUrl = (origin: string, l: Pick<Link, "purpose" | "token">) =>
-  `${process.env.APP_URL || origin}/login/bekraeft?t=${encodeURIComponent(l.token)}${l.purpose === "verify" ? "&ny=1" : ""}`;
+  `${process.env.APP_URL || origin}/login/bekraeft?t=${encodeURIComponent(l.token)}${l.purpose === "verify" ? "&ny=1" : l.purpose === "invite" ? "&inv=1" : ""}`;
 
 /** "123456" → "123 456", easier to read and type. */
 export const spacedCode = (code: string) => `${code.slice(0, 3)} ${code.slice(3)}`;
@@ -21,11 +21,39 @@ export const spacedCode = (code: string) => `${code.slice(0, 3)} ${code.slice(3)
 export async function deliver(origin: string, l: Link | null): Promise<{ ok: true; devLink?: string; devCode?: string }> {
   if (!l) return { ok: true };
   const url = linkUrl(origin, l);
-  const sent = await sendAuthMail(l.account.email, authMail(l.purpose, l.account.firstName, url, l.code), url);
+  const mail =
+    l.purpose === "invite"
+      ? inviteMail(l.to.firstName, displayName(l.account), url, `${process.env.APP_URL || origin}/login`)
+      : authMail(l.purpose, l.to.firstName, url, l.code);
+  const sent = await sendAuthMail(l.to.email, mail, url);
   return !sent && DEV ? { ok: true, devLink: url, devCode: l.code } : { ok: true };
 }
 
-export function authMail(purpose: Purpose, firstName: string, link: string, code: string) {
+/**
+ * Sent when the primary adds an e-mail to a shared budget. No code: nobody asked for one on a device yet. Later
+ * logins go through the login page, which mails a code to the member's own e-mail.
+ */
+export function inviteMail(firstName: string, inviter: string, link: string, loginUrl: string) {
+  return {
+    subject: `${inviter} har delt et budget med dig på budgetpro`,
+    text: [
+      `Hej ${firstName}`,
+      "",
+      `${inviter} har givet dig adgang til budgettet på budgetpro, så I kan se og rette det sammen. Åbn linket for at tage imod og logge ind:`,
+      "",
+      link,
+      "",
+      `Linket virker i 7 dage og kan bruges én gang. Næste gang logger du ind på ${loginUrl} med denne e-mail. Så sender vi dig en kode.`,
+      "",
+      "Vi beder dig aldrig om en adgangskode eller om login til din bank. Kender du ikke afsenderen, kan du se bort fra denne mail.",
+      "",
+      "Venlig hilsen",
+      "budgetpro",
+    ].join("\n"),
+  };
+}
+
+export function authMail(purpose: Exclude<Purpose, "invite">, firstName: string, link: string, code: string) {
   const c = spacedCode(code);
   if (purpose === "verify")
     return {

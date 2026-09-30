@@ -393,6 +393,10 @@ dialog.setdlg{height:min(640px,90vh)}.setdlg form{height:100%}
 .setnav{width:230px}.setbody{grid-template-columns:230px minmax(0,1fr)}
 .personedit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .personedit input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:8px 10px;font-size:15px;min-width:0}
+.setgrp[hidden],.verdict[hidden]{display:none}
+.sharerow{padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--card)}
+.sharerow .who{min-width:0;display:flex;flex-direction:column;gap:1px;font-size:15px}
+.sharerow .who span{font-size:13px;color:var(--ink2);overflow-wrap:anywhere}
 .setnote{font-size:13px;color:var(--ink2);margin:-4px 0 0;max-width:68ch}
 .setsec .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:640px){.setbody{grid-template-columns:minmax(0,1fr)}.setnav{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--rule);padding:8px}.setnav{width:auto}.setnav button{white-space:nowrap}.setnav button span{display:none}.setsec .grid3{grid-template-columns:minmax(0,1fr)}}
@@ -948,7 +952,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   <form method="dialog" id="frmSet">
     <div class="sethead"><h2 id="setTitle">Indstillinger</h2><button type="button" class="primary" id="setDone">Færdig</button></div>
     <div class="setbody">
-      <nav class="setnav" aria-label="Indstillinger"><button type="button" data-sp="hus"><b>Husstand</b><span>Navn og personer</span></button><button type="button" data-sp="konti"><b>Konti</b><span>Navn, nummer og ejer</span></button><button type="button" data-sp="fordeling"><b>Fordeling</b><span>Sådan deles fælles udgifter</span></button><button type="button" data-sp="indtaegter"><b>Indtægter</b><span>Ekstra og bundne indtægter</span></button><button type="button" data-sp="bank"><b>Bankens krav</b><span>Vejledende rådighedsbeløb</span></button><button type="button" data-sp="paamind"><b>Påmindelser</b><span>Beskeder, mail og sms</span></button><button type="button" data-sp="visning"><b>Visning</b><span>Beløb, tema og markeringer</span></button><button type="button" data-sp="nyt"><b>Nyt budget</b><span>Start forfra med guiden</span></button></nav>
+      <nav class="setnav" aria-label="Indstillinger"><button type="button" data-sp="hus"><b>Husstand</b><span>Navn og personer</span></button><button type="button" data-sp="deling"><b>Deling</b><span>Hvem kan logge ind</span></button><button type="button" data-sp="konti"><b>Konti</b><span>Navn, nummer og ejer</span></button><button type="button" data-sp="fordeling"><b>Fordeling</b><span>Sådan deles fælles udgifter</span></button><button type="button" data-sp="indtaegter"><b>Indtægter</b><span>Ekstra og bundne indtægter</span></button><button type="button" data-sp="bank"><b>Bankens krav</b><span>Vejledende rådighedsbeløb</span></button><button type="button" data-sp="paamind"><b>Påmindelser</b><span>Beskeder, mail og sms</span></button><button type="button" data-sp="visning"><b>Visning</b><span>Beløb, tema og markeringer</span></button><button type="button" data-sp="nyt"><b>Nyt budget</b><span>Start forfra med guiden</span></button></nav>
       <div class="setmain" id="setMain">
         <section class="setsec" id="set-hus"><h3>Husstand</h3>
           <p class="setnote">Budgettets navn og de personer, der deler budgettet. Personerne bruges som betalere på poster, mål og konti.</p>
@@ -956,6 +960,18 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
           <div class="setgrp"><span class="flabel">Personer</span><div class="acctlist" id="personList"></div>
           <div><button type="button" id="btnAddPerson">Tilføj person</button></div>
           <p class="setnote">Fjerner du en person, flyttes personens poster og mål til Fælles, og personens konti får ingen ejer.</p></div></section>
+        <section class="setsec" id="set-deling"><h3>Deling</h3>
+          <p class="setnote">Deler I budgettet, kan op til tre e-mails logge ind på det. Hver logger ind med sin egen e-mail og får sin egen kode på mail. I ser og retter det samme budget.</p>
+          <div class="setgrp"><span class="flabel">Kan logge ind</span><div class="acctlist" id="shareList"><p class="setnote">Henter …</p></div></div>
+          <div class="setgrp" id="shareAdd" hidden><span class="flabel">Tilføj en e-mail</span>
+            <div class="grid2">
+              <div class="field"><label for="shareName">Fornavn</label><input id="shareName" autocomplete="off" maxlength="60"></div>
+              <div class="field"><label for="shareMail">E-mail</label><input id="shareMail" type="email" autocomplete="off" inputmode="email" maxlength="200"></div>
+            </div>
+            <div><button type="button" id="shareSend">Send invitation</button></div>
+            <p class="setnote">Vi sender en mail med et link, som personen bruger til at tage imod. Næste gang logger personen ind med sin e-mail på login-siden. Påmindelser på mail og sms går fortsat til den primære e-mail.</p></div>
+          <p class="setnote" id="shareNote"></p>
+          <div id="shareMsg" class="verdict" role="status" hidden></div></section>
         <section class="setsec" id="set-konti"><h3>Konti</h3>
           <p class="setnote">Navn, kontonummer, type og ejer. Rækkefølgen ændres ved at trække kontiene på Overblik.</p>
           <div class="acctlist" id="acctList"></div>
@@ -2936,9 +2952,48 @@ function fillRemind(){const sp=S.settings||{},r=rmOf(),due=rmDue();
   $('setEvery').onchange=e=>rset('every',+e.target.value||0);
   $('setRmMail').onchange=e=>rset('mail',e.target.checked);
   $('setRmSms').onchange=e=>rset('sms',e.target.checked);}
+/* Deling: up to three e-mails log in to one budget (lib/accounts.ts, /api/members). The primary adds and removes
+   them; a member sees the list and can leave. Test users have no account, so the API answers 401 for them. */
+function shareMsg(txt,kind){const m=$('shareMsg');m.hidden=!txt;m.className='verdict'+(kind?' '+kind:'');m.innerHTML=txt||''}
+function renderShare(d){
+  if(!d){$('shareList').innerHTML='';$('shareAdd').hidden=true;
+    $('shareNote').textContent='Deling kræver en konto med e-mail. Test-brugere kan ikke dele budgettet.';return}
+  const me=d.you,left=d.max-1-d.members.length;
+  const row=(name,mail,tag,btn)=>`<div class="personedit sharerow"><div class="who"><b>${esc(name)}${tag?` <span class="badge ${tag[1]}">${tag[0]}</span>`:''}</b><span>${esc(mail)}</span></div>${btn||''}</div>`;
+  $('shareList').innerHTML=row(d.primary.name,d.primary.email,['Primær','gtag'])
+    +d.members.map(m=>row(m.name+(m.id===me?' (dig)':''),m.email,m.pending?['Afventer','chk']:null,
+      !me?`<button type="button" class="ghost danger" data-shdel="${m.id}" aria-label="Fjern ${esc(m.name)}">Fjern</button>`
+        :m.id===me?`<button type="button" class="ghost danger" data-shdel="${m.id}">Forlad budgettet</button>`:'')).join('');
+  $('shareAdd').hidden=!!me||left<1;
+  $('shareNote').textContent=me?`Kun ${d.primary.name} kan tilføje og fjerne e-mails.`
+    :left<1?'Budgettet har tre e-mails. Fjern en for at tilføje en anden.'
+    :d.members.some(m=>m.pending)?'Afventer betyder, at personen ikke har taget imod invitationen endnu.':'';
+  $('shareList').querySelectorAll('[data-shdel]').forEach(b=>b.onclick=()=>{const self=b.dataset.shdel===me;
+    if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent=self?'Du kan ikke længere logge ind på budgettet. Forlad?':'Personen kan ikke længere logge ind. Fjern?';return}
+    b.disabled=true;
+    fetch(shareUrl()+'?id='+encodeURIComponent(b.dataset.shdel),{method:'DELETE'}).then(r=>{
+      if(!r.ok&&r.status!==404)throw 0;
+      if(self){window.BUDGETR_LOGOUT();return}
+      shareMsg('');loadShare()}).catch(()=>{b.disabled=false;shareMsg('Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')})})}
+const shareUrl=()=>'/api/members/'+encodeURIComponent(window.BUDGETR_USER);
+function loadShare(){fetch(shareUrl(),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null).then(renderShare)}
+$('shareSend').onclick=()=>{const b=$('shareSend'),firstName=$('shareName').value.trim(),email=$('shareMail').value.trim();
+  if(!firstName){shareMsg('Skriv personens fornavn.','bad');$('shareName').focus();return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){shareMsg('Skriv en gyldig e-mail, fx navn@eksempel.dk.','bad');$('shareMail').focus();return}
+  b.disabled=true;shareMsg('');
+  fetch(shareUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({firstName,email})})
+    .then(r=>r.json().catch(()=>({})).then(j=>({r,j}))).then(({r,j})=>{
+      const E={firstName:'Skriv personens fornavn.',email:'Skriv en gyldig e-mail, fx navn@eksempel.dk.',full:'Budgettet har allerede tre e-mails.',
+        taken:'Den e-mail kan allerede logge ind på budgetpro. En e-mail kan kun høre til ét budget.',primary:'Kun den primære e-mail kan tilføje andre.'};
+      if(j.members)renderShare(j);
+      if(r.ok||j.error==='mail'){$('shareName').value='';$('shareMail').value=''}
+      if(r.ok)shareMsg(`Invitationen er sendt til ${esc(email)}.`+(j.devLink?` <a href="${esc(j.devLink)}">Link (kun under udvikling)</a>`:''),'ok');
+      else if(j.error==='mail')shareMsg('Personen er tilføjet, men mailen kunne ikke sendes lige nu. Personen kan logge ind med sin e-mail på login-siden.','warn');
+      else shareMsg(E[j.error]||'Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')})
+    .catch(()=>shareMsg('Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')).finally(()=>{b.disabled=false})};
 // One page per group; the last page opened is shown again next time.
 let setPage='hus';
-function setShow(sec){if(!$('set-'+sec))sec='hus';setPage=sec;
+function setShow(sec){if(!$('set-'+sec))sec='hus';setPage=sec;if(sec==='deling'){shareMsg('');loadShare()}
   document.querySelectorAll('#setMain .setsec').forEach(x=>x.classList.toggle('on',x.id==='set-'+sec));
   document.querySelectorAll('.setnav [data-sp]').forEach(b=>{if(b.dataset.sp===sec)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});$('setMain').scrollTop=0}
 function openSet(sec){if(!S){openWiz();return}fillSet();setShow(sec||setPage);if(!$('dlgSet').open)$('dlgSet').showModal()}

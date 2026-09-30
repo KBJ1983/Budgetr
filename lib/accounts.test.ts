@@ -3,12 +3,16 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  addMember,
   findByEmail,
+  listLogins,
+  MAX_LOGINS,
   LOGIN_TTL_MS,
   MAX_CODE_TRIES,
   readAccount,
   redeem,
   redeemCode,
+  removeMember,
   requestLogin,
   RESEND_GAP_MS,
   signup,
@@ -58,7 +62,7 @@ describe("signup and confirm", () => {
     expect(await readFile(path.join(dir, "accounts", `${id}.json`), "utf8")).not.toContain(l!.token.split(".")[1]);
 
     const a = await redeem(l!.token, later(1000), dir);
-    expect(a?.verifiedAt).toBe(later(1000).toISOString());
+    expect(a?.account.verifiedAt).toBe(later(1000).toISOString());
     expect(await readProfile(id, dir)).toEqual({ email: "anna@eksempel.dk", phone: "+4512345678" });
     expect(await redeem(l!.token, later(2000), dir)).toBeNull();
   });
@@ -119,7 +123,7 @@ describe("codes", () => {
     expect(l.code).toMatch(/^\d{6}$/);
     expect(await readFile(path.join(dir, "accounts", `${l.account.id}.json`), "utf8")).not.toContain(l.code);
     const a = await redeemCode(" ANNA@eksempel.dk ", `${l.code.slice(0, 3)} ${l.code.slice(3)}`, later(1000), dir);
-    expect(a?.verifiedAt).toBe(later(1000).toISOString());
+    expect(a?.account.verifiedAt).toBe(later(1000).toISOString());
     expect(await readProfile(l.account.id, dir)).toEqual({ email: "anna@eksempel.dk", phone: "+4512345678" });
     expect(await redeemCode(input.email, l.code, later(2000), dir)).toBeNull();
     expect(await redeem(l.token, later(2000), dir)).toBeNull();
@@ -146,5 +150,68 @@ describe("codes", () => {
     // … but not after the limit, and the link is gone as well.
     expect(await redeemCode(input.email, login.code, t0, dir)).toBeNull();
     expect(await redeem(login.token, t0, dir)).toBeNull();
+  });
+});
+
+describe("sharing a budget", () => {
+  const confirmed = async () => {
+    const l = (await signup(input, t0, dir))!;
+    await redeem(l.token, t0, dir);
+    return l.account.id;
+  };
+  const bo = { firstName: "Bo", email: "Bo@Eksempel.dk" };
+
+  it("invites a member who logs in to the same budget with their own e-mail and code", async () => {
+    const id = await confirmed();
+    const r = await addMember(id, bo, t0, dir);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.link.purpose).toBe("invite");
+    expect(r.link.to).toEqual({ email: "bo@eksempel.dk", firstName: "Bo" });
+    expect(listLogins((await readAccount(id, dir))!).members).toEqual([
+      { id: r.link.member!.id, name: "Bo", email: "bo@eksempel.dk", pending: true },
+    ]);
+
+    const accepted = (await redeem(r.link.token, later(1000), dir))!;
+    expect(accepted.account.id).toBe(id);
+    expect(accepted.member?.verifiedAt).toBe(later(1000).toISOString());
+    expect(await redeem(r.link.token, later(2000), dir)).toBeNull();
+
+    // Later logins mail a code to the member, not to the primary.
+    const login = (await requestLogin("bo@eksempel.dk", later(RESEND_GAP_MS + 1), dir))!;
+    expect(login.to.email).toBe("bo@eksempel.dk");
+    expect(login.purpose).toBe("login");
+    const viaCode = (await redeemCode("bo@eksempel.dk", login.code, later(RESEND_GAP_MS + 2), dir))!;
+    expect(viaCode.account.id).toBe(id);
+    expect(viaCode.member?.id).toBe(r.link.member!.id);
+    // The primary's own login is untouched.
+    expect((await readAccount(id, dir))?.token).toBeUndefined();
+    expect(await readProfile(id, dir)).toEqual({ email: "anna@eksempel.dk", phone: "+4512345678" });
+  });
+
+  it(`allows at most ${MAX_LOGINS} e-mails and each e-mail on one budget only`, async () => {
+    const id = await confirmed();
+    expect(await addMember(id, { firstName: "Anna", email: input.email }, t0, dir)).toEqual({ ok: false, error: "taken" });
+    expect((await addMember(id, bo, t0, dir)).ok).toBe(true);
+    expect(await addMember(id, bo, t0, dir)).toEqual({ ok: false, error: "taken" });
+    expect((await addMember(id, { firstName: "Cia", email: "cia@eksempel.dk" }, t0, dir)).ok).toBe(true);
+    expect(await addMember(id, { firstName: "Dan", email: "dan@eksempel.dk" }, t0, dir)).toEqual({ ok: false, error: "full" });
+    expect(await addMember(id, { firstName: " ", email: "dan@eksempel.dk" }, t0, dir)).toEqual({ ok: false, error: "firstName" });
+    expect(await addMember(id, { firstName: "Dan", email: "dan@" }, t0, dir)).toEqual({ ok: false, error: "email" });
+    // Signing up with a member's e-mail makes no new account; it mails the member a login.
+    const s = (await signup({ ...input, email: "bo@eksempel.dk" }, later(RESEND_GAP_MS + 1), dir))!;
+    expect(s.account.id).toBe(id);
+    expect(s.purpose).toBe("login");
+    expect((await readdir(path.join(dir, "accounts"))).length).toBe(1);
+  });
+
+  it("stops a removed member's links and codes", async () => {
+    const id = await confirmed();
+    const r = (await addMember(id, bo, t0, dir)) as { ok: true; link: { token: string; member?: { id: string } } };
+    expect(await removeMember(id, r.link.member!.id, dir)).toBe(true);
+    expect(await removeMember(id, r.link.member!.id, dir)).toBe(false);
+    expect(await redeem(r.link.token, t0, dir)).toBeNull();
+    expect(await requestLogin("bo@eksempel.dk", t0, dir)).toBeNull();
+    expect((await readAccount(id, dir))?.members).toBeUndefined();
   });
 });

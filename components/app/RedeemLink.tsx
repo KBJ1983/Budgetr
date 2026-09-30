@@ -6,10 +6,25 @@ import { AuthShell } from "@/components/app/AuthShell";
 import { startAccountSession } from "@/lib/store";
 
 /**
- * Opened from the mailed link (/login/bekraeft?t=…[&ny=1]). The link is only used when the button is pressed:
+ * Opened from the mailed link (/login/bekraeft?t=…[&ny=1 | &inv=1]). The link is only used when the button is pressed:
  * mail programs often open links on their own to scan them, which would otherwise spend a one-time link.
  */
-export function RedeemLink({ token, isNew }: { token?: string; isNew: boolean }) {
+const TEXT = {
+  new: {
+    title: "Bekræft din e-mail",
+    lead: "Tryk på knappen for at bekræfte din e-mail. Så er din konto klar, og du kommer videre til dit budget.",
+    button: "Bekræft og fortsæt",
+  },
+  invite: {
+    title: "Du er inviteret til et budget",
+    lead: "Tryk på knappen for at tage imod invitationen. Så kommer du videre til det budget, der er delt med dig. Næste gang logger du ind med din e-mail.",
+    button: "Tag imod og fortsæt",
+  },
+  login: { title: "Log ind", lead: "Tryk på knappen for at logge ind og komme videre til dit budget.", button: "Log ind" },
+};
+
+export function RedeemLink({ token, kind }: { token?: string; kind: keyof typeof TEXT }) {
+  const t = TEXT[kind];
   const [state, setState] = useState<"idle" | "busy" | "expired" | "error">(token ? "idle" : "expired");
 
   const go = async () => {
@@ -46,12 +61,8 @@ export function RedeemLink({ token, isNew }: { token?: string; isNew: boolean })
 
   return (
     <AuthShell>
-      <h1>{isNew ? "Bekræft din e-mail" : "Log ind"}</h1>
-      <p className="bx-guide-lead">
-        {isNew
-          ? "Tryk på knappen for at bekræfte din e-mail. Så er din konto klar, og du kommer videre til dit budget."
-          : "Tryk på knappen for at logge ind og komme videre til dit budget."}
-      </p>
+      <h1>{t.title}</h1>
+      <p className="bx-guide-lead">{t.lead}</p>
       {state === "error" ? (
         <p className="bx-error" role="alert" style={{ marginBottom: 12 }}>
           Det lykkedes ikke lige nu. Prøv igen om lidt.
@@ -64,7 +75,7 @@ export function RedeemLink({ token, isNew }: { token?: string; isNew: boolean })
         disabled={state === "busy"}
         onClick={go}
       >
-        {state === "busy" ? "Et øjeblik …" : isNew ? "Bekræft og fortsæt" : "Log ind"}
+        {state === "busy" ? "Et øjeblik …" : t.button}
       </button>
     </AuthShell>
   );

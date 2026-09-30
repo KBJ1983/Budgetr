@@ -1,13 +1,14 @@
 /**
- * Server session for real accounts: an httpOnly cookie "<userId>.<expires ms>.<HMAC>" set when a mailed link is
- * used (app/api/auth/redeem). The budget and profile APIs only serve an account to its own session. Test users
+ * Server session for real accounts: an httpOnly cookie "<userId>[.<memberId>].<expires ms>.<HMAC>" set when a
+ * mailed link or code is used (app/api/auth/redeem). The budget and profile APIs only serve an account to its own
+ * sessions (the primary's and its members', lib/accounts.ts); a removed member's session stops working. Test users
  * (lib/users.ts) need no cookie – they keep the old no-password trust level.
  *
  * The HMAC key is AUTH_SECRET (at least 32 characters) or, without it, a random key kept as "auth-secret"
  * in the store (lib/kv.ts).
  */
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
-import { readAccount } from "./accounts";
+import { readAccount, type Login } from "./accounts";
 import { openStore } from "./kv";
 import { isAccountId, userById } from "./users";
 
@@ -38,26 +39,47 @@ function key(dir: string | undefined) {
 
 const sign = (k: Buffer, body: string) => createHmac("sha256", k).update(body).digest("base64url");
 
-export async function makeSession(userId: string, now = new Date(), dir?: string): Promise<string> {
-  const body = `${userId}.${now.getTime() + SESSION_MAX_AGE_S * 1000}`;
+/** A session for an account, or for one of its members (memberId) – both open the same budget. */
+export async function makeSession(userId: string, now = new Date(), dir?: string, memberId?: string): Promise<string> {
+  const body = `${userId}${memberId ? "." + memberId : ""}.${now.getTime() + SESSION_MAX_AGE_S * 1000}`;
   return `${body}.${sign(await key(dir), body)}`;
 }
 
-/** The user id in a valid, unexpired session cookie, else null. */
-export async function readSession(value: string | undefined, now = new Date(), dir?: string): Promise<string | null> {
-  const m = /^(u-[a-z0-9]{12})\.(\d+)\.([\w-]+)$/.exec(value || "");
+export interface Session {
+  user: string;
+  /** Set when a member (not the primary e-mail) logged in. */
+  member?: string;
+}
+
+/** The account (and member) in a valid, unexpired session cookie, else null. */
+export async function readSession(value: string | undefined, now = new Date(), dir?: string): Promise<Session | null> {
+  const m = /^(u-[a-z0-9]{12})(?:\.(m-[a-z0-9]{8}))?\.(\d+)\.([\w-]+)$/.exec(value || "");
   if (!m) return null;
-  const [, id, exp, sig] = m as unknown as [string, string, string, string];
-  const want = Buffer.from(sign(await key(dir), `${id}.${exp}`)), got = Buffer.from(sig);
+  const [, id, member, exp, sig] = m as unknown as [string, string, string | undefined, string, string];
+  const want = Buffer.from(sign(await key(dir), `${id}${member ? "." + member : ""}.${exp}`)), got = Buffer.from(sig);
   if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
-  return Number(exp) > now.getTime() ? id : null;
+  if (!(Number(exp) > now.getTime())) return null;
+  return member ? { user: id, member } : { user: id };
+}
+
+/**
+ * The login behind a session for userId's budget: the account, and the member when a member logged in. Null when
+ * the cookie is for another account, the e-mail isn't confirmed, or the member has been taken off the budget.
+ */
+export async function sessionLogin(userId: string, cookie: string | undefined, now = new Date(), dir?: string): Promise<Login | null> {
+  const s = await readSession(cookie, now, dir);
+  if (!s || s.user !== userId) return null;
+  const a = await readAccount(userId, dir);
+  if (!a?.verifiedAt) return null;
+  if (!s.member) return { account: a };
+  const m = a.members?.find((x) => x.id === s.member);
+  return m?.verifiedAt ? { account: a, member: m } : null;
 }
 
 /** May this request read and write userId's budget and profile? */
 export async function canAccess(userId: string, cookie: string | undefined, now = new Date(), dir?: string) {
   if (userById(userId)) return true;
-  if (!isAccountId(userId) || (await readSession(cookie, now, dir)) !== userId) return false;
-  return !!(await readAccount(userId, dir))?.verifiedAt;
+  return isAccountId(userId) && !!(await sessionLogin(userId, cookie, now, dir));
 }
 
 export const sessionCookieOptions = {
