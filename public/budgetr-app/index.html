@@ -252,6 +252,15 @@ tr.paused td{color:var(--ink3)}
 .exrow input{max-width:none!important;min-width:0}
 .pin input{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:7px 10px;font:inherit;font-size:15px;color:var(--ink);max-width:220px}
 .person .big{font-size:26px;font-weight:700;letter-spacing:-.01em;margin-top:8px}
+/* Person card sum: green incomes, red expenses, totals under a rule */
+.person .calc .ch{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding-top:10px}
+.person .calc .ch:first-child{padding-top:0}
+.person .calc .in{color:var(--pine)} .person .calc .out{color:var(--brick)}
+.person .calc .ch.in,.person .calc .ch.out{color:var(--ink2)}
+.person .calc .tot{font-weight:700;border-top:1px solid var(--rule2);padding-top:5px}
+.person .calc .held{grid-column:1/-1;margin:-2px 0 2px;color:var(--ink2)}
+.person .calc small{font-size:11px;color:var(--ink3)}
+.person .kv.calc{column-gap:0}.person .calc>span{text-align:left;font-weight:400;padding-right:16px}.person .calc>span.v{padding-right:0}.person .calc>span.v{text-align:right;font-weight:500}.person .calc>span.tot{font-weight:700}
 .split{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
 .split input[type=number]{width:70px}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
@@ -649,6 +658,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <label class="check"><input type="checkbox" id="fCheck"> Skal tjekkes</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
       <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
+      <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter, fx børnefamilieydelse. Kan holdes ude af Til rådighed med fluebenet under Hvem betaler hvad</label>
       <label class="check" id="wSplit" style="grid-column:1/-1"><input type="checkbox" id="fSplit"> Tæller med i fordelingsnøglen (fast indkomst). Fjern fluebenet for fx børnefamilieydelse, der går direkte til en fælles konto</label>
       <div class="preview" id="preview"></div>
     </div>
@@ -800,9 +810,15 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');cle
 
 /* ---------- beregning ---------- */
 let ENT=null, SC=null;
-const FIELDS=['auto','type','desc','key','category','freq','start','amount','account','payer','from','to','active','check','note','bank','split','cover','extra'];
+const FIELDS=['auto','type','desc','key','category','freq','start','amount','account','payer','from','to','active','check','note','bank','split','cover','extra','free'];
 /* Does an income count in the split key "efter fast indkomst"? It is still an income everywhere else. */
-const inSplit=e=>e.extra?false:e.split!==undefined?!!e.split:!/b(ø|oe)rne(familie)?ydelse|b(ø|oe)rnepenge|b(ø|oe)rnecheck/i.test(e.desc||'');
+const CHILD_RE=/b(ø|oe)rne(familie)?ydelse|b(ø|oe)rnepenge|b(ø|oe)rnecheck/i;
+const inSplit=e=>e.extra?false:e.split!==undefined?!!e.split:!CHILD_RE.test(e.desc||'');
+// An income can be bound to set expenses (child benefit by default). It counts everywhere, except that
+// "Medregn bundne indtægter" under Hvem betaler hvad can keep it out of each person's Til rådighed.
+const isBound=e=>e.type==='indtaegt'&&!e.extra&&(e.free!==undefined?!e.free:CHILD_RE.test(e.desc||''));
+const boundOn=()=>(S.settings||{}).withBound!==false;
+const inFree=e=>!isBound(e)||boundOn();
 const curSc=()=>SC&&(S.scenarios||[]).find(x=>x.id===SC)||null;
 /* opsparingsmål: omsættes til virtuelle poster pr. kontekst ('base' eller scenarie-id) */
 const GC=['var(--pine)','var(--ochre)','var(--focus)','var(--brick)','var(--ink3)'];
@@ -981,14 +997,15 @@ function totals(){
 }
 function personCalc(pid){
   const E=act(), sh=shares()[pid]||0;
-  const own=E.filter(e=>e.type==='indtaegt'&&!e.extra&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0);
-  const shInc=E.filter(e=>e.type==='indtaegt'&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
+  const own=E.filter(e=>e.type==='indtaegt'&&!e.extra&&inFree(e)&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0);
+  const shInc=E.filter(e=>e.type==='indtaegt'&&inFree(e)&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
+  const held=E.filter(e=>!inFree(e)&&(e.payer===pid||e.payer===FAELLES)), heldSum=held.reduce((a,e)=>a+mAvg(e)*(e.payer===pid?1:sh),0);
   const ownExp=E.filter(e=>e.type==='udgift'&&!e._goal&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0);
   const shExp=E.filter(e=>e.type==='udgift'&&!e._goal&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
   const gOwn=E.filter(e=>e._goal&&e._gpayer===pid).reduce((a,e)=>a+mAvg(e),0), gSh=E.filter(e=>e._goal&&e._gpayer===FAELLES).reduce((a,e)=>a+mAvg(e),0)*sh;
   const p=S.persons.find(x=>x.id===pid), extra=E.filter(e=>e.type==='indtaegt'&&e.extra&&e.payer===pid).reduce((a,e)=>a+mAvg(e),0), psav=pNum(p,'savings'), gsav=gOwn+gSh, sav=psav+gsav;
   const left=own+extra+shInc-ownExp-shExp;
-  return {own,extra,shInc,ownExp,shExp,sh,left,psav,gOwn,gSh,gsav,sav,afterSav:left-sav};
+  return {own,extra,shInc,held,heldSum,ownExp,shExp,sh,left,psav,gOwn,gSh,gsav,sav,afterSav:left-sav};
 }
 
 /* ---------- render ---------- */
@@ -1020,7 +1037,7 @@ function render(){
    <div class="kpis">
     <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),null,'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
     <div class="kpi"><span>Faste udgifter ${ib(catInfo('Faste udgifter i bankens beregning',act().filter(e=>e.type==='udgift'&&inBank(e)),'Mad, opsparing og gaver er trukket ud.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
-    <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>pr. måned</small></div>
+    <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>${(()=>{const d=bk.rad-t.left;return Math.abs(d)<1?'pr. måned, det samme som Tilbage øverst':`pr. måned. ${kr(Math.abs(d))} ${d>0?'mere':'mindre'} end Tilbage øverst, fordi ${esc(exclNote(bk).replace(/^Ikke medregnet: /,'').replace(/ I alt .*$/,'').replace(/\.$/,''))} ikke regnes som faste udgifter`})()}</small></div>
     <div class="kpi"><span>Vejledende krav ${ib(`<b>Vejledende krav</b>${tbl([['2 voksne','',kr(+bk.b.adults||0)],[`${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}`,'',kr((+bk.b.children||0)*(+bk.b.childRate||0))],['= Krav','',kr(bk.req)]])}<p>En tommelfingerregel, ikke bankens egne satser. Bankerne har hver deres interne krav. Satserne kan rettes under "Juster det vejledende krav".</p>`)}</span><b>${kr(bk.req)}</b><small>Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser</small></div>
     <div class="kpi ${bk.buf>=0?'good':'bad'}"><span>${bk.buf>=0?'Luft over kravet':'Under kravet'}</span><b>${kr(Math.abs(bk.buf))}</b><small>pr. måned</small></div>
     ${(()=>{const F=loansFreedWithin(12).filter(x=>x.inB);if(!F.length)return '';const fr=F.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=F[F.length-1].i;
@@ -1082,16 +1099,24 @@ function render(){
   // personer
   const sp=S.settings||{};
   h+=`<section><div class="sechead"><h2>Hvem betaler hvad</h2>
-    <div class="split"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button><label for="splitSel">Fælles udgifter fordeles</label><select id="splitSel"><option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${S.persons.length===2?'<option value="manuel">manuelt</option>':''}</select>
+    <div class="split"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button>${(()=>{const B=act().filter(isBound);if(!B.length)return '';return `<label class="extog small" title="Styrer kun personkortene herunder"><input type="checkbox" data-bndtog ${boundOn()?'checked':''}> Medregn bundne indtægter (${esc([...new Set(B.map(e=>e.desc.replace(/\s+(\S+)$/,(m,w)=>S.persons.some(p=>p.name===w)?'':m)))].join(', '))} ${disp(B.reduce((a,e)=>a+mAvg(e),0))})</label>`})()}<label for="splitSel">Fælles udgifter fordeles</label><select id="splitSel"><option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${S.persons.length===2?'<option value="manuel">manuelt</option>':''}</select>
     ${sp.split==='manuel'&&S.persons.length===2?`<input type="number" id="manPct" min="0" max="100" step="1" value="${+sp.manualPct||50}" aria-label="Andel for ${esc(S.persons[0].name)} i procent"> % til ${esc(S.persons[0].name)}`:''}</div></div><div class="people">`;
   S.persons.forEach(p=>{
     const c=personCalc(p.id);
-    h+=`<div class="person"><h3>${esc(p.name)}</h3><div class="kv">
-      <span>Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&!e.extra&&e.payer===p.id)))}</span><span>${disp(c.own)}</span>
-      <span>Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu. Slå det til med fluebenet.'} Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}</span><span>${disp(c.extra)}</span>
-      <span>Andel af fælles indtægter</span><span>${disp(c.shInc)}</span>
-      <span>Egne faste udgifter ${ib(catInfo('Egne faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===p.id)))}</span><span>${disp(c.ownExp)}</span>
-      <span>Andel af fælles udgifter (${Math.round(c.sh*100)} %) ${ib(`<b>Andel af fælles udgifter</b>${tbl([['Fælles udgifter i alt','',disp(act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0))],['× Andel','',Math.round(c.sh*100)+' %'],['= Andel','',disp(c.shExp)]])}<p>${shareNote()}</p>`)}</span><span>${disp(c.shExp)}</span></div>
+    // Til rådighed as a small sum: incomes (+, green), expenses (−, red), then the result below.
+    const incT=c.own+c.extra+c.shInc, expT=c.ownExp+c.shExp, ln=(cls,label,v)=>`<span class="${cls}">${label}</span><span class="${cls} v">${disp(v)}</span>`;
+    h+=`<div class="person"><h3>${esc(p.name)}</h3><div class="kv calc">
+      <span class="ch in">Indtægter</span><span class="ch"></span>
+      ${ln('in',`+ Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&!e.extra&&inFree(e)&&e.payer===p.id)))}`,c.own)}
+      ${extraSum(p)?ln('in',`+ Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu. Slå det til med fluebenet.'} Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}${exOn()?'':' <small>ikke medregnet</small>'}`,c.extra):''}
+      ${c.shInc?ln('in','+ Andel af fælles indtægter',c.shInc):''}
+      ${c.heldSum?`<span class="note held">${esc([...new Set(c.held.map(e=>e.desc))].join(', '))} på ${disp(c.heldSum)} er holdt ude, fordi pengene er bundet ${ib(listInfo('Bundne indtægter',c.held.slice(),null,'Bundne indtægter er fx børnefamilieydelse, der går til bestemte udgifter. Fluebenet Medregn bundne indtægter øverst i afsnittet styrer, om de tæller med her. De tæller altid med i tallene øverst på siden og i bankens beregning, og de går stadig ind på kontoen og sænker overførslen dertil.'))}</span>`:''}
+      ${ln('in tot','= Indtægter i alt',incT)}
+      <span class="ch out">Udgifter</span><span class="ch"></span>
+      ${ln('out',`− Egne faste udgifter ${ib(catInfo('Egne faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===p.id)))}`,c.ownExp)}
+      ${ln('out',`− Andel af fælles udgifter (${Math.round(c.sh*100)} %) ${ib(`<b>Andel af fælles udgifter</b>${tbl([['Fælles udgifter i alt','',disp(act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===FAELLES).reduce((a,e)=>a+mAvg(e),0))],['× Andel','',Math.round(c.sh*100)+' %'],['= Andel','',disp(c.shExp)]])}<p>${shareNote()}</p>`)}`,c.shExp)}
+      ${ln('out tot','= Udgifter i alt',expT)}</div>
+      <div class="big" style="color:${c.left>=0?'var(--pine)':'var(--brick)'}">${disp(c.left)}</div><div class="muted" style="font-size:13px">= til rådighed ${per()} efter faste udgifter. Det er det maksimale, der kan spares op.</div>
       ${(()=>{const fa=S.accounts.filter(a=>a.type==='faelles'&&act().some(e=>e.type==='overfoersel'&&e.auto&&e.to===a.id&&(autoInfo(e)||{}).owner===p.id));if(!fa.length)return '';
         return `<div class="kv">`+fa.map(a=>{const r=oblParts(p.id,a.id),cp=primaryFor(p.id)===a.id?compFor(p.id):0,tr=act().filter(e=>e.type==='overfoersel'&&e.auto&&e.to===a.id&&(autoInfo(e)||{}).owner===p.id).reduce((s,e)=>s+mAvg(e),0);
           const rows=[[`Andel af fælles poster på ${esc(a.name)}`,Math.round(r.sh*100)+' %',disp(r.shared)],[`+ ${esc(p.name)}s egne udgifter på kontoen`,'fuldt',disp(r.own)],[`− ${esc(p.name)}s egne indtægter på kontoen`,'fx børnefamilieydelse',disp(r.ownInc)]];
@@ -1099,7 +1124,6 @@ function render(){
           if(Math.abs(cp)>0.5)rows.push([cp>0?'+ Udligning':'− Udligning','fælles poster betalt fra en personkonto',disp(Math.abs(cp))]);
           rows.push(['= Beregnet','',disp(recFor(p.id,a.id))],['Overføres (rundet op til 100 kr)','',disp(tr)]);
           return `<span>Overføres til ${esc(a.name)} ${ib(`<b>Overførsel til ${esc(a.name)}</b>${tbl(rows)}<p>Derfor er beløbet ikke det samme som "Andel af fælles udgifter": egne poster på fælleskontoen betales fuldt af ${esc(p.name)}, og fælles udgifter betalt fra en personkonto udlignes her.</p>`)}</span><span>${disp(tr)}</span>`}).join('')+`</div>`})()}
-      <div class="big" style="color:${c.left>=0?'var(--pine)':'var(--brick)'}">${disp(c.left)}</div><div class="muted" style="font-size:13px">til rådighed ${per()} efter faste udgifter. Det er det maksimale, der kan spares op.</div>
       ${extraSum(p)?`<label class="extog small"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening i beregningen</label>`:''}
       <div class="psav"><span class="ph">Ekstra indtjening</span>${exPosts(p.id).map(e=>`<div class="psrow click" data-open="${e.id}" tabindex="0" role="button" title="Ret posten"><span class="nm">${esc(e.desc)}<small>${esc(howOf(e))}${exOn()?'':' · ikke medregnet'}</small></span><span class="v">${disp(mAvg(e))}</span></div>`).join('')||'<span class="muted" style="font-size:13px">Ingen ekstra indtjening.</span>'}${extraSum(p)?`<div class="psum ex"><span>I alt</span><b>${disp(extraSum(p))}</b></div>`:''}
         <button type="button" class="ghost" data-exnew="${p.id}" style="align-self:flex-start">Tilføj ekstra indtjening</button></div>
@@ -1662,7 +1686,7 @@ function helpHtml(){
       <li>Fælles indtægter på en privat konto udlignes den anden vej: ejeren af kontoen overfører mere.</li>
       <li>Udligningen lægges på den fælles konto, som personen har sin auto-overførsel til (ellers den første fælles konto).</li></ul>`)
   +sec('person','Til rådighed pr. person',`<table class="itbl"><tbody>
-      <tr><td>Faste indtægter (poster med personen som betaler)</td></tr><tr><td>+ Ekstra indtjening, hvis den er slået til</td></tr><tr><td>+ Andel af fælles indtægter</td></tr>
+      <tr><td>Faste indtægter (poster med personen som betaler). Bundne indtægter, fx børnefamilieydelse, er med, medmindre fluebenet <b>Medregn bundne indtægter</b> under Hvem betaler hvad er slået fra. Tallene øverst og bankens beregning tæller dem altid med</td></tr><tr><td>+ Ekstra indtjening, hvis den er slået til</td></tr><tr><td>+ Andel af fælles indtægter</td></tr>
       <tr><td>− Egne faste udgifter (personen som betaler, fra alle konti)</td></tr><tr><td>− Andel af fælles faste udgifter</td></tr>
       <tr class="sum"><td>= Til rådighed. Det er det, der højst kan spares op</td></tr><tr><td>− Opsparingsfelt og opsparingsmål (egne mål fuldt, fælles mål efter nøglen)</td></tr>
       <tr class="sum"><td>= Tilbage efter opsparing</td></tr></tbody></table>
@@ -1716,7 +1740,7 @@ function rowHtml(e){
   const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
   const freq=FREQ[+e.freq||0]||'', when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:String(e.freq)==='0'?' (gennemsnit)':'';
   const hd=e._goal?'<span class="dragh off" aria-hidden="true"></span>':`<span class="dragh" data-dragpost="${e.id}" role="button" tabindex="0" aria-label="Flyt ${esc(e.desc)}. Træk, eller brug pil op og ned" title="Træk for at flytte posten">⋮⋮</span>`;
-  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.extra?`<span class="badge mute" title="Ekstra indtjening">${exOn()?'Ekstra':'Ekstra · ikke medregnet'}</span>`:''}${e.type==='indtaegt'&&!e.extra&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
+  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.extra?`<span class="badge mute" title="Ekstra indtjening">${exOn()?'Ekstra':'Ekstra · ikke medregnet'}</span>`:''}${isBound(e)?'<span class="badge mute" title="Bundet til bestemte udgifter">Bundet</span>':''}${e.type==='indtaegt'&&!e.extra&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
         <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`}
 function rowsHtml(){
   const L=filtered(), plain=F.type==='alle'&&F.account==='alle'&&F.payer==='alle'&&!F.q.trim();
@@ -1854,6 +1878,7 @@ function bindMain(){
   $('bkC').onchange=e=>bset('children',Math.max(0,Math.round(+e.target.value||0)));
   $('bkR').onchange=e=>bset('childRate',Math.max(0,Math.round(parseAmt(e.target.value)||0)));
   const det=document.querySelector('.bankdet'); if(bankOpen)det.open=true; det.ontoggle=()=>{bankOpen=det.open};
+  document.querySelectorAll('[data-bndtog]').forEach(i=>i.onchange=()=>{S.settings.withBound=i.checked;commit()});
   document.querySelectorAll('[data-exnew]').forEach(b=>b.onclick=()=>{const pid=b.dataset.exnew;
     openEntry(null,{type:'indtaegt',extra:true,split:false,payer:pid,account:homeAcct(pid)||S.accounts[0]?.id||'',freq:0,desc:''})});
   document.querySelectorAll('.person .psrow[data-open]').forEach(r=>r.onkeydown=ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target===r){ev.preventDefault();openEntry(r.dataset.open)}});
@@ -1900,7 +1925,7 @@ function syncType(){
   {const inc=t==='indtaegt',v=$('fCover').value;$('lCover').textContent=inc?'Flyttes videre til konto':'Dækkes af fast overførsel fra';
     $('nCover').textContent=inc?'Fx børnepenge, der kommer ind på lønkontoen og fast flyttes til budgetkontoen. Overførslen følger indtægtens beløb og står under Faste overførsler.':'Fx en madkonto, der fyldes op fra budgetkontoen. Overførslen følger udgiftens beløb og står under Faste overførsler.';
     opts($('fCover'),[['',inc?'Ingen, bliver på kontoen':'Ingen, betales direkte fra kontoen'],...S.accounts.map(a=>[a.id,a.name])],v)}
-  $('wExtra').style.display=t==='indtaegt'?'':'none';
+  $('wExtra').style.display=t==='indtaegt'?'':'none';$('wFree').style.display=t==='indtaegt'&&!$('fExtra').checked?'':'none';
   $('wSplit').style.display=t==='indtaegt'&&!$('fExtra').checked&&(S.settings||{}).split==='indkomst'?'':'none';
   const ai=t==='overfoersel'?autoInfo({from:$('fFrom').value,to:$('fTo').value}):null;
   $('wAuto').style.display=ai?'':'none'; if(!ai)$('fAuto').checked=false;
@@ -1936,7 +1961,7 @@ function openEntry(id,preset){
   opts($('fPayer'),[[FAELLES,'Fælles'],...S.persons.map(p=>[p.id,p.name])],e.payer||FAELLES);
   opts($('fFrom'),accs,e.from);opts($('fTo'),accs,e.to);
   opts($('fCover'),[['',''],...accs],e.cover||'');
-  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fAuto').checked=!!e.auto;
+  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fFree').checked=isBound(Object.assign({},e,{type:'indtaegt',extra:false}));$('fAuto').checked=!!e.auto;
   {const base=id?S.entries.find(x=>x.id===id):null, scx=curSc();$('fHist').innerHTML='';$('fSince').value=base?(base.since||''):'';
     ((base&&base.history)||[]).slice().sort((a,b)=>a.date<b.date?-1:1).forEach(x=>addHist(x));
     $('wHist').style.display=scx?'none':'';
@@ -1980,7 +2005,7 @@ $('frm').addEventListener('submit',ev=>{
     active:$('fActive').checked,check:$('fCheck').checked,note:$('fNote').value.trim()};
   if(t==='udgift')d.bank=$('fBank').checked;
   if(t!=='overfoersel')d.cover=$('fCover').value;
-  if(t==='indtaegt'){d.extra=$('fExtra').checked;if(d.extra)d.split=false;else if($('wSplit').style.display!=='none')d.split=$('fSplit').checked}
+  if(t==='indtaegt'){d.extra=$('fExtra').checked;if(!d.extra)d.free=!$('fFree').checked;if(d.extra)d.split=false;else if($('wSplit').style.display!=='none')d.split=$('fSplit').checked}
   if(t==='overfoersel'){d.auto=isAuto;if(isAuto){d.freq=1;const prev=cur().find(x=>x.id===editingId);d.amount=amt>=0?Math.round(amt):(prev?(+prev.amount||0):0)}}
   const sc=curSc();
   if(sc){
