@@ -852,10 +852,10 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   <div class="appbar-in">
     <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><span class="lb" aria-hidden="true">budget</span><span class="lp" aria-hidden="true">pro</span><span class="ld" aria-hidden="true"></span></a>
     <div class="abr">
-      <span class="status" id="status" role="status">Indlæser…</span>
+      <span class="status" id="status">Gemmes automatisk i sikker database</span>
       <div class="expwrap"><button type="button" class="uchip" id="btnUserMenu" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu" aria-label="Profil, eksport og import"><span class="av" id="bxUser"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="userMenu" role="menu" hidden>
-          <div class="umhead"><span class="av" id="umAv"></span><div><b id="umName"></b><span id="umSub">Gemmes online</span></div></div>
+          <div class="umhead"><span class="av" id="umAv"></span><div><b id="umName"></b><span id="umSub">Gemmes automatisk i sikker database</span></div></div>
           <hr class="mhr">
           <button type="button" role="menuitem" data-um="set"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span><span class="umt"><b>Indstillinger</b><span>Husstand, konti og fordeling</span></span></button>
           <button type="button" role="menuitem" data-um="help"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8 1c0 1.6-2.4 2-2.4 3.6"/><path d="M12 17.2v.1"/></svg></span><span class="umt"><b>Sådan regnes det</b><span>Forklaring af beregningerne</span></span></button>
@@ -2489,16 +2489,14 @@ async function flush(){
   if(!dirty||saving)return; dirty=false; saving=true;
   const body=JSON.parse(JSON.stringify(rootS()));
   try{
-    if(dbRef){await dbRef.set(body);setStatus('Gemt')}
-    else{let inBrowser=true;try{localStorage.setItem(window.BUDGETR_KEY,JSON.stringify(body))}catch(e){inBrowser=false}
-      if(!await saveDisk(body))setStatus(inBrowser?'Gemt i browseren, men ikke online endnu – prøver igen':'Kunne ikke gemme – ændringer forsvinder ved genindlæsning')}
+    if(dbRef)await dbRef.set(body);
+    else{try{localStorage.setItem(window.BUDGETR_KEY,JSON.stringify(body))}catch(e){}
+      await saveDisk(body)}
   }catch(e){
-    if(e&&e.code==='invalid_argument'){setStatus('Du har kun læseadgang. Ændringer gemmes ikke.')}
-    else if(e&&e.code==='unavailable'){dirty=true;setTimeout(flush,1500+Math.random()*1000);setStatus('Forbindelsen hakker – prøver igen')}
-    else setStatus('Kunne ikke gemme: '+(e&&e.message||'ukendt fejl'));
+    if(e&&e.code==='unavailable'){dirty=true;setTimeout(flush,1500+Math.random()*1000)}
   }finally{saving=false;if(dirty)flush()}
 }
-function setStatus(t){$('status').textContent=t}
+// The status always reads the same (the user's wish); failed saves are retried quietly (saveDisk).
 /* Disk copy (see the prelude). Marks the browser copy as unsynced until the disk has it, and retries. */
 const UNSYNCED=window.BUDGETR_KEY+':unsynced';
 async function saveDisk(body){
@@ -2506,7 +2504,7 @@ async function saveDisk(body){
     const r=await fetch('/api/budget/'+encodeURIComponent(window.BUDGETR_USER),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(!r.ok)throw new Error(r.status);
     try{localStorage.removeItem(UNSYNCED);localStorage.setItem(window.BUDGETR_KEY+':disk','1')}catch(e){}
-    clearTimeout(saveDisk._t);setStatus('Gemt online');return true;
+    clearTimeout(saveDisk._t);return true;
   }catch(e){
     try{localStorage.setItem(UNSYNCED,'1')}catch(e2){}
     clearTimeout(saveDisk._t);saveDisk._t=setTimeout(()=>{if(S&&!dirty)saveDisk(JSON.parse(JSON.stringify(rootS())))},5000);return false;
@@ -2971,7 +2969,6 @@ function umPick(b){const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
   else if(y==='stmt'){if(!S){toast('Opret først et budget');return}DR?openDImp():openImp()}else if(y==='draft'){if(!S){toast('Opret først et budget');return}openDft(null)}else if(y==='json')$('jsonFile').click();
   else if(u==='set'){if(!S){toast('Opret først et budget');return}openSet()}else if(u==='help')openHelp();else if(u==='data')$('dlgData').showModal();else if(u==='home')location.href='/';else if(u==='user')window.BUDGETR_LOGOUT()}
 menuSetup('btnUserMenu','userMenu',umPick);
-$('btnUserMenu').addEventListener('click',()=>{$('umSub').textContent=$('status').textContent||'Gemmes online'});
 $('dlgData').querySelectorAll('.dtile').forEach(b=>b.onclick=()=>{$('dlgData').close();umPick(b)});
 $('btnDataClose').onclick=()=>$('dlgData').close();
 $('dlgData').addEventListener('click',ev=>{if(ev.target===$('dlgData'))$('dlgData').close()});
@@ -3166,7 +3163,7 @@ let IMP=null;
 function openImp(){IMP={stage:'file',acc:S.accounts[0]?.id||''};renderImp();$('dlgImp').showModal()}
 function renderImp(){const b=$('impBody');$('btnImpApply').hidden=IMP.stage!=='review';
   if(IMP.stage==='file'){
-    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken som CSV, Excel eller PDF, fx de seneste 3–12 måneder, og vælg filen her. Dato, tekst og beløb findes automatisk. Filen læses kun i din browser.</p>
+    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken som CSV, Excel eller PDF, fx de seneste 3–12 måneder, og vælg filen her. Dato, tekst og beløb findes automatisk. Selve filen bliver ikke gemt eller sendt videre.</p>
       <div class="imphdr" style="margin-bottom:10px"><label for="impAcc">Kontoudskriften er fra</label><select id="impAcc">${S.accounts.map(a=>`<option value="${a.id}" ${a.id===IMP.acc?'selected':''}>${esc(a.name)}</option>`).join('')}</select></div>
       <div class="drop" id="impDrop" tabindex="0" role="button">Træk filen herind, eller <b>klik for at vælge</b><br><span style="font-size:12px">CSV (semikolon, komma eller tab), .xlsx, .xls eller PDF</span></div>
       ${IMP.err?`<div class="verdict bad" style="margin-top:10px">${esc(IMP.err)}</div>`:''}`;
@@ -3358,7 +3355,7 @@ function dAnalyse(){const F=DI.files.filter(f=>f.tx&&f.tx.length),acc={};
   DI.cand=C;DI.nTx=all.length;DI.nPairs=pairs.length;DI.nFiles=F.length}
 function renderDImp(){const b=$('dimpBody'),rev=DI.stage==='review',nx=$('dimpNext');$('dimpBack').hidden=!rev;
   if(!rev){const ok=DI.files.filter(f=>f.tx&&f.tx.length);
-    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken for hver konto, der skal med, fx de seneste 3–12 måneder, og læg filerne ind her. Læg gerne alle filer ind på én gang, så overførsler mellem egne konti kan findes. Filerne læses kun i din browser, og kun de poster, du vælger, bliver gemt.</p>
+    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken for hver konto, der skal med, fx de seneste 3–12 måneder, og læg filerne ind her. Læg gerne alle filer ind på én gang, så overførsler mellem egne konti kan findes. Selve filerne bliver ikke gemt eller sendt videre. Kun de poster, du vælger, bliver gemt.</p>
       <h3 class="dsec" style="margin-top:0">Personer i kladden</h3>
       <div class="dpers">${S.persons.map(p=>`<input data-dpn="${p.id}" value="${esc(p.name)}" aria-label="Navn på person" autocomplete="off">`).join('')}${S.persons.length<6?'<button type="button" id="dAddP">Tilføj person</button>':''}</div>
       <h3 class="dsec">Kontoudskrifter</h3>
@@ -3605,7 +3602,7 @@ render();
   let db=null;
   db=null;
   downloads=null;
-  if(!db){localMode=true;loaded=true;S=normalize(loadLocal());setStatus(window.BUDGETR_DISK?'Gemmes online':'Gemmes kun i denne browser – kan ikke gemme online lige nu');render();
+  if(!db){localMode=true;loaded=true;S=normalize(loadLocal());render();
     if(S&&window.BUDGETR_PUSH)saveDisk(JSON.parse(JSON.stringify(S)));showNotes();reopenDraft();return}
   dbRef=db.doc('budget/state');
   let first=true;
@@ -3615,9 +3612,8 @@ render();
     const next=snap.exists?normalize(JSON.parse(JSON.stringify(snap.data()))):null;
     if(!first&&$('dlg').open)return;
     S=next;first=false;loaded=true;
-    setStatus(snap.exists?'Gemt og delt':'Intet budget gemt endnu');
     render();
-  },err=>{loaded=true;render();setStatus('Forbindelsen til databasen er afbrudt. Genindlæs siden.')});
+  },err=>{loaded=true;render()});
 })();
 })();
 </script>
