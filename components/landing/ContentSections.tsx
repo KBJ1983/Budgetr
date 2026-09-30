@@ -2,9 +2,9 @@ import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
-import { ShotFrame, ThemeShot } from "./Shots";
+import { ShotFrame } from "./Shots";
 import { SwipeList } from "./Swipe";
-import { BellIcon, CalendarIcon, PeopleIcon, TargetIcon, UploadIcon, WandIcon } from "./icons";
+import { PeopleIcon, UploadIcon, WandIcon } from "./icons";
 
 const STEPS = [
   {
@@ -164,74 +164,5 @@ export function Sharing() {
       visualFirst
       tone="stone"
     />
-  );
-}
-
-const NOTE_CARDS: readonly { icon: ReactNode; title: string; body: string }[] = [
-  {
-    icon: <TargetIcon size={20} strokeWidth={1.8} />,
-    title: "Milepæle i opsparingen",
-    body: "Ved 10, 25, 50, 75 og 100 % af målet får du en besked, næste gang du logger ind.",
-  },
-  {
-    icon: <CalendarIcon size={20} strokeWidth={1.8} />,
-    title: "Påmindelse om budgetgennemgang",
-    body: "Hver måned, hver 3. måned, hvert halve år eller en gang om året, hvis budgettet ikke er rettet i perioden.",
-  },
-  {
-    icon: <BellIcon size={20} strokeWidth={1.8} />,
-    title: "I appen, på mail eller sms",
-    body: "Påmindelsen vises, når du logger ind, og kan også sendes på mail eller sms.",
-  },
-];
-
-/** Beskeder og påmindelser: the login note (goal milestone + review reminder) and the reminder settings. */
-export function Notifications() {
-  return (
-    <section id="beskeder" className={`${styles.section} ${styles.notes}`} aria-labelledby="beskeder-title">
-      {/* Text and a compact list on the left, the two screenshots on the right: one row on desktop. */}
-      <div className={`${styles.sectionInner} ${styles.notesBody}`}>
-        <div className={styles.notesText} data-reveal>
-          <span className={styles.eyebrow}>Beskeder og påmindelser</span>
-          <h2 id="beskeder-title" className={styles.h2}>
-            Besked, når du når et mål. Påmindelse, når budgettet trænger.
-          </h2>
-          <p className={styles.bodyLg}>Du vælger selv, hvad du vil have besked om, og kan slå det fra igen.</p>
-          <ul className={styles.notesCards}>
-            {NOTE_CARDS.map((card) => (
-              <li key={card.title} className={styles.notesCard}>
-                <span className={styles.notesIcon} aria-hidden="true">
-                  {card.icon}
-                </span>
-                <div>
-                  <h3 className={styles.notesCardTitle}>{card.title}</h3>
-                  <p className={styles.notesCardBody}>{card.body}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className={styles.notesVisual} data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties}>
-          <figure className={`${styles.shotFrame} ${styles.notesSettings}`}>
-            <ThemeShot
-              name="paamind"
-              alt="Indstillinger, Påmindelser: besked ved milepæle i opsparingen, påmindelse hver 3. måned og også på mail"
-              width={1840}
-              height={1260}
-              sizes="(max-width: 760px) 100vw, 620px"
-            />
-          </figure>
-          <figure className={`${styles.shotFrame} ${styles.notesNote}`}>
-            <ThemeShot
-              name="besked"
-              alt="Beskeden ved login: Tillykke, Udbetaling til hus har nået 50 %, og det er tid til at se budgettet igennem"
-              width={1040}
-              height={928}
-              sizes="(max-width: 760px) 90vw, 300px"
-            />
-          </figure>
-        </div>
-      </div>
-    </section>
   );
 }

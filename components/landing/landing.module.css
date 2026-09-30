@@ -945,82 +945,6 @@
   margin: -80px 0 0 32px;
 }
 
-/* ================= Beskeder og påmindelser ================= */
-
-.notes {
-  --section-y: 96px;
-}
-.notesBody {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 64px;
-  align-items: center;
-}
-.notesText {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.notesText .h2 {
-  font-size: 44px;
-}
-/* A plain list, no boxes: icon, title and one line of text. */
-.notesCards {
-  list-style: none;
-  margin: 6px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.notesCard {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-.notesIcon {
-  flex: 0 0 auto;
-  display: flex;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background: var(--v-pine-bg);
-  color: var(--v-pine);
-  align-items: center;
-  justify-content: center;
-}
-.notesCardTitle {
-  margin: 0 0 3px;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.notesCardBody {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--v-ink-3);
-  text-wrap: pretty;
-}
-.notesVisual {
-  position: relative;
-  min-width: 0;
-  padding-bottom: 56px;
-}
-.notesSettings {
-  width: 88%;
-  margin-left: auto;
-}
-.notesNote {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 38%;
-  border-radius: 14px;
-  box-shadow: 0 30px 60px -18px rgba(21, 25, 26, 0.45);
-}
-
 /* ================= Citater ================= */
 
 .quotes {
@@ -1125,86 +1049,173 @@
   text-align: center;
 }
 
-/* ================= Alt det andet: dark band ================= */
+/* ================= Funktioner: dark band with a sideways tour ================= */
 
 .featureBand {
   background: var(--v-dark);
   color: var(--v-dark-text);
   --section-y: 112px;
 }
-.featureBandInner {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: 72px;
-  align-items: start;
-}
-.featureBandText {
-  min-width: 0;
+.tour {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
 }
-.featureBandText .h2 {
-  font-size: 48px;
-}
-.featureList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 36px 40px;
-}
-.featureItem {
-  min-width: 0;
+.tourArrows {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 24px;
-  border-top: 1px solid var(--v-dark-rule);
+  justify-content: flex-end;
+  gap: 8px;
 }
-
-/* ================= Opsparing og scenarier: photo cards ================= */
-
-.plans {
-  background: var(--v-white);
-  border-top: 1px solid var(--v-rule);
-  border-bottom: 1px solid var(--v-rule);
+.tourArrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--v-dark-rule);
+  background: var(--v-dark-card);
+  color: var(--v-dark-text);
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    opacity 0.15s;
 }
-.planGrid {
+.tourArrow:hover:not(:disabled) {
+  background: #26282b;
+}
+.tourArrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.tourArrowBack {
+  display: flex;
+  transform: scaleX(-1);
+}
+.tourTrack {
   list-style: none;
   margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0 0 4px;
+  display: flex;
   gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: 20px;
 }
-.planCard {
+.tourTrack::-webkit-scrollbar {
+  display: none;
+}
+.tourCard {
+  flex: 0 0 calc((100% - 32px) / 3);
   min-width: 0;
-  background: var(--v-paper);
-  border: 1px solid var(--v-rule);
-  border-radius: 24px;
-  overflow: hidden;
+  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
+  background: var(--v-dark-card);
+  border: 1px solid var(--v-dark-rule);
+  border-radius: 20px;
+  overflow: hidden;
 }
-.planPhoto {
+.tourVisual {
   position: relative;
-  height: 300px;
-  background: #dcdad3;
+  height: 210px;
+  overflow: hidden;
+  background: #26282b;
+  border-bottom: 1px solid var(--v-dark-rule);
 }
-.planText {
-  padding: 26px 30px 30px;
+.tourVisual .tourShot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+.tourVisualIcon {
+  display: grid;
+  place-items: center;
+  background: #1f2a24;
+}
+.tourIcon {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 24px;
+  background: rgba(126, 212, 168, 0.12);
+  color: var(--v-pine-light);
+}
+.tourText {
+  padding: 22px 24px 26px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.planTitle {
-  margin: 0;
-  font-size: 24px;
-  line-height: 1.2;
+.tourLabel {
+  font-size: 12px;
+}
+
+/* "Se alle funktioner": the classic list, folded away. */
+.allFeatures {
+  border-top: 1px solid var(--v-dark-rule);
+  padding-top: 8px;
+}
+.allFeaturesToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  color: var(--v-dark-text);
+  border-radius: 8px;
+}
+.allFeaturesToggle::-webkit-details-marker {
+  display: none;
+}
+.allFeaturesToggle .faqPlus {
+  background: var(--v-dark-card);
+  border: 1px solid var(--v-dark-rule);
+}
+.allFeatures[open] .faqPlus {
+  transform: rotate(45deg);
+}
+.allHide,
+.allFeatures[open] .allShow {
+  display: none;
+}
+.allFeatures[open] .allHide {
+  display: inline;
+}
+.allGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 28px;
+  padding: 20px 0 8px;
+}
+.allGroup {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.allTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--v-pine-light);
+}
+.allList {
+  gap: 10px;
+}
+.allList li {
+  font-size: 15px;
+  line-height: 1.45;
+  color: #d3d6d9;
 }
 
 /* ================= Pris og spørgsmål ================= */
@@ -1501,15 +1512,14 @@
     font-size: 62px;
   }
   .h2,
-  .splitIntro .h2,
-  .notesText .h2 {
+  .splitIntro .h2 {
     font-size: 40px;
   }
   .trustBandGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .featureBandText .h2 {
-    font-size: 40px;
+  .allGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1527,15 +1537,19 @@
     max-width: 640px;
   }
   .sectionHead,
-  .featureBandInner,
   .split,
-  .notesBody,
   .pricingInner {
     grid-template-columns: minmax(0, 1fr);
     gap: 40px;
   }
   .sectionHead {
     gap: 16px;
+  }
+  .tourCard {
+    flex-basis: calc((100% - 16px) / 2);
+  }
+  .allGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .headBody {
     max-width: 620px;
@@ -1629,8 +1643,7 @@
   }
 
   .h2,
-  .splitIntro .h2,
-  .notesText .h2 {
+  .splitIntro .h2 {
     font-size: 34px;
     line-height: 1.08;
   }
@@ -1695,36 +1708,31 @@
     margin: -48px 0 0 16px;
   }
 
-  .featureBandText .h2 {
-    font-size: 34px;
-    line-height: 1.08;
+  /* The tour runs edge to edge on a phone; swipe instead of the arrows. */
+  .tourArrows {
+    display: none;
   }
-  .featureBandText {
-    gap: 14px;
+  .tourTrack {
+    gap: 12px;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0 var(--gutter) 4px;
+    scroll-padding-inline: var(--gutter);
+    border-radius: 0;
   }
-  .featureList {
+  .tourCard {
+    flex-basis: min(84%, 340px);
+    border-radius: 16px;
+  }
+  .tourVisual {
+    height: 180px;
+  }
+  .tourText {
+    padding: 18px 20px 22px;
+    gap: 8px;
+  }
+  .allGrid {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
-  }
-  .featureItem {
-    gap: 8px;
-    padding-top: 20px;
-  }
-  .planGrid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-  }
-  .planCard {
-    border-radius: 20px;
-  }
-  .planPhoto {
-    height: 220px;
-  }
-  .planText {
-    padding: 20px 22px 24px;
-  }
-  .planTitle {
-    font-size: 20px;
   }
 
   .trustCircle {
@@ -1770,21 +1778,6 @@
   }
   .shotFrame {
     border-radius: 14px;
-  }
-
-  .notesVisual {
-    padding-bottom: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  /* On a phone the settings page is too small to read; the login note alone says it. */
-  .notesSettings {
-    display: none;
-  }
-  .notesNote {
-    position: static;
-    width: 100%;
   }
 
   .quotesCircle {
