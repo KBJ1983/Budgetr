@@ -21,7 +21,7 @@ const SLIDES = [
   { id: "maal", tab: "Opsparing", alt: "Opsparingsmål: månedligt beløb og hvor langt I er nået", note: "Opsparingsmål, der selv regner det månedlige beløb ud." },
 ] as const;
 
-const SLIDE_MS = 4000;
+const SLIDE_MS = 5000;
 
 function useShotTheme(): [Theme, (t: Theme) => void] {
   const [theme, setTheme] = useState<Theme>("light");
