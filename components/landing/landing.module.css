@@ -1125,102 +1125,86 @@
   text-align: center;
 }
 
-/* ================= Alt det andet: text cards ================= */
+/* ================= Alt det andet: dark band ================= */
 
-.featureSection {
-  background: var(--v-white);
-  border-top: 1px solid var(--v-rule);
-  border-bottom: 1px solid var(--v-rule);
+.featureBand {
+  background: var(--v-dark);
+  color: var(--v-dark-text);
+  --section-y: 112px;
 }
-.photoCards {
+.featureBandInner {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 72px;
+  align-items: start;
 }
-.photoCard {
-  position: relative;
-  margin: 0;
-  height: 320px;
-  border-radius: 24px;
-  overflow: hidden;
-  background: #dcdad3;
-}
-.photoCardShade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(21, 22, 23, 0) 45%, rgba(21, 22, 23, 0.7) 100%);
-}
-.photoCardText {
-  position: absolute;
-  left: 26px;
-  right: 26px;
-  bottom: 22px;
+.featureBandText {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  color: #fff;
+  gap: 22px;
 }
-.photoCardText .eyebrow {
-  font-size: 12px;
+.featureBandText .h2 {
+  font-size: 48px;
 }
-.photoCardTitle {
-  font-size: 24px;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.featureCards {
+.featureList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px 40px;
 }
-.featureCard {
+.featureItem {
   min-width: 0;
-  border: 1px solid var(--v-rule);
-  border-radius: 20px;
-  background: var(--v-card);
-  padding: 26px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: border-color 0.2s;
+  gap: 10px;
+  padding-top: 24px;
+  border-top: 1px solid var(--v-dark-rule);
 }
-.featureCard:hover {
-  border-color: #c6d6cb;
+
+/* ================= Opsparing og scenarier: photo cards ================= */
+
+.plans {
+  background: var(--v-white);
+  border-top: 1px solid var(--v-rule);
+  border-bottom: 1px solid var(--v-rule);
 }
-.featureIcon {
+.planGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.planCard {
+  min-width: 0;
+  background: var(--v-paper);
+  border: 1px solid var(--v-rule);
+  border-radius: 24px;
+  overflow: hidden;
   display: flex;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--v-pine-bg);
-  color: var(--v-ink);
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 6px;
+  flex-direction: column;
 }
-.featureCard:nth-child(3n + 2) .featureIcon {
-  background: #dcede3;
+.planPhoto {
+  position: relative;
+  height: 300px;
+  background: #dcdad3;
 }
-.featureCard:nth-child(3n) .featureIcon,
-.featureCard:nth-child(5) .featureIcon {
-  background: #e4e8ef;
+.planText {
+  padding: 26px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.featureCardTitle {
+.planTitle {
   margin: 0;
-  font-size: 19px;
+  font-size: 24px;
+  line-height: 1.2;
   font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.featureCardBody {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--v-ink-3);
-  text-wrap: pretty;
+  letter-spacing: -0.02em;
 }
 
 /* ================= Pris og spørgsmål ================= */
@@ -1521,9 +1505,11 @@
   .notesText .h2 {
     font-size: 40px;
   }
-  .trustBandGrid,
-  .featureCards {
+  .trustBandGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .featureBandText .h2 {
+    font-size: 40px;
   }
 }
 
@@ -1541,6 +1527,7 @@
     max-width: 640px;
   }
   .sectionHead,
+  .featureBandInner,
   .split,
   .notesBody,
   .pricingInner {
@@ -1708,20 +1695,35 @@
     margin: -48px 0 0 16px;
   }
 
-  .photoCards {
+  .featureBandText .h2 {
+    font-size: 34px;
+    line-height: 1.08;
+  }
+  .featureBandText {
+    gap: 14px;
+  }
+  .featureList {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .featureItem {
+    gap: 8px;
+    padding-top: 20px;
+  }
+  .planGrid {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
-  .photoCard {
-    height: 240px;
-    border-radius: 16px;
+  .planCard {
+    border-radius: 20px;
   }
-  .photoCardText {
-    left: 20px;
-    right: 20px;
-    bottom: 18px;
+  .planPhoto {
+    height: 220px;
   }
-  .photoCardTitle {
+  .planText {
+    padding: 20px 22px 24px;
+  }
+  .planTitle {
     font-size: 20px;
   }
 
@@ -1731,23 +1733,19 @@
     right: -180px;
     bottom: -140px;
   }
-  .trustBandGrid,
-  .featureCards {
+  .trustBandGrid {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
-  .trustBandCard,
-  .featureCard {
+  .trustBandCard {
     padding: 20px;
     border-radius: 16px;
     gap: 8px;
   }
-  .trustBandCardTitle,
-  .featureCardTitle {
+  .trustBandCardTitle {
     font-size: 17px;
   }
-  .trustBandCardBody,
-  .featureCardBody {
+  .trustBandCardBody {
     font-size: 14px;
     line-height: 1.5;
   }
