@@ -8,10 +8,9 @@ const LINKS = [
   // Legal pages do not exist yet.
   { href: "#", label: "Vilkår" },
   { href: "#", label: "Privatlivspolitik" },
+  { href: "#", label: "Kontakt" },
 ] as const;
 const COMPANY = "[Firmanavn · CVR]";
-const EMAIL = "info@budgetpro.dk";
-const PHONE = { href: "tel:+4527114717", label: "27 11 47 17" };
 
 export function SiteFooter() {
   return (
@@ -25,11 +24,7 @@ export function SiteFooter() {
             </a>
           ))}
         </nav>
-        <div className={styles.footerContact}>
-          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-          <a href={PHONE.href}>{PHONE.label}</a>
-          <span>© 2026 budgetpro · {COMPANY}</span>
-        </div>
+        <span className={styles.footerCompany}>© 2026 budgetpro · {COMPANY}</span>
       </div>
     </footer>
   );

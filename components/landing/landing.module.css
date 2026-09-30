@@ -1549,24 +1549,10 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.footerContact {
+.footerCompany {
   margin-left: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 20px;
   font-size: 14px;
   color: var(--v-ink-3);
-}
-.footerContact a {
-  color: var(--v-ink-3);
-  text-decoration: none;
-  padding: 8px 0;
-}
-.footerContact a:hover {
-  color: var(--v-ink);
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 /* ================= Header nav breakpoint ================= */
@@ -1974,11 +1960,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 16px;
   }
-  .footerContact {
+  .footerCompany {
     margin-left: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
   }
 }
 
