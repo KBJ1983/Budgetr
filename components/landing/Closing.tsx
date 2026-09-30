@@ -147,7 +147,7 @@ const PRICE_FEATURES = [
 const FAQ = [
   {
     q: "Hvad koster det?",
-    a: "De første 30 dage er gratis med alle funktioner. Derefter koster det 19 kr om måneden, eller 194 kr om året, hvis du betaler årligt og sparer 15 %. Ét abonnement dækker hele husstanden. Priserne er inkl. moms.",
+    a: "De første 30 dage er gratis med alle funktioner. Derefter koster det 29 kr om måneden. Deler du budgettet med andre, koster hver ekstra bruger 9 kr om måneden. Betaler du årligt, sparer du 15 %: 296 kr om året og 92 kr om året for hver ekstra bruger. Priserne er inkl. moms.",
   },
   {
     q: "Skal jeg give adgang til min netbank?",
@@ -159,7 +159,7 @@ const FAQ = [
   },
   {
     q: "Kan jeg dele budgettet med andre?",
-    a: "Ja. Invitér partner, familie eller en, du deler bolig med. I arbejder i det samme budget, og hver især vælger selv tema og visning.",
+    a: "Ja. Invitér partner, familie eller en, du deler bolig med. I arbejder i det samme budget, og hver især vælger selv tema og visning. Hver ekstra bruger koster 9 kr om måneden.",
   },
   {
     q: "Hvad hvis jeg vil stoppe?",

@@ -6,16 +6,16 @@ import styles from "./landing.module.css";
 const PLANS = {
   monthly: {
     label: "Månedlig",
-    value: "19 kr",
+    value: "29 kr",
     unit: "pr. måned",
-    note: "Efter 30 dages gratis prøveperiode. Ingen binding. Hele husstanden er med.",
+    note: "Efter 30 dages gratis prøveperiode. Ingen binding. En ekstra bruger på samme budget koster 9 kr pr. måned.",
   },
   yearly: {
     label: "Årlig",
     tag: "Spar 15 %",
-    value: "194 kr",
+    value: "296 kr",
     unit: "pr. år",
-    note: "Svarer til ca. 16 kr om måneden. Efter 30 dages gratis prøveperiode. Hele husstanden er med.",
+    note: "Svarer til ca. 25 kr om måneden. Efter 30 dages gratis prøveperiode. En ekstra bruger på samme budget koster 92 kr pr. år.",
   },
 } as const;
 
