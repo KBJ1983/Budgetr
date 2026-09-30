@@ -140,8 +140,9 @@ try {
     const d = new Date(), iso = (y, m) => `${y}-${String(m + 1).padStart(2, "0")}-01`;
     const start = new Date(d.getFullYear(), d.getMonth() - 3, 1), end = new Date(d.getFullYear(), d.getMonth() + 7, 1);
     const budget = {
-      version: 1, persons: [{ id: "p1", name: "Person 1" }], accounts: [{ id: "budget", name: "Budgetkonto", type: "faelles", owner: "", startSaldo: 0 }],
-      entries: [], settings: { split: "indkomst", touched: iso(d.getFullYear() - 1, d.getMonth()), remind: { every: 3 } },
+      version: 1, persons: [{ id: "p1", name: "Person 1" }], accounts: [{ id: "budget", name: "Budgetkonto", type: "faelles", owner: "", startSaldo: 0, todo: "Opret kontoen i banken" }],
+      entries: [{ id: "e1", type: "overfoersel", desc: "Til opsparing", freq: 1, start: 1, amount: 500, from: "budget", to: "budget", active: true, check: true, todo: "Opret den faste overførsel i banken", note: "" }],
+      settings: { split: "indkomst", touched: iso(d.getFullYear() - 1, d.getMonth()), remind: { every: 3 } },
       goals: [{ id: "g1", name: "Testmål", mode: "target", target: 10000, saved: 0, start: iso(start.getFullYear(), start.getMonth()), end: iso(end.getFullYear(), end.getMonth()), from: "budget", to: "", payer: "faelles", active: true, scopes: ["base"], extras: [] }],
     };
     let saved = null;
@@ -157,6 +158,7 @@ try {
     await note.waitFor();
     check((await note.getByText("Tillykke").count()) > 0 && (await note.getByText("25 % af dit opsparingsmål").count()) > 0, "login note congratulates on the 25 % milestone");
     check((await note.getByText(/siden, du sidst rettede i budgettet/).count()) > 0, "login note reminds to update the budget");
+    check((await note.getByText(/Du har også 3 opgaver/).count()) > 0, "login note mentions the open tasks");
     const over = await p2.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(over <= 0, `no horizontal scroll at 390px with the login note (${over}px)`);
     await p2.screenshot({ path: `${OUT}/login-note.png` });
@@ -164,6 +166,18 @@ try {
     await p2.waitForTimeout(900);
     check(saved?.goals?.[0]?.hit === 25 && !!saved?.settings?.remindSeen, "closing the note saves it as seen");
     check(saved?.settings?.touched === budget.settings.touched, "a seen note does not count as a change to the budget");
+    // Opgaver: the bell counts the account task, the entry task and Skal tjekkes; Klar clears one and saves.
+    check((await p2.locator("#todoN").textContent()) === "3", "the bell shows 3 open tasks");
+    await p2.locator("#btnTodo").click();
+    const todos = p2.locator("#todoMenu");
+    check((await todos.locator(".tdrow").count()) === 3 && (await todos.getByText("Opret den faste overførsel i banken").count()) === 1, "the task list shows the tasks");
+    const overT = await p2.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    check(overT <= 0, `no horizontal scroll at 390px with the task list open (${overT}px)`);
+    await p2.screenshot({ path: `${OUT}/todos.png` });
+    await todos.locator(".tdok").first().click();
+    await p2.waitForTimeout(900);
+    check(!(await todos.isHidden()) && (await todos.locator(".tdrow").count()) === 2 && (await p2.locator("#todoN").textContent()) === "2", "Klar removes the task and keeps the list open");
+    check(saved?.accounts?.[0]?.todo === "" && saved?.entries?.[0]?.todo, "the cleared task is saved");
     await ctx.close();
   }
   // The new-budget guide on a phone, with the optional bank and reminder steps (served by a route, nothing in data/).

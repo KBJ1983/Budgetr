@@ -536,6 +536,25 @@ td.act{width:1%;white-space:nowrap}
 .uchip .av{min-width:28px;height:28px;padding:0 6px;border-radius:14px;background:var(--ink);color:var(--paper);font:600 11px var(--font);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 .uchip .caret,.scnbtn .caret{font-size:11px;color:var(--ink2)}
 .appbar .expmenu{right:0;left:auto;max-height:calc(100vh - 84px);overflow-y:auto}
+/* Opgaver: bell in the app bar with the number of open tasks (same rule as lib/todos.ts) */
+.tdbtn{position:relative;display:flex!important;align-items:center;justify-content:center;width:36px;height:36px;padding:0!important;border:1px solid var(--rule)!important;border-radius:18px!important;background:transparent!important;color:var(--ink)}
+.tdbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tdbtn .tdn{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:9px;background:var(--pine);color:var(--on-pine);font:600 11px/18px var(--font);text-align:center}
+#todoMenu{width:min(380px,calc(100vw - 24px));padding:0;gap:0}
+#todoMenu .tdhead{padding:14px 16px 10px;border-bottom:1px solid var(--rule)}
+#todoMenu .tdhead b{display:block;font-size:15px;font-weight:600}
+#todoMenu .tdhead span{font-size:13px;color:var(--ink2)}
+#todoMenu .tdlist{display:flex;flex-direction:column;padding:6px}
+#todoMenu .tdrow{display:flex;align-items:center;gap:8px;border-radius:8px}
+#todoMenu .tdrow:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+#todoMenu .tdopen{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 10px;background:transparent;border:0;text-align:left}
+#todoMenu .tdopen b{font-size:14px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#todoMenu .tdopen span{font-size:13px;line-height:1.4;color:var(--ink2);font-weight:400}
+#todoMenu .tdopen small{font-size:12px;color:var(--ink3)}
+#todoMenu .tdok{flex:0 0 auto;margin-right:6px;padding:5px 12px;font-size:13px;border:1px solid var(--rule);border-radius:8px;background:var(--card)}
+#todoMenu .tdempty{margin:0;padding:16px;font-size:14px;line-height:1.45;color:var(--ink2)}
+@media (max-width:760px){.appbar #todoMenu{position:fixed;top:66px;left:12px;right:12px;width:auto;max-height:calc(100vh - 80px)}}
+.acctedit .acttodo{grid-column:1/-1}
 .expmenu .mrow .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .navrow{min-height:64px;align-items:stretch!important;gap:8px 12px!important;margin-bottom:0}
 .navrow .tabs{gap:0;align-items:stretch}
@@ -853,6 +872,8 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
     <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><span class="lb" aria-hidden="true">budget</span><span class="lp" aria-hidden="true">pro</span><span class="ld" aria-hidden="true"></span></a>
     <div class="abr">
       <span class="status" id="status">Gemmes automatisk i sikker database</span>
+      <div class="expwrap"><button type="button" class="tdbtn" id="btnTodo" aria-haspopup="true" aria-expanded="false" aria-controls="todoMenu" aria-label="Opgaver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span class="tdn" id="todoN" hidden></span></button>
+        <div class="expmenu" id="todoMenu" hidden></div></div>
       <div class="expwrap"><button type="button" class="uchip" id="btnUserMenu" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu" aria-label="Profil, eksport og import"><span class="av" id="bxUser"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="userMenu" role="menu" hidden>
           <div class="umhead"><span class="av" id="umAv"></span><div><b id="umName"></b><span id="umSub">Gemmes automatisk i sikker database</span></div></div>
@@ -945,6 +966,12 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
       <div class="field full">
         <label for="fNote">Note</label>
         <input id="fNote" autocomplete="off">
+      </div>
+      <div class="field full" id="wTodo">
+        <label for="fTodo">Opgave</label>
+        <input id="fTodo" list="todoSug" autocomplete="off" placeholder="fx Opret den faste overførsel i banken">
+        <datalist id="todoSug"></datalist>
+        <span class="note">Noget, der mangler at blive gjort. Opgaven vises under klokken i topmenuen, til du markerer den som klaret.</span>
       </div>
       <div class="field full" id="wHist"><span class="flabel">Udvikling – tidligere beløb</span>
         <div class="histsince"><label for="fSince">Nuværende beløb gælder fra</label><input id="fSince" type="date"></div>
@@ -1075,7 +1102,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
             <div class="field"><label for="setBkR">Pr. barn, kr./md.</label><input id="setBkR" inputmode="decimal"></div>
           </div></section>
         <section class="setsec" id="set-paamind"><h3>Påmindelser</h3>
-          <p class="setnote">Beskeder, når du logger ind, og en påmindelse, når budgettet ikke er rettet i et stykke tid.</p>
+          <p class="setnote">Beskeder, når du logger ind, og en påmindelse, når budgettet ikke er rettet i et stykke tid. Åbne opgaver fra klokken i topmenuen kommer med i påmindelsen.</p>
           <div class="setgrp"><label class="check"><input type="checkbox" id="setMile"> Vis en besked, når et opsparingsmål når 10, 25, 50, 75 og 100 %</label>
           <p class="setnote">budgetpro er ikke forbundet til netbanken. Beskeden bygger på, at indbetalingerne er gået ind som planlagt.</p></div>
           <div class="grid2"><div class="field"><label for="setEvery">Påmind mig om at opdatere budgettet</label><select id="setEvery"><option value="0">Aldrig</option><option value="1">Hver måned</option><option value="3">Hver 3. måned</option><option value="6">Hvert halve år</option><option value="12">En gang om året</option></select></div></div>
@@ -1414,7 +1441,7 @@ function personCalc(pid){
 function render(){
   const app=$('app');
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
-  renderScn();renderDraftBar();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
+  renderScn();renderDraftBar();renderTodos();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
   if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button></div>`;
     $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();return}
   syncENT();
@@ -2170,7 +2197,7 @@ function rowHtml(e){
   const acc=e.type==='overfoersel'?`${esc(accName(e.from))} til ${esc(accName(e.to))}`:(e.account?esc(accName(e.account)):'<span class="badge un">Ikke placeret</span>');
   const freq=FREQ[+e.freq||0]||'', when=(+e.freq||1)>1?` (${monthsOf(e).join(', ')})`:String(e.freq)==='0'?' (gennemsnit)':'';
   const hd=e._goal?'<span class="dragh off" aria-hidden="true"></span>':`<span class="dragh" data-dragpost="${e.id}" role="button" tabindex="0" aria-label="Flyt ${esc(e.desc)}. Træk, eller brug pil op og ned" title="Træk for at flytte posten">⋮⋮</span>`;
-  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.extra?`<span class="badge mute" title="Ekstra indtjening">${exOn()?'Ekstra':'Ekstra · ikke medregnet'}</span>`:''}${isBound(e)?'<span class="badge mute" title="Bundet til bestemte udgifter">Bundet</span>':''}${e.type==='indtaegt'&&!e.extra&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
+  return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.extra?`<span class="badge mute" title="Ekstra indtjening">${exOn()?'Ekstra':'Ekstra · ikke medregnet'}</span>`:''}${isBound(e)?'<span class="badge mute" title="Bundet til bestemte udgifter">Bundet</span>':''}${e.type==='indtaegt'&&!e.extra&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.todo?`<span class="badge chk" title="${esc(e.todo)}">Opgave</span>`:''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
         <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`}
 function rowsHtml(){
   const L=filtered(), plain=F.type==='alle'&&F.account==='alle'&&F.payer==='alle'&&!F.q.trim();
@@ -2396,8 +2423,14 @@ function openEntry(id,preset){
   $('btnDel').style.display=id?'':'none';$('btnDel').textContent=sc?(isBase?'Fjern i scenariet':'Slet fra scenariet'):'Slet post';
   $('btnReset').style.display=sc&&isBase&&sc.overrides&&sc.overrides[id]?'':'none';
   $('dlgTitle').textContent=(id?'Ret post':'Ny post')+(sc?' i '+(sc.name||'scenarie'):'');
-  syncType();$('dlg').showModal();$('fDesc').focus();
+  // Tasks belong to the current budget, so they are not edited inside a scenario.
+  {const base=id?S.entries.find(x=>x.id===id):null;$('fTodo').value=base?(base.todo||''):(e.todo||'');$('wTodo').style.display=sc?'none':''}
+  syncTodoSug();syncType();$('dlg').showModal();$('fDesc').focus();
 }
+const TODO_SUG={udgift:['Opret betalingsaftalen i banken','Ret beløbet i banken','Opsig aftalen','Flyt betalingen til en anden konto'],indtaegt:['Flyt udbetalingen til en anden konto','Ret beløbet'],
+  overfoersel:['Opret den faste overførsel i banken','Ret beløbet på den faste overførsel','Stop den faste overførsel']};
+function syncTodoSug(){$('todoSug').innerHTML=(TODO_SUG[$('fType').value]||[]).map(t=>`<option value="${esc(t)}">`).join('')}
+$('fType').addEventListener('change',syncTodoSug);
 $('fType').onchange=syncType;$('fExtra').onchange=syncType;$('fAuto').onchange=syncType;$('fFreq').onchange=syncType;$('fStart').onchange=updPreview;$('fAmount').oninput=()=>{$('eAmount').textContent='';updPreview()};
 $('fDesc').oninput=()=>$('eDesc').textContent='';$('fTo').onchange=()=>{$('eTo').textContent='';syncType()};$('fFrom').onchange=()=>{$('eTo').textContent='';syncType()};
 $('fCover').onchange=$('fAccount').onchange=()=>$('eCover').textContent='';
@@ -2445,6 +2478,7 @@ $('frm').addEventListener('submit',ev=>{
       const b=editingId?S.entries.find(x=>x.id===editingId):null;
       if(b&&!b.auto&&(+b.amount!==d.amount||(+b.freq||1)!==d.freq)&&sinceIn===(b.since||'')){d.history.push({date:b.since||DAY(),amount:+b.amount||0,freq:+b.freq||1,desc:b.since?'Gemt ved rettelse':'Gemt ved rettelse, startdato ukendt',unknown:!b.since});d.since=DAY()}
       else d.since=sinceIn||(b?b.since||'':DAY());}
+    d.todo=$('fTodo').value.trim();
     if(editingId){Object.assign(S.entries.find(x=>x.id===editingId),d)}else{S.entries.push(Object.assign({id:uid()},d))}}
   $('dlg').close();commit();toast(editingId?'Post gemt':'Post oprettet');
 });
@@ -2457,7 +2491,9 @@ function renderAccts(){
     <input data-f="number" value="${esc(a.number||'')}" placeholder="Kontonr." aria-label="Kontonummer">
     <select data-f="type" aria-label="Kontotype"><option value="faelles" ${a.type==='faelles'?'selected':''}>Fælles</option><option value="personlig" ${a.type!=='faelles'?'selected':''}>Personlig</option></select>
     <select data-f="owner" aria-label="Ejer"><option value="">Ingen ejer</option>${S.persons.map(p=>`<option value="${p.id}" ${a.owner===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
-    <button type="button" class="ghost danger" data-del="${a.id}" aria-label="Slet konto ${esc(a.name)}">Slet</button></div>`).join('');
+    <button type="button" class="ghost danger" data-del="${a.id}" aria-label="Slet konto ${esc(a.name)}">Slet</button>
+    <input class="acttodo" data-f="todo" list="acctTodoSug" value="${esc(a.todo||'')}" placeholder="Opgave, fx Opret kontoen i banken" aria-label="Opgave for ${esc(a.name)}"></div>`).join('')
+    +`<datalist id="acctTodoSug">${['Opret kontoen i banken','Bestil kort til kontoen','Luk kontoen i banken','Giv adgang til kontoen'].map(t=>`<option value="${esc(t)}">`).join('')}</datalist>`;
   $('personList').innerHTML=S.persons.map(p=>`<div class="personedit" data-pid="${p.id}"><input data-p="name" value="${esc(p.name)}" aria-label="Navn på person"><button type="button" class="ghost danger" data-pdel="${p.id}" ${S.persons.length<2?'disabled title="Der skal være mindst én person"':''} aria-label="Fjern ${esc(p.name)}">Fjern</button></div>`).join('');
   $('personList').querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{const id=b.dataset.pdel;if(S.persons.length<2)return;
     const n=entryCopies().filter(e=>e.payer===id).length+(S.goals||[]).filter(g=>g.payer===id).length, na=S.accounts.filter(a=>a.owner===id).length;
@@ -2465,7 +2501,7 @@ function renderAccts(){
     entryCopies().forEach(e=>{if(e.payer===id)e.payer=FAELLES});(S.goals||[]).forEach(g=>{if(g.payer===id)g.payer=FAELLES});S.accounts.forEach(a=>{if(a.owner===id)a.owner=''});
     S.persons=S.persons.filter(x=>x.id!==id);if(S.settings.split==='manuel'&&S.persons.length!==2)S.settings.split='indkomst';setCommit()});
   $('acctList').querySelectorAll('.acctedit').forEach(row=>{
-    row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);a[inp.dataset.f]=inp.value;commit()});
+    row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);a[inp.dataset.f]=inp.dataset.f==='todo'?inp.value.trim():inp.value;commit()});
   });
   $('acctList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.del, used=S.entries.filter(e=>e.account===id||e.from===id||e.to===id).length;
@@ -3561,6 +3597,37 @@ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cmp]');i
 $('exAll').onchange=e=>{if(!S)return;S.settings.withExtra=e.target.checked;commit();fillSet()};
 $('btnNew').onclick=()=>{if(!S){S=blank();commit()}openEntry(null)};
 
+/* ---------- opgaver ---------- */
+// Open tasks in the budget on screen (same rule as lib/todos.ts): the task text on accounts, then on entries,
+// and entries marked Skal tjekkes. The update reminder lists them for the primary budget.
+function todoList(B){B=B||S;if(!B)return [];const L=[],t=v=>typeof v==='string'?v.trim():'';
+  (B.accounts||[]).forEach(a=>{if(t(a.todo))L.push({k:'a',id:a.id,title:t(a.name)||'Konto',text:t(a.todo),kind:'Konto'})});
+  (B.entries||[]).forEach(e=>{const title=t(e.desc)||'Budgetpost',kind=e.type==='overfoersel'?'Fast overførsel':e.type==='indtaegt'?'Indtægt':'Udgift';
+    if(t(e.todo))L.push({k:'e',id:e.id,f:'todo',title,text:t(e.todo),kind});
+    if(e.check===true)L.push({k:'e',id:e.id,f:'check',title,text:'Tjek beløbet',kind})});
+  return L}
+const todoCount=n=>n+(n===1?' opgave':' opgaver');
+function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=L.length;
+  btn.parentElement.hidden=!S;$('todoN').hidden=!n;$('todoN').textContent=n>99?'99+':String(n);
+  btn.setAttribute('aria-label',n?'Opgaver, '+todoCount(n):'Opgaver, ingen åbne');
+  menu.innerHTML=`<div class="tdhead"><b>Opgaver</b><span>${n?`${todoCount(n)}, der venter`:'Ingen åbne opgaver'}</span></div>`
+    +(n?`<div class="tdlist">${L.map(x=>{const key=x.k+':'+x.id+':'+(x.f||'');return `<div class="tdrow"><button type="button" class="tdopen" data-tdopen="${esc(key)}"><b>${esc(x.title)}</b><span>${esc(x.text)}</span><small>${x.kind}</small></button><button type="button" class="tdok" data-tdok="${esc(key)}" aria-label="Markér ${esc(x.title)} som klaret">Klar</button></div>`}).join('')}</div>`
+      :'<p class="tdempty">Skriv en opgave på en budgetpost eller en konto, fx at en fast overførsel mangler at blive oprettet i banken. Den vises her, til du markerer den som klaret.</p>')}
+{const btn=$('btnTodo'),menu=$('todoMenu');const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
+  btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));
+    if(o){const f=menu.querySelector('button');if(f)f.focus()}};
+  menu.addEventListener('click',ev=>{const ok=ev.target.closest('[data-tdok]'),op=ev.target.closest('[data-tdopen]');if(!ok&&!op||!S)return;
+    const [k,id,f]=(ok||op).dataset[ok?'tdok':'tdopen'].split(':');
+    // The list is redrawn at once, so the click must not reach the close-on-outside-click handler.
+    if(ok){ev.stopPropagation();const x=k==='a'?S.accounts.find(a=>a.id===id):S.entries.find(e=>e.id===id);if(!x)return;
+      if(f==='check')x.check=false;else x.todo='';commit();toast('Opgaven er klaret');
+      const nx=menu.querySelector('button');if(nx)nx.focus();else btn.focus();return}
+    close();
+    if(k==='a'){openSet('konti');setTimeout(()=>{const r=document.querySelector(`.acctedit[data-id="${id}"] .acttodo`);if(r){r.scrollIntoView({block:'center'});r.focus()}},0)}
+    else if(S.entries.some(e=>e.id===id))openEntry(id)});
+  document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnTodo')&&!ev.target.closest('#todoMenu'))close()});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}});}
+
 /* ---------- beskeder ved login ---------- */
 // Goals in the current budget that passed a new milestone, and the update reminder when it is due.
 function loginNotes(){const sp=S.settings||{},N=[];
@@ -3579,7 +3646,7 @@ function showNotes(){if(!S)return;
       <p>${m===100?'Du bør nu have nået hele dit opsparingsmål.':`Du bør nu have nået ${m} % af dit opsparingsmål.`}</p><small>Skønnet opsparet ${kr(c.est)} af ${kr(c.T)}</small></div></div>`).join('')
     +(N.length?'<p class="ntfoot">budgetpro er ikke forbundet til din netbank. Tallet bygger på, at indbetalingerne er gået ind som planlagt.</p>':'')
     +(rem?`<div class="ntrow"><span class="ntico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>${N.length?'Tid til at se budgettet igennem':'Påmindelse'}</b>
-      <p>${mo?`Det er ${mo===1?'en måned':mo+' måneder'} siden, du sidst rettede i budgettet.`:'Det er et stykke tid siden, du sidst rettede i budgettet.'} Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.</p></div></div>`:'');
+      <p>${mo?`Det er ${mo===1?'en måned':mo+' måneder'} siden, du sidst rettede i budgettet.`:'Det er et stykke tid siden, du sidst rettede i budgettet.'} Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.${(n=>n?` Du har også ${todoCount(n)}, der venter under klokken øverst.`:'')(todoList().length)}</p></div></div>`:'');
   $('btnNoteGo').textContent=N.length?'Se opsparingsmål':'Se budgetposter';$('btnNoteGo').dataset.go=N.length?'maal':'poster';
   $('dlgNote').showModal()}
 // Closing the note in any way marks it as seen.

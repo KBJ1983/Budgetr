@@ -11,6 +11,7 @@ import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readProfile } from "../lib/profile.ts";
 import { dueReminder, parseDay, reminderText } from "../lib/reminders.ts";
+import { openTodos } from "../lib/todos.ts";
 
 try {
   process.loadEnvFile(".env.local");
@@ -71,7 +72,7 @@ for (const name of (await readdir(DIR)).filter((n) => n.endsWith(".json") && n !
   const due = dueReminder(sp.remind, await readProfile(user, DIR), touched, last, now);
   if (!due) continue;
 
-  const t = reminderText(sp.title || "", touched, now, URL_);
+  const t = reminderText(sp.title || "", touched, now, URL_, openTodos(budget));
   const to = [due.email && `mail ${mask(due.email)}`, due.msisdn && `sms ${mask(due.msisdn)}`].filter(Boolean).join(", ");
   if (!SEND) {
     console.log(`[prøve] ${user}: ville sende til ${to}`);

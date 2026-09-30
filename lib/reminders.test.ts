@@ -48,4 +48,15 @@ describe("helpers", () => {
     expect(t.sms.length).toBeLessThanOrEqual(160);
     expect(`${t.subject}${t.text}${t.sms}`).not.toContain("!");
   });
+
+  it("lists open tasks and counts them in the sms", () => {
+    const todos = Array.from({ length: 12 }, (_, i) => ({ title: `Post ${i + 1}`, text: "Opret i banken" }));
+    const t = reminderText("", day("2026-06-10"), day("2026-09-30"), "http://localhost:3200/app", todos);
+    expect(t.text).toContain("Du har 12 opgaver, der venter:\n- Post 1: Opret i banken\n");
+    expect(t.text).toContain("- og 2 opgaver mere");
+    expect(t.text).not.toContain("Post 11");
+    expect(t.sms).toContain("Du har 12 opgaver.");
+    expect(t.sms.length).toBeLessThanOrEqual(160);
+    expect(reminderText("", day("2026-06-10"), day("2026-09-30"), "u").text).not.toContain("opgave");
+  });
 });

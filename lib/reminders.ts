@@ -7,8 +7,12 @@
  * after the later of the last change to the budget (settings.touched) and the last reminder, whether sent
  * or shown in the app at login (settings.remindSeen).
  *
- * Plain TypeScript with no imports, so Node can run it directly from the .mjs script.
+ * Open tasks (lib/todos.ts) are listed in the message, so they come along with the reminder.
+ *
+ * Plain TypeScript, so Node can run it directly from the .mjs script.
  */
+
+import { todoCount, type Todo } from "./todos.ts";
 
 export interface RemindSettings {
   /** Months between reminders; 0 or missing = off. */
@@ -75,16 +79,27 @@ export function dueReminder(r: RemindSettings | undefined, contact: Contact, tou
 export const monthsBetween = (a: Date, b: Date) =>
   Math.max(1, (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth());
 
-/** The texts, in the app's tone: Danish, calm, no exclamation marks. */
-export function reminderText(title: string, touched: Date, now: Date, url: string) {
+/** Tasks listed by name in the mail; the rest are counted. */
+const MAIL_TODOS = 10;
+
+/** The texts, in the app's tone: Danish, calm, no exclamation marks. `todos` are the budget's open tasks. */
+export function reminderText(title: string, touched: Date, now: Date, url: string, todos: Todo[] = []) {
   const n = monthsBetween(touched, now);
   const since = `Det er ${n === 1 ? "en måned" : `${n} måneder`} siden, du sidst rettede i budgettet`;
   const name = title.trim() || "dit budget";
+  const more = todos.length - MAIL_TODOS;
+  const tasks = todos.length
+    ? `Du har ${todoCount(todos.length)}, der venter:\n` +
+      todos.slice(0, MAIL_TODOS).map((t) => `- ${t.title}: ${t.text}\n`).join("") +
+      (more > 0 ? `- og ${todoCount(more)} mere\n` : "") +
+      "\n"
+    : "";
   return {
     subject: "Tid til at se budgettet igennem",
     text:
       `Hej\n\n${since} ${name}. Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.\n\n` +
+      tasks +
       `${url}\n\nDu kan ændre eller slå påmindelsen fra under Indstillinger, Påmindelser.\n\nbudgetpro`,
-    sms: `budgetpro: ${since}. Se det igennem, når du har tid: ${url}`,
+    sms: `budgetpro: ${since}.${todos.length ? ` Du har ${todoCount(todos.length)}.` : ""} Se det igennem, når du har tid: ${url}`,
   };
 }
