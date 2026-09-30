@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import { AuthShell, DevLink, MailSent, safeNext } from "@/components/app/AuthShell";
+import { AuthShell, MailSent, safeNext } from "@/components/app/AuthShell";
 import { isEmail } from "@/lib/signup";
 import { login, logout, useSession } from "@/lib/store";
 
@@ -11,7 +11,7 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
   const [value, setValue] = useState(email ?? "");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState<{ email: string; devLink?: string } | null>(null);
+  const [sent, setSent] = useState<{ email: string; devLink?: string; devCode?: string } | null>(null);
   const inputId = useId();
   const errorId = useId();
 
@@ -36,8 +36,8 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
         body: JSON.stringify({ email }),
       });
       if (!r.ok) throw new Error(String(r.status));
-      const j = (await r.json()) as { devLink?: string };
-      setSent({ email, devLink: j.devLink });
+      const j = (await r.json()) as { devLink?: string; devCode?: string };
+      setSent({ email, devLink: j.devLink, devCode: j.devCode });
     } catch {
       setError("Vi kunne ikke sende mailen lige nu. Prøv igen om lidt.");
     } finally {
@@ -47,16 +47,22 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
 
   if (sent)
     return (
-      <MailSent title="Tjek din mail" onBack={() => setSent(null)}>
+      <MailSent
+        title="Tjek din mail"
+        email={sent.email}
+        next={next}
+        devLink={sent.devLink}
+        devCode={sent.devCode}
+        onBack={() => setSent(null)}
+      >
         <p className="bx-guide-lead">
-          Har du en konto med <b>{sent.email}</b>, har vi sendt dig et link til at logge ind. Linket virker i 20
-          minutter.
+          Har du en konto med <b>{sent.email}</b>, har vi sendt dig en kode til at logge ind. Skriv den herunder. Koden
+          virker i 20 minutter.
         </p>
-        <p className="bx-help">
+        <p className="bx-help" style={{ marginBottom: 20 }}>
           Kan du ikke finde mailen, så kig i spam-mappen. Har du ikke en konto endnu, kan du{" "}
           <Link href="/opret">oprette en</Link>.
         </p>
-        <DevLink href={sent.devLink} />
       </MailSent>
     );
 
@@ -79,18 +85,17 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
         </div>
       ) : (
         <p className="bx-guide-lead">
-          Skriv din e-mail, så sender vi dig et link til at logge ind. Der er ingen adgangskode. Testbrugere skriver
-          deres initialer.
+          Skriv din e-mail, så sender vi dig en kode og et link til at logge ind. Der er ingen adgangskode.
+          Testbrugere skriver deres initialer.
         </p>
       )}
-      <form onSubmit={submit} noValidate style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <form onSubmit={submit} noValidate className="bx-auth-form">
         <label className="bx-field" htmlFor={inputId}>
           <span>E-mail eller initialer</span>
         </label>
         <input
           id={inputId}
           className="bx-input"
-          style={{ height: 52, borderRadius: 12, fontSize: 16 }}
           autoComplete="username"
           autoCapitalize="none"
           inputMode="email"
@@ -108,7 +113,7 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
             {error}
           </p>
         ) : null}
-        <button type="submit" className="bx-btn bx-btn-primary bx-btn-lg" style={{ height: 52 }} disabled={busy}>
+        <button type="submit" className="bx-btn bx-btn-primary bx-btn-lg" disabled={busy}>
           {busy ? "Sender …" : user ? "Skift bruger" : "Log ind"}
         </button>
       </form>

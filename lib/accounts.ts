@@ -1,13 +1,15 @@
 /**
  * Real accounts, next to the test users in lib/users.ts. Signing up takes first name, last name, e-mail and a
- * Danish mobile number; the account can only be used once the e-mail is confirmed through the link we send.
- * There are no passwords: logging in later also goes through a link sent by e-mail.
+ * Danish mobile number; the account can only be used once the e-mail is confirmed through the mail we send.
+ * There are no passwords: logging in later also goes through a mail. Each mail has a link and a 6-digit code;
+ * either one works (the code is for when the mail is read on another device than the one logging in).
  *
  *   accounts/<id>.json   { id, firstName, lastName, email, phone, createdAt, verifiedAt?, token?, lastMailAt? }
  *   profiles/<id>.json   e-mail + phone for reminders (lib/profile.ts), written when the e-mail is confirmed
  *
  * in the store (lib/kv.ts; on disk under BUDGETR_DATA_DIR or ./data, git-ignored). A link holds "<id>.<random>";
- * only a hash of the random part is stored, it works once, and a new link replaces the previous one.
+ * only hashes of the random part and the code are stored. Link and code work once (using one spends both), a new
+ * mail replaces the previous one, and MAX_CODE_TRIES wrong codes spend them too.
  */
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { openStore } from "./kv";
@@ -19,6 +21,8 @@ export const VERIFY_TTL_MS = 48 * 60 * 60 * 1000;
 export const LOGIN_TTL_MS = 20 * 60 * 1000;
 /** No new mail to the same account within this gap (a double click, or someone hammering the form). */
 export const RESEND_GAP_MS = 60 * 1000;
+/** Wrong codes allowed per mail; then the link and code stop working and a new mail is needed. */
+export const MAX_CODE_TRIES = 5;
 
 export { isEmail, normalizeEmail, validateSignup, type SignupField, type SignupInput } from "./signup";
 
@@ -33,15 +37,17 @@ export interface Account {
   phone: string;
   createdAt: string;
   verifiedAt?: string;
-  token?: { hash: string; purpose: Purpose; expires: string };
+  token?: { hash: string; code?: string; tries?: number; purpose: Purpose; expires: string };
   lastMailAt?: string;
 }
 
-/** A link to mail: which kind, and the token that goes into it. */
+/** A mail to send: which kind, the token for its link and the code. */
 export interface Link {
   account: Account;
   purpose: Purpose;
   token: string;
+  /** 6 digits. */
+  code: string;
 }
 
 export const displayName = (a: Pick<Account, "firstName" | "lastName">) => `${a.firstName} ${a.lastName}`;
@@ -77,14 +83,18 @@ const hash = (s: string) => createHash("sha256").update(s).digest("hex");
 const throttled = (a: Account, now: Date) =>
   !!a.lastMailAt && now.getTime() - Date.parse(a.lastMailAt) < RESEND_GAP_MS;
 
-/** Gives the account a fresh link (replacing any earlier one) and saves it. */
+// The code is hashed with the account id, so equal codes on two accounts don't look alike.
+const codeHash = (id: string, code: string) => hash(`${id}:${code}`);
+const newCode = () => String(randomBytes(4).readUInt32BE() % 1_000_000).padStart(6, "0");
+
+/** Gives the account a fresh link and code (replacing any earlier ones) and saves it. */
 async function issue(a: Account, purpose: Purpose, now: Date, dir: string | undefined): Promise<Link> {
-  const secret = randomBytes(24).toString("base64url");
+  const secret = randomBytes(24).toString("base64url"), code = newCode();
   const ttl = purpose === "verify" ? VERIFY_TTL_MS : LOGIN_TTL_MS;
-  a.token = { hash: hash(secret), purpose, expires: new Date(now.getTime() + ttl).toISOString() };
+  a.token = { hash: hash(secret), code: codeHash(a.id, code), tries: 0, purpose, expires: new Date(now.getTime() + ttl).toISOString() };
   a.lastMailAt = now.toISOString();
   await saveAccount(a, dir);
-  return { account: a, purpose, token: `${a.id}.${secret}` };
+  return { account: a, purpose, token: `${a.id}.${secret}`, code };
 }
 
 /**
@@ -111,20 +121,13 @@ export async function requestLogin(email: string, now = new Date(), dir?: string
   return issue(a, a.verifiedAt ? "login" : "verify", now, dir);
 }
 
-/**
- * Uses a link. On success the link is spent, a first use confirms the e-mail (and writes the profile the reminders
- * read), and the account is returned. An unknown, used or expired link gives null.
- */
-export async function redeem(token: unknown, now = new Date(), dir?: string): Promise<Account | null> {
-  if (typeof token !== "string") return null;
-  const dot = token.indexOf(".");
-  const id = token.slice(0, dot), secret = token.slice(dot + 1);
-  if (dot < 0 || !secret) return null;
-  const a = await readAccount(id, dir);
-  if (!a?.token) return null;
-  const want = Buffer.from(a.token.hash, "hex"), got = Buffer.from(hash(secret), "hex");
-  if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
-  if (!(Date.parse(a.token.expires) > now.getTime())) return null;
+const same = (a: string, b: string) => {
+  const x = Buffer.from(a, "hex"), y = Buffer.from(b, "hex");
+  return x.length === y.length && timingSafeEqual(x, y);
+};
+
+/** Spends the link and code; a first use confirms the e-mail (and writes the profile the reminders read). */
+async function use(a: Account, now: Date, dir: string | undefined): Promise<Account> {
   delete a.token;
   if (!a.verifiedAt) {
     a.verifiedAt = now.toISOString();
@@ -132,4 +135,32 @@ export async function redeem(token: unknown, now = new Date(), dir?: string): Pr
   }
   await saveAccount(a, dir);
   return a;
+}
+
+/** Uses a link. On success the account is returned; an unknown, used or expired link gives null. */
+export async function redeem(token: unknown, now = new Date(), dir?: string): Promise<Account | null> {
+  if (typeof token !== "string") return null;
+  const dot = token.indexOf(".");
+  const id = token.slice(0, dot), secret = token.slice(dot + 1);
+  if (dot < 0 || !secret) return null;
+  const a = await readAccount(id, dir);
+  if (!a?.token || !same(a.token.hash, hash(secret))) return null;
+  if (!(Date.parse(a.token.expires) > now.getTime())) return null;
+  return use(a, now, dir);
+}
+
+/**
+ * Uses the code from the mail, typed on the device that asked for it. Spaces are ignored. Gives null for an
+ * unknown e-mail, a wrong, used or expired code, or after MAX_CODE_TRIES wrong tries (which also spends the link).
+ */
+export async function redeemCode(email: unknown, code: unknown, now = new Date(), dir?: string): Promise<Account | null> {
+  const digits = typeof code === "string" ? code.replace(/\s/g, "") : "";
+  if (!/^\d{6}$/.test(digits)) return null;
+  const a = await findByEmail(normalizeEmail(email), dir);
+  if (!a?.token?.code || !(Date.parse(a.token.expires) > now.getTime())) return null;
+  if (same(a.token.code, codeHash(a.id, digits))) return use(a, now, dir);
+  a.token.tries = (a.token.tries ?? 0) + 1;
+  if (a.token.tries >= MAX_CODE_TRIES) delete a.token;
+  await saveAccount(a, dir);
+  return null;
 }

@@ -5,8 +5,10 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   findByEmail,
   LOGIN_TTL_MS,
+  MAX_CODE_TRIES,
   readAccount,
   redeem,
+  redeemCode,
   requestLogin,
   RESEND_GAP_MS,
   signup,
@@ -106,5 +108,43 @@ describe("login links", () => {
     expect(login.purpose).toBe("login");
     expect(await redeem(login.token, new Date(t2.getTime() + LOGIN_TTL_MS + 1), dir)).toBeNull();
     expect((await findByEmail(input.email, dir))?.id).toBe(l.account.id);
+  });
+});
+
+describe("codes", () => {
+  const wrong = (code: string) => String((Number(code) + 1) % 1_000_000).padStart(6, "0");
+
+  it("confirms with the mailed code instead of the link, once, and spends the link too", async () => {
+    const l = (await signup(input, t0, dir))!;
+    expect(l.code).toMatch(/^\d{6}$/);
+    expect(await readFile(path.join(dir, "accounts", `${l.account.id}.json`), "utf8")).not.toContain(l.code);
+    const a = await redeemCode(" ANNA@eksempel.dk ", `${l.code.slice(0, 3)} ${l.code.slice(3)}`, later(1000), dir);
+    expect(a?.verifiedAt).toBe(later(1000).toISOString());
+    expect(await readProfile(l.account.id, dir)).toEqual({ email: "anna@eksempel.dk", phone: "+4512345678" });
+    expect(await redeemCode(input.email, l.code, later(2000), dir)).toBeNull();
+    expect(await redeem(l.token, later(2000), dir)).toBeNull();
+  });
+
+  it("stops working when the link is used, the code expires or the e-mail is someone else's", async () => {
+    const l = (await signup(input, t0, dir))!;
+    expect(await redeemCode("ingen@eksempel.dk", l.code, t0, dir)).toBeNull();
+    expect(await redeemCode(input.email, l.code, later(VERIFY_TTL_MS + 1), dir)).toBeNull();
+    expect(await redeemCode(input.email, "12345", t0, dir)).toBeNull();
+    expect(await redeemCode(input.email, 123456, t0, dir)).toBeNull();
+    await redeem(l.token, t0, dir);
+    expect(await redeemCode(input.email, l.code, t0, dir)).toBeNull();
+  });
+
+  it(`spends link and code after ${MAX_CODE_TRIES} wrong codes`, async () => {
+    const l = (await signup(input, t0, dir))!;
+    for (let i = 1; i < MAX_CODE_TRIES; i++) expect(await redeemCode(input.email, wrong(l.code), t0, dir)).toBeNull();
+    // Still usable after one try less than the limit …
+    expect(await redeemCode(input.email, l.code, t0, dir)).not.toBeNull();
+
+    const login = (await requestLogin(input.email, later(RESEND_GAP_MS + 1), dir))!;
+    for (let i = 0; i < MAX_CODE_TRIES; i++) await redeemCode(input.email, wrong(login.code), t0, dir);
+    // … but not after the limit, and the link is gone as well.
+    expect(await redeemCode(input.email, login.code, t0, dir)).toBeNull();
+    expect(await redeem(login.token, t0, dir)).toBeNull();
   });
 });

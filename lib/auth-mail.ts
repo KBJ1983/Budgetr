@@ -1,7 +1,7 @@
 /**
- * The confirm and login mails. Sent through Resend (same provider as scripts/send-reminders.mjs) when
- * RESEND_API_KEY and MAIL_FROM (or REMINDER_MAIL_FROM) are set in .env.local. Without them – e.g. in local
- * development – nothing is sent and the link is written to the server log instead.
+ * The confirm and login mails, each with a link and a 6-digit code. Sent through Resend (same provider as
+ * scripts/send-reminders.mjs) when RESEND_API_KEY and MAIL_FROM (or REMINDER_MAIL_FROM) are set in .env.local.
+ * Without them – e.g. in local development – nothing is sent and the link is written to the server log instead.
  */
 import type { Link, Purpose } from "./accounts";
 
@@ -11,44 +11,56 @@ const DEV = process.env.NODE_ENV !== "production";
 export const linkUrl = (origin: string, l: Pick<Link, "purpose" | "token">) =>
   `${process.env.APP_URL || origin}/login/bekraeft?t=${encodeURIComponent(l.token)}${l.purpose === "verify" ? "&ny=1" : ""}`;
 
+/** "123456" → "123 456", easier to read and type. */
+export const spacedCode = (code: string) => `${code.slice(0, 3)} ${code.slice(3)}`;
+
 /**
- * Mails the link (null = nothing to send: unknown e-mail or throttled – the caller answers the same either way).
- * In development without a mail provider the link comes back as devLink so it can be opened from the page.
+ * Mails the link and code (null = nothing to send: unknown e-mail or throttled – the caller answers the same either
+ * way). In development without a mail provider they come back as devLink and devCode so they can be used from the page.
  */
-export async function deliver(origin: string, l: Link | null): Promise<{ ok: true; devLink?: string }> {
+export async function deliver(origin: string, l: Link | null): Promise<{ ok: true; devLink?: string; devCode?: string }> {
   if (!l) return { ok: true };
   const url = linkUrl(origin, l);
-  const sent = await sendAuthMail(l.account.email, authMail(l.purpose, l.account.firstName, url), url);
-  return !sent && DEV ? { ok: true, devLink: url } : { ok: true };
+  const sent = await sendAuthMail(l.account.email, authMail(l.purpose, l.account.firstName, url, l.code), url);
+  return !sent && DEV ? { ok: true, devLink: url, devCode: l.code } : { ok: true };
 }
 
-export function authMail(purpose: Purpose, firstName: string, link: string) {
+export function authMail(purpose: Purpose, firstName: string, link: string, code: string) {
+  const c = spacedCode(code);
   if (purpose === "verify")
     return {
-      subject: "Bekræft din e-mail til budgetpro",
+      subject: `${c} er din kode til budgetpro`,
       text: [
         `Hej ${firstName}`,
         "",
-        "Tak fordi du har oprettet en konto hos budgetpro. Åbn linket herunder for at bekræfte din e-mail. Så kommer du direkte videre til dit budget.",
+        "Tak fordi du har oprettet en konto hos budgetpro. Skriv koden herunder på siden, hvor du oprettede kontoen:",
+        "",
+        c,
+        "",
+        "Eller åbn linket for at bekræfte din e-mail på denne enhed:",
         "",
         link,
         "",
-        "Linket virker i 48 timer og kan bruges én gang. Har du ikke oprettet en konto, kan du se bort fra denne mail.",
+        "Koden og linket virker i 48 timer og kan bruges én gang. Vi beder dig aldrig om en adgangskode eller om login til din bank. Har du ikke oprettet en konto, kan du se bort fra denne mail.",
         "",
         "Venlig hilsen",
         "budgetpro",
       ].join("\n"),
     };
   return {
-    subject: "Dit link til at logge ind på budgetpro",
+    subject: `${c} er din kode til at logge ind på budgetpro`,
     text: [
       `Hej ${firstName}`,
       "",
-      "Åbn linket herunder for at logge ind på budgetpro.",
+      "Skriv koden herunder på siden, hvor du bad om at logge ind:",
+      "",
+      c,
+      "",
+      "Eller åbn linket for at logge ind på denne enhed:",
       "",
       link,
       "",
-      "Linket virker i 20 minutter og kan bruges én gang. Har du ikke bedt om at logge ind, kan du se bort fra denne mail.",
+      "Koden og linket virker i 20 minutter og kan bruges én gang. Vi beder dig aldrig om en adgangskode eller om login til din bank. Har du ikke bedt om at logge ind, kan du se bort fra denne mail.",
       "",
       "Venlig hilsen",
       "budgetpro",

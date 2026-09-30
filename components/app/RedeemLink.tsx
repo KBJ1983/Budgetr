@@ -38,7 +38,7 @@ export function RedeemLink({ token, isNew }: { token?: string; isNew: boolean })
         <p className="bx-guide-lead">
           Linket er enten brugt eller udløbet. Skriv din e-mail på login-siden, så sender vi dig et nyt.
         </p>
-        <Link href="/login" className="bx-btn bx-btn-primary bx-btn-lg" style={{ height: 52 }}>
+        <Link href="/login" className="bx-btn bx-btn-primary bx-btn-lg">
           Få et nyt link
         </Link>
       </AuthShell>
@@ -60,7 +60,7 @@ export function RedeemLink({ token, isNew }: { token?: string; isNew: boolean })
       <button
         type="button"
         className="bx-btn bx-btn-primary bx-btn-lg"
-        style={{ height: 52, width: "100%" }}
+        style={{ width: "100%" }}
         disabled={state === "busy"}
         onClick={go}
       >

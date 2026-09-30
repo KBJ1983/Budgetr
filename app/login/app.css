@@ -897,6 +897,278 @@
   margin-top: 28px;
 }
 
+/* ---------- auth pages (/login, /opret, /login/bekraeft, components/app/AuthShell.tsx) ----------
+   The landing page's dark rounded card on a white frame (values from the .page block in
+   components/landing/landing.module.css), always dark: form on the right, Tryghed on the left (below on phones). */
+.bx-auth {
+  --bg: #151617;
+  --card: #1c1d1f;
+  --card-2: #232427;
+  --tx: #ececec;
+  --tx-2: #b4b6ba;
+  --tx-3: #8d9095;
+  --rule: #2a2c2f;
+  --field: #151617;
+  --accent: #ececec;
+  --accent-tx: #151617;
+  --pos: #7ed4a8;
+  --neg: #ffb4a3;
+  color-scheme: dark;
+  background: #ffffff;
+  padding: 14px;
+  color: var(--tx);
+}
+.bx-auth-card {
+  position: relative;
+  max-width: 1400px;
+  min-height: calc(100vh - 28px);
+  margin: 0 auto;
+  background: var(--bg);
+  border-radius: 32px;
+  overflow: hidden;
+  padding: 0 clamp(20px, 5vw, 72px) 56px;
+  display: flex;
+  flex-direction: column;
+}
+/* Behind the form, like the landing page's Tryghed band: the panel covers its middle and it shows around it. */
+.bx-auth-circle {
+  position: absolute;
+  right: -140px;
+  bottom: -320px;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  background: #2c6a4d;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.bx-auth-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 76px;
+}
+.bx-auth-brand {
+  display: inline-flex;
+  color: var(--tx) !important;
+  text-decoration: none;
+  border-radius: 8px;
+}
+.bx-auth .bx-auth-back {
+  color: var(--tx-2);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.bx-auth .bx-auth-back:hover {
+  color: var(--tx);
+}
+.bx-auth-grid {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  padding-top: 24px;
+}
+.bx-auth-panel {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.5);
+}
+.bx-auth-panel h1 {
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+.bx-auth-panel .bx-guide-lead {
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--tx-2);
+  margin: 0 0 22px;
+}
+.bx-auth-panel .bx-help {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.bx-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.bx-auth .bx-field > span {
+  font-size: 13px;
+}
+.bx-auth .bx-input {
+  height: 52px;
+  border-radius: 12px;
+  font-size: 16px;
+  padding: 0 14px;
+}
+.bx-auth .bx-input:focus {
+  outline: 2px solid #7ed4a8;
+  outline-offset: 1px;
+  border-color: var(--rule);
+}
+.bx-auth .bx-auth-code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 24px;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+.bx-auth .bx-btn-lg {
+  min-height: 52px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.bx-auth .bx-btn-primary:hover {
+  filter: none;
+  background: #ffffff;
+  border-color: #ffffff;
+}
+.bx-auth .bx-auth-secondary {
+  margin-top: 16px;
+  min-height: 44px;
+  font-size: 14px;
+}
+.bx-auth .bx-note.is-info {
+  font-size: 13px;
+}
+.bx-auth-trust {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 520px;
+}
+.bx-auth-eyebrow {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #cfe9da;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 6px 14px 6px 10px;
+}
+.bx-auth-eyebrow svg {
+  color: #7ed4a8;
+}
+.bx-auth-trust h2 {
+  margin: 0;
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.bx-auth-check {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--tx-2);
+  text-wrap: pretty;
+}
+.bx-auth-check b {
+  color: var(--tx);
+  font-weight: 600;
+}
+.bx-auth-points {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.bx-auth-points li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.bx-auth-points li > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--tx-3);
+}
+.bx-auth-points b {
+  color: var(--tx);
+  font-size: 15px;
+  font-weight: 600;
+}
+.bx-auth-icon {
+  flex: 0 0 auto;
+  display: flex;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: rgba(126, 212, 168, 0.12);
+  color: #7ed4a8;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 900px) {
+  .bx-auth {
+    padding: 8px;
+  }
+  .bx-auth-card {
+    min-height: calc(100vh - 16px);
+    border-radius: 24px;
+    padding: 0 16px 32px;
+  }
+  .bx-auth-top {
+    height: 64px;
+  }
+  .bx-auth-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    padding-top: 8px;
+  }
+  .bx-auth-panel,
+  .bx-auth-trust {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .bx-auth-panel {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  .bx-auth-panel h1 {
+    font-size: 28px;
+  }
+  .bx-auth-trust {
+    padding: 0 4px;
+  }
+  .bx-auth-circle {
+    width: 420px;
+    height: 420px;
+    left: auto;
+    right: -220px;
+    bottom: -220px;
+  }
+}
+
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
   .bx-tiles {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import { AuthShell, DevLink, MailSent } from "@/components/app/AuthShell";
+import { AuthShell, MailSent } from "@/components/app/AuthShell";
 import { validateSignup, type SignupField } from "@/lib/signup";
 
 type Values = Record<SignupField, string>;
@@ -20,7 +20,7 @@ export function CreateAccountForm({ email }: { email?: string }) {
   const [errors, setErrors] = useState<Partial<Values>>({});
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState<{ email: string; devLink?: string } | null>(null);
+  const [sent, setSent] = useState<{ email: string; devLink?: string; devCode?: string } | null>(null);
   const idBase = useId();
 
   const showErrors = (errs: Partial<Values>) => {
@@ -41,10 +41,10 @@ export function CreateAccountForm({ email }: { email?: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      const j = (await r.json().catch(() => ({}))) as { errors?: Partial<Values>; devLink?: string };
+      const j = (await r.json().catch(() => ({}))) as { errors?: Partial<Values>; devLink?: string; devCode?: string };
       if (r.status === 400 && j.errors) return showErrors(j.errors);
       if (!r.ok) throw new Error(String(r.status));
-      setSent({ email: values.email.trim(), devLink: j.devLink });
+      setSent({ email: values.email.trim(), devLink: j.devLink, devCode: j.devCode });
     } catch {
       setError("Vi kunne ikke oprette kontoen lige nu. Prøv igen om lidt.");
     } finally {
@@ -54,16 +54,22 @@ export function CreateAccountForm({ email }: { email?: string }) {
 
   if (sent)
     return (
-      <MailSent title="Bekræft din e-mail" onBack={() => setSent(null)}>
+      <MailSent
+        title="Bekræft din e-mail"
+        email={sent.email}
+        isNew
+        devLink={sent.devLink}
+        devCode={sent.devCode}
+        onBack={() => setSent(null)}
+      >
         <p className="bx-guide-lead">
-          Vi har sendt en mail til <b>{sent.email}</b>. Åbn linket i mailen for at bekræfte din e-mail. Så kommer du
+          Vi har sendt en kode til <b>{sent.email}</b>. Skriv den herunder for at bekræfte din e-mail. Så kommer du
           direkte videre til dit budget.
         </p>
-        <p className="bx-help">
-          Linket virker i 48 timer. Kan du ikke finde mailen, så kig i spam-mappen. Har du allerede en konto med den
-          e-mail, får du i stedet et link til at logge ind.
+        <p className="bx-help" style={{ marginBottom: 20 }}>
+          Koden virker i 48 timer. Kan du ikke finde mailen, så kig i spam-mappen. Har du allerede en konto med den
+          e-mail, får du i stedet en kode til at logge ind.
         </p>
-        <DevLink href={sent.devLink} />
       </MailSent>
     );
 
@@ -71,10 +77,10 @@ export function CreateAccountForm({ email }: { email?: string }) {
     <AuthShell>
       <h1>Opret gratis konto</h1>
       <p className="bx-guide-lead">
-        Udfyld felterne, så sender vi dig en mail, hvor du bekræfter din e-mail. Der er ingen adgangskode – du logger
-        ind med et link på mail.
+        Udfyld felterne, så sender vi dig en kode, som bekræfter din e-mail. Der er ingen adgangskode – du logger ind
+        med en kode eller et link på mail.
       </p>
-      <form onSubmit={submit} noValidate style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <form onSubmit={submit} noValidate className="bx-auth-form">
         {FIELDS.map((f) => {
           const id = `${idBase}-${f.key}`, err = errors[f.key];
           return (
@@ -86,7 +92,6 @@ export function CreateAccountForm({ email }: { email?: string }) {
                 id={id}
                 name={f.key}
                 className="bx-input"
-                style={{ height: 52, borderRadius: 12, fontSize: 16 }}
                 type={f.type ?? "text"}
                 inputMode={f.inputMode}
                 autoComplete={f.autoComplete}
@@ -114,7 +119,7 @@ export function CreateAccountForm({ email }: { email?: string }) {
             {error}
           </p>
         ) : null}
-        <button type="submit" className="bx-btn bx-btn-primary bx-btn-lg" style={{ height: 52, marginTop: 4 }} disabled={busy}>
+        <button type="submit" className="bx-btn bx-btn-primary bx-btn-lg" style={{ marginTop: 4 }} disabled={busy}>
           {busy ? "Opretter …" : "Opret konto"}
         </button>
       </form>
