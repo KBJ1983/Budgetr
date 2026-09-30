@@ -47,22 +47,22 @@ try {
   await page.waitForURL(/\/login/);
   await page.getByLabel("E-mail eller initialer").fill("TEST9");
   await page.getByRole("button", { name: "Log ind" }).click();
-  await page.getByText(/Vi kender ikke den bruger/).waitFor();
+  await page.getByText(/Skriv den e-mail, du oprettede din konto med/).waitFor();
   check(true, "unknown login is rejected");
 
   // Hero: a button to the login, no e-mail field
   await page.goto(`${BASE}/`);
   check((await page.locator('#top input[type="email"]').count()) === 0, "hero has no e-mail field");
   await page.locator("#top").getByRole("link", { name: /Opret gratis bruger/ }).click();
-  await page.waitForURL(/\/login/);
-  check(true, "hero button opens the login");
+  await page.waitForURL(/\/opret/);
+  check(true, "hero button opens the signup");
 
   // Tryghed comes right after "Sådan virker det"
   await page.goto(`${BASE}/`);
   const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.id).filter(Boolean));
   check(order.indexOf("tryghed") === order.indexOf("saadan") + 1, `Tryghed follows Sådan virker det (${order.join(" → ")})`);
 
-  // Final signup form prefills the login
+  // Final signup form prefills the account signup
   const signup = page.locator('form:has(input[type="email"])');
   await signup.locator('input[type="email"]').fill("ikke-en-mail");
   await signup.locator('button[type="submit"]').click();
@@ -70,8 +70,9 @@ try {
   check(true, "signup rejects an invalid e-mail");
   await signup.locator('input[type="email"]').fill("test@eksempel.dk");
   await signup.locator('button[type="submit"]').click();
-  await page.waitForURL(/\/login\?/);
-  check((await page.getByLabel("E-mail eller initialer").inputValue()) === "test@eksempel.dk", "signup prefills the login");
+  await page.waitForURL(/\/opret\?/);
+  check((await page.getByLabel("E-mail").inputValue()) === "test@eksempel.dk", "signup prefills the account form");
+  check((await page.getByLabel("Fornavn").count()) === 1 && (await page.getByLabel("Mobilnummer").count()) === 1, "account form asks for name and phone");
 
   // KBJ: the original app with the real budget
   await loginAs("KBJ");
@@ -122,7 +123,7 @@ try {
 
   // No horizontal scroll on mobile
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const path of ["/", "/login", "/app"]) {
+  for (const path of ["/", "/login", "/opret", "/login/bekraeft?t=x", "/app"]) {
     await page.goto(`${BASE}${path}`);
     await page.waitForTimeout(800);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

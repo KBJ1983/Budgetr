@@ -2,7 +2,7 @@
   "name": "budgetr",
   "private": true,
   "version": "0.1.0",
-  "description": "budgetr – gratis budget for dig, par og familier. Landing page + budget app (no login yet, data in the browser).",
+  "description": "budgetr – gratis budget for dig, par og familier. Landing page + budget app (accounts with e-mail links, test users, data on disk and in the browser).",
   "type": "module",
   "packageManager": "pnpm@12.4.1",
   "engines": {

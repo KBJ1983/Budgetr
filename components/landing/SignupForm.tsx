@@ -19,7 +19,7 @@ type SignupFormProps = {
   centered?: boolean;
 };
 
-/** E-mail signup (HANDOFF §5). A valid address continues to the test-user login. */
+/** E-mail signup (HANDOFF §5). A valid address continues to /opret with the e-mail filled in. */
 export function SignupForm({ idPrefix, variant = "light", centered = false }: SignupFormProps) {
   const router = useRouter();
   const [invalid, setInvalid] = useState(false);
@@ -37,8 +37,7 @@ export function SignupForm({ idPrefix, variant = "light", centered = false }: Si
       return;
     }
     setInvalid(false);
-    // While testing there is no real signup: the e-mail is prefilled on the test-user login.
-    router.push(`/login?next=/app&email=${encodeURIComponent(value)}`);
+    router.push(`/opret?email=${encodeURIComponent(value)}`);
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {

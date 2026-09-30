@@ -2,13 +2,14 @@
  * A user's profile: the contact details given when the profile was created. Notifications (the update
  * reminder by e-mail or SMS) always use these; the budget only says which channels the user wants.
  *
- * Profile creation is not built yet. When it is, it writes <dir>/profiles/<userId>.json as
- * { "email": "...", "phone": "..." }. <dir> is BUDGETR_DATA_DIR or ./data (git-ignored – real contact
- * details never go into git). Until a user has a profile, their reminders are only shown in the app.
+ * The profile is written when a new account confirms its e-mail (lib/accounts.ts), as
+ * <dir>/profiles/<userId>.json = { "email": "...", "phone": "..." }. <dir> is BUDGETR_DATA_DIR or ./data
+ * (git-ignored – real contact details never go into git). Until a user has a profile, their reminders are
+ * only shown in the app.
  *
  * Only node: imports, so Node can run it directly from scripts/send-reminders.mjs.
  */
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export interface Profile {
@@ -33,7 +34,16 @@ export async function readProfile(userId: string, dir = dataDir()): Promise<Prof
   }
 }
 
-/** "navn@eksempel.dk" → "n…@eksempel.dk", so the app can show where mails go without exposing the address. */
+export async function writeProfile(userId: string, profile: Profile, dir = dataDir()): Promise<void> {
+  const folder = path.join(dir, "profiles");
+  await mkdir(folder, { recursive: true });
+  const file = path.join(folder, `${userId}.json`);
+  const tmp = `${file}.${process.pid}.tmp`;
+  await writeFile(tmp, JSON.stringify({ email: profile.email, phone: profile.phone }, null, 1), "utf8");
+  await rename(tmp, file);
+}
+
+/** "navn@eksempel.dk" →"n…@eksempel.dk", so the app can show where mails go without exposing the address. */
 export const maskEmail = (e?: string) => (e && e.includes("@") ? `${e[0]}…${e.slice(e.indexOf("@"))}` : null);
 /** "12 34 56 78" → "•• •• •• 78". */
 export const maskPhone = (p?: string) => {

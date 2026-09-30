@@ -30,3 +30,6 @@ export function findUser(login: string): TestUser | undefined {
 }
 
 export const userById = (id: string | null | undefined) => USERS.find((u) => u.id === id);
+
+/** Real accounts (lib/accounts.ts) have ids like "u-k3x9…", so they never clash with a test user or a data/ file. */
+export const isAccountId = (id: unknown): id is string => typeof id === "string" && /^u-[a-z0-9]{12}$/.test(id);

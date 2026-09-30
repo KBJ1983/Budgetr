@@ -2,8 +2,10 @@
 <html lang="da">
 <head>
 <script>
-/* budgetr test-user layer (no password): the session is set by /login. Each user has their own storage key.
-   A user's first visit loads /private/<user>.legacy.json if it exists (git-ignored real data), else the guide. */
+/* budgetr session: set by /login (test users, no password) or by the mailed link of a real account (/login/bekraeft,
+   which also sets an httpOnly cookie the budget API checks – a 401 here means that session is gone). Each user has
+   their own storage key. A user's first visit loads /private/<user>.legacy.json if it exists (git-ignored real data),
+   else the guide. */
 (function(){
   var uid=null;try{uid=localStorage.getItem('budgetr:session')}catch(e){}
   if(!uid){location.replace('/login?next=/app');return}
@@ -13,15 +15,21 @@
      (no ":unsynced"). Otherwise the browser copy is pushed up once the app starts (the disk keeps the old one as a backup). */
   var has=null,uns=false,synced=false;try{has=localStorage.getItem(window.BUDGETR_KEY);uns=localStorage.getItem(window.BUDGETR_KEY+':unsynced')==='1';synced=localStorage.getItem(window.BUDGETR_KEY+':disk')==='1'}catch(e){}
   window.BUDGETR_DISK=false;window.BUDGETR_PUSH=false;
+  window.BUDGETR_LOGOUT=function(){try{localStorage.removeItem('budgetr:session');localStorage.removeItem('budgetr:session-name')}catch(e){}
+    try{fetch('/api/auth/logout',{method:'POST',keepalive:true})}catch(e){}location.href='/login?next=/app'};
   try{var sx=new XMLHttpRequest();sx.open('GET','/api/budget/'+encodeURIComponent(uid),false);sx.send();
+    if(sx.status===401){try{localStorage.removeItem('budgetr:session')}catch(e){}location.replace('/login?next=/app');return}
     if(sx.status===200||sx.status===204)window.BUDGETR_DISK=true;
     if(sx.status===200&&/^\s*\{/.test(sx.responseText)&&(!has||(synced&&!uns))){try{localStorage.setItem(window.BUDGETR_KEY,sx.responseText);localStorage.setItem(window.BUDGETR_KEY+':disk','1')}catch(e){}has=sx.responseText}
     else if(window.BUDGETR_DISK)window.BUDGETR_PUSH=true}catch(e){}
   if(!has){try{var x=new XMLHttpRequest();x.open('GET','/private/'+encodeURIComponent(uid)+'.legacy.json',false);x.send();
     if(x.status===200&&/^\s*\{/.test(x.responseText))window.BUDGETR_SEED=x.responseText}catch(e){}}
   document.addEventListener('DOMContentLoaded',function(){
-    ['bxUser','umAv','umName'].forEach(function(i){var n=document.getElementById(i);if(n)n.textContent=uid.toUpperCase()});
-    var b=document.getElementById('btnUser');if(b)b.onclick=function(){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'};
+    /* Real accounts show their name (initials in the avatar); test users their login in capitals. */
+    var nm=null;try{nm=localStorage.getItem('budgetr:session-name')}catch(e){}
+    var w=nm?nm.split(/\s+/).filter(Boolean):[],ini=w.length?(w[0][0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase():uid.toUpperCase();
+    [['bxUser',ini],['umAv',ini],['umName',nm||uid.toUpperCase()]].forEach(function(a){var n=document.getElementById(a[0]);if(n)n.textContent=a[1]});
+    var b=document.getElementById('btnUser');if(b)b.onclick=window.BUDGETR_LOGOUT;
   });
 })();
 </script>
@@ -2866,7 +2874,7 @@ function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>
 function umPick(b){const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
   if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
   else if(y==='stmt'){if(!S){toast('Opret først et budget');return}openImp()}else if(y==='json')$('jsonFile').click();
-  else if(u==='set'){if(!S){toast('Opret først et budget');return}openSet()}else if(u==='help')openHelp();else if(u==='data')$('dlgData').showModal();else if(u==='home')location.href='/';else if(u==='user'){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'}}
+  else if(u==='set'){if(!S){toast('Opret først et budget');return}openSet()}else if(u==='help')openHelp();else if(u==='data')$('dlgData').showModal();else if(u==='home')location.href='/';else if(u==='user')window.BUDGETR_LOGOUT()}
 menuSetup('btnUserMenu','userMenu',umPick);
 $('btnUserMenu').addEventListener('click',()=>{$('umSub').textContent=$('status').textContent||'Gemmes på denne computer'});
 $('dlgData').querySelectorAll('.dtile').forEach(b=>b.onclick=()=>{$('dlgData').close();umPick(b)});

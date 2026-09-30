@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
 import { maskEmail, maskPhone, readProfile } from "@/lib/profile";
-import { userById } from "@/lib/users";
+import { canAccess, SESSION_COOKIE } from "@/lib/session";
 
-// Where the user's notifications go, masked (no auth – same trust level as the test-user login).
+// Where the user's notifications go, masked (test users need no auth; a real account needs its session).
 // The app shows it under Indstillinger > Påmindelser; null = the profile has no such detail yet.
-export async function GET(_req: NextRequest, ctx: RouteContext<"/api/profile/[user]">) {
+export async function GET(req: NextRequest, ctx: RouteContext<"/api/profile/[user]">) {
   const { user } = await ctx.params;
-  if (!userById(user)) return new Response(null, { status: 404 });
+  if (!(await canAccess(user, req.cookies.get(SESSION_COOKIE)?.value))) return new Response(null, { status: 401 });
   const p = await readProfile(user);
   return Response.json({ email: maskEmail(p.email), phone: maskPhone(p.phone) }, { headers: { "Cache-Control": "no-store" } });
 }
