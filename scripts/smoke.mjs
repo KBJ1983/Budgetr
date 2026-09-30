@@ -99,7 +99,9 @@ try {
   // Switch to TEST1: empty budget → the app's own guide / empty budget
   await page.locator("#btnUserMenu").click();
   await page.locator("#btnUser").click();
-  await page.waitForURL(/\/login/);
+  // Log ud goes back to the landing page
+  await page.waitForURL((u) => u.pathname === "/");
+  await page.goto(`${BASE}/login`);
   await page.getByLabel("E-mail eller initialer").fill("TEST1");
   await page.getByRole("button", { name: "Log ind" }).click();
   await page.waitForURL(/\/app$/);

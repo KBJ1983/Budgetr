@@ -122,6 +122,31 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .imphdr select{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:6px 9px;font:inherit;color:var(--ink)}
 .drop{border:2px dashed var(--rule);border-radius:10px;padding:26px;text-align:center;color:var(--ink2);cursor:pointer}
 .drop:hover,.drop.over{border-color:var(--pine);color:var(--pine)}
+/* Draft budget: a bar above the pages while a draft is open, and the multi-file statement import */
+.dftbar{margin:16px 0 0;border:1px solid var(--ochre-rule);background:var(--ochre-bg);border-radius:12px;padding:12px 14px}
+.dftbar[hidden]{display:none}
+.dftin{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap}
+.dftt{display:flex;flex-direction:column;gap:2px;flex:1 1 240px;min-width:0}
+.dftt b{font-size:15px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.dftt span{font-size:13.5px;color:var(--ink2)}
+.dfta{display:flex;gap:8px;flex-wrap:wrap}
+.dfta button{font-size:13.5px!important;padding:7px 12px!important}
+.dfile{border:1px solid var(--rule);border-radius:10px;padding:12px;margin-top:10px}
+.dfh{display:flex;gap:6px 10px;align-items:baseline;flex-wrap:wrap;min-width:0}
+.dfh b{font-size:14.5px;font-weight:600;overflow-wrap:anywhere;min-width:0}
+.dfh span{font-size:13px;color:var(--ink2)}
+.dfh button{margin-left:auto}
+.dfh .bad{color:var(--brick)}
+.dfr{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:10px}
+.dfr label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink2);min-width:0}
+.dfr select,.dfr input,.dpers input,.dftf input{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:6px 9px;font:inherit;font-size:14px;color:var(--ink);min-width:0;width:100%}
+.dpers{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+.dpers input{width:150px}
+.dftf{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.dftf>label{font-size:13px;color:var(--ink2)}
+.imptbl input.dsc{width:100%;min-width:150px;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 7px;font:inherit;font-size:13px;color:var(--ink)}
+.dsec{margin:14px 0 0;font-size:15px}
+.dsec span{font-weight:400;color:var(--ink2);font-size:13px}
 .expmenu{position:absolute;right:0;top:calc(100% + 6px);z-index:40;background:var(--card);border:1px solid var(--rule);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;min-width:270px;display:flex;flex-direction:column;gap:2px}
 .expmenu[hidden]{display:none}
 .expmenu button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:7px;display:flex;flex-direction:column;gap:1px}
@@ -852,6 +877,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
       <button type="button" id="btnNew" class="primary">+ Ny budgetpost</button>
     </div>
   </div>
+  <div id="draftBar" class="dftbar" role="region" aria-label="Kladde" hidden></div>
   <div id="app"></div>
 </div>
 
@@ -964,7 +990,24 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   </form>
 </dialog>
 
-<input type="file" id="stmtFile" accept=".csv,.txt,.xlsx,.xls,text/csv" hidden>
+<input type="file" id="stmtFile" accept=".csv,.txt,.xlsx,.xls,.pdf,text/csv,application/pdf" hidden>
+<input type="file" id="dftFile" accept=".csv,.txt,.xlsx,.xls,.pdf,text/csv,application/pdf" multiple hidden>
+<dialog id="dlgDft">
+  <form method="dialog" id="frmDft" novalidate>
+    <h2 id="dftTitle">Ny kladde</h2>
+    <div id="dftBody"></div>
+    <div class="dlgfoot"><button type="button" id="dftDel" class="danger" hidden>Slet kladde</button>
+      <div class="rgt"><button type="button" id="dftCancel">Annullér</button><button type="submit" class="primary" id="dftOk">Opret kladde</button></div></div>
+  </form>
+</dialog>
+<dialog id="dlgDImp" class="wide">
+  <form method="dialog" id="frmDImp" novalidate>
+    <h2>Kontoudskrifter til kladden</h2>
+    <div id="dimpBody"></div>
+    <div class="dlgfoot"><span class="muted" id="dimpFoot" style="font-size:13px"></span>
+      <div class="rgt"><button type="button" id="dimpBack" hidden>Tilbage</button><button type="button" id="dimpClose">Luk</button><button type="button" class="primary" id="dimpNext">Find faste poster</button></div></div>
+  </form>
+</dialog>
 <input type="file" id="jsonFile" accept=".json,application/json" hidden>
 <dialog id="dlgImp" class="wide">
   <form method="dialog" id="frmImp">
@@ -1096,7 +1139,8 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
         <button type="button" class="dtile" data-exp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Hele budgettet gemt i én fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
       <div class="dcol"><h3>Importér</h3>
-        <button type="button" class="dtile" data-imp="stmt"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9 12 4l8 5M6 10v7M10 10v7M14 10v7M18 10v7M3.5 20h17"/></svg></span><span class="dtt"><b>Kontoudskrift</b><span>CSV eller Excel fra netbanken. Opdaterer ydelser og beløb</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-imp="stmt"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9 12 4l8 5M6 10v7M10 10v7M14 10v7M18 10v7M3.5 20h17"/></svg></span><span class="dtt"><b>Kontoudskrift</b><span>CSV, Excel eller PDF fra netbanken. Opdaterer ydelser og beløb</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-imp="draft"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v6"/><path d="M14 3v4h4M6 3v18h7"/><path d="M17 15v6M14 18h6"/></svg></span><span class="dtt"><b>Kladdebudget</b><span>Byg et budget ud fra kontoudskrifter fra flere konti, fx når to økonomier skal lægges sammen</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
         <button type="button" class="dtile" data-imp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Gendan et budget fra en gemt fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
     </div>
@@ -1370,7 +1414,7 @@ function personCalc(pid){
 function render(){
   const app=$('app');
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
-  renderScn();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
+  renderScn();renderDraftBar();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
   if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button></div>`;
     $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();return}
   syncENT();
@@ -2443,7 +2487,7 @@ function commit(){if(S&&S.settings)S.settings.touched=DAY();render();saveSoon()}
 function saveSoon(){dirty=true;clearTimeout(commit._t);commit._t=setTimeout(flush,500)}
 async function flush(){
   if(!dirty||saving)return; dirty=false; saving=true;
-  const body=JSON.parse(JSON.stringify(S));
+  const body=JSON.parse(JSON.stringify(rootS()));
   try{
     if(dbRef){await dbRef.set(body);setStatus('Gemt')}
     else{let inBrowser=true;try{localStorage.setItem(window.BUDGETR_KEY,JSON.stringify(body))}catch(e){inBrowser=false}
@@ -2465,11 +2509,11 @@ async function saveDisk(body){
     clearTimeout(saveDisk._t);setStatus('Gemt på denne computer');return true;
   }catch(e){
     try{localStorage.setItem(UNSYNCED,'1')}catch(e2){}
-    clearTimeout(saveDisk._t);saveDisk._t=setTimeout(()=>{if(S&&!dirty)saveDisk(JSON.parse(JSON.stringify(S)))},5000);return false;
+    clearTimeout(saveDisk._t);saveDisk._t=setTimeout(()=>{if(S&&!dirty)saveDisk(JSON.parse(JSON.stringify(rootS())))},5000);return false;
   }
 }
 // Closing the tab inside the save delay would otherwise lose the last change.
-addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.stringify(S);
+addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.stringify(rootS());
   try{localStorage.setItem(window.BUDGETR_KEY,j);localStorage.setItem(UNSYNCED,'1')}catch(e){}
   try{navigator.sendBeacon('/api/budget/'+encodeURIComponent(window.BUDGETR_USER),new Blob([j],{type:'application/json'}))}catch(e){}});
 
@@ -2924,7 +2968,7 @@ function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>
 /* Profile menu: export, import, theme and test user. */
 function umPick(b){const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
   if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
-  else if(y==='stmt'){if(!S){toast('Opret først et budget');return}openImp()}else if(y==='json')$('jsonFile').click();
+  else if(y==='stmt'){if(!S){toast('Opret først et budget');return}DR?openDImp():openImp()}else if(y==='draft'){if(!S){toast('Opret først et budget');return}openDft(null)}else if(y==='json')$('jsonFile').click();
   else if(u==='set'){if(!S){toast('Opret først et budget');return}openSet()}else if(u==='help')openHelp();else if(u==='data')$('dlgData').showModal();else if(u==='home')location.href='/';else if(u==='user')window.BUDGETR_LOGOUT()}
 menuSetup('btnUserMenu','userMenu',umPick);
 $('btnUserMenu').addEventListener('click',()=>{$('umSub').textContent=$('status').textContent||'Gemmes på denne computer'});
@@ -2934,15 +2978,25 @@ $('dlgData').addEventListener('click',ev=>{if(ev.target===$('dlgData'))$('dlgDat
 /* Scenario picker in the tab row (replaces the Nuværende/scenario buttons on each page). Items change, so it binds by delegation. */
 function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
   if(page!=='budget'){document.querySelector('[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
-function renderScn(){const sc=curSc(),b=$('btnScn');if(!b)return;b.hidden=!S;const bn=(S&&S.settings&&S.settings.title)||'Mit budget';
-  $('scnName').textContent=sc?(sc.name||'Scenarie'):bn;b.classList.toggle('on',!!sc);
-  const row=(id,name,sub,on,dots)=>`<div class="scrow${on?' on':''}"><button type="button" role="menuitem" data-scn="${id}" aria-checked="${on}"><b>${esc(name)}</b><span>${sub}</span></button><button type="button" class="scdots" role="menuitem" data-scdots="${id}" aria-label="${dots}" title="${dots}">···</button></div>`;
-  $('scnMenu').innerHTML=`<div class="mh">Budget</div>`+row('',bn,'Nuværende · det budget, I lever efter i dag',!sc,'Indstillinger for budgettet')
-    +((S&&S.scenarios||[]).length?`<div class="mh">Scenarier</div>`:'')+(S&&S.scenarios||[]).map(x=>row(x.id,x.name||'Scenarie',x.from?'Fra '+esc(x.from):'Scenarie',!!sc&&sc.id===x.id,'Indstillinger for '+esc(x.name||'scenariet'))).join('')
-    +`<div class="scsep"></div><button type="button" role="menuitem" class="scnew" data-scnew><b>+ Nyt scenarie</b><span>Prøv en ændring uden at røre det nuværende budget</span></button>`}
+function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!b)return;b.hidden=!S;const bn=(R&&R.settings&&R.settings.title)||'Mit budget';
+  b.querySelector('.lbl').textContent=dr?'Kladde':'Scenarie';
+  $('scnName').textContent=dr?(dr.name||'Kladde'):sc?(sc.name||'Scenarie'):bn;b.classList.toggle('on',!!sc||!!dr);
+  const row=(id,name,sub,on,dots,at='scn')=>`<div class="scrow${on?' on':''}"><button type="button" role="menuitem" data-${at}="${id}" aria-checked="${on}"><b>${esc(name)}</b><span>${sub}</span></button><button type="button" class="scdots" role="menuitem" data-${at}dots="${id}" aria-label="${dots}" title="${dots}">···</button></div>`;
+  // Scenarios belong to the primary budget, so an open draft shows only the budget and the drafts.
+  const SL=dr?[]:(S&&S.scenarios)||[],D=(R&&R.drafts)||[];
+  $('scnMenu').innerHTML=`<div class="mh">Budget</div>`+row('',bn,'Nuværende · det budget, I lever efter i dag',!sc&&!dr,'Indstillinger for budgettet')
+    +(SL.length?`<div class="mh">Scenarier</div>`:'')+SL.map(x=>row(x.id,x.name||'Scenarie',x.from?'Fra '+esc(x.from):'Scenarie',!!sc&&sc.id===x.id,'Indstillinger for '+esc(x.name||'scenariet'))).join('')
+    +(D.length?`<div class="mh">Kladder</div>`:'')+D.map(x=>row(x.id,x.name||'Kladde',x.mode==='prev'?'Det tidligere primære budget':'Kladde'+(x.files.length?` · ${x.files.length} ${x.files.length===1?'kontoudskrift':'kontoudskrifter'}`:''),!!dr&&dr.id===x.id,'Omdøb eller slet '+esc(x.name||'kladden'),'dft')).join('')
+    +`<div class="scsep"></div>`+(dr?'':`<button type="button" role="menuitem" class="scnew" data-scnew><b>+ Nyt scenarie</b><span>Prøv en ændring uden at røre det nuværende budget</span></button>`)
+    +`<button type="button" role="menuitem" class="scnew" data-dftnew><b>+ Ny kladde</b><span>Byg et nyt budget ud fra kontoudskrifter fra flere konti</span></button>`}
 {const btn=$('btnScn'),menu=$('scnMenu'),close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});renderScn();const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));if(o)menu.querySelector('button').focus()};
   menu.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;close();if(b.hasAttribute('data-scnew')){newScenario();return}
+    if(b.hasAttribute('data-dftnew')){openDft(null);return}
+    if(b.hasAttribute('data-dftdots')){openDft(b.dataset.dftdots);return}
+    if(b.hasAttribute('data-dft')){if(b.dataset.dft!==DR)enterDraft(b.dataset.dft);return}
+    // The budget row and its settings leave an open draft first.
+    if(DR)leaveDraft();
     if(b.hasAttribute('data-scdots')){const id=b.dataset.scdots;if(!id){openSet();setTimeout(()=>{$('setName').focus();$('setName').select()},50);return}
       // A scenario's settings (name, from, saldo, delete) are the panel at the top of the Budget tab.
       SC=id;if(page!=='budget')document.querySelector('[data-page="budget"]').click();else render();window.scrollTo(0,0);setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0);return}
@@ -3055,12 +3109,12 @@ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-set]');i
 
 /* ---------- sikkerhedskopi ---------- */
 function saveBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
-async function exportJson(){if(!S)return;const name='budgetpro-sikkerhedskopi-'+new Date().toISOString().slice(0,10)+'.json',data=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+async function exportJson(){if(!S)return;const name='budgetpro-sikkerhedskopi-'+new Date().toISOString().slice(0,10)+'.json',data=new Blob([JSON.stringify(rootS(),null,1)],{type:'application/json'});
   if(downloads){try{await downloads.save({filename:name,data});toast('Sikkerhedskopi gemt');return true}catch(e){if(e&&e.code==='declined')return false;toast('Sikkerhedskopien kunne ikke gemmes her');return false}}
   saveBlob(data,name);toast('Sikkerhedskopi gemt');return true}
 $('jsonFile').onchange=async ev=>{const f=ev.target.files[0];ev.target.value='';if(!f)return;
   try{const d=normalize(JSON.parse(await f.text()));if(!d){toast('Filen er ikke en gyldig sikkerhedskopi');return}
-    if(!confirm('Erstat hele budgettet med indholdet af '+f.name+'? Det gælder for alle, der bruger budgettet.'))return;S=d;SC=null;commit();toast('Sikkerhedskopi indlæst')}catch(e){toast('Filen kunne ikke læses')}};
+    if(!confirm('Erstat hele budgettet med indholdet af '+f.name+'? Det gælder for alle, der bruger budgettet.'))return;setPrimary(d);commit();toast('Sikkerhedskopi indlæst')}catch(e){toast('Filen kunne ikke læses')}};
 
 /* ---------- kontoudskrift ---------- */
 const nrm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9æøåäöü]+/g,' ').trim();
@@ -3096,21 +3150,25 @@ function matchEntries(tx){
       if(sc>=5&&(!best||sc>best.sc||(sc===best.sc&&t.date>best.t.date)))best={t,sc,kh}});
     return best?{e,t:best.t,sc:best.sc,kh:best.kh,newAmt:Math.round(Math.abs(best.t.amount)*100)/100}:null}).filter(Boolean);
 }
-function recurringUnmatched(tx,matched){
-  const gk=t=>nrm(t.text).split(' ').filter(w=>!/^\d+$/.test(w)).slice(0,3).join(' '), usedK=new Set(matched.map(m=>gk(m.t))), g={};
-  tx.filter(t=>t.amount<0).forEach(t=>{const k=gk(t);if(!k||usedK.has(k))return;(g[k]=g[k]||[]).push(t)});
+// Payee key: the first three words of the text without numbers (dates, card and reference numbers).
+const gkTx=t=>nrm(t.text).split(' ').filter(w=>!/^\d+$/.test(w)).slice(0,3).join(' ');
+// Groups of transactions with the same key (keyOf returns null to leave one out) that show up in at least two months.
+function recurGroups(tx,keyOf){const g={};tx.forEach(t=>{const k=keyOf(t);if(k)(g[k]=g[k]||[]).push(t)});
   return Object.entries(g).map(([k,L])=>{const months=new Set(L.map(t=>t.date.slice(0,7)));if(months.size<2)return null;L.sort((a,b)=>a.date<b.date?-1:1);
     const gaps=[];for(let i=1;i<L.length;i++)gaps.push((mIdx(L[i].date)-mIdx(L[i-1].date)));const gap=gaps.length?gaps.sort((a,b)=>a-b)[Math.floor(gaps.length/2)]:1;
     const freq=[1,2,3,4,6,12].reduce((a,f)=>Math.abs(f-gap)<Math.abs(a-gap)?f:a,1),last=L[L.length-1];
-    return {key:k,text:last.text,n:L.length,last,amount:Math.round(Math.abs(last.amount)*100)/100,freq,start:(+last.date.slice(5,7)-1)%freq+1}}).filter(Boolean).sort((a,b)=>b.amount-a.amount).slice(0,40);
+    return {key:k,L,months:months.size,text:last.text,n:L.length,last,amount:Math.round(Math.abs(last.amount)*100)/100,freq,start:(+last.date.slice(5,7)-1)%freq+1}}).filter(Boolean)}
+function recurringUnmatched(tx,matched){
+  const usedK=new Set(matched.map(m=>gkTx(m.t)));
+  return recurGroups(tx.filter(t=>t.amount<0),t=>{const k=gkTx(t);return k&&!usedK.has(k)?k:null}).sort((a,b)=>b.amount-a.amount).slice(0,40);
 }
 let IMP=null;
 function openImp(){IMP={stage:'file',acc:S.accounts[0]?.id||''};renderImp();$('dlgImp').showModal()}
 function renderImp(){const b=$('impBody');$('btnImpApply').hidden=IMP.stage!=='review';
   if(IMP.stage==='file'){
-    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken som CSV eller Excel, fx de seneste 3–12 måneder, og vælg filen her. Dato, tekst og beløb findes automatisk. Filen læses kun i din browser.</p>
+    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken som CSV, Excel eller PDF, fx de seneste 3–12 måneder, og vælg filen her. Dato, tekst og beløb findes automatisk. Filen læses kun i din browser.</p>
       <div class="imphdr" style="margin-bottom:10px"><label for="impAcc">Kontoudskriften er fra</label><select id="impAcc">${S.accounts.map(a=>`<option value="${a.id}" ${a.id===IMP.acc?'selected':''}>${esc(a.name)}</option>`).join('')}</select></div>
-      <div class="drop" id="impDrop" tabindex="0" role="button">Træk filen herind, eller <b>klik for at vælge</b><br><span style="font-size:12px">CSV (semikolon, komma eller tab), .xlsx eller .xls</span></div>
+      <div class="drop" id="impDrop" tabindex="0" role="button">Træk filen herind, eller <b>klik for at vælge</b><br><span style="font-size:12px">CSV (semikolon, komma eller tab), .xlsx, .xls eller PDF</span></div>
       ${IMP.err?`<div class="verdict bad" style="margin-top:10px">${esc(IMP.err)}</div>`:''}`;
     $('impAcc').onchange=e=>IMP.acc=e.target.value;const d=$('impDrop');d.onclick=()=>$('stmtFile').click();d.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')$('stmtFile').click()};
     d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');d.ondrop=e=>{e.preventDefault();d.classList.remove('over');const f=e.dataTransfer.files[0];if(f)readStmt(f)};
@@ -3130,11 +3188,47 @@ function renderImp(){const b=$('impBody');$('btnImpApply').hidden=IMP.stage!=='r
   b.addEventListener('change',upd);upd();
   if(curSc())$('impFoot').textContent+=' · Opdaterer det nuværende budget, ikke scenariet';
 }
-async function readStmt(f){try{let rows;
-    if(/\.xlsx?$/i.test(f.name)){if(!window.XLSX){IMP.err='Excel-modulet kunne ikke indlæses. Gem filen som CSV og prøv igen.';renderImp();return}
+/* PDF statements: pdf.js (vendor/pdfjs, loaded on first use) gives the text pieces with positions. Pieces on the same
+   height become a line; a line that starts with a date and ends with one or two amounts (amount, then balance) is a
+   transaction. Scanned PDFs have no text and give nothing. */
+let PDFJS=null;
+async function pdfLines(buf){
+  if(!PDFJS){PDFJS=await import('/budgetr-app/vendor/pdfjs/pdf.min.mjs');PDFJS.GlobalWorkerOptions.workerSrc='/budgetr-app/vendor/pdfjs/pdf.worker.min.mjs'}
+  const task=PDFJS.getDocument({data:new Uint8Array(buf),isEvalSupported:false}),doc=await task.promise,out=[];
+  try{for(let p=1;p<=doc.numPages;p++){const tc=await (await doc.getPage(p)).getTextContent();
+    const I=tc.items.filter(i=>i.str&&i.str.trim()).map(i=>({s:i.str.trim(),x:i.transform[4],y:i.transform[5],h:Math.abs(i.transform[3])||8})).sort((a,b)=>b.y-a.y||a.x-b.x),rows=[];
+    I.forEach(i=>{const r=rows.find(r=>Math.abs(r.y-i.y)<=Math.max(2,i.h*.4));if(r)r.i.push(i);else rows.push({y:i.y,i:[i]})});
+    rows.forEach(r=>out.push(r.i.sort((a,b)=>a.x-b.x).map(i=>i.s).join('  ')))}}
+  finally{task.destroy()}
+  return out}
+const PDF_AMT='[-−–+]?\\d{1,3}(?:[.\\s]\\d{3})*,\\d{2}-?';
+const PDF_LINE=new RegExp(`^(\\d{1,2}[.\\-/]\\d{1,2}(?:[.\\-/]\\d{2,4})?)\\s+(.*?)\\s+(${PDF_AMT})(?:\\s+(${PDF_AMT}))?(?:\\s*(?:kr\\.?|dkk))?$`,'i');
+function pdfTx(lines){
+  // Dates without a year get the year most dates in the document have.
+  const Y={};lines.forEach(l=>(l.match(/\b\d{1,2}[.\-/]\d{1,2}[.\-/](\d{4})\b/g)||[]).forEach(d=>{const y=d.slice(-4);Y[y]=(Y[y]||0)+1}));
+  const yr=(Object.entries(Y).sort((a,b)=>b[1]-a[1])[0]||[String(new Date().getFullYear())])[0];
+  const amt=v=>{v=v.replace(/\s/g,'');const neg=/-$/.test(v),n=parseAmtX(v.replace(/-$/,''));return neg?-n:n};
+  const tx=[];lines.forEach(l=>{const m=PDF_LINE.exec(l.replace(/\s+/g,' ').trim());if(!m)return;
+    const date=parseDateX(m[1].split(/[.\-/]/).length===2?m[1]+'.'+yr:m[1]);
+    // Drop a second date (the value date) and a trailing currency code from the text.
+    const text=m[2].replace(/^\d{1,2}[.\-/]\d{1,2}(?:[.\-/]\d{2,4})?\s+/,'').replace(/\s+(?:dkk|kr\.?)$/i,'').trim(),a=amt(m[3]);
+    if(date&&text&&!isNaN(a))tx.push({date,text,amount:a,saldo:m[4]?amt(m[4]):null})});
+  // Some banks print every amount without a sign; the change in the balance tells whether money went in or out.
+  if(tx.length>2&&!tx.some(t=>t.amount<0)&&tx.filter(t=>t.saldo!=null).length>2)tx.forEach((t,i)=>{if(t.saldo==null)return;
+    const fit=o=>o&&o.saldo!=null&&Math.abs(Math.abs(t.saldo-o.saldo)-t.amount)<0.01,p=tx[i-1],n=tx[i+1];
+    if(fit(p))t.amount=Math.sign(t.saldo-p.saldo)*t.amount||t.amount;else if(fit(n))t.amount=Math.sign(t.saldo-n.saldo)*t.amount||t.amount});
+  tx.forEach(t=>delete t.saldo);
+  return {tx,cols:{date:'dato',text:'tekst',amount:'beløb'},err:tx.length?null:'Der blev ikke fundet nogen posteringer i PDF-filen. Er den scannet, så hent kontoudskriften som CSV i stedet.'}}
+// Transactions from a statement file: CSV/text, Excel or PDF.
+async function fileTx(f){
+  if(/\.pdf$/i.test(f.name)||f.type==='application/pdf')return pdfTx(await pdfLines(await f.arrayBuffer()));
+  let rows;
+    if(/\.xlsx?$/i.test(f.name)){if(!window.XLSX)return {tx:[],err:'Excel-modulet kunne ikke indlæses. Gem filen som CSV og prøv igen.'};
       const wb=window.XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});rows=window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''})}
     else{const buf=await f.arrayBuffer();let t=new TextDecoder('utf-8').decode(buf);if(t.includes('\uFFFD'))t=new TextDecoder('windows-1252').decode(buf);rows=csvRows(t)}
-    const r=rowsToTx(rows);if(r.err){IMP.err=r.err;renderImp();return}
+  return rowsToTx(rows)}
+async function readStmt(f){try{
+    const r=await fileTx(f);if(r.err){IMP.err=r.err;renderImp();return}
     const M=matchEntries(r.tx);IMP={...IMP,stage:'review',tx:r.tx,cols:r.cols,matched:M,rec:recurringUnmatched(r.tx,M),err:null};renderImp()}
   catch(e){IMP.err='Filen kunne ikke læses: '+(e&&e.message||e);renderImp()}}
 $('stmtFile').onchange=ev=>{const f=ev.target.files[0];ev.target.value='';if(f)readStmt(f)};
@@ -3149,6 +3243,177 @@ $('btnImpApply').onclick=()=>{const b=$('impBody'),unchk=$('impUnchk').checked;l
     if(sl.value==='__new'){S.entries.push({id:uid(),type:'udgift',desc:r.text.slice(0,60),key:'',category:'Importeret',freq:r.freq,start:r.start,amount:r.amount,account:IMP.acc,payer:acc&&acc.type!=='faelles'&&acc.owner?acc.owner:FAELLES,active:true,check:true,bank:true,note:'Oprettet fra kontoudskrift',since:r.last.date});c++}
     else{const e=S.entries.find(x=>x.id===sl.value);if(e&&setEntryAmount(e,r.amount,r.last.date,unchk))n++;if(e&&!e.key){const k=(r.text.match(/\d{6,}/)||[])[0];if(k)e.key=k}}});
   $('dlgImp').close();commit();toast(`${n} ${n===1?'post':'poster'} opdateret${c?`, ${c} oprettet`:''}`)};
+
+/* ---------- kladder ---------- */
+/* A draft is a whole budget kept inside the primary one (drafts[].data), e.g. built from bank statements from several
+   accounts when two households merge. While a draft is open, S is the draft's data and ROOT the primary budget, so every
+   page and dialog works on the draft and saving always stores ROOT. "Sæt som primært budget" swaps them and keeps the
+   old primary budget as a draft. */
+let DR=null, ROOT=null;
+const DKEY=window.BUDGETR_KEY+':draft';
+const rootS=()=>DR&&ROOT?ROOT:S;
+const curDraft=()=>DR&&ROOT?(ROOT.drafts||[]).find(d=>d.id===DR)||null:null;
+function enterDraft(id){const R=rootS(),d=R&&(R.drafts||[]).find(x=>x.id===id);if(!d)return false;
+  ROOT=R;DR=id;S=d.data;SC=null;try{sessionStorage.setItem(DKEY,id)}catch(e){}render();window.scrollTo(0,0);return true}
+function leaveDraft(){if(!DR)return;S=ROOT;DR=null;ROOT=null;SC=null;try{sessionStorage.removeItem(DKEY)}catch(e){}render();window.scrollTo(0,0)}
+// A reload keeps the open draft (per tab).
+function reopenDraft(){try{const id=sessionStorage.getItem(DKEY);if(id&&!enterDraft(id))sessionStorage.removeItem(DKEY)}catch(e){}}
+// Replaces the primary budget (guide, backup) and keeps the drafts unless the new budget brings its own.
+function setPrimary(N){const R=rootS();if(R&&(R.drafts||[]).length&&!(N.drafts||[]).length)N.drafts=R.drafts;
+  DR=null;ROOT=null;try{sessionStorage.removeItem(DKEY)}catch(e){}S=N;SC=null}
+function draftData(mode,name){const R=rootS(),sp=R.settings||{};
+  if(mode==='copy'){const d=JSON.parse(JSON.stringify(R));delete d.drafts;
+    // Scenarios stay with the primary budget; the copy keeps the goals the current budget has.
+    d.scenarios=[];d.goals=(d.goals||[]).filter(g=>goalIn(g,'base'));d.goals.forEach(g=>g.scopes=['base']);return normalize(d)}
+  // From scratch: the household's split, bank requirement and reminders carry over; the title is the draft's name.
+  const d=blank();d.loans=[];d.scenarios=[];d.settings={split:sp.split||'indkomst',manualPct:sp.manualPct??50,title:name};
+  ['bank','remind'].forEach(k=>{if(sp[k])d.settings[k]=JSON.parse(JSON.stringify(sp[k]))});if(sp.milestones!==undefined)d.settings.milestones=sp.milestones;
+  return normalize(d)}
+function renderDraftBar(){const b=$('draftBar');if(!b)return;const d=curDraft();b.hidden=!d;if(!d){b.innerHTML='';return}const n=d.files.length;
+  b.innerHTML=`<div class="dftin"><div class="dftt"><b>Kladde: ${esc(d.name)}</b><span>Du arbejder i en kladde. Det primære budget er ikke ændret${n?`. ${n} ${n===1?'kontoudskrift':'kontoudskrifter'} lagt ind`:''}.</span></div>
+    <div class="dfta"><button type="button" data-dfb="imp">Tilføj kontoudskrifter</button><button type="button" data-dfb="close">Luk kladden</button><button type="button" class="primary" data-dfb="use">Sæt som primært budget</button></div></div>`;
+  b.querySelectorAll('[data-dfb]').forEach(x=>x.onclick=()=>{const a=x.dataset.dfb;a==='imp'?openDImp():a==='close'?leaveDraft():promoteDraft()})}
+function promoteDraft(){const d=curDraft(),R=ROOT;if(!d)return;
+  if(!confirm(`Sæt "${d.name}" som primært budget? Det nuværende budget gemmes som en kladde, så du kan gå tilbage til det. Det gælder for alle, der bruger budgettet.`))return;
+  const old=JSON.parse(JSON.stringify(R));delete old.drafts;
+  const N=d.data;N.drafts=(R.drafts||[]).filter(x=>x.id!==d.id);
+  N.drafts.push({id:'d'+uid(),name:'Tidligere budget, '+fmtDate(DAY()),created:DAY(),mode:'prev',files:[],data:old});
+  DR=null;ROOT=null;try{sessionStorage.removeItem(DKEY)}catch(e){}S=N;SC=null;commit();window.scrollTo(0,0);toast(`${d.name} er nu det primære budget`)}
+let DFT=null;
+function openDft(id){const R=rootS();if(!R)return;const d=id&&(R.drafts||[]).find(x=>x.id===id);DFT={id:d?d.id:null};
+  $('dftTitle').textContent=d?'Kladde':'Ny kladde';$('dftOk').textContent=d?'Gem':'Opret kladde';$('dftDel').hidden=!d;$('dftDel').textContent='Slet kladde';delete $('dftDel').dataset.armed;
+  const n=(R.drafts||[]).filter(x=>x.mode!=='prev').length+1;
+  $('dftBody').innerHTML=d?`<div class="dftf"><label for="dftName">Navn</label><input id="dftName" value="${esc(d.name)}" autocomplete="off"></div>
+      <p class="wzp">Oprettet ${esc(fmtDate(d.created))}. ${d.files.length?'Kontoudskrifter: '+d.files.map(f=>esc(f.name)).join(', ')+'.':'Ingen kontoudskrifter endnu.'}</p>`
+    :`<p class="wzp">En kladde er et budget ved siden af det, du bruger i dag. Læg kontoudskrifter fra alle konti ind i den, ret til, og sæt den som primært budget, når den er færdig. Indtil da er det nuværende budget uændret.</p>
+      <div class="dftf"><label for="dftName">Navn</label><input id="dftName" value="${esc('Kladde '+n)}" autocomplete="off"></div>
+      <label class="wzopt"><input type="radio" name="dftMode" value="blank" checked><span>Start fra bunden<br><span class="muted" style="font-size:13px">Til en ny økonomi, fx når to økonomier skal lægges sammen</span></span></label>
+      <label class="wzopt"><input type="radio" name="dftMode" value="copy"><span>Start med en kopi af det nuværende budget<br><span class="muted" style="font-size:13px">Ret i en kopi, og hent de nyeste beløb ind fra kontoudskrifterne</span></span></label>`;
+  $('dlgDft').showModal();setTimeout(()=>{const i=$('dftName');i.focus();i.select()},30)}
+$('frmDft').onsubmit=ev=>{ev.preventDefault();const R=rootS(),name=$('dftName').value.trim()||'Kladde';
+  if(DFT.id){const d=(R.drafts||[]).find(x=>x.id===DFT.id);if(d)d.name=name;$('dlgDft').close();saveSoon();render();return}
+  const mode=(document.querySelector('[name=dftMode]:checked')||{}).value||'blank',id='d'+uid();
+  R.drafts=R.drafts||[];R.drafts.push({id,name,created:DAY(),mode,files:[],data:draftData(mode,name)});$('dlgDft').close();saveSoon();
+  enterDraft(id);openDImp()};
+$('dftCancel').onclick=()=>$('dlgDft').close();
+$('dftDel').onclick=()=>{const b=$('dftDel');if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='Slet kladden for altid?';return}
+  const R=rootS();if(DR===DFT.id)leaveDraft();R.drafts=(R.drafts||[]).filter(x=>x.id!==DFT.id);$('dlgDft').close();saveSoon();render();toast('Kladden er slettet')};
+
+/* Statement import for a draft: several files at once, each tied to an account (an existing one, or a new one with an
+   owner). Transfers between the uploaded accounts (the same amount out of one and into another within 3 days) are kept
+   out of expenses and income. Only the entries chosen are stored; the transactions stay in the browser. */
+let DI=null;
+const CATKW=[['Bolig & forsyning',/husleje|boligfor|andelsbolig|realkredit|totalkredit|nykredit|ejendom|ørsted|orsted|norlys|andel energi|ewii|forsyning|fjernvarme|vandværk|renovation/],
+  ['Forsikring',/forsikring|tryg|topdanmark|alka|codan|gjensidige|a kasse|akasse|fagforening/],
+  ['Abonnementer',/netflix|spotify|hbo|viaplay|disney|tv 2|youtube|apple com|icloud|storytel|mofibo|podimo|fitness|puregym/],
+  ['Kommunikation',/telenor|telia|yousee|cbb|lebara|oister|hiper|fastspeed|bredbånd|mobilabonnement/],
+  ['Transport',/rejsekort|dsb|parkering|easypark|circle k|q8|shell|uno x|ingo|billån|brobizz/],
+  ['Børn',/institution|sfo|fritidshjem|vuggestue|børnehave|dagpleje/],
+  ['Husholdning',/netto|rema|føtex|bilka|lidl|aldi|meny|coop|superbrugsen|kvickly|løvbjerg/]];
+const catGuess=t=>{const s=nrm(t);return (CATKW.find(([,re])=>re.test(s))||['Importeret'])[0]};
+const dFile=id=>DI.files.find(f=>f.id===id);
+const dAccKey=f=>f.acc==='__new'?'n:'+f.id:f.acc;
+function dAccName(k){const f=DI.files.find(f=>'n:'+f.id===k);if(f)return (f.newName||'').trim()||'Ny konto';const a=S.accounts.find(a=>a.id===k);return a?a.name:''}
+function dOwner(k){const f=DI.files.find(f=>'n:'+f.id===k);if(f)return f.owner;const a=S.accounts.find(a=>a.id===k);return a&&a.type!=='faelles'&&a.owner?a.owner:FAELLES}
+const dSpan=L=>({from:L.reduce((a,t)=>t.date<a?t.date:a,'9999'),to:L.reduce((a,t)=>t.date>a?t.date:a,'0000')});
+const dPayerOpts=v=>`<option value="${FAELLES}" ${v===FAELLES?'selected':''}>Fælles</option>${S.persons.map(p=>`<option value="${p.id}" ${v===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}`;
+function openDImp(){if(!curDraft())return;DI={stage:'files',files:[]};renderDImp();$('dlgDImp').showModal()}
+async function dAddFiles(list){const F=[...list];if(!F.length||!DI)return;const copy=curDraft()&&curDraft().mode==='copy';
+  const add=F.filter(f=>!DI.files.some(x=>x.name===f.name&&x.size===f.size)).map(f=>{const fn=nrm(f.name),who=S.persons.find(p=>p.name&&fn.includes(nrm(p.name))),
+      nm=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim().slice(0,40);
+    // In a copy the file most likely belongs to an account named like it, or to the account of the person it names.
+    const acc=copy&&(S.accounts.find(a=>nrm(a.name)&&fn.includes(nrm(a.name)))||(who&&S.accounts.find(a=>a.type!=='faelles'&&a.owner===who.id))||S.accounts[0]);
+    return {id:'f'+uid(),name:f.name,size:f.size,file:f,busy:true,tx:null,err:null,acc:acc?acc.id:'__new',
+      newName:nm?nm.charAt(0).toUpperCase()+nm.slice(1):'Ny konto',owner:who?who.id:FAELLES}});
+  if(add.length<F.length)toast('En fil, der allerede er lagt ind, blev sprunget over');
+  DI.files.push(...add);renderDImp();
+  for(const f of add){try{const r=await fileTx(f.file);f.tx=r.tx||[];f.err=r.err}catch(e){f.tx=[];f.err='Filen kunne ikke læses: '+(e&&e.message||e)}
+    f.busy=false;delete f.file;if(DI&&DI.stage==='files'&&$('dlgDImp').open)renderDImp()}}
+$('dftFile').onchange=ev=>{const L=[...ev.target.files];ev.target.value='';dAddFiles(L)};
+function dAnalyse(){const F=DI.files.filter(f=>f.tx&&f.tx.length),acc={};
+  // Two exports of the same account can overlap; each transaction counts once.
+  F.forEach(f=>{const k=dAccKey(f),a=acc[k]=acc[k]||{k,tx:[],seen:new Set()};
+    f.tx.forEach(t=>{const h=t.date+'|'+t.amount+'|'+t.text;if(a.seen.has(h))return;a.seen.add(h);a.tx.push({...t,acc:k})})});
+  const A=Object.values(acc),all=A.flatMap(a=>a.tx),days=(x,y)=>Math.abs(Date.parse(x)-Date.parse(y))/864e5,C=[];let n=0;const cid=()=>'c'+(n++);
+  const pairs=[];if(A.length>1){const pos=all.filter(t=>t.amount>0);
+    all.filter(t=>t.amount<0).forEach(t=>{const u=pos.find(u=>!u.tr&&u.acc!==t.acc&&Math.abs(u.amount+t.amount)<0.005&&days(u.date,t.date)<=3);if(u){t.tr=u.tr=true;pairs.push({...t,to:u.acc})}})}
+  recurGroups(pairs,t=>t.acc+'>'+t.to+'|'+Math.round(-t.amount)).forEach(g=>C.push({id:cid(),kind:'overfoersel',on:true,from:g.last.acc,to:g.last.to,
+    desc:`${dAccName(g.last.acc)} til ${dAccName(g.last.to)}`,freq:g.freq,start:g.start,amount:g.amount,n:g.n,last:g.last}));
+  // Entries already in the draft (a copy, or an earlier import) get the new amount instead of a second entry.
+  const rest=all.filter(t=>!t.tr),M=matchEntries(rest),used=new Set(M.map(m=>m.t.acc+'|'+gkTx(m.t))),fixed=new Set();
+  M.forEach(m=>{if(Math.abs(m.newAmt-(+m.e.amount||0))>=0.5)C.push({id:cid(),kind:'update',on:true,e:m.e,desc:m.e.desc,amount:m.newAmt,last:m.t,freq:+m.e.freq||1})});
+  [-1,1].forEach(sg=>recurGroups(rest.filter(t=>Math.sign(t.amount)===sg),t=>{const k=gkTx(t);return k&&!used.has(t.acc+'|'+k)?t.acc+'|'+k:null}).forEach(g=>{
+    // Many payments a month to the same place (the supermarket) is spending, not a fixed expense.
+    if(g.n>g.months*1.5)return;
+    g.L.forEach(t=>fixed.add(t));const L3=g.L.slice(-3),k=g.last.acc,own=dOwner(k);
+    // A transfer to an account that wasn't uploaded is rarely an expense or income, so it starts unticked.
+    C.push({id:cid(),kind:sg<0?'udgift':'indtaegt',on:!/overf[øo]r/i.test(g.text)||/l[øo]n/i.test(g.text),acc:k,desc:g.text.slice(0,60),freq:g.freq,start:g.start,n:g.n,last:g.last,
+      amount:Math.round(L3.reduce((a,t)=>a+Math.abs(t.amount),0)/L3.length*100)/100,
+      // Income belongs to a person (it sets the split); on a shared account it goes to the first person until changed.
+      payer:sg>0&&own===FAELLES?(S.persons[0]||{}).id||FAELLES:own,category:sg<0?catGuess(g.text):/l[øo]n|salary/i.test(g.text)?'Løn':''})}));
+  // What is left of the payments out of each account: one optional entry with the monthly average.
+  A.forEach(a=>{const L=a.tx.filter(t=>t.amount<0&&!t.tr&&!fixed.has(t)&&!used.has(t.acc+'|'+gkTx(t)));if(L.length<3)return;
+    const sp=dSpan(a.tx),mo=Math.max(1,(Date.parse(sp.to)-Date.parse(sp.from))/864e5/30.44),amount=Math.round(L.reduce((s,t)=>s-t.amount,0)/mo/100)*100;if(amount<100)return;
+    C.push({id:cid(),kind:'forbrug',on:false,acc:a.k,payer:dOwner(a.k),desc:'Forbrug i øvrigt, '+dAccName(a.k),category:'Husholdning',freq:1,start:1,amount,n:L.length})});
+  DI.cand=C;DI.nTx=all.length;DI.nPairs=pairs.length;DI.nFiles=F.length}
+function renderDImp(){const b=$('dimpBody'),rev=DI.stage==='review',nx=$('dimpNext');$('dimpBack').hidden=!rev;
+  if(!rev){const ok=DI.files.filter(f=>f.tx&&f.tx.length);
+    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken for hver konto, der skal med, fx de seneste 3–12 måneder, og læg filerne ind her. Læg gerne alle filer ind på én gang, så overførsler mellem egne konti kan findes. Filerne læses kun i din browser, og kun de poster, du vælger, bliver gemt.</p>
+      <h3 class="dsec" style="margin-top:0">Personer i kladden</h3>
+      <div class="dpers">${S.persons.map(p=>`<input data-dpn="${p.id}" value="${esc(p.name)}" aria-label="Navn på person" autocomplete="off">`).join('')}${S.persons.length<6?'<button type="button" id="dAddP">Tilføj person</button>':''}</div>
+      <h3 class="dsec">Kontoudskrifter</h3>
+      ${DI.files.map(f=>{const sp=f.tx&&f.tx.length?dSpan(f.tx):null;return `<div class="dfile"><div class="dfh"><b>${esc(f.name)}</b>
+        <span${f.err?' class="bad"':''}>${f.busy?'Læser filen…':f.err?esc(f.err):`${f.tx.length} posteringer fra ${esc(fmtDate(sp.from))} til ${esc(fmtDate(sp.to))}`}</span>
+        <button type="button" class="ghost danger" data-dfx="${f.id}" aria-label="Fjern ${esc(f.name)}">✕</button></div>
+        ${sp?`<div class="dfr"><label>Konto<select data-dfac="${f.id}">${S.accounts.map(a=>`<option value="${a.id}" ${f.acc===a.id?'selected':''}>${esc(a.name)}</option>`).join('')}<option value="__new" ${f.acc==='__new'?'selected':''}>Ny konto</option></select></label>
+          ${f.acc==='__new'?`<label>Navn på kontoen<input data-dfn="${f.id}" value="${esc(f.newName)}" autocomplete="off"></label><label>Kontoen tilhører<select data-dfo="${f.id}">${dPayerOpts(f.owner)}</select></label>`:''}</div>`:''}</div>`}).join('')}
+      <div class="drop" id="dDrop" tabindex="0" role="button" style="margin-top:10px">Træk filerne herind, eller <b>klik for at vælge</b><br><span style="font-size:12px">CSV, Excel eller PDF. Du kan vælge flere filer på én gang</span></div>`;
+    b.querySelectorAll('[data-dpn]').forEach(i=>i.onchange=()=>{const p=S.persons.find(x=>x.id===i.dataset.dpn),v=i.value.trim();if(p&&v){p.name=v;commit()}});
+    const ap=$('dAddP');if(ap)ap.onclick=()=>{S.persons.push({id:'p'+uid(),name:'Person '+(S.persons.length+1)});commit();renderDImp();const L=b.querySelectorAll('[data-dpn]'),i=L[L.length-1];if(i){i.focus();i.select()}};
+    b.querySelectorAll('[data-dfx]').forEach(x=>x.onclick=()=>{DI.files=DI.files.filter(f=>f.id!==x.dataset.dfx);renderDImp()});
+    b.querySelectorAll('[data-dfac]').forEach(s=>s.onchange=()=>{dFile(s.dataset.dfac).acc=s.value;renderDImp()});
+    b.querySelectorAll('[data-dfn]').forEach(i=>i.oninput=()=>{dFile(i.dataset.dfn).newName=i.value});
+    b.querySelectorAll('[data-dfo]').forEach(s=>s.onchange=()=>{dFile(s.dataset.dfo).owner=s.value});
+    const d=$('dDrop');d.onclick=()=>$('dftFile').click();d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('dftFile').click()}};
+    d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');d.ondrop=e=>{e.preventDefault();d.classList.remove('over');dAddFiles(e.dataTransfer.files)};
+    nx.textContent='Find faste poster';nx.disabled=!ok.length||DI.files.some(f=>f.busy);
+    $('dimpFoot').textContent=ok.length?`${ok.length} ${ok.length===1?'fil':'filer'} klar`:'';return}
+  const C=DI.cand,FQ=[1,2,3,4,6,12];
+  const row=c=>{const i=c.id,up=c.kind==='update',note=up?`Nu ${kr(+c.e.amount||0)} · seneste postering ${fmtDate(c.last.date)}`:c.kind==='forbrug'?`${c.n} enkeltstående betalinger, gennemsnit pr. måned`:`${c.n} gange, senest ${fmtDate(c.last.date)}${c.acc?' · '+dAccName(c.acc):''}`;
+    return `<tr><td class="chk"><input type="checkbox" data-con="${i}" ${c.on?'checked':''} aria-label="Tag ${esc(c.desc)} med"></td>
+      <td class="desc">${up?esc(c.desc):`<input class="dsc" data-cd="${i}" value="${esc(c.desc)}" aria-label="Beskrivelse">`}<span class="note">${esc(note)}</span></td>
+      <td>${up?esc(FREQ[c.freq]||''):`<select data-cf="${i}" aria-label="Hyppighed">${FQ.map(f=>`<option value="${f}" ${c.freq===f?'selected':''}>${FREQ[f]}</option>`).join('')}</select>`}</td>
+      <td class="r"><input class="amt" data-ca="${i}" inputmode="decimal" value="${nf.format(c.amount)}" aria-label="Beløb"></td>
+      <td>${up?'':c.kind==='overfoersel'?esc(dAccName(c.from)+' → '+dAccName(c.to)):`<select data-cp="${i}" aria-label="Betales af">${dPayerOpts(c.payer)}</select>`}</td></tr>`};
+  const sec=(title,sub,kind,last)=>{const L=C.filter(c=>c.kind===kind);return L.length?`<h3 class="dsec">${title} <span>${sub}</span></h3><div class="tablewrap imptbl"><table><thead><tr><th></th><th>Post</th><th>Hyppighed</th><th class="r">Beløb</th><th>${last}</th></tr></thead><tbody>${L.map(row).join('')}</tbody></table></div>`:''};
+  b.innerHTML=`<p class="wzp">${DI.nTx} posteringer fra ${DI.nFiles} ${DI.nFiles===1?'fil':'filer'}. ${DI.nPairs?`${DI.nPairs} overførsler mellem egne konti er holdt ude af udgifter og indtægter. `:''}${C.length?'Vælg de poster, der skal med i kladden. Alt kan rettes bagefter under Budgetposter.':'Der blev ikke fundet nogen faste poster. En fast betaling skal gå igen i mindst to måneder, så hent gerne en længere periode.'}</p>
+    ${sec('Poster i kladden med nyt beløb','Det gamle beløb gemmes i postens udvikling','update','')}
+    ${sec('Faste udgifter','Betalinger, der går igen','udgift','Betales af')}
+    ${sec('Indtægter','Indbetalinger, der går igen','indtaegt','Hvis indtægt')}
+    ${sec('Overførsler mellem egne konti','Tælles ikke som udgift eller indtægt','overfoersel','Fra og til')}
+    ${sec('Forbrug i øvrigt','Indkøb og andre enkeltstående betalinger, som én post pr. konto','forbrug','Betales af')}`;
+  const get=id=>C.find(c=>c.id===id),upd=()=>{const k=C.filter(c=>c.on).length;$('dimpFoot').textContent=k?k+' poster valgt':'Intet valgt';nx.disabled=!k};
+  b.querySelectorAll('[data-con]').forEach(x=>x.onchange=()=>{get(x.dataset.con).on=x.checked;upd()});
+  b.querySelectorAll('[data-cd]').forEach(x=>x.oninput=()=>{get(x.dataset.cd).desc=x.value});
+  b.querySelectorAll('[data-cf]').forEach(x=>x.onchange=()=>{get(x.dataset.cf).freq=+x.value});
+  b.querySelectorAll('[data-cp]').forEach(x=>x.onchange=()=>{get(x.dataset.cp).payer=x.value});
+  b.querySelectorAll('[data-ca]').forEach(x=>x.oninput=()=>{const c=get(x.dataset.ca);c.amount=parseAmtX(x.value);c.on=true;const cb=b.querySelector(`[data-con="${c.id}"]`);if(cb)cb.checked=true;upd()});
+  nx.textContent='Tilføj til kladden';upd()}
+function dApply(){const d=curDraft();if(!d||!DI)return;const F=DI.files.filter(f=>f.tx&&f.tx.length),accId={};let ne=0,nu=0,nt=0;
+  F.forEach(f=>{const k=dAccKey(f);if(accId[k])return;if(f.acc!=='__new'){accId[k]=f.acc;return}const id='k'+uid();
+    S.accounts.push({id,name:(f.newName||'').trim()||'Ny konto',number:'',type:f.owner===FAELLES?'faelles':'personlig',owner:f.owner===FAELLES?'':f.owner,startSaldo:0});accId[k]=id});
+  DI.cand.filter(c=>c.on).forEach(c=>{const amt=Math.round((+c.amount||0)*100)/100;if(!(amt>0))return;
+    if(c.kind==='update'){if(setEntryAmount(c.e,amt,c.last.date,true))nu++;return}
+    const desc=(c.desc||'').trim().slice(0,60)||'Post',since=c.last?c.last.date:DAY();
+    if(c.kind==='overfoersel'){S.entries.push({id:uid(),type:'overfoersel',desc,key:'',category:'',freq:c.freq,start:c.start,amount:amt,from:accId[c.from],to:accId[c.to],active:true,note:'Fundet i kontoudskrifter'});nt++;return}
+    S.entries.push({id:uid(),type:c.kind==='indtaegt'?'indtaegt':'udgift',desc,key:c.last?(c.last.text.match(/\d{6,}/)||[])[0]||'':'',category:c.category||'',freq:c.freq,start:c.start||1,amount:amt,
+      account:accId[c.acc]||'',payer:c.payer||FAELLES,active:true,check:true,bank:c.category!=='Husholdning',note:c.kind==='forbrug'?'Gennemsnit fra kontoudskrift':'Oprettet fra kontoudskrift',since});ne++});
+  F.forEach(f=>{const sp=dSpan(f.tx);d.files.push({name:f.name,n:f.tx.length,from:sp.from,to:sp.to,account:accId[dAccKey(f)],added:DAY()})});
+  $('dlgDImp').close();DI=null;commit();
+  toast([ne&&`${ne} ${ne===1?'post':'poster'} oprettet`,nu&&`${nu} opdateret`,nt&&`${nt} ${nt===1?'overførsel':'overførsler'}`].filter(Boolean).join(', ')||'Kontoudskrifterne er lagt ind')}
+$('dimpClose').onclick=()=>$('dlgDImp').close();
+$('dimpBack').onclick=()=>{DI.stage='files';renderDImp()};
+$('dimpNext').onclick=()=>{if(!DI)return;if(DI.stage==='files'){dAnalyse();DI.stage='review';renderDImp();$('dimpBody').scrollTop=0;return}dApply()};
 
 /* ---------- guide: nyt budget ---------- */
 const WZ_EXP=[['Husleje / boliglån','Bolig & forsyning'],['El','Bolig & forsyning'],['Varme','Bolig & forsyning'],['Vand','Bolig & forsyning'],['Internet','Bolig & forsyning'],['Mobil','Kommunikation'],['Forsikringer','Forsikring'],['Bil (lån, forsikring, afgift)','Transport'],['Brændstof / transport','Transport'],['Institution / SFO','Børn'],['Streaming og abonnementer','Abonnementer'],['Fagforening / a-kasse','Forsikring'],['Mad og husholdning','Husholdning']];
@@ -3267,7 +3532,7 @@ $('wzSkip').onclick=()=>{if(WS===WS_BANK){W.bankSet=false;W.bank={adults:12000,c
   if(WZ_OPTIONAL.includes(WS)){WS++;renderWiz()}};
 $('wzNext').onclick=()=>{wzCollect();const e=wzValidate();if(e.length){$('wzErr').innerHTML=e.map(esc).join(' ');$('wzErr').hidden=false;return}
   if(WS<WSTEPS.length-1){WS++;renderWiz();return}
-  const N=wzBuild();if(!N){toast('Budgettet kunne ikke oprettes');return}S=N;SC=null;$('dlgWiz').close();commit();toast('Nyt budget oprettet');
+  const N=wzBuild();if(!N){toast('Budgettet kunne ikke oprettes');return}setPrimary(N);$('dlgWiz').close();commit();toast('Nyt budget oprettet');
   const t=document.querySelector('[data-page="budget"]');if(t)t.click()};
 
 
@@ -3321,7 +3586,7 @@ function showNotes(){if(!S)return;
   $('btnNoteGo').textContent=N.length?'Se opsparingsmål':'Se budgetposter';$('btnNoteGo').dataset.go=N.length?'maal':'poster';
   $('dlgNote').showModal()}
 // Closing the note in any way marks it as seen.
-$('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)S.settings.remindSeen=DAY();saveSoon()});
+$('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)rootS().settings.remindSeen=DAY();saveSoon()});
 $('btnNoteClose').onclick=()=>$('dlgNote').close();
 $('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close();const t=document.querySelector(`[data-page="${p}"]`);if(t)t.click()};
 
@@ -3331,14 +3596,17 @@ function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=A
   L.filter(v=>+v.amount>0).forEach((v,i)=>x.entries.push({id:'x'+p.id+i+Date.now().toString(36),type:'indtaegt',desc:v.desc||'Ekstra indtjening',key:'',category:'',freq:0,start:1,amount:Math.round(+v.amount),account:acc,payer:p.id,extra:true,split:false,active:true,check:false,note:'',since:DAY()}));
   delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};
   // Contact details belong on the profile, not in the budget (an early version kept them here).
-  const rm=x.settings.remind;if(rm&&typeof rm==='object'){delete rm.email;delete rm.phone}return x}
+  const rm=x.settings.remind;if(rm&&typeof rm==='object'){delete rm.email;delete rm.phone}
+  // Drafts are whole budgets kept inside the primary one (one level deep).
+  x.drafts=Array.isArray(x.drafts)?x.drafts.filter(d=>d&&d.id&&d.data&&normalize(d.data)):[];
+  x.drafts.forEach(d=>{delete d.data.drafts;d.name=d.name||'Kladde';d.files=Array.isArray(d.files)?d.files:[]});return x}
 render();
 (async()=>{
   let db=null;
   db=null;
   downloads=null;
   if(!db){localMode=true;loaded=true;S=normalize(loadLocal());setStatus(window.BUDGETR_DISK?'Gemmes på denne computer':'Gemmes kun i denne browser – kan ikke nå computeren');render();
-    if(S&&window.BUDGETR_PUSH)saveDisk(JSON.parse(JSON.stringify(S)));showNotes();return}
+    if(S&&window.BUDGETR_PUSH)saveDisk(JSON.parse(JSON.stringify(S)));showNotes();reopenDraft();return}
   dbRef=db.doc('budget/state');
   let first=true;
   dbRef.onSnapshot(snap=>{
