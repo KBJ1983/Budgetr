@@ -20,7 +20,7 @@
   if(!has){try{var x=new XMLHttpRequest();x.open('GET','/private/'+encodeURIComponent(uid)+'.legacy.json',false);x.send();
     if(x.status===200&&/^\s*\{/.test(x.responseText))window.BUDGETR_SEED=x.responseText}catch(e){}}
   document.addEventListener('DOMContentLoaded',function(){
-    var n=document.getElementById('bxUser');if(n)n.textContent=uid.toUpperCase();
+    ['bxUser','umAv','umName'].forEach(function(i){var n=document.getElementById(i);if(n)n.textContent=uid.toUpperCase()});
     var b=document.getElementById('btnUser');if(b)b.onclick=function(){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'};
   });
 })();
@@ -34,21 +34,22 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* budgetpro "Skov" palette */
-  --paper:#F4F6F2; --card:#FFFFFF; --ink:#17211B; --ink2:#5F6B63; --ink3:#838D86; --rule:#DFE5DC; --rule2:#B7C3BA; --band:#E6ECE5;
-  --pine:#2C6A4D; --pine-bg:#E3EEE6; --pine-ink:#235A40; --brick:#A8382A; --brick-bg:#F8E7E2; --ochre:#9A6B12; --ochre-bg:#FBF0D9;
-  --hero-sub:#A7B3AA; --on-pine:#FFFFFF;
+  /* budgetpro palette (design "sider v2"): neutral grey-green surfaces, pine accent, neutral primary buttons */
+  --paper:#ECEEE9; --card:#FFFFFF; --ink:#141A16; --ink2:#535C56; --ink3:#68716B; --rule:#CDD4C9; --rule2:#B3BCB0; --band:#DDE2DA;
+  --pine:#2C6A4D; --pine-bg:#E3EEE6; --pine-ink:#235A40; --brick:#A8382A; --brick-bg:#F8E7E2; --ochre:#7A4F0C; --ochre-bg:#F7ECD6; --ochre-rule:#EAD7AE; --warnline:#C98A1E;
+  --hero-sub:#C9D2CC; --on-pine:#FFFFFF; --btn:#17211B; --btn-ink:#FFFFFF; --barud:#B5BDB7;
+  --mk1:#4F7D67; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F4F6F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
-  --bar:#C9D2CD; --focus:#2F6FB3; --sky:#2B63A6; --sky-bg:#E1EBF7; --plum:#4E5D73; --plum-bg:#E9ECF1;
+  --bar:#C9D2CD; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4E5D73; --plum-bg:#E9ECF1;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28; --rule2:#48534C; --band:#1F2621;
-  --pine:#7ED4A8; --pine-bg:#1C2E24; --pine-ink:#7ED4A8; --brick:#F08A78; --brick-bg:#3A221E; --hero-sub:#5A625C; --on-pine:#0E1A13; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}}
+  --paper:#131415; --card:#1B1C1E; --ink:#ECECEC; --ink2:#9D9FA4; --ink3:#7E8085; --rule:#2D2F33; --rule2:#45474C; --band:#1F2023;
+  --pine:#7ED4A8; --pine-bg:#1D2320; --pine-ink:#8FD3AE; --brick:#F08A78; --brick-bg:#34211F; --hero-sub:#4A4C51; --on-pine:#0E1A13; --ochre:#E3B56A; --ochre-bg:#27231B; --ochre-rule:#3D3421; --warnline:#E3B56A; --btn:#ECECEC; --btn-ink:#131415; --barud:#5F6268; --bar:#3A3C41; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1B2230; --plum:#A7B0C0; --plum-bg:#222428; --mk1:#8FB8A4; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23131415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#121513; --card:#1A1E1B; --ink:#E9ECE9; --ink2:#9AA39D; --ink3:#7A847E; --rule:#262C28; --rule2:#48534C; --band:#1F2621;
-  --pine:#7ED4A8; --pine-bg:#1C2E24; --pine-ink:#7ED4A8; --brick:#F08A78; --brick-bg:#3A221E; --hero-sub:#5A625C; --on-pine:#0E1A13; --ochre:#E4B758; --ochre-bg:#352A14; --bar:#34403C; --focus:#7FB3EA; --sky:#86B8EE; --sky-bg:#1B2A3B; --plum:#A7B4C8; --plum-bg:#212831; color-scheme:dark;}
+  --paper:#131415; --card:#1B1C1E; --ink:#ECECEC; --ink2:#9D9FA4; --ink3:#7E8085; --rule:#2D2F33; --rule2:#45474C; --band:#1F2023;
+  --pine:#7ED4A8; --pine-bg:#1D2320; --pine-ink:#8FD3AE; --brick:#F08A78; --brick-bg:#34211F; --hero-sub:#4A4C51; --on-pine:#0E1A13; --ochre:#E3B56A; --ochre-bg:#27231B; --ochre-rule:#3D3421; --warnline:#E3B56A; --btn:#ECECEC; --btn-ink:#131415; --barud:#5F6268; --bar:#3A3C41; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1B2230; --plum:#A7B0C0; --plum-bg:#222428; --mk1:#8FB8A4; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23131415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--font)}
@@ -259,6 +260,8 @@ tr.paused td{color:var(--ink3)}
 .person .calc .ch.in,.person .calc .ch.out{color:var(--ink2)}
 .person .calc .tot{font-weight:700;border-top:1px solid var(--rule2);padding-top:5px}
 .person .calc .held{grid-column:1/-1;margin:-2px 0 2px;color:var(--ink2)}
+.person .calc .ptog{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:2px 0 4px;font-size:13.5px;color:var(--ink2);cursor:pointer;text-align:left}
+.person .calc .ptog .info{margin-left:0}
 .person .calc small{font-size:11px;color:var(--ink3)}
 .person .kv.calc{column-gap:0}.person .calc>span{text-align:left;font-weight:400;padding-right:16px}.person .calc>span.v{padding-right:0}.person .calc>span.v{text-align:right;font-weight:500}.person .calc>span.tot{font-weight:700}
 .split{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
@@ -301,16 +304,6 @@ tr.cat .gcount{margin-left:8px}
 /* Status line under the Budget sentence: a faint yellow bar */
 .hero small.hbar{display:inline-block;margin-top:14px;padding:7px 12px;border-radius:8px;background:var(--ochre-bg);color:var(--ochre);border:1px solid color-mix(in srgb,var(--ochre) 18%,transparent);font-size:13.5px;line-height:1.45}
 .hero small.hbar:empty{display:none}
-/* Sådan regnes det */
-.helphead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.helphead h2{margin:0}
-.helpbody{max-height:72vh;overflow:auto;padding-right:6px;font-size:14px;line-height:1.55}
-.htoc{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;background:var(--card);padding:4px 0 10px;border-bottom:1px solid var(--rule);z-index:1}
-.htoc a{font-size:12.5px;padding:3px 9px;border:1px solid var(--rule);border-radius:14px;color:var(--ink2);text-decoration:none}
-.htoc a:hover{color:var(--ink);border-color:var(--ink3)}
-.hsec{padding:14px 0 6px;border-bottom:1px solid var(--rule);scroll-margin-top:var(--toc-h,60px)}.hsec:last-child{border-bottom:0}
-.hsec h3{font-size:15.5px;margin:0 0 6px}.hsec p{margin:6px 0}.hsec ul{margin:6px 0;padding-left:20px}.hsec li{margin:3px 0}
-.hsec .itbl{margin:8px 0}.hsec .itbl td{padding:5px 8px}
-.hex{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;margin:8px 0}.hex ul{margin-bottom:0}
 .helplink{border:0!important;background:transparent!important;padding:0 0 0 8px!important;font:400 13px var(--font)!important;color:var(--pine)!important;text-decoration:underline;vertical-align:1px}
 .split .tbtn{margin-right:6px}
 .shtools{display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -367,6 +360,36 @@ td.desc{white-space:normal;min-width:200px}
 .plan input{width:120px}
 .empty{padding:40px 0;text-align:left}
 .empty p{max-width:52ch;color:var(--ink2)}
+/* Indstillinger: section menu on the left (on top on a phone), all sections in one scrolling column */
+dialog.setdlg{width:min(920px,96vw);max-height:90vh}
+.setdlg form{padding:0;display:flex;flex-direction:column;max-height:90vh}
+.sethead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--rule)}
+.sethead h2{margin:0}
+.setbody{display:grid;grid-template-columns:200px minmax(0,1fr);min-height:0;flex:1}
+.setnav{display:flex;flex-direction:column;gap:2px;padding:14px 10px;border-right:1px solid var(--rule);background:var(--paper)}
+.setnav button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:9px 12px;border:0;border-radius:8px;background:transparent;color:var(--ink2);text-align:left}
+.setnav button b{font-size:15px;font-weight:500;color:var(--ink)}
+.setnav button span{font-size:12.5px;line-height:1.35}
+.setnav button:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.setnav button[aria-current="page"]{background:var(--band)}
+.setnav button[aria-current="page"] b{font-weight:600}
+.setmain{overflow:auto;padding:4px 22px 22px;scroll-padding-top:8px}
+.setsec{padding:22px 0;display:none;flex-direction:column;gap:14px;border-bottom:0}
+.personedit button[data-armed="1"]{grid-column:1/-1;justify-self:start;white-space:normal;text-align:left}
+.setsec.on{display:flex}
+.setgrp{display:flex;flex-direction:column;gap:8px}
+
+.setsec h3{margin:0;font-size:20px;font-weight:600}
+dialog.setdlg{height:min(640px,90vh)}.setdlg form{height:100%}
+.setnav{width:230px}.setbody{grid-template-columns:230px minmax(0,1fr)}
+.personedit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.personedit input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:8px 10px;font-size:15px;min-width:0}
+.setnote{font-size:13px;color:var(--ink2);margin:-4px 0 0;max-width:68ch}
+.setsec .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.setbody{grid-template-columns:minmax(0,1fr)}.setnav{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--rule);padding:8px}.setnav{width:auto}.setnav button{white-space:nowrap}.setnav button span{display:none}.setsec .grid3{grid-template-columns:minmax(0,1fr)}}
+/* Quiet status line where a setting used to be edited in place */
+.setstat{font-size:13px;color:var(--ink2);margin:-8px 0 14px}
+.setstat button{background:none;border:0;padding:0 0 0 4px;color:var(--pine);text-decoration:underline;font:inherit;cursor:pointer}
 dialog{border:1px solid var(--rule);border-radius:12px;padding:0;background:var(--card);color:var(--ink);width:min(560px,94vw)}
 dialog::backdrop{background:rgba(10,20,16,.45)}
 dialog form{padding:20px 22px}
@@ -475,7 +498,7 @@ td.act{width:1%;white-space:nowrap}
 .expmenu .mrow .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .navrow{min-height:64px;align-items:stretch!important;gap:8px 12px!important;margin-bottom:0}
 .navrow .tabs{gap:0;align-items:stretch}
-.tabs button{padding:0 14px!important;font:400 16px var(--font)!important;color:var(--ink2);border-bottom:2px solid transparent!important;min-height:62px}
+.tabs button{padding:0 12px!important;font:400 14px var(--font)!important;color:var(--ink2);border-bottom:2px solid transparent!important;min-height:62px}
 .tabs button[aria-selected="true"]{font-weight:500!important;color:var(--ink);border-bottom-color:var(--pine)!important}
 .navrow .tools{padding:0!important;margin-left:auto;align-items:center;gap:10px}
 .scnbtn,.morebtn{background:var(--card)!important;border:1px solid var(--rule)!important;border-radius:8px!important;font:500 14px var(--font)!important;color:var(--ink)!important}
@@ -515,6 +538,12 @@ button.primary{color:var(--on-pine)!important}
 .scedit .chip input{accent-color:var(--ink2)}
 #scnMenu .scnew b{color:var(--pine)}
 .expmenu button:focus:not(:focus-visible){outline:none;box-shadow:none}
+/* Profile menu: compact, one line per item; the longer descriptions are tooltips */
+#userMenu{min-width:210px;padding:5px}
+#userMenu>button{padding:6px 10px}
+#userMenu>button b{font-size:13.5px;font-weight:500}
+#userMenu .mh{font-size:10.5px;padding:6px 10px 2px}
+#userMenu .mrow{font-size:13.5px;padding:5px 10px}
 .scnbtn #scnName{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hero{padding:40px 0 32px}
 .hero p{font:400 clamp(24px,3.2vw,34px)/1.25 var(--font);letter-spacing:-.01em;max-width:680px}
@@ -536,7 +565,187 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
 .kpi.good b,.kpi.good span,.kpi.good small{color:var(--pine-ink)}
 .kpi.bad small{color:var(--brick)}
 .big,.gamt{font-family:var(--mono);font-weight:500}
-@media (max-width:760px){.appbar-in{height:60px;gap:10px}.appbar .status{font-size:0;gap:0}.navrow .tools{margin-left:0;padding-bottom:10px!important;flex-wrap:wrap}.tabs button{min-height:50px;font-size:15px!important;padding:0 10px!important}}
+@media (max-width:760px){.appbar-in{height:60px;gap:10px}.appbar .status{font-size:0;gap:0}.navrow .tools{margin-left:0;padding-bottom:10px!important;flex-wrap:wrap}.tabs button{min-height:48px;font-size:13.5px!important;padding:0 9px!important}}
+/* ---------- Design "sider v2": panel section heads, bigger cards, neutral primary button ---------- */
+button.primary,#btnNew{background:var(--btn)!important;border-color:var(--btn)!important;color:var(--btn-ink)!important}
+#btnNew{padding:10px 16px!important;font:600 15px var(--font)!important}
+.appbar-in,.wrap{max-width:1360px}
+.appbar .status{font-size:14px}
+.uchip .av{min-width:32px;height:32px;border-radius:16px;font-size:12px}
+.navrow{min-height:72px}
+.tabs button{min-height:72px;padding:0 14px!important;font:500 16px var(--font)!important;color:var(--ink2)}
+.tabs button[aria-selected="true"]{color:var(--ink)}
+.scnbtn{font:600 15px var(--font)!important;padding:9px 14px!important}
+.hero{padding:48px 0 0;border-bottom:0}
+.hero p{font:400 clamp(26px,3.6vw,44px)/1.22 var(--font);letter-spacing:-.015em;max-width:820px}
+.hero small.hbar{margin-top:20px;padding:10px 16px;font-size:15px;line-height:1.4;border-color:var(--ochre-rule)}
+#app>section,#app>.tflow{padding:56px 0 0}
+#app>section>.sechead,#app>section>h2{margin-bottom:16px;padding:22px 26px;background:var(--band);border:1px solid var(--rule);border-radius:12px}
+#app>section>.sechead h2,#app>section>h2{font-size:22px;font-weight:600}
+#app>section>.sechead .hint{font-size:15px;line-height:1.45;color:var(--ink2);max-width:460px}
+.helplink{font-size:15px!important;padding-left:14px!important}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.kpi{border-radius:12px;padding:18px;gap:8px}
+.kpi span{font-size:14px}
+.kpi b{font-size:24px}
+.kpi small{font-size:13px;line-height:1.45}
+.setstat{font-size:15px;margin-top:4px}
+.bankdet{font-size:15px}
+.accounts:has(details.acctd){gap:8px}
+details.acctd>summary{min-height:56px;padding:0 22px}
+details.acctd>summary h3{font-size:17px!important;font-weight:600}
+details.acctd>summary .num{font-size:14px!important}
+.asum{font-size:15px}
+.people{grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:16px}
+.person{border-radius:12px;padding:26px}
+.person h3{font-size:19px;font-weight:600;margin-bottom:14px}
+.person .kv.calc{font-size:16px;max-width:420px;grid-template-columns:minmax(0,1fr) auto}
+.person .calc .ch{font-size:13px;letter-spacing:.08em;padding-top:12px}
+.person .calc .tot{font-weight:600;border-top-color:var(--rule);padding-top:8px;padding-bottom:4px}
+.person .big{font-size:36px;font-weight:500;margin-top:14px}
+.person .muted{font-size:14px!important}
+.psav{font-size:15px}
+.psrow{padding:10px 14px;border-radius:8px}
+.gdot{border-radius:50%}
+.goals{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.goal{border-radius:12px;padding:22px;gap:12px}
+.ghead h3{font-size:19px;font-weight:600}
+.gamt{font-size:30px;letter-spacing:-.02em}
+.goal .kv{font-size:15px;grid-template-columns:auto minmax(0,1fr);justify-content:stretch;gap:8px 16px}
+.goal .kv span:nth-child(odd){white-space:nowrap}
+.gamt{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:10px}
+.gamt small{font:400 14px var(--font);margin-left:0;white-space:nowrap}
+tr.grp td,tr.grp.in td,tr.grp.out td{border-bottom:1px solid var(--rule)}
+.chip{border-radius:18px;padding:5px 12px 5px 8px;font-size:14px;background:transparent}
+.chip:has(input:checked){background:color-mix(in srgb,var(--ink) 6%,transparent);border-color:var(--ink2);color:var(--ink)}
+.chip input{accent-color:var(--ink)}
+/* Checkboxes (design v2): rounded square, filled with the ink colour and a tick in the page colour when checked */
+input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:0 0 auto;width:18px;height:18px;margin:0;border:1.5px solid var(--ink2);border-radius:5px;background:transparent center/10px 10px no-repeat;cursor:pointer;vertical-align:-3px;transition:background-color .15s,border-color .15s}
+input[type=checkbox]:checked{background-color:var(--ink);border-color:var(--ink);background-image:var(--cb-tick)}
+input[type=checkbox]:disabled{opacity:.45;cursor:default}
+input[type=checkbox]:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.chip input[type=checkbox]{border-radius:50%}
+.tablewrap{border-radius:12px}
+table{font-size:15px}
+th{font-size:14px;padding:14px 12px}
+td{padding:12px}
+tr.grp td{background:var(--band)!important;font-size:19px;padding:14px 12px}
+tr.grp.in td{color:var(--pine)}
+tr.grp.out td{color:var(--ink)}
+tbody tr.grp:not(:first-child) td{border-top-color:var(--card)}
+tr.cat td{background:transparent;font-size:16px}
+.badge{font-size:13px;padding:3px 8px;border-radius:6px}
+.badge.mute{background:var(--paper);color:var(--ink2)}
+.filters select,.filters input{padding:9px 14px;font-size:15px}
+.tcard,.acct,.tflow{border-radius:12px}
+dialog{border-radius:16px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+/* Profile menu: a header with who is logged in, icon rows with a line of explanation */
+#userMenu{width:320px;min-width:0;padding:6px;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.28)}
+#userMenu .umhead{display:flex;align-items:center;gap:12px;padding:12px}
+#userMenu .umhead .av{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--paper);font:600 13px var(--font);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+#userMenu .umhead b{display:block;font-size:15px;font-weight:600}
+#userMenu .umhead span{font-size:12.5px;color:var(--ink2)}
+#userMenu>button{flex-direction:row;align-items:center;gap:12px;padding:10px 12px;border-radius:8px}
+#userMenu>button:hover,#userMenu>button:focus-visible{background:color-mix(in srgb,var(--ink) 7%,transparent)}
+#userMenu .umi{display:flex;color:var(--ink2);flex:0 0 auto}
+#userMenu .umi svg,#dlgData .dti svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#userMenu .umt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+#userMenu .umt b{font-size:15px;font-weight:500;color:var(--ink)}
+#userMenu .umt span{font-size:12.5px;color:var(--ink2);line-height:1.35}
+#userMenu .umc{display:flex;color:var(--ink2)}
+#userMenu .umc svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#userMenu .mrow{gap:12px;padding:8px 12px;font-size:15px;font-weight:500;justify-content:flex-start}
+#userMenu .mrow>span:nth-child(2){flex:1}
+#userMenu .mrow .seg{padding:3px;border-radius:8px;background:var(--paper);gap:2px}
+#userMenu .mrow .seg button{border-radius:5px;padding:5px 12px;font-size:13px;background:transparent;color:var(--ink2)}
+#userMenu .mrow .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+#userMenu .mhr{margin:4px 6px}
+/* Import og eksport */
+dialog#dlgData{width:min(700px,94vw)}
+#dlgData form{padding:28px;display:flex;flex-direction:column;gap:24px}
+#dlgData .dhead{display:flex;align-items:flex-start;gap:16px}
+#dlgData .dhead h2{margin:0 0 6px;font-size:22px;font-weight:600}
+#dlgData .dhead p{margin:0;font-size:15px;color:var(--ink2)}
+#dlgData .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent}
+#dlgData .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#dlgData .dcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+#dlgData .dcol{display:flex;flex-direction:column;gap:10px}
+#dlgData .dcol h3{margin:0;font:600 12px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+#dlgData .dtile{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid var(--rule);border-radius:10px;background:transparent;text-align:left;width:100%}
+#dlgData .dtile:hover{background:color-mix(in srgb,var(--ink) 5%,transparent);border-color:var(--rule)}
+#dlgData .dti{width:38px;height:38px;border-radius:9px;background:var(--band);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+#dlgData .dti svg{width:20px;height:20px}
+#dlgData .dtt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+#dlgData .dtt b{font-size:15px;font-weight:600}
+#dlgData .dtt span{font-size:13px;line-height:1.4;color:var(--ink2);font-weight:400}
+#dlgData .dtile>svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+/* Sådan regnes det: section menu on the left, figures built from the household's own numbers */
+dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;border-radius:18px;overflow:hidden}
+.howwrap{display:grid;grid-template-columns:250px minmax(0,1fr);height:100%}
+.hownav{border-right:1px solid var(--rule);padding:28px 16px;background:var(--paper);display:flex;flex-direction:column;gap:4px;overflow:auto}
+.hownav h2{font-size:20px;font-weight:600;margin:0;padding:0 10px 18px}
+#helpNav{display:flex;flex-direction:column;gap:4px}
+#helpNav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font:500 15px var(--font);color:var(--ink2);text-decoration:none}
+#helpNav a span{font:500 12px var(--mono);color:var(--ink3);width:18px}
+#helpNav a:hover{color:var(--ink)}
+#helpNav a.on{color:var(--ink);background:var(--band)}
+.howmain{display:flex;flex-direction:column;min-height:0}
+.howtop{display:flex;justify-content:flex-end;padding:16px 20px 0}
+.howx{display:flex!important;align-items:center;gap:8px;font:500 14px var(--font)!important;padding:7px 12px!important;background:transparent!important}
+.howx svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.howbody{flex:1;overflow-y:auto;padding:8px 48px 80px;display:flex;flex-direction:column;gap:40px;position:relative}
+.hsec{display:flex;flex-direction:column;gap:18px;padding:0 0 40px;border-bottom:1px solid var(--rule);scroll-margin-top:12px}
+.hsec:last-child{border-bottom:0}
+.hsec .hh{display:flex;align-items:baseline;gap:12px;padding-top:8px}
+.hsec .hh span{font:500 13px var(--mono);color:var(--ink3)}
+.hsec h3{margin:0;font:600 26px/1.2 var(--font);letter-spacing:-.01em}
+.hsec>p{margin:0;font-size:16px;line-height:1.6;max-width:720px}
+.hpanel{background:var(--band);border:1px solid var(--rule);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;max-width:760px}
+.hcap{font:600 12px/1.5 var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.hbul{display:flex;flex-direction:column;gap:10px;max-width:720px;margin:0;padding:0;list-style:none}
+.hbul li{display:flex;gap:12px;font-size:16px;line-height:1.55}
+.hbul li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--ink2);margin-top:10px;flex:0 0 auto}
+.hsteps{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:12px;overflow:hidden;max-width:760px}
+.hsteps>div{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;font-size:15.5px;line-height:1.55}
+.hsteps>div+div{border-top:1px solid var(--rule)}
+.hsteps>div.tot{background:var(--band);font-weight:600}
+.hsteps i{width:26px;height:26px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font:600 15px var(--mono);font-style:normal;background:var(--band);color:var(--ink);margin-top:-1px}
+.hsteps i.p{background:var(--pine-bg);color:var(--pine)} .hsteps i.m{background:var(--brick-bg);color:var(--brick)} .hsteps .tot i{background:var(--ink);color:var(--paper)}
+.hkey{display:flex;height:44px;border-radius:10px;overflow:hidden;font:600 15px var(--font)}
+.hkey>div,.hbar2>div{display:flex;align-items:center;gap:8px;padding:0 14px;color:var(--paper);white-space:nowrap;overflow:hidden;min-width:0}
+.hkey>div span{font-weight:400}
+.hpay{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.hpay>div{display:flex;flex-direction:column;gap:8px}
+.hcard{border:1px solid var(--rule);background:var(--card);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.hcard b{font-size:15px;font-weight:600} .hcard span{font-size:13px;line-height:1.4;color:var(--ink2)}
+.hthin{display:flex;height:10px;border-radius:5px;overflow:hidden}
+.hudl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px 16px;align-items:center}
+.hudl>span{font-size:14px;color:var(--ink2)}
+.hbar2{display:flex;height:34px;border-radius:8px;overflow:hidden;font:500 14px var(--font)}
+.hchips{display:flex;flex-wrap:wrap;gap:8px}
+.hchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:6px 10px;font-size:14px}
+.hchip b{font:600 14px var(--mono)} .hchip b.p{color:var(--pine)} .hchip b.m{color:var(--brick)}
+.hres{font-size:15px;font-weight:600}
+.hwf{display:flex;flex-direction:column;gap:8px}
+.hwf>div{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr) 110px;gap:14px;align-items:center;font-size:14px}
+.hwf .tr{position:relative;height:22px;border-radius:4px;background:var(--paper)}
+.hwf .tr i{position:absolute;top:0;bottom:0;border-radius:4px}
+.hwf .v{font:500 14px var(--mono);text-align:right}
+.hwf .t{font-weight:600} .hwf .t .v{font-weight:600}
+.hcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.hcols>div{display:flex;flex-direction:column;gap:10px} .hcols h4{margin:0;font-size:16px;font-weight:600}
+.hflow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hflow>.hcard{flex:1;min-width:150px}
+.hflow>svg{width:22px;height:22px;fill:none;stroke:var(--ink2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.hflow>.hsplit{flex:1.4;min-width:220px;display:flex;flex-direction:column;gap:8px}
+.hfreq{position:relative;height:120px;display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;border-bottom:1px solid var(--rule)}
+.hfreq>div{border-radius:4px 4px 0 0}
+.hfreq .avg{position:absolute;left:0;right:0;border-top:2px dashed var(--pine)}
+.hfreq .avgl{position:absolute;right:0;font:500 12px var(--font);color:var(--pine);background:var(--band);padding:0 4px}
+.hfreqm{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;font-size:12px;color:var(--ink2);text-align:center}
+@media (max-width:760px){dialog.howdlg{width:100vw;height:100vh;max-height:100vh;border-radius:0}.howwrap{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.hownav{border-right:0;border-bottom:1px solid var(--rule);padding:12px 12px 8px}.hownav h2{padding:0 6px 8px;font-size:18px}#helpNav{flex-direction:row;overflow-x:auto;scrollbar-width:none}#helpNav a{white-space:nowrap;padding:6px 10px}.howtop{position:absolute;top:8px;right:8px;padding:0}.howbody{padding:16px 16px 60px;gap:28px}.hsec h3{font-size:21px}.hudl{grid-template-columns:minmax(0,1fr)}.hwf>div{grid-template-columns:minmax(0,1fr) 90px}.hwf .tr{grid-column:1/-1;grid-row:2}.hpanel{padding:16px}}
+@media (max-width:760px){.appbar .status{font-size:0;gap:0}.tabs button{min-height:52px;font-size:14px!important;padding:0 10px!important}.navrow{min-height:0}.hero{padding-top:32px}#app>section{padding-top:40px}#app>section>.sechead,#app>section>h2{padding:16px 18px}#app>section>.sechead h2,#app>section>h2{font-size:19px}.person{padding:20px}.person .big{font-size:30px}.kpi b{font-size:21px}#userMenu{width:min(320px,calc(100vw - 24px))}}
 @media print{
   .appbar,.navrow{display:none!important}
   header.top .tools,.filters,button,.plan .ctrl{display:none!important}
@@ -554,27 +763,22 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <span class="status" id="status" role="status">Indlæser…</span>
       <div class="expwrap"><button type="button" class="uchip" id="btnUserMenu" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu" aria-label="Profil, eksport og import"><span class="av" id="bxUser"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="userMenu" role="menu" hidden>
-          <div class="mh">Eksportér</div>
-          <button type="button" role="menuitem" data-exp="pdf"><b>PDF</b><span>Rapport til udskrift eller banken</span></button>
-          <button type="button" role="menuitem" data-exp="xlsx"><b>Excel</b><span>Alle data i ark, klar til egne beregninger</span></button>
-          <button type="button" role="menuitem" data-exp="json"><b>Sikkerhedskopi (JSON)</b><span>Alle data i én fil, som kan indlæses igen</span></button>
-          <hr class="mhr"><div class="mh">Importér</div>
-          <button type="button" role="menuitem" data-imp="stmt"><b>Kontoudskrift …</b><span>CSV eller Excel fra netbanken. Opdaterer ydelser og beløb</span></button>
-          <button type="button" role="menuitem" data-imp="json"><b>Sikkerhedskopi …</b><span>Gendan budgettet fra en JSON-fil</span></button>
+          <div class="umhead"><span class="av" id="umAv"></span><div><b id="umName"></b><span id="umSub">Gemmes på denne computer</span></div></div>
           <hr class="mhr">
-          <button type="button" role="menuitem" data-um="help"><b>Sådan regnes det</b><span>Fordeling, overførsler, rådighed og opsparing</span></button>
-          <hr class="mhr"><div class="mh">Testbruger</div>
-          <div class="mrow"><span>Tema</span><div class="seg" role="group" aria-label="Tema"><button type="button" data-thm="light">Lyst</button><button type="button" data-thm="dark">Mørkt</button></div></div>
+          <button type="button" role="menuitem" data-um="set"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span><span class="umt"><b>Indstillinger</b><span>Husstand, konti og fordeling</span></span></button>
+          <button type="button" role="menuitem" data-um="help"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8 1c0 1.6-2.4 2-2.4 3.6"/><path d="M12 17.2v.1"/></svg></span><span class="umt"><b>Sådan regnes det</b><span>Forklaring af beregningerne</span></span></button>
+          <button type="button" role="menuitem" data-um="data"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4v13M3.5 13.5 7 17l3.5-3.5M17 20V7M13.5 10.5 17 7l3.5 3.5"/></svg></span><span class="umt"><b>Import og eksport</b><span>PDF, Excel, kontoudskrift og sikkerhedskopi</span></span><span class="umc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span></button>
+          <div class="mrow"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span><span>Tema</span><div class="seg" role="group" aria-label="Tema"><button type="button" data-thm="light">Lyst</button><button type="button" data-thm="dark">Mørkt</button></div></div>
           <hr class="mhr">
-          <button type="button" role="menuitem" data-um="user" id="btnUser"><b>Skift bruger</b><span>Log ind som en anden testbruger</span></button>
-          <button type="button" role="menuitem" data-um="home"><b>Til forsiden</b><span>budgetpro.dk</span></button>
+          <button type="button" role="menuitem" data-um="user" id="btnUser"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.5 4-5 7-5s5.8 1.5 7 5"/></svg></span><span class="umt"><b>Skift bruger</b></span></button>
+          <button type="button" role="menuitem" data-um="home"><span class="umi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 9.5V20h12V9.5"/></svg></span><span class="umt"><b>Til forsiden</b></span></button>
         </div></div>
     </div>
   </div>
 </header>
 <div class="wrap">
   <div class="navrow">
-    <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Budget</button><button type="button" role="tab" data-page="laan" aria-selected="false">Overblik over lån</button><button type="button" role="tab" data-page="overf" aria-selected="false">Faste overførsler</button><button type="button" role="tab" data-page="maal" aria-selected="false">Opsparingsmål</button></nav>
+    <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Overblik</button><button type="button" role="tab" data-page="poster" aria-selected="false">Budgetposter</button><button type="button" role="tab" data-page="laan" aria-selected="false">Overblik over lån</button><button type="button" role="tab" data-page="overf" aria-selected="false">Faste overførsler</button><button type="button" role="tab" data-page="maal" aria-selected="false">Opsparingsmål</button></nav>
     <div class="tools">
       <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Scenarie</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="scnMenu" role="menu" hidden></div></div>
@@ -658,7 +862,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <label class="check"><input type="checkbox" id="fCheck"> Skal tjekkes</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
       <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
-      <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter, fx børnefamilieydelse. Kan holdes ude af Til rådighed med fluebenet under Hvem betaler hvad</label>
+      <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter, fx børnefamilieydelse. Kan holdes ude af Til rådighed på personkortene under Indstillinger</label>
       <label class="check" id="wSplit" style="grid-column:1/-1"><input type="checkbox" id="fSplit"> Tæller med i fordelingsnøglen (fast indkomst). Fjern fluebenet for fx børnefamilieydelse, der går direkte til en fælles konto</label>
       <div class="preview" id="preview"></div>
     </div>
@@ -712,23 +916,56 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
       <div class="rgt"><button type="button" id="wzCancel">Annullér</button><button type="button" class="primary" id="wzNext">Næste</button></div></div>
   </form>
 </dialog>
-<dialog id="dlgSet">
+<dialog id="dlgSet" class="setdlg" aria-labelledby="setTitle">
   <form method="dialog" id="frmSet">
-    <h2>Indstillinger</h2>
-    <div class="grid2">
-      <div class="field full"><label for="setName">Budgettets navn</label><input id="setName" autocomplete="off"></div>
-      <div class="field"><label for="setSplit">Fælles udgifter fordeles</label><select id="setSplit"></select></div>
-      <div class="field" id="wSetPct"><label for="setPct" id="lSetPct">Andel i procent</label><input id="setPct" type="number" min="0" max="100" step="1"></div>
-      <label class="check" style="grid-column:1/-1"><input type="checkbox" id="exAll" checked> Medregn ekstra indtjening, fx fritidsjob, i alle beregninger</label>
-      <div class="field"><span class="flabel">Vis beløb</span><div class="seg" role="group" aria-label="Vis beløb" style="align-self:flex-start">
-        <button type="button" data-view="md" aria-pressed="true">Pr. måned</button><button type="button" data-view="aar" aria-pressed="false">Pr. år</button></div></div>
-      <div class="field"><span class="flabel">Tema</span><div class="seg" role="group" aria-label="Tema" style="align-self:flex-start">
-        <button type="button" data-thm="light">Lyst</button><button type="button" data-thm="dark">Mørkt</button></div></div>
-      <div class="field full"><span class="flabel">Konti og personer</span><div><button type="button" id="setAccts">Rediger konti og personer …</button></div></div>
-      <div class="field full"><span class="flabel">Nyt budget</span><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button type="button" id="setWiz">Start nyt budget …</button><span class="muted" style="font-size:13px">Guide i 7 trin. Erstatter det nuværende budget for alle.</span></div></div>
+    <div class="sethead"><h2 id="setTitle">Indstillinger</h2><button type="button" class="primary" id="setDone">Færdig</button></div>
+    <div class="setbody">
+      <nav class="setnav" aria-label="Indstillinger"><button type="button" data-sp="hus"><b>Husstand</b><span>Navn og personer</span></button><button type="button" data-sp="konti"><b>Konti</b><span>Navn, nummer og ejer</span></button><button type="button" data-sp="fordeling"><b>Fordeling</b><span>Sådan deles fælles udgifter</span></button><button type="button" data-sp="indtaegter"><b>Indtægter</b><span>Ekstra og bundne indtægter</span></button><button type="button" data-sp="bank"><b>Bankens krav</b><span>Vejledende rådighedsbeløb</span></button><button type="button" data-sp="visning"><b>Visning</b><span>Beløb, tema og markeringer</span></button><button type="button" data-sp="nyt"><b>Nyt budget</b><span>Start forfra med guiden</span></button></nav>
+      <div class="setmain" id="setMain">
+        <section class="setsec" id="set-hus"><h3>Husstand</h3>
+          <p class="setnote">Budgettets navn og de personer, der deler budgettet. Personerne bruges som betalere på poster, mål og konti.</p>
+          <div class="field"><label for="setName">Budgettets navn</label><input id="setName" autocomplete="off"></div>
+          <div class="setgrp"><span class="flabel">Personer</span><div class="acctlist" id="personList"></div>
+          <div><button type="button" id="btnAddPerson">Tilføj person</button></div>
+          <p class="setnote">Fjerner du en person, flyttes personens poster og mål til Fælles, og personens konti får ingen ejer.</p></div></section>
+        <section class="setsec" id="set-konti"><h3>Konti</h3>
+          <p class="setnote">Navn, kontonummer, type og ejer. Rækkefølgen ændres ved at trække kontiene på Overblik.</p>
+          <div class="acctlist" id="acctList"></div>
+          <div><button type="button" id="btnAddAcct">Tilføj konto</button></div></section>
+        <section class="setsec" id="set-fordeling"><h3>Fordeling</h3>
+          <p class="setnote">Sådan deles de poster, der har Fælles som betaler.</p>
+          <div class="grid2">
+            <div class="field"><label for="setSplit">Fælles udgifter fordeles</label><select id="setSplit"></select></div>
+            <div class="field" id="wSetPct"><label for="setPct" id="lSetPct">Andel i procent</label><input id="setPct" type="number" min="0" max="100" step="1"></div>
+          </div>
+          <p class="setnote" id="setSplitNote"></p></section>
+        <section class="setsec" id="set-indtaegter"><h3>Indtægter</h3>
+          <p class="setnote">Indtægter, der ikke kommer fast, eller som er bundet til bestemte udgifter. Fluebenene findes også på personkortene under Hvem betaler hvad.</p>
+          <div class="setgrp"><label class="check"><input type="checkbox" id="exAll" checked> Medregn ekstra indtjening, fx fritidsjob</label>
+          <p class="setnote" id="setExNote"></p></div>
+          <div class="setgrp"><label class="check"><input type="checkbox" id="setBound"> Medregn bundne indtægter på personkortene</label>
+          <p class="setnote" id="setBoundNote"></p></div></section>
+        <section class="setsec" id="set-bank"><h3>Bankens krav</h3>
+          <p class="setnote">Det vejledende krav til rådighedsbeløbet. Bankerne har hver deres interne satser. Som tommelfingerregel for 2026 ligger kravet for et par på 11.000–12.500 kr. pr. måned, og hertil kommer cirka 2.500–3.500 kr. pr. barn.</p>
+          <div class="grid3">
+            <div class="field"><label for="setBkA">Voksne i alt, kr./md.</label><input id="setBkA" inputmode="decimal"></div>
+            <div class="field"><label for="setBkC">Antal børn</label><input id="setBkC" type="number" min="0" max="10" step="1"></div>
+            <div class="field"><label for="setBkR">Pr. barn, kr./md.</label><input id="setBkR" inputmode="decimal"></div>
+          </div></section>
+        <section class="setsec" id="set-visning"><h3>Visning</h3>
+          <p class="setnote">Visning og tema gælder kun på denne enhed. Markeringen af stigende udgifter gælder budgettet.</p>
+          <div class="grid2">
+            <div class="field"><span class="flabel">Vis beløb</span><div class="seg" role="group" aria-label="Vis beløb" style="align-self:flex-start">
+              <button type="button" data-view="md" aria-pressed="true">Pr. måned</button><button type="button" data-view="aar" aria-pressed="false">Pr. år</button></div></div>
+            <div class="field"><span class="flabel">Tema</span><div class="seg" role="group" aria-label="Tema" style="align-self:flex-start">
+              <button type="button" data-thm="light">Lyst</button><button type="button" data-thm="dark">Mørkt</button></div></div>
+            <div class="field"><label for="setDev">Markér udgifter, der er steget mindst (%)</label><input id="setDev" type="number" min="1" max="100" step="1"></div>
+          </div></section>
+        <section class="setsec" id="set-nyt"><h3>Nyt budget</h3>
+          <p class="setnote">Guiden tager dig igennem personer, konti, faste udgifter, fordeling og opsparingsmål. Tag en sikkerhedskopi først, hvis du vil gemme det nuværende budget.</p>
+          <div><button type="button" id="setWiz">Start nyt budget …</button></div></section>
+      </div>
     </div>
-    <p class="muted" style="font-size:12.5px;margin:12px 0 0">Navn, fordeling og ekstra indtjening gælder budgettet for alle. Visning og tema gælder kun på denne enhed.</p>
-    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" class="primary" id="setDone">Færdig</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgGoal">
@@ -759,11 +996,30 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
   </form>
 </dialog>
 
-<dialog id="dlgHelp" class="wide">
-  <form method="dialog" style="padding:20px 24px">
-    <div class="helphead"><h2>Sådan regnes det</h2><button type="button" id="btnHelpClose" class="ghost" aria-label="Luk">Luk</button></div>
-    <div id="helpBody" class="helpbody"></div>
+<dialog id="dlgData" aria-labelledby="dataTitle">
+  <form method="dialog">
+    <div class="dhead"><div><h2 id="dataTitle">Import og eksport</h2><p>Tag budgettet med ud, eller hent data ind i det.</p></div><button type="button" class="dx" id="btnDataClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="dcols">
+      <div class="dcol"><h3>Eksportér</h3>
+        <button type="button" class="dtile" data-exp="pdf"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 13h5M10 16.5h5"/></svg></span><span class="dtt"><b>PDF</b><span>Budgettet som dokument, klar til print eller banken</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-exp="xlsx"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M10 5v14"/></svg></span><span class="dtt"><b>Excel</b><span>Alle poster i et regneark, klar til egne beregninger</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-exp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Hele budgettet gemt i én fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+      <div class="dcol"><h3>Importér</h3>
+        <button type="button" class="dtile" data-imp="stmt"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9 12 4l8 5M6 10v7M10 10v7M14 10v7M18 10v7M3.5 20h17"/></svg></span><span class="dtt"><b>Kontoudskrift</b><span>CSV eller Excel fra netbanken. Opdaterer ydelser og beløb</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-imp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Gendan et budget fra en gemt fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+    </div>
   </form>
+</dialog>
+<dialog id="dlgHelp" class="howdlg" aria-labelledby="helpTitle">
+  <div class="howwrap">
+    <nav class="hownav" aria-label="Indhold"><h2 id="helpTitle">Sådan regnes det</h2><div id="helpNav"></div></nav>
+    <div class="howmain">
+      <div class="howtop"><button type="button" id="btnHelpClose" class="howx"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>Luk</button></div>
+      <div id="helpBody" class="howbody"></div>
+    </div>
+  </div>
 </dialog>
 <dialog id="dlgCat">
   <form method="dialog" id="frmCat" style="padding:20px 22px">
@@ -774,16 +1030,7 @@ h2{font-size:17px;font-weight:600;letter-spacing:0}
     <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnCatClose" class="primary">Luk</button></div></div>
   </form>
 </dialog>
-<dialog id="dlgAcct">
-  <form method="dialog" id="frmAcct" style="padding:20px 22px">
-    <h2>Konti og personer</h2>
-    <div class="acctlist" id="acctList"></div>
-    <div style="margin-top:10px"><button type="button" id="btnAddAcct">Tilføj konto</button></div>
-    <h2 style="margin-top:20px">Personer</h2>
-    <div class="acctlist" id="personList"></div>
-    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnAcctClose" class="primary">Luk</button></div></div>
-  </form>
-</dialog>
+
 
 <script type="application/json" id="seed">null</script>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -821,7 +1068,7 @@ const boundOn=()=>(S.settings||{}).withBound!==false;
 const inFree=e=>!isBound(e)||boundOn();
 const curSc=()=>SC&&(S.scenarios||[]).find(x=>x.id===SC)||null;
 /* opsparingsmål: omsættes til virtuelle poster pr. kontekst ('base' eller scenarie-id) */
-const GC=['var(--pine)','var(--ochre)','var(--focus)','var(--brick)','var(--ink3)'];
+const GC=['var(--mk1)','var(--mk2)','var(--mk3)','var(--mk4)','var(--ink3)'];
 const gColor=g=>GC[Math.max(0,(S.goals||[]).indexOf(g))%GC.length];
 const mIdx=iso=>{const m=/^(\d{4})-(\d{2})/.exec(iso||'');return m?(+m[1])*12+(+m[2]-1):null};
 const idxLbl=(i,short)=>{const m=((i%12)+12)%12,y=Math.floor(i/12);return short?MONTHS[m]+' '+String(y).slice(2):MONTHS[m]+' '+y};
@@ -893,7 +1140,7 @@ function spark(P){if(P.length<2)return '';const W=90,H=24,v=P.map(p=>p.m),mx=Mat
 function devHtml(){
   const L=act().map(e=>({e,d:devOf(e)})).filter(x=>x.d).sort((a,b)=>(b.d.pct??1e9)-(a.d.pct??1e9));
   const U=L.filter(x=>x.e.type==='udgift'), flag=U.filter(x=>x.d.flag), sumD=U.reduce((a,x)=>a+x.d.d,0), sumB=U.reduce((a,x)=>a+x.d.base.m,0);
-  let h=`<section><div class="sechead"><h2>Udvikling i poster</h2><div class="devset"><label for="devPct">Markér udgifter, der er steget mindst</label><input id="devPct" type="number" min="1" max="100" step="1" value="${devPct()}"> %</div></div>`;
+  let h=`<section><div class="sechead"><h2>Udvikling i poster</h2></div><p class="setstat">Markerer udgifter, der er steget mindst ${devPct()} % det seneste år<button type="button" data-set="visning">Ret</button></p>`;
   if(!L.length)return h+`<p class="muted" style="font-size:14px;margin:0">Ingen poster har historik endnu. Når du retter et beløb, gemmes det gamle automatisk, og du kan tilføje tidligere beløb på posten under "Udvikling – tidligere beløb". Sammenligningen er med beløbet for cirka et år siden.</p></section>`;
   h+=`<div class="kpis" style="margin-bottom:12px">
     <div class="kpi ${flag.length?'bad':'good'}"><span>Steget mindst ${devPct()} %</span><b>${flag.length}</b><small>${flag.length?esc(flag.slice(0,3).map(x=>x.e.desc).join(', '))+(flag.length>3?' …':''):'Ingen udgifter over grænsen'}</small></div>
@@ -982,11 +1229,15 @@ function bankCalc(){
   const disp_=inc+extra-fixed, req=(+b.adults||0)+(+b.children||0)*(+b.childRate||0);
   return {b,inc,extra,fixed,excl,exclSum:excl.reduce((a,e)=>a+mAvg(e),0),rad:disp_,req,buf:disp_-req};
 }
-/* Short note for the Faste udgifter card: what the bank calculation leaves out, by category, largest first. */
-function exclNote(bk){if(!bk.excl.length)return 'Alle faste udgifter er medregnet';
-  const g={};bk.excl.forEach(e=>{const k=e._goal?'Opsparingsmål':(e.category||(/gave/i.test(e.desc||'')?'Gaver':'Uden kategori'));g[k]=(g[k]||0)+mAvg(e)});
+/* What the bank leaves out of the faste udgifter in the sentence at the top, by category, largest first.
+   Goals are not faste udgifter in the sentence either, so they are not listed. */
+function exclList(bk){const g={};bk.excl.filter(e=>!e._goal).forEach(e=>{const k=e.category||(/gave/i.test(e.desc||'')?'Gaver':'Uden kategori');g[k]=(g[k]||0)+mAvg(e)});
   const L=Object.entries(g).sort((a,b)=>b[1]-a[1]), nb=v=>kr(v).replace(/ /g,'\u00a0'), shown=L.slice(0,3).map(([k,v])=>k+' '+nb(v)), rest=L.length-3;
-  return 'Ikke medregnet: '+(shown.length>1?shown.slice(0,-1).join(', ')+(rest>0?', ':' og ')+shown[shown.length-1]:shown[0])+(rest>0?' m.fl. ':'. ')+'I alt '+nb(bk.exclSum)}
+  return !L.length?'':shown.length>1?shown.slice(0,-1).join(', ')+(rest>0?', ':' og ')+shown[shown.length-1]+(rest>0?' m.fl.':''):shown[0]}
+// One category is named; with more, the card only gives the total (the (i) and Se beregningen list them).
+function exclNote(bk){const P=bk.excl.filter(e=>!e._goal);if(!P.length)return 'Det samme som de faste udgifter øverst';
+  const cats=new Set(P.map(e=>e.category||e.desc)), sum=P.reduce((a,e)=>a+mAvg(e),0);
+  return `Faste udgifter øverst ${kr(totals().exp)} minus ${cats.size===1?exclList(bk):kr(sum)+' til bl.a. '+exclList(bk).split(/, | og /)[0].replace(/ [\d.]+ kr$/,'').toLowerCase()}, som skal dækkes af rådighedsbeløbet`}
 function totals(){
   const E=act();
   const inc=E.filter(e=>e.type==='indtaegt'&&!e.extra).reduce((a,e)=>a+mAvg(e),0);
@@ -1012,7 +1263,7 @@ function personCalc(pid){
 function render(){
   const app=$('app');
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
-  renderScn();document.title='budgetpro · '+({budget:'Budget',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
+  renderScn();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
   if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling og opsparingsmål. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button></div>`;
     $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();return}
   syncENT();
@@ -1033,34 +1284,30 @@ function render(){
 
   if(sc)h+=compareHtml(sc);
   const bk=bankCalc();
-  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.</span></div>
+  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus bankens faste udgifter. Banken regner ikke mad og husholdning, opsparing og gaver med, fordi de skal dækkes af rådighedsbeløbet.</span></div>
    <div class="kpis">
     <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),null,'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
-    <div class="kpi"><span>Faste udgifter ${ib(catInfo('Faste udgifter i bankens beregning',act().filter(e=>e.type==='udgift'&&inBank(e)),'Mad, opsparing og gaver er trukket ud.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
-    <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>${(()=>{const d=bk.rad-t.left;return Math.abs(d)<1?'pr. måned, det samme som Tilbage øverst':`pr. måned. ${kr(Math.abs(d))} ${d>0?'mere':'mindre'} end Tilbage øverst, fordi ${esc(exclNote(bk).replace(/^Ikke medregnet: /,'').replace(/ I alt .*$/,'').replace(/\.$/,''))} ikke regnes som faste udgifter`})()}</small></div>
+    <div class="kpi"><span>Bankens faste udgifter ${ib(catInfo('Bankens faste udgifter',act().filter(e=>e.type==='udgift'&&inBank(e)),'De faste udgifter øverst, uden de poster, der skal dækkes af rådighedsbeløbet.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
+    <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Bankens faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>${(()=>{const d=bk.rad-t.left;return Math.abs(d)<1?'pr. måned, det samme som Tilbage øverst':`pr. måned. ${kr(Math.abs(d))} ${d>0?'mere':'mindre'} end Tilbage øverst${exclList(bk)&&d>0?', fordi banken ikke regner alle faste udgifter med':''}`})()}</small></div>
     <div class="kpi"><span>Vejledende krav ${ib(`<b>Vejledende krav</b>${tbl([['2 voksne','',kr(+bk.b.adults||0)],[`${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}`,'',kr((+bk.b.children||0)*(+bk.b.childRate||0))],['= Krav','',kr(bk.req)]])}<p>En tommelfingerregel, ikke bankens egne satser. Bankerne har hver deres interne krav. Satserne kan rettes under "Juster det vejledende krav".</p>`)}</span><b>${kr(bk.req)}</b><small>Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser</small></div>
     <div class="kpi ${bk.buf>=0?'good':'bad'}"><span>${bk.buf>=0?'Luft over kravet':'Under kravet'}</span><b>${kr(Math.abs(bk.buf))}</b><small>pr. måned</small></div>
     ${(()=>{const F=loansFreedWithin(12).filter(x=>x.inB);if(!F.length)return '';const fr=F.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=F[F.length-1].i;
       return `<div class="kpi ${nb>=0?'good':'bad'}"><span>${nb>=0?'Luft':'Under kravet'} fra ${idxLbl(last).toLowerCase()} ${ib(`<b>Når lån udløber inden for 12 md.</b>${tbl(F.map(x=>[esc(x.l.desc||x.l.bank),idxLbl(x.i).toLowerCase(),'+'+kr(x.free)]).concat([['Rådighedsbeløb nu','',kr(bk.rad)],['+ Frigivet','',kr(fr)],['= Rådighedsbeløb','',kr(bk.rad+fr)],['− Vejledende krav','',kr(bk.req)],[nb>=0?'= Luft':'= Under kravet','',kr(Math.abs(nb))]]))}<p>Kun lån, hvis budgetpost indgår i bankens faste udgifter, er regnet med. Udløb er beregnet ud fra restgæld, rente og ydelse. Se Overblik over lån.</p>`)}</span><b>${kr(Math.abs(nb))}</b><small>+${kr(fr)} frigives: ${esc(F.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '))}</small></div>`})()}
    </div>
-   <details class="bankdet"><summary>Juster det vejledende krav og se beregningen</summary>
-    <div class="bankset">
-     <label>Voksne i alt, kr./md.<input id="bkA" inputmode="decimal" value="${nf.format(+bk.b.adults||0)}"></label>
-     <label>Antal børn<input id="bkC" type="number" min="0" max="10" step="1" value="${+bk.b.children||0}"></label>
-     <label>Pr. barn, kr./md.<input id="bkR" inputmode="decimal" value="${nf.format(+bk.b.childRate||0)}"></label>
-     <label class="check"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening${(()=>{const t=S.persons.reduce((a,p)=>a+extraSum(p),0);return t?' ('+kr(t)+' pr. md.)':''})()}</label>
-    </div>
-    <p class="muted" style="font-size:13px;margin:8px 0 0">${exSrc()}</p>
-    <p class="muted" style="font-size:13px;margin:8px 0">Bankerne har hver deres interne satser. Som tommelfingerregel for 2026 ligger kravet for et par på 11.000–12.500 kr. pr. måned. Hertil kommer cirka 2.500–3.500 kr. pr. barn, og beløbet stiger med barnets alder. Ekstra indtjening medregnes typisk kun, hvis den kan dokumenteres over flere år. Fluebenet følger det fælles flueben øverst på siden.</p>
-    <p style="font-size:14px;margin:8px 0 4px"><b>Ikke medregnet som faste udgifter</b></p>
+   <p class="setstat" style="margin:12px 0 0">Vejledende krav: ${kr(+bk.b.adults||0)} for voksne + ${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}${S.persons.some(p=>extraSum(p))?(exOn()?' · Ekstra indtjening medregnet':' · Ekstra indtjening ikke medregnet'):''}<button type="button" data-set="bank">Ret</button></p>
+   <details class="bankdet"><summary>Se beregningen</summary>
+    <p class="muted" style="font-size:13px;margin:8px 0 0">${exSrc()}</p>${exPosts().length?`<label class="extog small" title="Gælder hele budgettet"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening</label>`:''}
+    <p class="muted" style="font-size:13px;margin:8px 0">Bankerne har hver deres interne satser. Som tommelfingerregel for 2026 ligger kravet for et par på 11.000–12.500 kr. pr. måned. Hertil kommer cirka 2.500–3.500 kr. pr. barn, og beløbet stiger med barnets alder. Ekstra indtjening medregnes typisk kun, hvis den kan dokumenteres over flere år.</p>
+    <p style="font-size:14px;margin:8px 0 4px"><b>Ikke med i bankens faste udgifter</b></p>
     <ul class="excl">${bk.excl.map(e=>`<li><button type="button" class="exlink" data-open="${e.id}" title="Åbn posten"><span>${esc(e.desc)}</span><span>${kr(mAvg(e))}</span></button></li>`).join('')||'<li class="muted">Ingen</li>'}</ul>
     <p class="muted" style="font-size:13px">Sæt eller fjern flueben ved "Medregnes i bankens faste udgifter" på den enkelte post.</p>
+    <p style="font-size:14px;margin:10px 0 0"><button type="button" class="tbtn" data-help="bank"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det: bankens rådighedsbeløb</span></button></p>
    </details></section>`;
 
   // konti
   const ids=S.accounts.map(a=>a.id); if(unplaced.length)ids.push('');
   const maxv=Math.max(1,...ids.map(id=>{const c=accountCalc(id);return Math.max(c.in,c.out)}));
-  h+=`<section><div class="sechead"><h2>Konti</h2><div class="shtools"><span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti og personer</span></button></div></div><div class="accounts">`;
+  h+=`<section><div class="sechead"><h2>Konti</h2><div class="shtools"><span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti</span></button></div></div><div class="accounts">`;
   ids.forEach(id=>{
     const a=S.accounts.find(x=>x.id===id)||{id:'',name:'Ikke placeret',type:'',number:''};
     const c=accountCalc(id);
@@ -1079,7 +1326,7 @@ function render(){
     }
     const w=v=>Math.round(v/maxv*100), E_=act(), owners=id?S.persons.filter(p=>homeAcct(p.id)===id).map(p=>p.id):[];
     const accEx=id?exPosts().filter(e=>(e.account||'')===id).reduce((s,e)=>s+mAvg(e),0):0;
-    const exTog=accEx?`<label class="extog small"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening (${disp(accEx)})</label>`:'';
+    const exTog=accEx&&!exOn()?`<p class="setstat" style="margin:6px 0 0">Ekstra indtjening på ${disp(accEx)} er ikke medregnet<button type="button" data-set="indtaegter">Ret</button></p>`:'';
     const sumTxt=id===''?`<span class="bad">${disp(c.exp)} ikke placeret</span>`:a.type==='faelles'?(()=>{const gp=c.need-c.tin;return `<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span>${gp>0.5?`<span class="bad">Mangler <b style="color:inherit">${disp(gp)}</b></span>`:(Math.abs(gp)<0.5?`<span class="ok">Dækket</span>`:`<span class="ok">Dækket, overskud ${disp(-gp)}</span>`)}`})()
       :`<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span><span class="${c.left>=0?'ok':'bad'}">Tilbage <b style="color:inherit">${disp(c.left)}</b></span>`;
     h+=`<details class="acctd" data-acc="${esc(id)}" ${isFolded(id)?'':'open'}><summary><div>${id?`<span class="dragh" draggable="true" role="button" tabindex="0" data-drag="${esc(id)}" aria-label="Flyt ${esc(a.name)}. Træk, eller brug pil op og ned" title="Træk for at flytte kontoen">⋮⋮</span>`:''}<h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><div class="asum">${sumTxt}</div></summary>`;
@@ -1099,8 +1346,8 @@ function render(){
   // personer
   const sp=S.settings||{};
   h+=`<section><div class="sechead"><h2>Hvem betaler hvad</h2>
-    <div class="split"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button>${(()=>{const B=act().filter(isBound);if(!B.length)return '';return `<label class="extog small" title="Styrer kun personkortene herunder"><input type="checkbox" data-bndtog ${boundOn()?'checked':''}> Medregn bundne indtægter (${esc([...new Set(B.map(e=>e.desc.replace(/\s+(\S+)$/,(m,w)=>S.persons.some(p=>p.name===w)?'':m)))].join(', '))} ${disp(B.reduce((a,e)=>a+mAvg(e),0))})</label>`})()}<label for="splitSel">Fælles udgifter fordeles</label><select id="splitSel"><option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${S.persons.length===2?'<option value="manuel">manuelt</option>':''}</select>
-    ${sp.split==='manuel'&&S.persons.length===2?`<input type="number" id="manPct" min="0" max="100" step="1" value="${+sp.manualPct||50}" aria-label="Andel for ${esc(S.persons[0].name)} i procent"> % til ${esc(S.persons[0].name)}`:''}</div></div><div class="people">`;
+    <div class="split"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button></div></div>
+    <p class="setstat">${splitTxt()}${S.persons.some(p=>extraSum(p))?(exOn()?' · Ekstra indtjening medregnet':' · Ekstra indtjening ikke medregnet'):''}${boundTxt()?(boundOn()?' · Bundne indtægter medregnet':' · Bundne indtægter holdt ude'):''}<button type="button" data-set="fordeling">Ret</button></p><div class="people">`;
   S.persons.forEach(p=>{
     const c=personCalc(p.id);
     // Til rådighed as a small sum: incomes (+, green), expenses (−, red), then the result below.
@@ -1108,9 +1355,11 @@ function render(){
     h+=`<div class="person"><h3>${esc(p.name)}</h3><div class="kv calc">
       <span class="ch in">Indtægter</span><span class="ch"></span>
       ${ln('in',`+ Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&!e.extra&&inFree(e)&&e.payer===p.id)))}`,c.own)}
-      ${extraSum(p)?ln('in',`+ Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu. Slå det til med fluebenet.'} Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}${exOn()?'':' <small>ikke medregnet</small>'}`,c.extra):''}
+      ${extraSum(p)?ln('in',`+ Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu.'} Fluebenet herunder gælder hele husstanden. Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}`,c.extra)
+        +`<label class="ptog" title="Gælder hele husstanden"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening (${disp(extraSum(p))})</label>`:''}
       ${c.shInc?ln('in','+ Andel af fælles indtægter',c.shInc):''}
-      ${c.heldSum?`<span class="note held">${esc([...new Set(c.held.map(e=>e.desc))].join(', '))} på ${disp(c.heldSum)} er holdt ude, fordi pengene er bundet ${ib(listInfo('Bundne indtægter',c.held.slice(),null,'Bundne indtægter er fx børnefamilieydelse, der går til bestemte udgifter. Fluebenet Medregn bundne indtægter øverst i afsnittet styrer, om de tæller med her. De tæller altid med i tallene øverst på siden og i bankens beregning, og de går stadig ind på kontoen og sænker overførslen dertil.'))}</span>`:''}
+      ${(()=>{const B=act().filter(e=>isBound(e)&&e.payer===p.id);if(!B.length)return '';const sum=B.reduce((a,e)=>a+mAvg(e),0),nm=esc([...new Set(B.map(e=>e.desc.endsWith(' '+p.name)?e.desc.slice(0,-(p.name.length+1)):e.desc))].join(', '));
+        return `<label class="ptog" title="Gælder hele husstanden"><input type="checkbox" data-bndtog ${boundOn()?'checked':''}> Medregn bundne indtægter (${nm} ${disp(sum)})${ib(listInfo('Bundne indtægter',B.slice(),null,'Bundne indtægter er fx børnefamilieydelse, der går til bestemte udgifter. Fluebenet styrer, om de tæller med i personkortene, og gælder hele husstanden. De tæller altid med i tallene øverst på siden og i bankens beregning, og de går stadig ind på kontoen og sænker overførslen dertil.'))}</label>`+(boundOn()?'':`<span class="note held">Holdt ude af Faste indtægter, fordi pengene er bundet.</span>`)})()}
       ${ln('in tot','= Indtægter i alt',incT)}
       <span class="ch out">Udgifter</span><span class="ch"></span>
       ${ln('out',`− Egne faste udgifter ${ib(catInfo('Egne faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===p.id)))}`,c.ownExp)}
@@ -1124,7 +1373,6 @@ function render(){
           if(Math.abs(cp)>0.5)rows.push([cp>0?'+ Udligning':'− Udligning','fælles poster betalt fra en personkonto',disp(Math.abs(cp))]);
           rows.push(['= Beregnet','',disp(recFor(p.id,a.id))],['Overføres (rundet op til 100 kr)','',disp(tr)]);
           return `<span>Overføres til ${esc(a.name)} ${ib(`<b>Overførsel til ${esc(a.name)}</b>${tbl(rows)}<p>Derfor er beløbet ikke det samme som "Andel af fælles udgifter": egne poster på fælleskontoen betales fuldt af ${esc(p.name)}, og fælles udgifter betalt fra en personkonto udlignes her.</p>`)}</span><span>${disp(tr)}</span>`}).join('')+`</div>`})()}
-      ${extraSum(p)?`<label class="extog small"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening i beregningen</label>`:''}
       <div class="psav"><span class="ph">Ekstra indtjening</span>${exPosts(p.id).map(e=>`<div class="psrow click" data-open="${e.id}" tabindex="0" role="button" title="Ret posten"><span class="nm">${esc(e.desc)}<small>${esc(howOf(e))}${exOn()?'':' · ikke medregnet'}</small></span><span class="v">${disp(mAvg(e))}</span></div>`).join('')||'<span class="muted" style="font-size:13px">Ingen ekstra indtjening.</span>'}${extraSum(p)?`<div class="psum ex"><span>I alt</span><b>${disp(extraSum(p))}</b></div>`:''}
         <button type="button" class="ghost" data-exnew="${p.id}" style="align-self:flex-start">Tilføj ekstra indtjening</button></div>
       ${psavHtml(p,c)}
@@ -1133,7 +1381,8 @@ function render(){
   });
   h+=`</div></section>`;
 
-  // poster
+  // poster (own tab). hTop is the overview so far; the posts page starts with the scenario bar only.
+  const hTop=h; h=scBarHtml(true);
   h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
   <div class="filters">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
@@ -1144,6 +1393,7 @@ function render(){
   </div>
   <div class="tablewrap"><table><thead><tr><th>Beskrivelse</th><th>Nøgle</th><th>Hyppighed</th><th class="r">Beløb</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th class="r">Udvikling</th><th>Konto</th><th>Betaler</th></tr></thead><tbody id="tbody">${rowsHtml()}</tbody></table></div></section>`;
   h+=devHtml();
+  const hPost=h; h=hTop;
 
   // månedsplan
   if(!S.accounts.some(a=>a.id===planAcct))planAcct=S.accounts[0]?.id||'';
@@ -1153,7 +1403,7 @@ function render(){
    ${(()=>{const sd=pa?saldoFor(pa.id):{amount:0,date:DAY()};return `<label for="startSaldo">Saldo</label><input id="startSaldo" inputmode="decimal" value="${nf.format(sd.amount||0)}"><label for="saldoDate">pr.</label><input id="saldoDate" style="width:160px" type="date" value="${esc(sd.legacy?DAY():sd.date)}">${curSc()?`<span class="badge sc">${sd.sc?'Scenariets saldo':'Samme som nuværende'}</span>${sd.sc?'<button type="button" class="ghost" id="saldoReset" style="font-size:12.5px">Brug nuværende</button>':''}`:''}${sd.legacy?'<span class="muted" style="font-size:12.5px">Ikke gemt endnu. Indtil da regnes saldoen fra 1. januar.</span>':''}`})()}</div>
    <div id="planChart">${planSvg(planAcct)}</div></section>`;
 
-  app.innerHTML=h;
+  app.innerHTML=page==='poster'?hPost:h;
   bindMain();
 }
 function metrics(){
@@ -1639,7 +1889,7 @@ $('frmLoan').addEventListener('submit',ev=>{ev.preventDefault();
   if(loanEdit)Object.assign(S.loans.find(x=>x.id===loanEdit),d);else S.loans.push(Object.assign({id:'l'+uid()},d));
   $('dlgLoan').close();commit();toast(loanEdit?'Lån gemt':'Lån oprettet');
 });
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;document.querySelectorAll('[data-page]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));$('btnNew').style.display=page!=='budget'?'none':'';render();window.scrollTo(0,0)});
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;document.querySelectorAll('[data-page]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));$('btnNew').style.display=page==='budget'||page==='poster'?'':'none';render();window.scrollTo(0,0)});
 function filtered(){
   const q=F.q.trim().toLowerCase();
   if(F.type==='overfoersel')F.type='alle';
@@ -1655,68 +1905,93 @@ function filtered(){
 /* ---------- Sådan regnes det ---------- */
 /* Plain-language description of the calculation rules (oblParts, compFor, recFor, personCalc, accountCalc, bankCalc,
    goalEntries). Keep it in step when those change. Examples use the household's own names and split. */
+const HELPSEC=[['fordeling','Fordeling'],['overforsel','Overførsel til budgetkonto'],['privat','Fælles betaling fra privat konto'],['person','Til rådighed'],['konti','Kontokort'],['opsparing','Opsparing'],['bank','Bankens rådighedsbeløb'],['ovrigt','Øvrigt']];
 function helpHtml(){
   const P=S.persons, sh=shares(), sp=(S.settings||{}).split, ba=S.accounts.find(a=>a.type==='faelles'), bn=ba?esc(ba.name):'budgetkontoen';
-  const A=P[0], B=P[1], pa=A?Math.round((sh[A.id]||0)*100):50, pb=B?Math.round((sh[B.id]||0)*100):50, nA=A?esc(A.name):'Person 1', nB=B?esc(B.name):'Person 2';
+  const A=P[0], B=P[1], pa=A?Math.round((sh[A.id]||0)*100):50, pb=B?Math.round((sh[B.id]||0)*100):100-pa, nA=A?esc(A.name):'Person 1', nB=B?esc(B.name):'Person 2';
   const ex=1000, aPart=Math.round(ex*pa/100), bPart=ex-aPart;
   const key=sp==='indkomst'?'efter fast indkomst':sp==='manuel'?'manuelt':'ligeligt';
-  const sec=(id,t,body)=>`<section class="hsec" id="help-${id}"><h3>${t}</h3>${body}</section>`;
-  return `<nav class="htoc" aria-label="Indhold"><a href="#help-fordeling">Fordeling</a><a href="#help-overforsel">Overførsel til ${bn}</a><a href="#help-privat">Fælles betaling fra privat konto</a><a href="#help-person">Til rådighed</a><a href="#help-konti">Kontokort</a><a href="#help-opsparing">Opsparing</a><a href="#help-bank">Bankens rådighedsbeløb</a><a href="#help-ovrigt">Øvrigt</a></nav>`
-  +sec('fordeling','Fordeling af fælles poster',`<p>Hver post har en betaler: <b>Fælles</b> eller en bestemt person.</p><ul>
-      <li><b>Fælles</b> poster deles efter nøglen. Nu fordeles de ${key}: ${P.map(p=>esc(p.name)+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')||'ingen personer endnu'}.</li>
-      <li>En post med en <b>bestemt person</b> som betaler lægges fuldt på den person, uanset hvilken konto den trækkes fra.</li>
-      <li>Efter fast indkomst betyder: hver persons faste indtægter (poster med personen som betaler) i forhold til husstandens samlede. Ekstra indtjening er ikke med i nøglen.</li>
-      <li>En indtægt kan holdes uden for nøglen med fluebenet <b>Tæller med i fordelingsnøglen</b> på posten. Børnefamilieydelse er som udgangspunkt holdt ude. Den er stadig en indtægt i alle andre tal, og går den direkte ind på en fælles konto, trækkes den fra den persons overførsel dertil.${(()=>{const o=act().filter(e=>e.type==='indtaegt'&&!inSplit(e));return o.length?' Holdt ude nu: '+esc(o.map(e=>e.desc).join(', '))+'.':''})()}</li></ul>`)
-  +sec('overforsel',`Hvad hver skal overføre til ${bn}`,`<p>For hver fælles konto regnes det ud, hvad hver person bør overføre pr. måned:</p><table class="itbl"><tbody>
-      <tr><td>+ Din andel af de fælles poster, der trækkes fra kontoen</td></tr>
-      <tr><td>+ Dine egne poster, der trækkes fra kontoen, fuldt</td></tr>
-      <tr><td>− Dine egne indtægter, der går direkte ind på kontoen, fx børnefamilieydelse</td></tr>
-      <tr><td>− Din andel af fælles indtægter, der går direkte ind på kontoen</td></tr>
-      <tr><td>± Faste overførsler fra og til kontoen. En overførsel videre til din egen konto er din; en til en fælles konto deles efter nøglen</td></tr>
-      <tr><td>± Udligning for fælles poster på private konti (se næste afsnit)</td></tr>
-      <tr class="sum"><td>= Bør overføres. En auto-overførsel runder op til nærmeste 100 kr, så der typisk er et lille overskud</td></tr></tbody></table>
-      <p class="muted">Opsparingsmål, der betales fra kontoen, tæller med som poster med den betaler, du har valgt på målet.</p>`)
-  +sec('privat','Fælles betaling fra en privat konto',`<p>Nogle fælles regninger trækkes fra den enes egen konto. Så betaler den person hele beløbet, men skal kun bære sin andel. Forskellen udlignes i overførslen til ${bn}:</p>
-      <div class="hex"><b>Eksempel:</b> En fælles udgift på ${kr(ex)} trækkes fra ${nA}s lønkonto. Nøglen er ${nA} ${pa} % og ${nB} ${pb} %.<ul>
-      <li>${nA} betaler ${kr(ex)} fra sin konto, men skal kun bære ${kr(aPart)}. ${nA}s overførsel til ${bn} bliver derfor <b>${kr(bPart)} lavere</b>.</li>
-      <li>${nB} skal bære ${kr(bPart)} og overfører <b>${kr(bPart)} mere</b> til ${bn}.</li>
-      <li>Resultat: ${nA} betaler ${kr(aPart)} og ${nB} ${kr(bPart)}, præcis som nøglen siger.</li></ul></div>
-      <ul><li>En <b>egen</b> udgift på egen konto (betaler = kontoens ejer) påvirker ikke overførslen.</li>
-      <li>En udgift på ${nA}s konto med ${nB} som betaler lægges fuldt på ${nB}: ${nB} overfører hele beløbet mere, og ${nA} tilsvarende mindre.</li>
-      <li>Fælles indtægter på en privat konto udlignes den anden vej: ejeren af kontoen overfører mere.</li>
-      <li>Udligningen lægges på den fælles konto, som personen har sin auto-overførsel til (ellers den første fælles konto).</li></ul>`)
-  +sec('person','Til rådighed pr. person',`<table class="itbl"><tbody>
-      <tr><td>Faste indtægter (poster med personen som betaler). Bundne indtægter, fx børnefamilieydelse, er med, medmindre fluebenet <b>Medregn bundne indtægter</b> under Hvem betaler hvad er slået fra. Tallene øverst og bankens beregning tæller dem altid med</td></tr><tr><td>+ Ekstra indtjening, hvis den er slået til</td></tr><tr><td>+ Andel af fælles indtægter</td></tr>
-      <tr><td>− Egne faste udgifter (personen som betaler, fra alle konti)</td></tr><tr><td>− Andel af fælles faste udgifter</td></tr>
-      <tr class="sum"><td>= Til rådighed. Det er det, der højst kan spares op</td></tr><tr><td>− Opsparingsfelt og opsparingsmål (egne mål fuldt, fælles mål efter nøglen)</td></tr>
-      <tr class="sum"><td>= Tilbage efter opsparing</td></tr></tbody></table>
-      <p class="muted">Tallet afhænger ikke af, hvilken konto pengene står på. Det er fordelingen, der tæller. Overførslen til ${bn} er et andet tal, fordi den kun handler om den ene konto.</p>`)
-  +sec('konti','Kontokortene',`<ul><li><b>Ind</b> = indtægter direkte på kontoen + overført ind. Ekstra indtjening tæller kun med, når den er slået til.</li>
-      <li><b>Ud</b> = faste udgifter + overført ud + opsparing fra kontoen.</li>
-      <li>En <b>fælles konto</b> viser <b>Bør overføres</b> = udgifter + opsparingsmål + overført ud − indtægter direkte på kontoen, og om den er dækket af det, der overføres.</li>
-      <li>En <b>privat konto</b> viser, hvad der er tilbage på kontoen.</li>
-      <li>En <b>fast overførsel</b> flytter penge mellem jeres egne konti. Den er ikke en udgift og tæller ikke med i faste udgifter, til rådighed eller bankens beregning. Betales fx mad fra en madkonto, så læg Mad som en udgift på madkontoen og vælg <b>Dækkes af fast overførsel fra</b> på posten. Så laves en overførsel af samme beløb til madkontoen, og den følger med, når beløbet ændres. Overførslen deles efter udgiftens betaler, så en fælles udgift deles efter nøglen.</li>
-      <li>Kommer en indtægt ind på én konto og flyttes fast videre, fx børnepenge fra lønkontoen til budgetkontoen, så vælg <b>Flyttes videre til konto</b> på indtægten. Overførslen laves af sig selv, og den sænker din overførsel til budgetkontoen tilsvarende.</li></ul>`)
-  +sec('opsparing','Opsparing og opsparingsmål',`<ul><li>Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.</li>
-      <li>I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så I kan se, hvad der er tilbage.</li>
-      <li>Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.</li>
-      <li>Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.</li></ul>`)
-  +sec('bank','Rådighedsbeløb som banken regner det',`<table class="itbl"><tbody><tr><td>Nettoindtægt (alle indtægter, ekstra indtjening kun hvis den er slået til)</td></tr>
-      <tr><td>− Faste udgifter, der er markeret "Medregnes i bankens faste udgifter"</td></tr><tr class="sum"><td>= Rådighedsbeløb</td></tr>
-      <tr><td>− Vejledende krav: voksne + antal børn × sats pr. barn</td></tr><tr class="sum"><td>= Luft over kravet (eller under kravet)</td></tr></tbody></table>
-      <p>Mad og husholdning, opsparing og gaver er som udgangspunkt <b>ikke</b> faste udgifter, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Faste udgifter viser, hvad der er holdt ude.</p>
-      <p class="muted">Kravet er en tommelfingerregel, ikke bankens egne satser. Luft fra en senere måned lægger ydelsen fra lån, der udløber inden for 12 måneder, til igen.</p>`)
-  +sec('ovrigt','Øvrigt',`<ul><li>Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.</li>
-      <li><b>Ekstra indtjening</b> er indtægter med fluebenet Ekstra indtjening, fx et fritidsjob. De står under Indtægter og tæller kun med, når Medregn ekstra indtjening er slået til. De indgår ikke i fordelingsnøglen. Kommer de ikke fast, vælges hyppigheden Uregelmæssig, og beløbet er et gennemsnit pr. måned over året.</li>
-      <li>Inaktive poster og mål tæller ikke med. Mål, der er nået måldatoen, tæller heller ikke.</li>
-      <li>Et scenarie regner på samme måde, bare med scenariets ændringer. Det nuværende budget røres ikke.</li></ul>`);
+  const MK=['var(--mk1)','var(--mk2)','var(--mk3)','var(--mk4)'], pc=i=>MK[i%MK.length];
+  const sec=(id,t,body)=>{const n=HELPSEC.findIndex(x=>x[0]===id)+1;return `<section class="hsec" id="help-${id}"><div class="hh"><span>0${n}</span><h3>${t}</h3></div>${body}</section>`};
+  const ul=L=>`<ul class="hbul">${L.map(x=>`<li><span>${x}</span></li>`).join('')}</ul>`;
+  // one row in a +/− list; k: p (+), m (−), n (±), t (= total), '' (starting figure)
+  const steps=L=>`<div class="hsteps">${L.map(([k,t])=>`<div${k==='t'?' class="tot"':''}><i class="${k}">${{p:'+',m:'−',n:'±',t:'='}[k]||''}</i><span>${t}</span></div>`).join('')}</div>`;
+  const panel=(cap,body)=>`<div class="hpanel"><div class="hcap">${cap}</div>${body}</div>`;
+  const chip=(sgn,t)=>`<span class="hchip"><b class="${sgn==='+'?'p':'m'}">${sgn}</b>${t}</span>`;
+  // waterfall: [label, value, 'total'?]; bars run from the running total
+  const wf=(items,max)=>{let run=0;max=Math.max(1,max);return `<div class="hwf">${items.map(([l,v,k])=>{let x,w;if(k==='total'){x=0;w=v/max;run=v}else if(v>=0){x=run/max;w=v/max;run+=v}else{run+=v;x=run/max;w=-v/max}
+      x=Math.max(0,Math.min(1,x));w=Math.max(.005,Math.min(1-x,w));const c=k==='total'?'var(--ink)':v<0?'var(--brick)':'var(--pine)';
+      return `<div class="${k==='total'?'t':''}"><span>${l}</span><div class="tr"><i style="left:${x*100}%;width:${w*100}%;background:${c}"></i></div><span class="v" style="color:${k==='total'?'var(--ink)':c}">${k==='total'?'= ':v<0?'− ':'+ '}${kr(Math.abs(v))}</span></div>`}).join('')}</div>`};
+  const keyBar=P.length?`<div class="hkey">${P.map((p,i)=>`<div style="width:${Math.max(1,(sh[p.id]||0)*100)}%;background:${pc(i)}">${esc(p.name)} <span>${Math.round((sh[p.id]||0)*100)} %</span></div>`).join('')}</div>`:'';
+  const thin=L=>`<div class="hthin">${L.map(([w,c])=>`<span style="width:${w}%;background:${c}"></span>`).join('')}</div>`;
+  const held=(()=>{const o=act().filter(e=>e.type==='indtaegt'&&!inSplit(e));return o.length?' Holdt ude nu: '+esc(o.map(e=>e.desc).join(', '))+'.':''})();
+  // Til rådighed for the first person, from personCalc
+  const pcA=A?personCalc(A.id):null;
+  const wfA=pcA?wf([['Faste indtægter',pcA.own,'total'],...(pcA.extra||extraSum(A)?[[exOn()?'Ekstra indtjening':'Ekstra indtjening (ikke medregnet)',exOn()?pcA.extra:0]]:[]),...(pcA.shInc?[['Andel af fælles indtægter',pcA.shInc]]:[]),['Egne faste udgifter',-pcA.ownExp],[`Andel af fælles faste udgifter (${Math.round(pcA.sh*100)} %)`,-pcA.shExp],['Til rådighed',pcA.left,'total'],...((pcA.sav||0)?[['Opsparing og opsparingsmål',-(pcA.sav||0)],['Tilbage efter opsparing',pcA.afterSav,'total']]:[])],pcA.own+(exOn()?pcA.extra:0)+pcA.shInc):'';
+  const bk=bankCalc();
+  const wfB=wf([['Nettoindtægt',bk.inc+bk.extra,'total'],['Bankens faste udgifter',-bk.fixed],['Rådighedsbeløb',bk.rad,'total'],['Vejledende krav',-bk.req],[bk.buf>=0?'Luft over kravet':'Under kravet',bk.buf,'total']],bk.inc+bk.extra);
+  // a quarterly post as the example for averages, else a made-up one
+  const q=act().find(e=>+e.freq===3&&mAvg(e)>0), qAmt=q?amtOf(q):3000, qAvg=q?mAvg(q):1000, qName=q?esc(q.desc):'En kvartalsvis betaling';
+  const qBars=MONTHS.map((l,i)=>{const on=q?paidIn(q,i+1):i%3===0;return `<div style="height:${on?'100%':'3%'};background:${on?'var(--mk1)':'var(--rule)'}"></div>`}).join('');
+  const arrow='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  return sec('fordeling','Fordeling af fælles poster',`<p>Hver post har en betaler: <b>Fælles</b> eller en bestemt person.</p>`
+      +(P.length?panel(`Nøglen lige nu · ${key}`,keyBar+`<div class="hpay"><div><div class="hcard"><b>Betaler: Fælles</b><span>Deles efter nøglen</span></div>${thin(P.map((p,i)=>[(sh[p.id]||0)*100,pc(i)]))}</div>${B?`<div><div class="hcard"><b>Betaler: ${nB}</b><span>Lægges fuldt på ${nB}</span></div>${thin([[100,pc(1)]])}</div>`:''}</div>`):'')
+      +ul([`<b>Fælles</b> poster deles efter nøglen. Nu fordeles de ${key}: ${P.map(p=>esc(p.name)+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')||'ingen personer endnu'}.`,
+        `En post med en <b>bestemt person</b> som betaler lægges fuldt på den person, uanset hvilken konto den trækkes fra.`,
+        `Efter fast indkomst betyder: hver persons faste indtægter (poster med personen som betaler) i forhold til husstandens samlede. Ekstra indtjening er ikke med i nøglen.`,
+        `En indtægt kan holdes uden for nøglen med fluebenet <b>Tæller med i fordelingsnøglen</b> på posten. Børnefamilieydelse er som udgangspunkt holdt ude. Den er stadig en indtægt i alle andre tal, og går den direkte ind på en fælles konto, trækkes den fra den persons overførsel dertil.${held}`]))
+  +sec('overforsel',`Hvad hver skal overføre til ${bn}`,`<p>For hver fælles konto regnes det ud, hvad hver person bør overføre pr. måned:</p>`
+      +steps([['p','Din andel af de fælles poster, der trækkes fra kontoen'],['p','Dine egne poster, der trækkes fra kontoen, fuldt'],['m','Dine egne indtægter, der går direkte ind på kontoen, fx børnefamilieydelse'],['m','Din andel af fælles indtægter, der går direkte ind på kontoen'],['n','Faste overførsler fra og til kontoen. En overførsel videre til din egen konto er din; en til en fælles konto deles efter nøglen'],['n','Udligning for fælles poster på private konti (se næste afsnit)'],['t','Bør overføres. En auto-overførsel runder op til nærmeste 100 kr, så der typisk er et lille overskud']])
+      +`<p>Opsparingsmål, der betales fra kontoen, tæller med som poster med den betaler, du har valgt på målet.</p>`)
+  +sec('privat','Fælles betaling fra en privat konto',`<p>Nogle fælles regninger trækkes fra den enes egen konto. Så betaler den person hele beløbet, men skal kun bære sin andel. Forskellen udlignes i overførslen til ${bn}:</p>`
+      +panel(`Eksempel: En fælles udgift på ${kr(ex)} trækkes fra ${nA}s lønkonto. Nøglen er ${nA} ${pa} % og ${nB} ${pb} %.`,`<div class="hudl"><span>Trækkes fra</span><div class="hbar2"><div style="width:100%;background:${pc(0)}">${nA}s konto · ${kr(ex)}</div></div>
+        <span>Skal bæres</span><div class="hbar2"><div style="width:${pa}%;background:${pc(0)}">${nA} ${kr(aPart)}</div><div style="width:${pb}%;background:${pc(1)}">${nB} ${kr(bPart)}</div></div>
+        <span>Udlignes i overførslen</span><div class="hchips">${chip('−',`${nA} overfører ${kr(bPart)} mindre`)}${chip('+',`${nB} overfører ${kr(bPart)} mere`)}</div></div>
+        <div class="hres">Resultat: ${nA} betaler ${kr(aPart)} og ${nB} ${kr(bPart)}, præcis som nøglen siger.</div>`)
+      +ul([`${nA} betaler ${kr(ex)} fra sin konto, men skal kun bære ${kr(aPart)}. ${nA}s overførsel til ${bn} bliver derfor ${kr(bPart)} lavere.`,
+        `${nB} skal bære ${kr(bPart)} og overfører ${kr(bPart)} mere til ${bn}.`,
+        `En <b>egen</b> udgift på egen konto (betaler = kontoens ejer) påvirker ikke overførslen.`,
+        `En udgift på ${nA}s konto med ${nB} som betaler lægges fuldt på ${nB}: ${nB} overfører hele beløbet mere, og ${nA} tilsvarende mindre.`,
+        `Fælles indtægter på en privat konto udlignes den anden vej: ejeren af kontoen overfører mere.`,
+        `Udligningen lægges på den fælles konto, som personen har sin auto-overførsel til (ellers den første fælles konto).`]))
+  +sec('person','Til rådighed pr. person',steps([['','Faste indtægter (poster med personen som betaler). Bundne indtægter, fx børnefamilieydelse, er med, medmindre <b>Medregn bundne indtægter</b> er slået fra på personkortet eller under Indstillinger. Tallene øverst og bankens beregning tæller dem altid med'],['p','Ekstra indtjening, hvis den er slået til'],['p','Andel af fælles indtægter'],['m','Egne faste udgifter (personen som betaler, fra alle konti)'],['m','Andel af fælles faste udgifter'],['t','Til rådighed. Det er det, der højst kan spares op'],['m','Opsparingsfelt og opsparingsmål (egne mål fuldt, fælles mål efter nøglen)'],['t','Tilbage efter opsparing']])
+      +(pcA?panel(`Eksempel: ${nA} i ${curSc()?esc(curSc().name||'scenariet'):'det nuværende budget'}`,wfA):'')
+      +`<p>Tallet afhænger ikke af, hvilken konto pengene står på. Det er fordelingen, der tæller. Overførslen til ${bn} er et andet tal, fordi den kun handler om den ene konto.</p>`)
+  +sec('konti','Kontokortene',panel('Hvad der tæller på et kontokort',`<div class="hcols"><div><h4>Ind</h4><div class="hchips">${chip('+','Indtægter direkte på kontoen')}${chip('+','Overført ind')}${chip('+','Ekstra indtjening, hvis slået til')}</div></div><div><h4>Ud</h4><div class="hchips">${chip('−','Faste udgifter')}${chip('−','Overført ud')}${chip('−','Opsparing fra kontoen')}</div></div></div>`)
+      +ul([`<b>Ind</b> = indtægter direkte på kontoen + overført ind. Ekstra indtjening tæller kun med, når den er slået til.`,
+        `<b>Ud</b> = faste udgifter + overført ud + opsparing fra kontoen.`,
+        `En <b>fælles konto</b> viser <b>Bør overføres</b> = udgifter + opsparingsmål + overført ud − indtægter direkte på kontoen, og om den er dækket af det, der overføres.`,
+        `En <b>privat konto</b> viser, hvad der er tilbage på kontoen.`,
+        `En <b>fast overførsel</b> flytter penge mellem jeres egne konti. Den er ikke en udgift og tæller ikke med i faste udgifter, til rådighed eller bankens beregning. Betales fx mad fra en madkonto, så læg Mad som en udgift på madkontoen og vælg <b>Dækkes af fast overførsel fra</b> på posten. Så laves en overførsel af samme beløb til madkontoen, og den følger med, når beløbet ændres. Overførslen deles efter udgiftens betaler, så en fælles udgift deles efter nøglen.`,
+        `Kommer en indtægt ind på én konto og flyttes fast videre, fx børnepenge fra lønkontoen til budgetkontoen, så vælg <b>Flyttes videre til konto</b> på indtægten. Overførslen laves af sig selv, og den sænker din overførsel til budgetkontoen tilsvarende.`]))
+  +sec('opsparing','Opsparing og opsparingsmål',panel('Fra mål til post',`<div class="hflow"><div class="hcard"><b>Opsparingsmål</b></div>${arrow}<div class="hcard"><b>Fast månedlig post</b></div>${arrow}<div class="hsplit"><div class="hcard"><b>Anden konto</b><span>Overførsel</span></div><div class="hcard"><b>Samme konto</b><span>Udgift på kontoen</span></div></div></div>`)
+      +ul([`Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.`,
+        `I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så I kan se, hvad der er tilbage.`,
+        `Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.`,
+        `Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.`]))
+  +sec('bank','Rådighedsbeløb som banken regner det',steps([['','Nettoindtægt (alle indtægter, ekstra indtjening kun hvis den er slået til)'],['m','Bankens faste udgifter: de faste udgifter, der er markeret "Medregnes i bankens faste udgifter"'],['t','Rådighedsbeløb'],['m','Vejledende krav: voksne + antal børn × sats pr. barn'],['t','Luft over kravet (eller under kravet)']])
+      +panel('Jeres tal lige nu',wfB)
+      +`<p>Bankens faste udgifter er de faste udgifter i sætningen øverst, minus mad og husholdning, opsparing og gaver. Dem regner banken ikke med, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Bankens faste udgifter viser, hvad der er holdt ude. Derfor er rådighedsbeløbet som regel højere end Tilbage øverst.</p>
+      <p>Kravet er en tommelfingerregel, ikke bankens egne satser. Luft fra en senere måned lægger ydelsen fra lån, der udløber inden for 12 måneder, til igen.</p>`)
+  +sec('ovrigt','Øvrigt',panel(`Eksempel: ${qName} · ${kr(qAmt)} kvartalsvis = ${kr(qAvg)} pr. måned`,`<div class="hfreq">${qBars}<div class="avg" style="bottom:33.3%"></div><span class="avgl" style="bottom:calc(33.3% + 6px)">Gennemsnit ${kr(qAvg)}/md.</span></div><div class="hfreqm">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`)
+      +ul([`Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.`,
+        `<b>Ekstra indtjening</b> er indtægter med fluebenet Ekstra indtjening, fx et fritidsjob. De står under Indtægter og tæller kun med, når Medregn ekstra indtjening er slået til. De indgår ikke i fordelingsnøglen. Kommer de ikke fast, vælges hyppigheden Uregelmæssig, og beløbet er et gennemsnit pr. måned over året.`,
+        `Inaktive poster og mål tæller ikke med. Mål, der er nået måldatoen, tæller heller ikke.`,
+        `Et scenarie regner på samme måde, bare med scenariets ændringer. Det nuværende budget røres ikke.`]));
 }
-function openHelp(section){$('helpBody').innerHTML=helpHtml();$('dlgHelp').showModal();
-  const b=$('helpBody'),toc=b.querySelector('.htoc');b.scrollTop=0;
-  // Sections scroll to just below the sticky contents bar, however many lines it wraps to.
-  setTimeout(()=>{b.style.setProperty('--toc-h',(toc.offsetHeight+8)+'px');const t=section&&section!=='fordeling'&&$('help-'+section);if(t)t.scrollIntoView({block:'start'})},0)}
+function helpNavOn(id){$('helpNav').querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.hs===id))}
+function openHelp(section){
+  const ba=S&&S.accounts.find(a=>a.type==='faelles');
+  $('helpNav').innerHTML=HELPSEC.map(([id,l],i)=>`<a href="#help-${id}" data-hs="${id}"><span>0${i+1}</span>${id==='overforsel'&&ba?'Overførsel til '+esc(ba.name):l}</a>`).join('');
+  $('helpBody').innerHTML=helpHtml();$('dlgHelp').showModal();
+  const b=$('helpBody');b.scrollTop=0;const id=HELPSEC.some(x=>x[0]===section)?section:'fordeling';helpNavOn(id);
+  if(id!=='fordeling')setTimeout(()=>{const t=$('help-'+id);if(t)b.scrollTop=t.offsetTop-12},0)}
 $('btnHelpClose').onclick=()=>$('dlgHelp').close();
-$('helpBody').addEventListener('click',ev=>{const a=ev.target.closest('.htoc a');if(!a)return;ev.preventDefault();const t=$(a.getAttribute('href').slice(1));if(t)t.scrollIntoView({block:'start',behavior:'smooth'})});
+$('dlgHelp').addEventListener('click',ev=>{if(ev.target===$('dlgHelp'))$('dlgHelp').close()});
+$('helpNav').addEventListener('click',ev=>{const a=ev.target.closest('a[data-hs]');if(!a)return;ev.preventDefault();const t=$('help-'+a.dataset.hs);if(t)$('helpBody').scrollTo({top:t.offsetTop-12,behavior:'smooth'});helpNavOn(a.dataset.hs)});
+// The menu follows the reading position.
+$('helpBody').addEventListener('scroll',()=>{const b=$('helpBody');let on=HELPSEC[0][0];HELPSEC.forEach(([id])=>{const t=$('help-'+id);if(t&&t.offsetTop-b.scrollTop<b.clientHeight*.35)on=id});
+  if(b.scrollTop+b.clientHeight>=b.scrollHeight-4)on=HELPSEC[HELPSEC.length-1][0];helpNavOn(on)},{passive:true});
 document.addEventListener('click',ev=>{const h=ev.target.closest('[data-help]');if(h){ev.preventDefault();openHelp(h.dataset.help)}});
 
 /* ---------- kategorier og rækkefølge i Poster ---------- */
@@ -1825,13 +2100,13 @@ function planSvg(id){
   g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink3)"/>`;
   M.forEach((x,i)=>{const cx=pl+cw*i+cw/2;
     g+=`<rect x="${cx-bw-1}" y="${y(x.i)}" width="${bw}" height="${Math.max(0,y(0)-y(x.i))}" rx="2" fill="var(--pine)"><title>${LB[i]}: ind ${kr(x.i)}</title></rect>`;
-    g+=`<rect x="${cx+1}" y="${y(0)}" width="${bw}" height="${Math.max(0,y(-x.o)-y(0))}" rx="2" fill="var(--ink3)"><title>${LB[i]}: ud ${kr(x.o)}</title></rect>`;
+    g+=`<rect x="${cx+1}" y="${y(0)}" width="${bw}" height="${Math.max(0,y(-x.o)-y(0))}" rx="2" fill="var(--barud)"><title>${LB[i]}: ud ${kr(x.o)}</title></rect>`;
     g+=`<text x="${cx}" y="${H-14}" text-anchor="middle" font-size="12" fill="var(--ink2)">${LB[i]}</text>`;});
   const pts=sal.map((v,i)=>`${pl+cw*i+cw/2},${y(v)}`).join(' ');
-  g+=`<polyline points="${pts}" fill="none" stroke="var(--ochre)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-  sal.forEach((v,i)=>g+=`<circle cx="${pl+cw*i+cw/2}" cy="${y(v)}" r="4" fill="${v<0?'var(--brick)':'var(--ochre)'}" stroke="var(--card)" stroke-width="2"><title>Saldo ultimo ${LB[i]}: ${kr(v)}</title></circle>`);
+  g+=`<polyline points="${pts}" fill="none" stroke="var(--warnline)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+  sal.forEach((v,i)=>g+=`<circle cx="${pl+cw*i+cw/2}" cy="${y(v)}" r="4" fill="${v<0?'var(--brick)':'var(--warnline)'}" stroke="var(--paper)" stroke-width="2"><title>Saldo ultimo ${LB[i]}: ${kr(v)}</title></circle>`);
   const low=Math.min(...sal), lowM=idxLbl(IX[sal.indexOf(low)]).toLowerCase();
-  const legend=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:6px"><span><span style="display:inline-block;width:10px;height:10px;background:var(--pine);border-radius:2px;margin-right:5px"></span>Ind</span><span><span style="display:inline-block;width:10px;height:10px;background:var(--ink3);border-radius:2px;margin-right:5px"></span>Ud</span><span><span style="display:inline-block;width:14px;height:3px;background:var(--ochre);vertical-align:3px;margin-right:5px"></span>Saldo</span></div>`;
+  const legend=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:6px"><span><span style="display:inline-block;width:10px;height:10px;background:var(--pine);border-radius:2px;margin-right:5px"></span>Ind</span><span><span style="display:inline-block;width:10px;height:10px;background:var(--barud);border-radius:2px;margin-right:5px"></span>Ud</span><span><span style="display:inline-block;width:14px;height:3px;background:var(--warnline);vertical-align:3px;margin-right:5px"></span>Saldo</span></div>`;
   const msg=low<0?`<div class="verdict bad">Laveste saldo er ${kr(low)} i ${lowM}. Kontoen skal have ${kr(-low+sd.amount)} pr. ${esc(fmtDate(sd.date))} for aldrig at gå i minus.</div>`:`<div class="verdict ok">Laveste saldo er ${kr(low)} i ${lowM}. Saldo ultimo ${idxLbl(IX[11]).toLowerCase()}: ${kr(sal[11])}.</div>`;
   return legend+`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Ind, ud og saldo pr. måned for ${esc(a.name)}">${g}</svg>`+msg;
 }
@@ -1860,9 +2135,10 @@ function bindAcctDrag(){
 function bindMain(){
   document.querySelectorAll('details.acctd').forEach(d=>d.addEventListener('toggle',()=>{FOLD[d.dataset.acc]=!d.open;saveFold();const all=[...document.querySelectorAll('details.acctd')];const b=$('btnFoldAll');if(b)b.innerHTML=foldLbl(all.every(x=>!x.open))}));
   const bf=$('btnFoldAll');if(bf)bf.onclick=()=>{const all=[...document.querySelectorAll('details.acctd')],open=!all.every(x=>!x.open)?false:true;all.forEach(x=>{x.open=open;FOLD[x.dataset.acc]=!open});saveFold();bf.innerHTML=foldLbl(!open)};
-  $('btnAccts').onclick=openAccts;
+  if($('btnAccts'))$('btnAccts').onclick=openAccts;
   bindAcctDrag();
   document.querySelectorAll('[data-extog]').forEach(c=>c.onchange=()=>{S.settings.withExtra=c.checked;commit()});
+  document.querySelectorAll('[data-bndtog]').forEach(c=>c.onchange=()=>{S.settings.withBound=c.checked;commit()});
   document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{SC=b.dataset.sc||null;render();window.scrollTo(0,0)});
   bindScopes();bindPsav();
   {const a=$('scSaldo'),d=$('scSaldoD');if(a&&d){const sv=()=>{setSaldo(a.dataset.acc,parseAmt(a.value)||0,d.value||(curSc()&&curSc().from&&parseDateX('01.'+curSc().from))||DAY(),true);commit()};a.onchange=sv;d.onchange=sv}}
@@ -1873,19 +2149,12 @@ function bindMain(){
     $('scFrom').onchange=e=>{sc.from=e.target.value.trim();commit()};
     $('btnDelSc').onclick=e=>{const b=e.target;if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='Bekræft sletning af scenariet';return}
       S.scenarios=S.scenarios.filter(x=>x.id!==sc.id);(S.goals||[]).forEach(g=>{g.scopes=(g.scopes||[]).filter(k=>k!==sc.id)});SC=null;commit();toast('Scenarie slettet')};}
-  const bset=(k,v)=>{S.settings.bank=Object.assign({adults:12000,children:3,childRate:3000,withExtra:false},S.settings.bank||{},{[k]:v});bankOpen=true;commit()};
-  $('bkA').onchange=e=>bset('adults',Math.max(0,Math.round(parseAmt(e.target.value)||0)));
-  $('bkC').onchange=e=>bset('children',Math.max(0,Math.round(+e.target.value||0)));
-  $('bkR').onchange=e=>bset('childRate',Math.max(0,Math.round(parseAmt(e.target.value)||0)));
-  const det=document.querySelector('.bankdet'); if(bankOpen)det.open=true; det.ontoggle=()=>{bankOpen=det.open};
-  document.querySelectorAll('[data-bndtog]').forEach(i=>i.onchange=()=>{S.settings.withBound=i.checked;commit()});
+  {const det=document.querySelector('.bankdet'); if(det){if(bankOpen)det.open=true; det.ontoggle=()=>{bankOpen=det.open}}}
   document.querySelectorAll('[data-exnew]').forEach(b=>b.onclick=()=>{const pid=b.dataset.exnew;
     openEntry(null,{type:'indtaegt',extra:true,split:false,payer:pid,account:homeAcct(pid)||S.accounts[0]?.id||'',freq:0,desc:''})});
   document.querySelectorAll('.person .psrow[data-open]').forEach(r=>r.onkeydown=ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target===r){ev.preventDefault();openEntry(r.dataset.open)}});
   document.querySelectorAll('[data-pf]').forEach(inp=>inp.onchange=()=>{const p=S.persons.find(x=>x.id===inp.dataset.pid);if(!p)return;const v=parseAmt(inp.value);p[inp.dataset.pf]=v>0?Math.round(v):0;commit()});
-  const ss=$('splitSel'); ss.value=S.settings?.split||'indkomst';
-  ss.onchange=()=>{S.settings.split=ss.value;commit()};
-  const mp=$('manPct'); if(mp)mp.onchange=()=>{S.settings.manualPct=Math.min(100,Math.max(0,Math.round(+mp.value||0)));commit()};
+  if($('tbody')){
   $('flType').value=F.type;$('flAcct').value=F.account;$('flPayer').value=F.payer;
   $('flType').onchange=e=>{F.type=e.target.value;$('tbody').innerHTML=rowsHtml()};
   $('flAcct').onchange=e=>{F.account=e.target.value;$('tbody').innerHTML=rowsHtml()};
@@ -1893,7 +2162,6 @@ function bindMain(){
   $('flQ').oninput=e=>{F.q=e.target.value;$('tbody').innerHTML=rowsHtml()};
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
-  const dp=$('devPct');if(dp)dp.onchange=()=>{const v=Math.round(+dp.value||0);S.settings.devPct=v>0?Math.min(100,v):10;commit()};
   $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!PFOLD[k];savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
     if(ev.target.closest('[data-cats]')){openCats();return}
     const ce=ev.target.closest('[data-catedit]');if(ce){openCats(ce.dataset.catedit);return}
@@ -1903,7 +2171,8 @@ function bindMain(){
   bindPostDrag();if($('btnCats'))$('btnCats').onclick=()=>openCats();
   if($('btnFoldPosts'))$('btnFoldPosts').onclick=()=>{const anyFolded=Object.values(PFOLD).some(Boolean);
     if(anyFolded)PFOLD={};else{PFOLD={'g:indtaegt':true};catList().concat([NOCAT,'Opsparing']).forEach(k=>PFOLD['c:'+k]=true)}
-    savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').innerHTML=foldAllHtml()};
+    savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').innerHTML=foldAllHtml()};}
+  if(!$('planSel'))return;
   $('planSel').onchange=e=>{planAcct=e.target.value;render()};
   const svS=()=>{const a=S.accounts.find(x=>x.id===planAcct);if(!a)return;const v=parseAmt($('startSaldo').value)||0,d=$('saldoDate').value||DAY();setSaldo(a.id,v,d,!!curSc());commit()};
   $('startSaldo').onchange=svS;$('saldoDate').onchange=svS;const sr=$('saldoReset');if(sr)sr.onclick=()=>{const sc=curSc();if(sc&&sc.saldo){delete sc.saldo[planAcct];commit()}};
@@ -2026,7 +2295,7 @@ $('frm').addEventListener('submit',ev=>{
 });
 
 /* ---------- konti og personer ---------- */
-function openAccts(){renderAccts();$('dlgAcct').showModal()}
+function openAccts(){openSet('konti')}
 function renderAccts(){
   $('acctList').innerHTML=S.accounts.map(a=>`<div class="acctedit" data-id="${a.id}">
     <input data-f="name" value="${esc(a.name)}" aria-label="Kontonavn">
@@ -2034,7 +2303,12 @@ function renderAccts(){
     <select data-f="type" aria-label="Kontotype"><option value="faelles" ${a.type==='faelles'?'selected':''}>Fælles</option><option value="personlig" ${a.type!=='faelles'?'selected':''}>Personlig</option></select>
     <select data-f="owner" aria-label="Ejer"><option value="">Ingen ejer</option>${S.persons.map(p=>`<option value="${p.id}" ${a.owner===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
     <button type="button" class="ghost danger" data-del="${a.id}" aria-label="Slet konto ${esc(a.name)}">Slet</button></div>`).join('');
-  $('personList').innerHTML=S.persons.map(p=>`<div class="acctedit" data-pid="${p.id}" style="grid-template-columns:1fr"><input data-p="name" value="${esc(p.name)}" aria-label="Navn"></div>`).join('');
+  $('personList').innerHTML=S.persons.map(p=>`<div class="personedit" data-pid="${p.id}"><input data-p="name" value="${esc(p.name)}" aria-label="Navn på person"><button type="button" class="ghost danger" data-pdel="${p.id}" ${S.persons.length<2?'disabled title="Der skal være mindst én person"':''} aria-label="Fjern ${esc(p.name)}">Fjern</button></div>`).join('');
+  $('personList').querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{const id=b.dataset.pdel;if(S.persons.length<2)return;
+    const n=entryCopies().filter(e=>e.payer===id).length+(S.goals||[]).filter(g=>g.payer===id).length, na=S.accounts.filter(a=>a.owner===id).length;
+    if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent=(n||na)?`${n?n+(n===1?' post og mål':' poster og mål')+' flyttes til Fælles':''}${n&&na?', ':''}${na?na+(na===1?' konto':' konti')+' mister ejer':''}. Fjern?`:'Fjern?';return}
+    entryCopies().forEach(e=>{if(e.payer===id)e.payer=FAELLES});(S.goals||[]).forEach(g=>{if(g.payer===id)g.payer=FAELLES});S.accounts.forEach(a=>{if(a.owner===id)a.owner=''});
+    S.persons=S.persons.filter(x=>x.id!==id);if(S.settings.split==='manuel'&&S.persons.length!==2)S.settings.split='indkomst';setCommit()});
   $('acctList').querySelectorAll('.acctedit').forEach(row=>{
     row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);a[inp.dataset.f]=inp.value;commit()});
   });
@@ -2047,8 +2321,8 @@ function renderAccts(){
   });
   $('personList').querySelectorAll('[data-p]').forEach(inp=>inp.onchange=()=>{const p=S.persons.find(x=>x.id===inp.closest('[data-pid]').dataset.pid);p.name=inp.value.trim()||p.name;commit()});
 }
+$('btnAddPerson').onclick=()=>{S.persons.push({id:'p'+uid(),name:'Person '+(S.persons.length+1)});setCommit();const L=$('personList').querySelectorAll('input');const i=L[L.length-1];if(i){i.focus();i.select()}};
 $('btnAddAcct').onclick=()=>{S.accounts.push({id:'k'+uid(),name:'Ny konto',number:'',type:'personlig',owner:'',startSaldo:0});commit();renderAccts()};
-$('btnAcctClose').onclick=()=>$('dlgAcct').close();
 
 /* ---------- gem ---------- */
 function blank(){return {version:1,persons:[{id:'p1',name:'Person 1'},{id:'p2',name:'Person 2'}],accounts:[{id:'budget',name:'Budgetkonto',number:'',type:'faelles',owner:'',startSaldo:0}],entries:[],goals:[],settings:{split:'indkomst',manualPct:50}}}
@@ -2090,7 +2364,7 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
    same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
 function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ')}
 const PC={paper:[244,246,242],card:[255,255,255],ink:[23,33,27],ink2:[95,107,99],ink3:[131,141,134],rule:[223,229,220],pine:[44,106,77],pineBg:[227,238,230],brick:[168,56,42],brickBg:[248,231,226],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
-const PGC=[PC.pine,PC.ochre,PC.focus,PC.brick,PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
+const PGC=[[79,125,103],[154,125,69],[82,104,138],[143,91,106],PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
 const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
 /* Month-by-month plan for the goals chart (same rules as goalChart on the page). */
 function goalPlan(L){
@@ -2243,13 +2517,13 @@ function buildPdf(){
     [S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening.':'Uden ekstra indtjening.'):'',checks?checks+(checks===1?' post er':' poster er')+' markeret til tjek.':'',flagged?`${flagged} ${flagged===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år.`:'',unplaced.length?unplaced.length+' udgifter er ikke placeret på en konto endnu.':''].filter(Boolean).join(' '));
   if(sc){h2('Holdt op mod nuværende budget',null,30);table(['Pr. måned','Nuværende','Scenarie','Forskel'],compareRows(sc).map(r=>[r[0],kr(r[1]),kr(r[2]),(r[3]>0.5?'+':'')+kr(r[3])]),{right:[1,2,3]});
     const chg=scChanges(sc);if(chg.length)table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,kr(c.b),kr(c.n)]),{right:[2,3]})}
-  h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter, fordi de skal dækkes af rådighedsbeløbet.',30);
-  const KB=[{label:'Nettoindtægt',value:kr(bk.inc+bk.extra),small:bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'},{label:'Faste udgifter',value:kr(bk.fixed),small:exclNote(bk)},{label:'Rådighedsbeløb',value:kr(bk.rad),small:'pr. måned',kind:'hero'},
+  h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus bankens faste udgifter. Banken regner ikke mad og husholdning, opsparing og gaver med, fordi de skal dækkes af rådighedsbeløbet.',30);
+  const KB=[{label:'Nettoindtægt',value:kr(bk.inc+bk.extra),small:bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'},{label:'Bankens faste udgifter',value:kr(bk.fixed),small:exclNote(bk)},{label:'Rådighedsbeløb',value:kr(bk.rad),small:'pr. måned',kind:'hero'},
     {label:'Vejledende krav',value:kr(bk.req),small:`Tommelfingerregel for 2 voksne + ${+bk.b.children||0} børn, ikke bankens egne satser`},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:kr(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'}];
   const FR=loansFreedWithin(12).filter(x=>x.inB);
   if(FR.length){const fr=FR.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=FR[FR.length-1].i;KB.push({label:(nb>=0?'Luft':'Under kravet')+' fra '+idxLbl(last).toLowerCase(),value:kr(Math.abs(nb)),small:'+'+kr(fr)+' frigives: '+FR.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '),kind:nb>=0?'good':'bad'})}
   kpis(KB,3);
-  if(bk.excl.length)para('Ikke medregnet som faste udgifter: '+bk.excl.map(e=>e.desc+' '+kr(mAvg(e))).join(', ')+'.',8,PC.ink3);
+  if(bk.excl.length)para('Ikke med i bankens faste udgifter: '+bk.excl.map(e=>e.desc+' '+kr(mAvg(e))).join(', ')+'.',8,PC.ink3);
   const ids=S.accounts.map(a=>a.id);if(unplaced.length)ids.push('');
   const maxv=Math.max(1,...ids.map(id=>{const c=accountCalc(id);return Math.max(c.in,c.out)}));
   h2('Konti','Hvad løber ind og ud af hver konto, og hvad der er tilbage.',50);
@@ -2425,11 +2699,11 @@ function buildXlsx(){
   B.h2('Nøgletal');B.table(['','Pr. md.','Pr. år'],metrics().map(r=>[r[0],r0(r[1]),r0(r[1]*12)]).concat([['Opsparing i alt',r0(t.sav),r0(t.sav*12)]]));
   if(sc){B.h2('Holdt op mod nuværende budget');B.table(['Pr. måned','Nuværende','Scenarie','Forskel'],compareRows(sc).map(r=>[r[0],r0(r[1]),r0(r[2]),{v:r0(r[3]),s:Math.abs(r[3])<0.5?null:XF.bold}]));
     const chg=scChanges(sc);if(chg.length)B.table(['Ændrede poster','','Før pr. md.','Efter pr. md.'],chg.map(c=>[c.desc,c.kind,r0(c.b),r0(c.n)]))}
-  B.h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus faste udgifter. Mad, opsparing og gaver regnes ikke som faste udgifter.');
+  B.h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus bankens faste udgifter. Mad og husholdning, opsparing og gaver er ikke med.');
   const FR=loansFreedWithin(12).filter(x=>x.inB), fr=FR.reduce((a,x)=>a+x.free,0);
-  B.kpis([{label:'Nettoindtægt',value:r0(bk.inc+bk.extra),small:bk.extra?'inkl. ekstra indtjening':'uden ekstra indtjening'},{label:'Faste udgifter',value:r0(bk.fixed),small:exclNote(bk)},{label:'Rådighedsbeløb',value:r0(bk.rad),small:'pr. måned',kind:'hero'},{label:'Vejledende krav',value:r0(bk.req),small:'tommelfingerregel'},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:r0(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'},
+  B.kpis([{label:'Nettoindtægt',value:r0(bk.inc+bk.extra),small:bk.extra?'inkl. ekstra indtjening':'uden ekstra indtjening'},{label:'Bankens faste udgifter',value:r0(bk.fixed),small:exclNote(bk)},{label:'Rådighedsbeløb',value:r0(bk.rad),small:'pr. måned',kind:'hero'},{label:'Vejledende krav',value:r0(bk.req),small:'tommelfingerregel'},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:r0(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'},
     ...(FR.length?[{label:(bk.buf+fr>=0?'Luft':'Under kravet')+' fra '+idxLbl(FR[FR.length-1].i).toLowerCase(),value:r0(Math.abs(bk.buf+fr)),small:'+'+kr(fr)+' frigives fra lån',kind:bk.buf+fr>=0?'good':'bad'}]:[])]);
-  if(bk.excl.length)B.table(['Ikke medregnet som faste udgifter','Pr. md.'],bk.excl.map(e=>[e.desc,r0(mAvg(e))]).concat([{tot:true,cells:['I alt',r0(bk.exclSum)]}]));
+  if(bk.excl.length)B.table(['Ikke med i bankens faste udgifter','Pr. md.'],bk.excl.map(e=>[e.desc,r0(mAvg(e))]).concat([{tot:true,cells:['I alt',r0(bk.exclSum)]}]));
   const unplaced=act().some(e=>e.type==='udgift'&&!e.account), ids=S.accounts.map(a=>a.id).concat(unplaced?['']:[]);
   B.h2('Konti','Hvad løber ind og ud af hver konto, og hvad der er tilbage, pr. måned.');
   B.table(['Konto','Indtægter','Overført ind','Faste udgifter','Overført ud','Opsparing','Ind i alt','Ud i alt','Tilbage','Bør overføres','Overføres','Status'],ids.map(id=>{const a=S.accounts.find(x=>x.id===id)||{name:'Ikke placeret'},c=accountCalc(id),f=a.type==='faelles',gap=c.need-c.tin;
@@ -2534,10 +2808,15 @@ function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#'+bid)&&!ev.target.closest('#'+mid))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}});}
 /* Profile menu: export, import, theme and test user. */
-menuSetup('btnUserMenu','userMenu',b=>{const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
+function umPick(b){const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
   if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
   else if(y==='stmt'){if(!S){toast('Opret først et budget');return}openImp()}else if(y==='json')$('jsonFile').click();
-  else if(u==='help')openHelp();else if(u==='home')location.href='/';else if(u==='user'){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'}});
+  else if(u==='set'){if(!S){toast('Opret først et budget');return}openSet()}else if(u==='help')openHelp();else if(u==='data')$('dlgData').showModal();else if(u==='home')location.href='/';else if(u==='user'){try{localStorage.removeItem('budgetr:session')}catch(e){}location.href='/login?next=/app'}}
+menuSetup('btnUserMenu','userMenu',umPick);
+$('btnUserMenu').addEventListener('click',()=>{$('umSub').textContent=$('status').textContent||'Gemmes på denne computer'});
+$('dlgData').querySelectorAll('.dtile').forEach(b=>b.onclick=()=>{$('dlgData').close();umPick(b)});
+$('btnDataClose').onclick=()=>$('dlgData').close();
+$('dlgData').addEventListener('click',ev=>{if(ev.target===$('dlgData'))$('dlgData').close()});
 /* Scenario picker in the tab row (replaces the Nuværende/scenario buttons on each page). Items change, so it binds by delegation. */
 function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
   if(page!=='budget'){document.querySelector('[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
@@ -2556,17 +2835,40 @@ function renderScn(){const sc=curSc(),b=$('btnScn');if(!b)return;b.hidden=!S;con
     SC=b.dataset.scn||null;render();window.scrollTo(0,0)};
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnScn')&&!ev.target.closest('#scnMenu'))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}})}
-function openSet(){if(!S){openWiz();return}const P=S.persons, sp=S.settings||{};
+function splitTxt(){const sp=S.settings||{},sh=shares(),P=S.persons;
+  const k=sp.split==='manuel'?'med fast procent':sp.split==='lige'?'ligeligt':'efter fast indkomst';
+  return `Fordelt ${k}${P.length?' ('+P.map(p=>esc(p.name)+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')+')':''}`}
+const boundTxt=()=>{const B=act().filter(isBound);return B.length?esc([...new Set(B.map(e=>e.desc.replace(/\s+(\S+)$/,(m,w)=>S.persons.some(p=>p.name===w)?'':m)))].join(', '))+' '+disp(B.reduce((a,e)=>a+mAvg(e),0)):''};
+function fillSet(){const P=S.persons, sp=S.settings||{}, bk=Object.assign({adults:12000,children:3,childRate:3000},sp.bank||{});
   $('setName').value=sp.title||'Mit budget';
   $('setSplit').innerHTML=`<option value="indkomst">efter fast indkomst</option><option value="lige">ligeligt</option>${P.length===2?'<option value="manuel">fast procent</option>':''}`;$('setSplit').value=sp.split||'indkomst';
   $('lSetPct').textContent=P[0]?P[0].name+' betaler, %':'Andel i procent';$('setPct').value=+sp.manualPct||50;$('wSetPct').style.display=$('setSplit').value==='manuel'?'':'none';
-  $('exAll').checked=exOn();$('dlgSet').showModal()}
-$('setName').onchange=()=>{S.settings.title=$('setName').value.trim()||'Mit budget';commit()};
-$('setSplit').onchange=()=>{S.settings.split=$('setSplit').value;$('wSetPct').style.display=$('setSplit').value==='manuel'?'':'none';commit()};
-$('setPct').onchange=()=>{S.settings.manualPct=Math.min(100,Math.max(0,Math.round(+$('setPct').value||0)));commit()};
-$('setAccts').onclick=()=>{$('dlgSet').close();openAccts()};
+  $('setSplitNote').innerHTML=splitTxt()+'. Efter fast indkomst bruger faste indtægter med personen som betaler. Ekstra indtjening og indtægter uden fluebenet Tæller med i fordelingsnøglen er ikke med i nøglen.';
+  $('exAll').checked=exOn();$('setExNote').innerHTML=exSrc()+' Slået fra tæller den ingen steder.';
+  $('setBound').checked=boundOn();const bt=boundTxt();
+  $('setBoundNote').innerHTML=(bt?`Bundne indtægter lige nu: ${bt}. `:'Ingen indtægter er markeret som bundne. ')+'Slået fra holdes de ude af Til rådighed på personkortene. Tallene øverst og bankens beregning tæller dem altid med. En indtægt bliver bundet med fluebenet på posten; børnefamilieydelse er det som udgangspunkt.';
+  $('setBkA').value=nf.format(+bk.adults||0);$('setBkC').value=+bk.children||0;$('setBkR').value=nf.format(+bk.childRate||0);
+  $('setDev').value=devPct();renderAccts()}
+// One page per group; the last page opened is shown again next time.
+let setPage='hus';
+function setShow(sec){if(!$('set-'+sec))sec='hus';setPage=sec;
+  document.querySelectorAll('#setMain .setsec').forEach(x=>x.classList.toggle('on',x.id==='set-'+sec));
+  document.querySelectorAll('.setnav [data-sp]').forEach(b=>{if(b.dataset.sp===sec)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});$('setMain').scrollTop=0}
+function openSet(sec){if(!S){openWiz();return}fillSet();setShow(sec||setPage);if(!$('dlgSet').open)$('dlgSet').showModal()}
+document.querySelector('.setnav').addEventListener('click',ev=>{const b=ev.target.closest('[data-sp]');if(b)setShow(b.dataset.sp)});
+const setCommit=()=>{commit();fillSet()};
+$('setName').onchange=()=>{S.settings.title=$('setName').value.trim()||'Mit budget';setCommit()};
+$('setSplit').onchange=()=>{S.settings.split=$('setSplit').value;setCommit()};
+$('setPct').onchange=()=>{S.settings.manualPct=Math.min(100,Math.max(0,Math.round(+$('setPct').value||0)));setCommit()};
+$('setBound').onchange=()=>{S.settings.withBound=$('setBound').checked;setCommit()};
+{const bset=(k,v)=>{S.settings.bank=Object.assign({adults:12000,children:3,childRate:3000,withExtra:false},S.settings.bank||{},{[k]:v});setCommit()};
+  $('setBkA').onchange=e=>bset('adults',Math.max(0,Math.round(parseAmt(e.target.value)||0)));
+  $('setBkC').onchange=e=>bset('children',Math.max(0,Math.round(+e.target.value||0)));
+  $('setBkR').onchange=e=>bset('childRate',Math.max(0,Math.round(parseAmt(e.target.value)||0)));}
+$('setDev').onchange=()=>{const v=Math.round(+$('setDev').value||0);S.settings.devPct=v>0?Math.min(100,v):10;setCommit()};
 $('setWiz').onclick=()=>{$('dlgSet').close();openWiz()};
 $('setDone').onclick=()=>$('dlgSet').close();
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-set]');if(!b)return;ev.preventDefault();openSet(b.dataset.set)});
 
 /* ---------- sikkerhedskopi ---------- */
 function saveBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
@@ -2774,7 +3076,7 @@ document.addEventListener('click',ev=>{const o=ev.target.closest('[data-open]');
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cmp]');if(!b)return;
   const go=()=>{const c=$('cmp');if(c){c.scrollIntoView({behavior:'smooth',block:'start'});c.animate&&c.animate([{background:'var(--plum-bg)'},{background:'transparent'}],{duration:1400})}};
   if(page!=='budget'){document.querySelector('[data-page="budget"]').click();setTimeout(go,50)}else go()});
-$('exAll').onchange=e=>{if(!S)return;S.settings.withExtra=e.target.checked;commit()};
+$('exAll').onchange=e=>{if(!S)return;S.settings.withExtra=e.target.checked;commit();fillSet()};
 $('btnNew').onclick=()=>{if(!S){S=blank();commit()}openEntry(null)};
 
 /* ---------- opstart ---------- */

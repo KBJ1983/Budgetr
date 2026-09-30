@@ -1,7 +1,7 @@
 /*
  * Landing page styles (docs/design/HANDOFF.md, forside-desktop.html / forside-mobil.html).
  * Breakpoints (§6): desktop >= 1280px, tablet 768–1279px, mobile < 768px.
- * Product cut-outs switch to compact layouts via container queries, so they fit any column width.
+ * The app is shown with real screenshots (public/landing/, `pnpm shots`), in the light or the dark theme.
  */
 
 .page {
@@ -12,7 +12,7 @@
   --error: #b03a22;
   --error-on-dark: #ffd4c8;
   --product-shadow: 0 30px 60px -28px rgba(18, 24, 22, 0.5), 0 10px 20px -12px rgba(18, 24, 22, 0.3);
-  --float-shadow: 0 24px 48px -20px rgba(18, 24, 22, 0.55);
+  --float-shadow: 0 18px 40px -18px rgba(18, 24, 22, 0.5);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -20,10 +20,6 @@
   color: var(--ink);
   /* Safety net for decorative shadows; layouts themselves never exceed the viewport. */
   overflow-x: clip;
-}
-
-.num {
-  font-variant-numeric: tabular-nums;
 }
 
 /* ================= Header ================= */
@@ -53,11 +49,6 @@
 .brand svg {
   width: 24px;
   height: 24px;
-}
-.brandName {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
 }
 
 .nav {
@@ -172,9 +163,6 @@
   text-transform: uppercase;
   color: var(--pine);
 }
-.eyebrowLight {
-  color: var(--pine-light);
-}
 
 .h2 {
   margin: 0;
@@ -186,9 +174,6 @@
 }
 .h2Light {
   color: var(--paper);
-}
-.h2Sm {
-  font-size: 40px;
 }
 
 .headBody {
@@ -441,782 +426,227 @@
   display: none;
 }
 
-.floatGoal {
-  position: absolute;
-  z-index: 1;
-  left: -64px;
-  bottom: 76px;
-  width: 250px;
-  background: var(--d-card);
-  color: var(--d-text);
-  border: 1px solid var(--d-rule);
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: var(--float-shadow);
-}
-.floatScenario {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  top: 150px;
-  width: 270px;
-  background: var(--d-slate-bg);
-  color: var(--d-text);
-  border: 1px solid var(--d-slate-rule);
-  border-radius: 14px;
-  padding: 14px 16px;
-  box-shadow: var(--float-shadow);
-}
+/* ================= Screenshots ================= */
+/* Each shot exists in both themes. <html data-shots> (set by the hero switch) wins; until then the system theme decides. */
 
-/* ================= Product cut-outs ================= */
-
-.product,
-.appWindow {
-  margin: 0;
-  width: 100%;
-  min-width: 0;
-  background: var(--d-bg);
-  color: var(--d-text);
-  border: 1px solid #0b0f0e;
-  border-radius: 16px;
-  container-type: inline-size;
-}
-.product {
-  padding: 22px;
-  box-shadow: var(--product-shadow);
-}
-.productCompact {
-  padding: 16px;
-  box-shadow: 0 24px 48px -24px rgba(18, 24, 22, 0.5);
-}
-.appWindow {
-  max-width: 760px;
-  overflow: hidden;
-  box-shadow: var(--shadow-product);
-}
-
-.productHead {
-  font-size: 11px;
-  color: var(--d-text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
-}
-.productTitleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-bottom: 14px;
-}
-.productTitleRow b {
-  font-size: 15px;
-}
-.muted11 {
-  font-size: 11px;
-  color: var(--d-text-3);
-}
-.strongLight {
-  color: var(--d-text);
-}
-.soft {
-  color: var(--d-text-2);
-}
-.right {
-  text-align: right;
-}
-.valPos {
-  color: var(--d-pos);
-}
-.valNeg {
-  color: var(--d-neg);
-}
-.valBlue {
-  color: var(--d-blue);
-}
-.valDim {
-  color: var(--d-text-3);
-}
-
-/* App chrome */
-.titleBar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--d-bar);
-  border-bottom: 1px solid var(--d-rule);
-}
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #3a4541;
-}
-.urlPill {
-  margin-left: 12px;
-  font-size: 11px;
-  color: var(--d-text-3);
-  background: var(--d-card);
-  padding: 3px 12px;
-  border-radius: 6px;
-}
-.appTop {
-  padding: 12px 20px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-}
-.appTitle {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-}
-.appTitle b {
-  font-size: 13px;
-}
-.appTitle > span:last-child {
-  padding-left: 10px;
-  border-left: 1px solid var(--d-rule);
-}
-.appUser {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.savedDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--d-pos);
-}
-.avatar {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--d-text);
-  color: var(--d-bg);
-  font-size: 9px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.appTabsRow {
-  padding: 8px 20px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 12px;
-  border-bottom: 1px solid var(--d-rule);
-}
-.appTabs {
-  display: flex;
-  min-width: 0;
-}
-.appTab {
-  font-size: 12px;
-  padding: 8px 12px;
-  color: var(--d-text-3);
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-}
-.appTabActive {
-  color: var(--d-text);
-  border-bottom-color: var(--d-pos);
-}
-.appActions {
-  display: flex;
-  gap: 6px;
-  padding-bottom: 8px;
-}
-.chip {
-  font-size: 11px;
-  padding: 5px 10px;
-  border: 1px solid var(--d-rule);
-  border-radius: 7px;
-  color: var(--d-text-2);
-  white-space: nowrap;
-}
-.chipPrimary {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 5px 12px;
-  background: var(--d-pos);
-  color: var(--d-bg);
-  border-radius: 7px;
-  white-space: nowrap;
-}
-.appBody {
-  padding: 20px;
-}
-.segRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-.product .segRow {
-  margin-bottom: 12px;
-}
-.seg {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--d-rule);
-  color: var(--d-text-2);
-}
-.segActive {
-  background: var(--d-text);
-  border-color: var(--d-text);
-  color: var(--d-bg);
-}
-.segSlate {
-  background: var(--d-slate);
-  border-color: var(--d-slate);
-  color: var(--d-bg);
-}
-.summary {
-  margin: 0 0 6px;
-  font-size: 26px;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-}
-.summaryCompact {
-  margin: 0 0 14px;
-  font-size: 17px;
-  line-height: 1.35;
-}
-.note {
-  margin: 0 0 18px;
-  font-size: 11px;
-  color: var(--d-text-3);
-}
-
-/* Stat tiles */
-.stat {
-  min-width: 0;
-  padding: 14px 16px;
-  border-radius: 10px;
-  background: var(--d-card);
-  border: 1px solid var(--d-rule);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.statLabel {
-  font-size: 12px;
-  color: var(--d-text-2);
-}
-.statValue {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--d-text);
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-.statSub {
-  font-size: 11px;
-  color: var(--d-text-3);
-}
-.statLight {
-  background: var(--d-text);
-  border-color: var(--d-text);
-}
-.statLight .statLabel {
-  color: #3a4642;
-}
-.statLight .statValue {
-  color: var(--d-bg);
-}
-.statLight .statSub {
-  color: #4a5550;
-}
-.statPos {
-  background: var(--d-pos-bg);
-  border-color: var(--d-pos-rule);
-}
-.statPos .statLabel,
-.statPos .statValue {
-  color: var(--d-pos);
-}
-
-.heroStats,
-.loanStats {
-  display: flex;
-  gap: 8px;
-}
-.heroStats {
-  margin-bottom: 16px;
-}
-.loanStats {
-  margin-bottom: 14px;
-}
-.heroStats > *,
-.loanStats > * {
-  flex: 1 1 0;
-}
-.statGrid2,
-.statGrid3 {
-  display: grid;
-  gap: 8px;
-}
-.statGrid2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.statGrid3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-/* Accounts (hero) */
-.accountList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.account {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 12px;
-  background: var(--d-card);
-  border: 1px solid var(--d-rule);
-  border-radius: 9px;
-  font-size: 12px;
-}
-.accountName {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  min-width: 0;
-}
-.accountName b {
-  font-size: 13px;
-  white-space: nowrap;
-}
-.accountOwner {
-  font-size: 11px;
-  color: var(--d-text-3);
-}
-
-/* Key/value rows */
-.subHead {
-  margin-top: 14px;
-  font-size: 12px;
-  color: var(--d-text-2);
-}
-.kvList {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 6px;
-}
-.kvBlock {
-  margin-top: 12px;
-}
-.kv {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
-  padding: 3px 0;
-}
-.kvLabel {
-  color: var(--d-text-2);
-  min-width: 0;
-}
-.kvValue {
-  color: var(--d-text);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.kvValue.valPos {
-  color: var(--d-pos);
-}
-.kvValue.valNeg {
-  color: var(--d-neg);
-}
-.kvValue.valBlue {
-  color: var(--d-blue);
-}
-.kvValue.valDim {
-  color: var(--d-text-3);
-}
-
-/* Goals */
-.goalList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.goal {
-  background: var(--d-card);
-  border: 1px solid var(--d-rule);
-  border-radius: 12px;
-  padding: 14px;
-}
-.goalCompact {
-  margin-top: 10px;
-  border-radius: 10px;
-  padding: 12px;
-}
-.goalHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-}
-.goalHead b {
-  font-size: 13px;
-}
-.goalCompact .goalHead {
-  font-size: 12px;
-}
-.goalCompact .goalHead b {
-  font-size: 12px;
-}
-.swatch {
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  border-radius: 3px;
-  margin-right: 7px;
-}
-.swPos {
-  background: var(--d-pos);
-}
-.swWarn {
-  background: var(--d-warn);
-}
-.swBlue {
-  background: var(--d-blue);
-}
-.tag {
-  font-size: 10px;
-  padding: 1px 7px;
-  border-radius: 9px;
-  background: var(--d-pos-bg);
-  color: var(--d-pos);
-  white-space: nowrap;
-}
-.goalAmount {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--d-pos);
-  margin: 6px 0 8px;
-  font-variant-numeric: tabular-nums;
-}
-.goalAmountLg {
-  font-size: 24px;
-}
-.goalCompact .goalAmount {
-  font-size: 18px;
-  margin: 4px 0 6px;
-}
-.per {
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--d-text-2);
-}
-.progress {
-  height: 6px;
-  border-radius: 4px;
-  background: var(--d-rule);
-  overflow: hidden;
-}
-.progressFill {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--d-pos);
-}
-.progressWarn {
-  background: var(--d-warn);
-}
-.goalMeta {
-  font-size: 11px;
-  color: var(--d-text-3);
-  margin-top: 6px;
-}
-.goalMetaFlat {
-  font-size: 11px;
-  color: var(--d-text-3);
-}
-
-/* Scenario */
-.scenarioBox {
-  background: var(--d-slate-bg);
-  border: 1px solid var(--d-slate-rule);
-  border-radius: 10px;
-  padding: 12px;
-}
-.scenarioTitle {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--d-slate);
-  margin-bottom: 8px;
-}
-.slateDot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--d-slate);
-  margin-right: 6px;
-}
-.pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.deltaPill {
-  display: inline-flex;
-  gap: 6px;
-  align-items: baseline;
-  padding: 3px 10px;
-  border-radius: 14px;
-  background: var(--d-card);
-  border: 1px solid var(--d-rule);
-  color: var(--d-text-2);
-  font-size: 12px;
-}
-.deltaPill b {
-  font-variant-numeric: tabular-nums;
-  color: var(--d-text-2);
-}
-.deltaPill b.valPos {
-  color: var(--d-pos);
-}
-.deltaPill b.valNeg {
-  color: var(--d-neg);
-}
-
-/* Sharing */
-.shareLegend {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 2px 12px;
-  font-size: 12px;
-  color: var(--d-text-2);
-  margin-bottom: 6px;
-}
-.shareBar {
-  display: flex;
-  height: 10px;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 14px;
-}
-.barA {
-  width: 58%;
-  background: var(--d-pos);
-}
-.barB {
-  width: 42%;
-  background: var(--d-blue);
-}
-.people {
-  display: flex;
-  gap: 10px;
-}
-.person {
-  flex: 1 1 0;
-  min-width: 0;
-  background: var(--d-card);
-  border: 1px solid var(--d-rule);
-  border-radius: 12px;
-  padding: 18px;
-}
-.personName {
-  font-size: 15px;
-}
-.personRows {
-  margin-top: 8px;
-}
-.personAmount {
-  font-size: 30px;
-  font-weight: 700;
-  color: var(--d-pos);
-  margin: 10px 0 2px;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-.divider {
-  height: 1px;
-  background: var(--d-rule);
-  margin: 12px 0 8px;
-}
-
-/* Charts */
-.chart {
+.shotLight,
+.shotDark {
   display: block;
   width: 100%;
   height: auto;
-  font-family: inherit;
+}
+.shotDark {
+  display: none;
+}
+:global(html[data-shots="dark"]) .shotLight {
+  display: none;
+}
+:global(html[data-shots="dark"]) .shotDark {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :global(html:not([data-shots="light"])) .shotLight {
+    display: none;
+  }
+  :global(html:not([data-shots="light"])) .shotDark {
+    display: block;
+  }
 }
 
-/* Loans table */
-.loanTable {
-  margin-top: 6px;
+.shotFrame {
+  margin: 0;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  box-shadow: var(--product-shadow);
 }
-.loanRow {
-  display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) 90px 90px 90px;
-  gap: 8px;
+
+/* Hero tour: tabs above a browser window; the pages cross-fade, and a short note says what you are looking at. */
+.showcase {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* Window colours follow the shots' theme. */
+  --chrome: var(--card);
+  --chrome-rule: var(--rule);
+  --chrome-ink: var(--ink-3);
+  --note-bg: var(--ink);
+  --note-ink: #fff;
+}
+:global(html[data-shots="dark"]) .showcase {
+  --chrome: var(--d-card);
+  --chrome-rule: var(--d-rule);
+  --chrome-ink: var(--d-text-2);
+  --note-bg: var(--d-text);
+  --note-ink: var(--d-bg);
+}
+@media (prefers-color-scheme: dark) {
+  :global(html:not([data-shots="light"])) .showcase {
+    --chrome: var(--d-card);
+    --chrome-rule: var(--d-rule);
+    --chrome-ink: var(--d-text-2);
+    --note-bg: var(--d-text);
+    --note-ink: var(--d-bg);
+  }
+}
+.showBar {
+  display: flex;
   align-items: center;
-  padding: 8px 0;
-  border-top: 1px solid var(--d-rule);
-  font-size: 12px;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-.loanNum {
-  width: 20px;
-  height: 20px;
+.showTabs {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+.showTab {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  font: 500 14px var(--font);
+  color: var(--ink-3);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+}
+.showTab:hover {
+  color: var(--ink);
+}
+.showTab[aria-selected="true"] {
+  color: var(--ink);
+  background: var(--paper);
+}
+.showProgress {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--pine);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+.showTheme {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--card);
+}
+.showTheme button {
+  border: 0;
+  background: transparent;
+  font: 500 13px var(--font);
+  color: var(--ink-3);
+  padding: 6px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.showTheme button[aria-pressed="true"] {
+  background: var(--ink);
+  color: #fff;
+}
+.showWindow {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--chrome);
+  border: 1px solid var(--chrome-rule);
+  box-shadow: var(--product-shadow);
+  transform: perspective(1600px) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg));
+  transition:
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 0.3s,
+    border-color 0.3s;
+}
+.showChrome {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--chrome-rule);
+}
+.showChrome span {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--d-pos);
-  color: var(--d-bg);
-  font-size: 10px;
-  font-weight: 700;
+  background: var(--chrome-rule);
+}
+.showChrome b {
+  margin-left: 12px;
+  padding: 3px 12px;
+  border-radius: 6px;
+  font: 500 12px var(--font);
+  color: var(--chrome-ink);
+  background: color-mix(in srgb, var(--chrome-ink) 12%, transparent);
+}
+.showStage {
+  position: relative;
+  aspect-ratio: 2360 / 1474;
+  overflow: hidden;
+}
+.showSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.showSlide[data-on="true"] {
+  opacity: 1;
+}
+.showNote {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  max-width: min(400px, calc(100% - 36px));
+  margin: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--note-bg);
+  color: var(--note-ink);
+  font: 500 14px/1.45 var(--font);
+  box-shadow: var(--float-shadow);
+}
+.showDot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--pine-light);
 }
 
-/* Transfers */
-.flowNote {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--d-text-2);
+/* Phone for small screens */
+.phone {
+  width: min(300px, 78vw);
+  margin: 0 auto;
+  padding: 9px;
+  border-radius: 44px;
+  background: #0f1011;
+  box-shadow: var(--product-shadow);
 }
-.flowNote b {
-  color: var(--d-text);
-}
-.warnBox {
-  margin-top: 10px;
-  background: var(--d-warn-bg);
-  border: 1px solid var(--d-warn-rule);
-  color: var(--d-warn);
-  border-radius: 9px;
-  padding: 9px 11px;
-  font-size: 12px;
-}
-
-/* Import */
-.importMeta {
-  font-size: 12px;
-  color: var(--d-text-2);
-  margin-bottom: 8px;
-}
-.importRow {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) 70px 70px 56px;
-  gap: 8px;
-  align-items: center;
-  padding: 7px 0;
-  border-top: 1px solid var(--d-rule);
-  font-size: 12px;
-}
-.importCheck {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  background: var(--d-blue);
-  color: var(--d-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.importDelta {
-  font-size: 11px;
-}
-.importFoot {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-/* Compact cut-out layouts, by the width of the window itself */
-@container (max-width: 740px) {
-  .appActions .chip {
-    display: none;
-  }
-  .summary {
-    font-size: 22px;
-  }
-}
-@container (max-width: 560px) {
-  .appActions {
-    display: none;
-  }
-  .heroStats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@container (max-width: 520px) {
-  .people {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .person {
-    padding: 14px;
-  }
-  .personAmount {
-    font-size: 24px;
-  }
-}
-@container (max-width: 480px) {
-  .stat {
-    padding: 11px 12px;
-  }
-  .statValue {
-    font-size: 18px;
-  }
-  .statGrid3,
-  .loanStats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .hideCompact {
-    display: none;
-  }
-  .productTitleRow b {
-    font-size: 13px;
-  }
-  .productHead {
-    font-size: 10px;
-  }
-  .shareLegend {
-    font-size: 11px;
-  }
-  .shareBar {
-    height: 8px;
-    margin-bottom: 12px;
-  }
-  .loanRow {
-    grid-template-columns: 22px minmax(0, 1fr) 70px 64px;
-    gap: 6px;
-    padding: 7px 0;
-    font-size: 11px;
-  }
-  .loanNum {
-    width: 18px;
-    height: 18px;
-    font-size: 9px;
-  }
-  .loanDuration {
-    display: none;
-  }
-}
-@container (max-width: 340px) {
-  .importRow {
-    grid-template-columns: 16px minmax(0, 1fr) 58px 58px 46px;
-    gap: 6px;
-    font-size: 11px;
-  }
+.phoneScreen {
+  aspect-ratio: 780 / 1400;
+  border-radius: 35px;
+  overflow: hidden;
+  background: var(--card);
 }
 
 /* ================= Sådan virker det ================= */
@@ -1292,7 +722,7 @@
   max-width: 360px;
 }
 
-/* ================= Text + cut-out sections ================= */
+/* ================= Text + screenshot sections ================= */
 
 .split {
   display: flex;
@@ -1323,152 +753,6 @@
 .splitReverse .splitVisual {
   order: -1;
   justify-content: flex-start;
-}
-
-/* ================= Alt det andet ================= */
-
-.features {
-  background: var(--ink);
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-}
-.featureGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  align-items: start;
-}
-.featureCol {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.featureCaption {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 0 4px;
-}
-.featureTitle {
-  margin: 0;
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--paper);
-}
-.featureBody {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--d-text-2);
-}
-.importWide {
-  display: grid;
-  grid-template-columns: 400px minmax(0, 1fr);
-  gap: 24px;
-  align-items: stretch;
-}
-.importPitch {
-  min-width: 0;
-  border: 1px solid var(--d-rule);
-  border-radius: 16px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 16px;
-}
-.importPitchTitle {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--paper);
-}
-.importPitchBody {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.55;
-  color: var(--d-text-2);
-  max-width: 520px;
-}
-.featurePills {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.featurePills li {
-  font-size: 13px;
-  padding: 6px 12px;
-  border-radius: 16px;
-  border: 1px solid var(--d-rule);
-  color: var(--d-text);
-}
-
-/* ================= Tryghed ================= */
-
-.trust {
-  display: flex;
-  gap: 80px;
-  align-items: flex-start;
-}
-.trustIntro {
-  flex: 0 0 420px;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.trustGrid {
-  flex: 1 1 auto;
-  min-width: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-.trustCard {
-  background: var(--card);
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.trustIcon {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--pine-bg);
-  color: var(--pine);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.trustCardText {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.trustTitle {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ink);
-}
-.trustBody {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--ink-2);
 }
 
 /* ================= Pris og spørgsmål ================= */
@@ -1681,9 +965,6 @@
   .h2 {
     font-size: 40px;
   }
-  .h2Sm {
-    font-size: 38px;
-  }
 
   .sectionHead {
     flex-direction: column;
@@ -1712,14 +993,6 @@
     padding: 24px 0;
     justify-content: center;
   }
-  .floatGoal {
-    left: -12px;
-    bottom: 40px;
-  }
-  .floatScenario {
-    right: -12px;
-    top: 120px;
-  }
 
   .stepGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1744,29 +1017,6 @@
   }
   .splitVisual > * {
     max-width: 720px;
-  }
-
-  .featureGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 40px;
-  }
-  .importWide {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .importPitch {
-    padding: 24px;
-  }
-
-  .trust {
-    flex-direction: column;
-    gap: 40px;
-  }
-  .trustIntro {
-    flex: none;
-    max-width: 640px;
-  }
-  .trustGrid {
-    width: 100%;
   }
 
   .pricing {
@@ -1816,8 +1066,7 @@
     font-size: 42px;
     line-height: 1.04;
   }
-  .h2,
-  .h2Sm {
+  .h2 {
     font-size: 32px;
     line-height: 1.1;
   }
@@ -1892,13 +1141,6 @@
     display: block;
   }
 
-  .product {
-    padding: 16px;
-  }
-  .features .product {
-    padding: 22px 18px;
-  }
-
   .steps {
     gap: 24px;
   }
@@ -1958,69 +1200,6 @@
   }
   .splitVisual > * {
     max-width: none;
-  }
-
-  .features {
-    gap: 28px;
-  }
-  .featureGrid {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 32px;
-  }
-  .featureCol {
-    gap: 14px;
-  }
-  .featureCaption {
-    padding: 0;
-    gap: 4px;
-  }
-  .featureTitle {
-    font-size: 18px;
-  }
-  .importWide {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
-  .importPitch {
-    padding: 20px;
-    gap: 12px;
-  }
-  .importPitchTitle {
-    font-size: 20px;
-  }
-  .importPitchBody {
-    font-size: 15px;
-  }
-
-  .trust {
-    gap: 24px;
-  }
-  .trustIntro {
-    gap: 12px;
-  }
-  .trustGrid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
-  .trustCard {
-    flex-direction: row;
-    gap: 14px;
-    padding: 18px;
-    border-radius: 14px;
-  }
-  .trustIcon svg {
-    width: 20px;
-    height: 20px;
-  }
-  .trustCardText {
-    gap: 4px;
-  }
-  .trustTitle {
-    font-size: 16px;
-  }
-  .trustBody {
-    font-size: 14px;
-    line-height: 1.5;
   }
 
   .pricing {
@@ -2336,13 +1515,43 @@
     opacity: 1;
   }
 }
-@keyframes drift {
-  0%,
-  100% {
+@keyframes slideProgress {
+  to {
+    transform: scaleX(1);
+  }
+}
+/* The page on screen drifts in a touch, like a camera settling. */
+@keyframes settle {
+  from {
+    transform: scale(1.035) translateY(6px);
+  }
+  to {
     transform: none;
   }
-  50% {
-    transform: translateY(-6px);
+}
+@keyframes noteIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* The phone scrolls slowly down its page and back. */
+@keyframes phoneScroll {
+  0%,
+  18% {
+    transform: none;
+  }
+  48%,
+  66% {
+    transform: translateY(-9%);
+  }
+  96%,
+  100% {
+    transform: none;
   }
 }
 
@@ -2368,15 +1577,20 @@
   .heroMobile {
     animation: riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
   }
-  .floatGoal {
-    animation:
-      riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s both,
-      drift 7s ease-in-out 1.6s infinite;
+  .showProgress {
+    animation: slideProgress var(--slide-ms, 6000ms) linear forwards;
   }
-  .floatScenario {
-    animation:
-      riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.75s both,
-      drift 8s ease-in-out 2.4s infinite;
+  .showcase:hover .showProgress {
+    animation-play-state: paused;
+  }
+  .showSlide[data-on="true"] {
+    animation: settle 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .showNote {
+    animation: noteIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s both;
+  }
+  .phoneScreen img {
+    animation: phoneScroll 16s ease-in-out 1.5s infinite;
   }
 
   .page :global([data-reveal-state]) {

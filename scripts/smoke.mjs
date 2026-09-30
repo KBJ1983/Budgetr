@@ -76,7 +76,7 @@ try {
   check((await page.locator("#bxUser").textContent()) === "KBJ", "app shows the logged-in test user");
   if (HAS_PRIVATE) {
     await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
-    for (const t of ["Måned for måned", "Udvikling i poster", "Rådighedsbeløb som banken regner det", "Ekstra indtjening"]) {
+    for (const t of ["Måned for måned", "Rådighedsbeløb som banken regner det", "Ekstra indtjening"]) {
       check((await page.getByText(t).count()) > 0, `KBJ budget shows “${t}”`);
     }
   }
@@ -84,9 +84,10 @@ try {
     ["Overblik over lån", /restgæld/i],
     ["Faste overførsler", /overfør/i],
     ["Opsparingsmål", /opspar/i],
-    ["Budget", /Poster|Intet budget/],
+    ["Budgetposter", /Udvikling i poster|Intet budget/],
+    ["Overblik", /Hvem betaler hvad|Intet budget/],
   ]) {
-    await tab(name).click();
+    await page.locator(`.tabs [role=tab]`, { hasText: new RegExp(`^${name}$`) }).first().click();
     await page.waitForTimeout(400);
     check((await page.locator("#app").getByText(text).count()) > 0, `tab “${name}” renders`);
   }

@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
-import { AvailabilityCutout, SharingCutout } from "./cutouts";
+import { ShotFrame } from "./Shots";
 import { PeopleIcon, UploadIcon, WandIcon } from "./icons";
 
 const STEPS = [
@@ -76,7 +76,7 @@ type SplitProps = {
   tone?: "paper" | "stone";
 };
 
-/** Text + product cut-out, side by side on desktop, stacked below 1280px. */
+/** Text + a screenshot of the app, side by side on desktop, stacked below 1280px. */
 function SplitSection({ id, eyebrow, title, body, bullets, visual, visualFirst = false, tone = "paper" }: SplitProps) {
   const titleId = `${id}-title`;
   return (
@@ -111,11 +111,11 @@ export function Availability() {
       title="Se, hvad du har til rådighed. Som banken ser det."
       body="Rådighedsbeløbet regnes, som banken gør, når I søger lån. Mad, opsparing og gaver holdes ude, så du kan se, om du ligger over eller under kravet."
       bullets={[
-        "Nettoindtægt minus faste udgifter, måned for måned",
+        "Nettoindtægt minus bankens faste udgifter, måned for måned",
         "Se hvornår et lån udløber og giver luft i budgettet",
         "Klik på en post for at rette den med det samme",
       ]}
-      visual={<AvailabilityCutout />}
+      visual={<ShotFrame name="bank" alt="Rådighedsbeløb som banken regner det, med nettoindtægt, bankens faste udgifter, rådighedsbeløb og vejledende krav" width={1692} height={1352} />}
     />
   );
 }
@@ -132,7 +132,7 @@ export function Sharing() {
         "Egne udgifter og egen opsparing holdes for sig",
         "Besked, når en fast overførsel skal rettes i netbanken",
       ]}
-      visual={<SharingCutout />}
+      visual={<ShotFrame name="hvem" alt="Hvem betaler hvad: to personkort med indtægter, udgifter, det, der er til rådighed, og overførslen til budgetkontoen" width={1808} height={2214} />}
       visualFirst
       tone="stone"
     />

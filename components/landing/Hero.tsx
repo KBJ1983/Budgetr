@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styles from "./landing.module.css";
-import { HeroFloatGoal, HeroFloatScenario, HeroMobileCutout, HeroWindow } from "./cutouts";
+import { HeroPhone, HeroShowcase } from "./Shots";
 import { ArrowRightIcon, CheckIcon, PeopleIcon } from "./icons";
 
 const PROMISES = ["Gratis", "Ingen adgang til netbank", "Klar på 10 minutter"] as const;
@@ -37,12 +37,10 @@ export function Hero() {
         </ul>
       </div>
       <div className={styles.heroVisual}>
-        <HeroWindow />
-        <HeroFloatGoal />
-        <HeroFloatScenario />
+        <HeroShowcase />
       </div>
       <div className={styles.heroMobile}>
-        <HeroMobileCutout />
+        <HeroPhone />
       </div>
     </section>
   );

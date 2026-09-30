@@ -1,37 +1,37 @@
-/* Design tokens from docs/design/HANDOFF.md §3, recoloured to the budgetpro "Skov" palette. Landing page is always light; the app has a light and a dark theme. */
+/* Design tokens from docs/design/HANDOFF.md §3, recoloured to the budgetpro palette (design "sider v2"; same values as the app's :root). Landing page is always light; the app has a light and a dark theme. */
 :root {
   /* Site (light) */
-  --paper: #f4f6f2;
+  --paper: #eceee9;
   --card: #ffffff;
-  --stone: #edefea;
-  --ink: #17211b;
+  --stone: #e3e7e0;
+  --ink: #141a16;
   --ink-2: #46534e;
   --ink-3: #5f6b66;
-  --rule: #dfe5dc;
-  --field-border: #c9cfc8;
+  --rule: #cdd4c9;
+  --field-border: #b8c1b5;
   --pine: #2c6a4d;
   --pine-hover: #21523b;
   --pine-bg: #e3eee6;
   --pine-light: #7ed4a8;
   --focus: #2f6fb3;
 
-  /* Product (dark app theme, used for cut-outs on the landing page) */
-  --d-bg: #121513;
-  --d-bar: #0e1311;
-  --d-card: #1a1e1b;
-  --d-text: #e9ece9;
-  --d-text-2: #9aa39d;
-  --d-text-3: #8e9a94;
-  --d-rule: #262c28;
+  /* Product (dark app theme, design "sider v2", used for cut-outs on the landing page) */
+  --d-bg: #131415;
+  --d-bar: #0f1011;
+  --d-card: #1b1c1e;
+  --d-text: #ececec;
+  --d-text-2: #9d9fa4;
+  --d-text-3: #8d8f94;
+  --d-rule: #2d2f33;
   --d-pos: #7ed4a8;
-  --d-pos-bg: #1c2e24;
+  --d-pos-bg: #1d2320;
   --d-pos-rule: #2b4a3e;
   --d-neg: #f08a78;
-  --d-neg-bg: #3a221e;
-  --d-warn: #e4b758;
-  --d-warn-bg: #352a14;
-  --d-warn-rule: #5a4718;
-  --d-blue: #86b8ee;
+  --d-neg-bg: #34211f;
+  --d-warn: #e3b56a;
+  --d-warn-bg: #27231b;
+  --d-warn-rule: #3d3421;
+  --d-blue: #7aa2d6;
   --d-slate: #a7b4c8;
   --d-slate-bg: #212831;
   --d-slate-rule: #36404d;
