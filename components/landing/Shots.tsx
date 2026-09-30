@@ -148,26 +148,19 @@ const PHONE_SLIDES = [
 ] as const;
 
 /**
- * Hero for small screens: the tour on a phone. Swipe the screen sideways or tap a tab; it moves on by itself
- * until the visitor touches it.
+ * Hero for small screens: the tour on a phone. Swipe the screen sideways or tap a tab; it stays still
+ * otherwise (no auto-advance on phones).
  */
 export function HeroPhone() {
   const track = useRef<HTMLDivElement>(null);
   const i = useSlideIndex(track);
-  const [auto, setAuto] = useState(true);
   const go = (k: number) => track.current && scrollToSlide(track.current, k);
   const slide = SLIDES.find((s) => s.id === PHONE_SLIDES[i]?.id);
 
   return (
     <div className={styles.phoneTour}>
       <div className={styles.phone}>
-        <div
-          ref={track}
-          id="hero-phone"
-          className={styles.phoneScreen}
-          onPointerDown={() => setAuto(false)}
-          onWheel={() => setAuto(false)}
-        >
+        <div ref={track} id="hero-phone" className={styles.phoneScreen}>
           {PHONE_SLIDES.map((s, k) => {
             const text = SLIDES.find((x) => x.id === s.id);
             return (
@@ -186,20 +179,9 @@ export function HeroPhone() {
             aria-controls="hero-phone"
             aria-current={k === i}
             className={styles.showTab}
-            onClick={() => {
-              setAuto(false);
-              go(k);
-            }}
+            onClick={() => go(k)}
           >
             {s.tab}
-            {k === i && auto && (
-              <span
-                className={styles.showProgress}
-                style={{ "--slide-ms": `${SLIDE_MS}ms` } as CSSProperties}
-                onAnimationEnd={() => go((i + 1) % PHONE_SLIDES.length)}
-                aria-hidden="true"
-              />
-            )}
           </button>
         ))}
       </div>
