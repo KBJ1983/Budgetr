@@ -71,7 +71,7 @@ export function SignupForm({ idPrefix, variant = "light", centered = false }: Si
         {invalid ? ERROR_TEXT : ""}
       </p>
       <button type="submit" className={styles.submit}>
-        Opret gratis bruger <ArrowRightIcon />
+        Prøv gratis i 30 dage <ArrowRightIcon />
       </button>
     </form>
   );

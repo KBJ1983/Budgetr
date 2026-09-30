@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 import styles from "./landing.module.css";
 import { SwipeList } from "./Swipe";
@@ -36,7 +37,12 @@ const FEATURES: readonly { icon: ReactNode; title: string; body: string }[] = [
   },
 ];
 
-/** "Alt det andet": the remaining features as text cards, without product cut-outs. */
+const PHOTOS = [
+  { src: "/landing/foto-strand.jpg", alt: "En familie på stranden i solnedgang", label: "Opsparingsmål", title: "Giv drømmen en dato.", position: "center 70%" },
+  { src: "/landing/foto-noegler.jpg", alt: "En familie, der får nøglerne til et nyt hjem", label: "Scenarier", title: "Kend rådigheden, før I byder.", position: "center 45%" },
+] as const;
+
+/** "Alt det andet": two photo cards, then the remaining features as text cards, without product cut-outs. */
 export function Features() {
   return (
     <section id="mere" className={`${styles.section} ${styles.featureSection}`} aria-labelledby="mere-title">
@@ -49,6 +55,18 @@ export function Features() {
             </h2>
           </div>
           <p className={styles.headBody}>Planlæg det næste skridt uden at røre det budget, du lever efter i dag.</p>
+        </div>
+        <div className={styles.photoCards} data-reveal>
+          {PHOTOS.map((p) => (
+            <figure key={p.src} className={styles.photoCard}>
+              <Image src={p.src} alt={p.alt} fill sizes="(max-width: 767px) 100vw, 560px" className={styles.photoCover} style={{ objectPosition: p.position }} />
+              <div className={styles.photoCardShade} aria-hidden="true" />
+              <figcaption className={styles.photoCardText}>
+                <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>{p.label}</span>
+                <span className={styles.photoCardTitle}>{p.title}</span>
+              </figcaption>
+            </figure>
+          ))}
         </div>
         <SwipeList className={styles.featureCards} label="Funktioner">
           {FEATURES.map((f) => (

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
@@ -8,8 +9,8 @@ import { BellIcon, CalendarIcon, PeopleIcon, TargetIcon, UploadIcon, WandIcon } 
 const STEPS = [
   {
     icon: <PeopleIcon size={22} strokeWidth={1.7} />,
-    title: "Opret en gratis bruger",
-    body: "Kun e-mail og en adgangskode. Bor I flere sammen, kan du invitere dem til det samme budget.",
+    title: "Start din gratis prøveperiode",
+    body: "Kun e-mail og en adgangskode. 30 dage gratis. Bor I flere sammen, kan du invitere dem til det samme budget.",
   },
   {
     icon: <WandIcon size={22} strokeWidth={1.7} />,
@@ -55,6 +56,31 @@ export function HowItWorks() {
             </li>
           ))}
         </SwipeList>
+      </div>
+    </section>
+  );
+}
+
+/** Wide photo with a short line of text, between "Sådan virker det" and Tryghed. */
+export function PhotoBanner() {
+  return (
+    <section className={styles.bannerWrap} aria-labelledby="banner-title">
+      <div className={styles.banner} data-reveal>
+        <Image
+          src="/landing/foto-sofa.jpg"
+          alt="Et par i sofaen, der ser på budgettet sammen på den bærbare"
+          fill
+          sizes="(max-width: 1344px) 100vw, 1280px"
+          className={styles.bannerImage}
+        />
+        <div className={styles.bannerShade} aria-hidden="true" />
+        <div className={styles.bannerText}>
+          <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Invester 30 minutter</span>
+          <h2 id="banner-title" className={styles.bannerTitle}>
+            Ro i økonomien. Ro i livet.
+          </h2>
+          <p className={styles.bannerBody}>Når I kender tallene, bliver der mere tid til det, der betyder noget.</p>
+        </div>
       </div>
     </section>
   );
@@ -125,7 +151,16 @@ export function Sharing() {
         "Egne udgifter og egen opsparing holdes for sig",
         "Besked, når en fast overførsel skal rettes i netbanken",
       ]}
-      visual={<ShotFrame name="hvem" alt="Hvem betaler hvad: to personkort med indtægter, udgifter, det, der er til rådighed, og overførslen til budgetkontoen" width={1808} height={2214} />}
+      visual={
+        <div className={styles.sharePhotoWrap}>
+          <div className={styles.sharePhoto}>
+            <Image src="/landing/foto-flytning.jpg" alt="Et par, der flytter sammen, med flyttekasser" fill sizes="(max-width: 1019px) 100vw, 560px" className={styles.photoCover} />
+          </div>
+          <div className={styles.shareShot}>
+            <ShotFrame name="hvem" alt="Hvem betaler hvad: to personkort med indtægter, udgifter, det, der er til rådighed, og overførslen til budgetkontoen" width={1808} height={2214} />
+          </div>
+        </div>
+      }
       visualFirst
       tone="stone"
     />

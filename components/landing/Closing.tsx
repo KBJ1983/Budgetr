@@ -4,6 +4,7 @@ import { Wordmark } from "@/components/Logo";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { DownloadIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon, UploadIcon } from "./icons";
+import { PricePlans } from "./PricePlans";
 import { SignupForm } from "./SignupForm";
 import { SwipeList } from "./Swipe";
 
@@ -145,8 +146,8 @@ const PRICE_FEATURES = [
 
 const FAQ = [
   {
-    q: "Er det virkelig gratis?",
-    a: "Ja. Alle funktionerne på denne side er med i den gratis bruger. [Tilføj evt. hvordan tjenesten finansieres]",
+    q: "Hvad koster det?",
+    a: "De første 30 dage er gratis med alle funktioner. Derefter koster det 19 kr om måneden, eller 194 kr om året, hvis du betaler årligt og sparer 15 %. Ét abonnement dækker hele husstanden. Priserne er inkl. moms.",
   },
   {
     q: "Skal jeg give adgang til min netbank?",
@@ -175,13 +176,10 @@ export function Pricing() {
             <span className={styles.eyebrow}>Pris</span>
             <span className={styles.priceTag}>Alle funktioner</span>
           </div>
-          <div className={styles.priceLine}>
-            <b className={styles.priceValue}>0 kr</b>
-            <span className={styles.priceNote}>også når I er flere</span>
-          </div>
+          <PricePlans />
           <CheckList items={PRICE_FEATURES} />
           <Link href="/opret" className={styles.buttonBlock}>
-            Opret gratis bruger
+            Prøv gratis i 30 dage
           </Link>
         </div>
         <div className={styles.faq} data-reveal-group>
@@ -213,7 +211,7 @@ export function FinalCta() {
           <h2 id="cta-title" className={styles.ctaTitle}>
             Giv din økonomi et hjem. Det tager ti minutter.
           </h2>
-          <p className={styles.ctaBody}>Opret en gratis bruger, følg guiden, og se med det samme, hvad du har til rådighed.</p>
+          <p className={styles.ctaBody}>Prøv gratis i 30 dage, følg guiden, og se med det samme, hvad du har til rådighed.</p>
           <div className={styles.ctaForm}>
             <SignupForm idPrefix="cta" variant="dark" centered />
           </div>

@@ -3,7 +3,7 @@ import styles from "./landing.module.css";
 import { HeroPhone, HeroShowcase } from "./Shots";
 import { ArrowRightIcon, CheckIcon, PeopleIcon } from "./icons";
 
-const PROMISES = ["Gratis", "Ingen adgang til netbank", "Klar på 10 minutter"] as const;
+const PROMISES = ["30 dage gratis", "Ingen adgang til netbank", "Klar på 10 minutter"] as const;
 
 /** Dark hero inside the rounded top card (design "Forside v2"); the header sits in the same card, above it. */
 export function Hero() {
@@ -27,7 +27,7 @@ export function Hero() {
           </p>
           <div id="opret" className={styles.heroActions}>
             <Link href="/opret" className={styles.heroButton}>
-              Opret gratis bruger <ArrowRightIcon size={16} />
+              Prøv gratis i 30 dage <ArrowRightIcon size={16} />
             </Link>
             <a href="#saadan" className={styles.heroLink}>
               Sådan virker det

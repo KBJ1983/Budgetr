@@ -33,7 +33,7 @@ export function SiteHeader() {
             Log ind
           </Link>
           <Link href="/opret" className={styles.headerCta}>
-            Opret gratis bruger
+            Prøv gratis i 30 dage
           </Link>
           <MobileMenu links={NAV_LINKS} />
         </div>

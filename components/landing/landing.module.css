@@ -842,6 +842,62 @@
   text-wrap: pretty;
 }
 
+/* ================= Photo banner ================= */
+
+.bannerWrap {
+  background: var(--v-white);
+  padding: 0 var(--gutter) var(--gutter);
+}
+.banner {
+  position: relative;
+  max-width: 1280px;
+  height: min(560px, 70vw);
+  margin: 0 auto;
+  border-radius: 36px;
+  overflow: hidden;
+  background: #2c2f33;
+}
+.bannerImage {
+  object-fit: cover;
+  object-position: center 35%;
+}
+.bannerShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(21, 22, 23, 0.78) 0%, rgba(21, 22, 23, 0.35) 55%, rgba(21, 22, 23, 0) 100%);
+}
+.bannerText {
+  position: relative;
+  height: 100%;
+  max-width: 620px;
+  padding: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  color: #fff;
+}
+.bannerTitle {
+  margin: 0;
+  font-size: 54px;
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.bannerBody {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #e3e5e7;
+  text-wrap: pretty;
+}
+
+/* Photos that fill their box (Image with fill). */
+.photoCover {
+  object-fit: cover;
+}
+
 /* ================= Tryghed: dark band ================= */
 
 .trustBand {
@@ -931,6 +987,26 @@
 }
 .splitReverse .splitVisual {
   order: -1;
+}
+
+/* Deler du økonomi: photo with the screenshot overlapping its lower edge. */
+.sharePhotoWrap {
+  display: flex;
+  flex-direction: column;
+}
+.sharePhoto {
+  position: relative;
+  height: 420px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #dcdad3;
+}
+.sharePhoto .photoCover {
+  object-position: center 24%;
+}
+.shareShot {
+  position: relative;
+  margin: -120px 0 0 32px;
 }
 
 /* ================= Beskeder og påmindelser ================= */
@@ -1120,6 +1196,43 @@
   border-top: 1px solid var(--v-rule);
   border-bottom: 1px solid var(--v-rule);
 }
+.photoCards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.photoCard {
+  position: relative;
+  margin: 0;
+  height: 320px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #dcdad3;
+}
+.photoCardShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(21, 22, 23, 0) 45%, rgba(21, 22, 23, 0.7) 100%);
+}
+.photoCardText {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #fff;
+}
+.photoCardText .eyebrow {
+  font-size: 12px;
+}
+.photoCardTitle {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
 .featureCards {
   list-style: none;
   margin: 0;
@@ -1206,11 +1319,53 @@
   border-radius: 999px;
   padding: 5px 12px;
 }
+.planSwitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: #f0efea;
+  border-radius: 999px;
+  padding: 4px;
+}
+.planButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--v-ink-3);
+  white-space: nowrap;
+}
+.planButton[aria-pressed="true"] {
+  background: var(--v-white);
+  color: var(--v-ink);
+  box-shadow: 0 1px 3px rgba(21, 25, 26, 0.15);
+}
+.planTag {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--v-pine);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .priceLine {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 6px 12px;
+  gap: 6px 10px;
 }
 .priceValue {
   font-size: 84px;
@@ -1219,9 +1374,17 @@
   letter-spacing: -0.05em;
   white-space: nowrap;
 }
-.priceNote {
-  font-size: 16px;
+.priceUnit {
+  font-size: 18px;
+  font-weight: 500;
   color: var(--v-ink-3);
+}
+.priceNote {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--v-ink-3);
+  text-wrap: pretty;
 }
 .buttonBlock {
   display: flex;
@@ -1386,10 +1549,24 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.footerCompany {
+.footerContact {
   margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
   font-size: 14px;
   color: var(--v-ink-3);
+}
+.footerContact a {
+  color: var(--v-ink-3);
+  text-decoration: none;
+  padding: 8px 0;
+}
+.footerContact a:hover {
+  color: var(--v-ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 /* ================= Header nav breakpoint ================= */
@@ -1466,6 +1643,12 @@
   .stepGrid,
   .quoteGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .bannerTitle {
+    font-size: 44px;
+  }
+  .bannerText {
+    padding: 44px;
   }
   .priceCard {
     max-width: 560px;
@@ -1578,6 +1761,53 @@
   }
   .stepBody {
     font-size: 15px;
+  }
+
+  .bannerWrap {
+    padding: 0 8px 8px;
+  }
+  .banner {
+    height: 440px;
+    border-radius: 24px;
+  }
+  .bannerShade {
+    background: linear-gradient(180deg, rgba(21, 22, 23, 0) 25%, rgba(21, 22, 23, 0.8) 100%);
+  }
+  .bannerText {
+    padding: 24px;
+    gap: 10px;
+  }
+  .bannerTitle {
+    font-size: 34px;
+    line-height: 1.08;
+  }
+  .bannerBody {
+    font-size: 16px;
+  }
+
+  .sharePhoto {
+    height: 260px;
+    border-radius: 16px;
+  }
+  .shareShot {
+    margin: -64px 0 0 16px;
+  }
+
+  .photoCards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .photoCard {
+    height: 240px;
+    border-radius: 16px;
+  }
+  .photoCardText {
+    left: 20px;
+    right: 20px;
+    bottom: 18px;
+  }
+  .photoCardTitle {
+    font-size: 20px;
   }
 
   .trustCircle {
@@ -1744,8 +1974,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 16px;
   }
-  .footerCompany {
+  .footerContact {
     margin-left: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
   }
 }
 

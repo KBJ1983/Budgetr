@@ -20,9 +20,9 @@ const brand = Bricolage_Grotesque({ subsets: ["latin"], weight: ["200"], variabl
 const brandPro = Instrument_Sans({ subsets: ["latin"], weight: ["600"], variable: "--font-brand-pro", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "budgetpro – gratis budget for dig, par og familier",
+  title: "budgetpro – budget for dig, par og familier",
   description:
-    "Saml løn, faste udgifter, lån og opsparing ét sted. Se hvad du har til rådighed, og planlæg med scenarier. Gratis og uden adgang til netbanken.",
+    "Saml løn, faste udgifter, lån og opsparing ét sted. Se hvad du har til rådighed, og planlæg med scenarier. 30 dage gratis og uden adgang til netbanken.",
   icons: { icon: "/icon.svg" },
 };
 
