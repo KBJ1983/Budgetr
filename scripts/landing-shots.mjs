@@ -16,7 +16,13 @@ const SHOTS = [
   { name: "laan", viewport: [1180, 737], tab: "laan" },
   { name: "maal", viewport: [1180, 737], tab: "maal" },
   { name: "bank", viewport: [880, 900], el: "section.bank" },
-  { name: "hvem", viewport: [940, 1000], el: "section:has(.people)" },
+  // Person cards only down to what is left each month: the checkboxes and everything below are hidden in the shot.
+  {
+    name: "hvem",
+    viewport: [940, 1000],
+    el: "section:has(.people)",
+    css: ".person .ptog, .person .big ~ .muted ~ * { display: none !important }",
+  },
   { name: "mobil", viewport: [390, 780], mobile: true },
   // The rest of the hero tour on a phone (swiped through in the mobile hero).
   { name: "mobil-poster", viewport: [390, 780], mobile: true, tab: "poster" },
@@ -74,13 +80,13 @@ for (const theme of ["light", "dark"]) {
     );
     await page.goto(`${BASE}/app`);
     await page.getByRole("heading", { name: "Hvem betaler hvad" }).waitFor();
-    await page.evaluate(() => {
+    await page.evaluate((css) => {
       const u = document.getElementById("bxUser");
       if (u) u.textContent = "AJ";
       const st = document.createElement("style");
-      st.textContent = "nextjs-portal{display:none!important} *{caret-color:transparent!important}";
+      st.textContent = "nextjs-portal{display:none!important} *{caret-color:transparent!important}" + css;
       document.head.append(st);
-    });
+    }, s.css ?? "");
     if (s.tab) await page.locator(`.tabs [data-page="${s.tab}"]`).click();
     if (s.notes) await page.locator("#dlgNote").waitFor();
     if (s.settings) {

@@ -65,11 +65,18 @@ export function HeroShowcase() {
   const [i, setI] = useState(0);
   const [theme, pick] = useShotTheme();
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [hover, setHover] = useState(false);
   const frame = useRef<HTMLDivElement>(null);
   const reduce = useRef(false);
   useEffect(() => {
     reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }, []);
+  // Next page every SLIDE_MS; paused under the pointer, and no auto-advance with reduced motion.
+  useEffect(() => {
+    if (hover || reduce.current) return;
+    const t = window.setTimeout(() => setI((k) => (k + 1) % SLIDES.length), SLIDE_MS);
+    return () => window.clearTimeout(t);
+  }, [i, hover]);
 
   // A little depth under the pointer; flat again when it leaves. Off with reduced motion and on touch.
   const onMove = (ev: PointerEvent<HTMLDivElement>) => {
@@ -79,7 +86,15 @@ export function HeroShowcase() {
   };
 
   return (
-    <div className={styles.showcase} onPointerMove={onMove} onPointerLeave={() => setTilt({ x: 0, y: 0 })}>
+    <div
+      className={styles.showcase}
+      onPointerMove={onMove}
+      onPointerEnter={(ev) => ev.pointerType === "mouse" && setHover(true)}
+      onPointerLeave={() => {
+        setTilt({ x: 0, y: 0 });
+        setHover(false);
+      }}
+    >
       <div className={styles.showBar}>
         <div className={styles.showTabs} role="tablist" aria-label="Se appen">
           {SLIDES.map((s, k) => (
@@ -93,14 +108,6 @@ export function HeroShowcase() {
               onClick={() => setI(k)}
             >
               {s.tab}
-              {k === i && (
-                <span
-                  className={styles.showProgress}
-                  style={{ "--slide-ms": `${SLIDE_MS}ms` } as CSSProperties}
-                  onAnimationEnd={() => setI((i + 1) % SLIDES.length)}
-                  aria-hidden="true"
-                />
-              )}
             </button>
           ))}
         </div>

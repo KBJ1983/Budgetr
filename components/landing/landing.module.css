@@ -409,29 +409,6 @@
   flex-direction: column;
   gap: 28px;
 }
-.badge {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #cfe9da;
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
-  border-radius: 999px;
-  padding: 6px 14px 6px 8px;
-}
-.badgeIcon {
-  display: flex;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: rgba(126, 212, 168, 0.16);
-  color: var(--v-pine-light);
-  align-items: center;
-  justify-content: center;
-}
 .h1 {
   margin: 0;
   font-size: 74px;
@@ -441,7 +418,7 @@
   text-wrap: balance;
 }
 .tagline {
-  margin: -8px 0 0;
+  margin: 0;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -481,44 +458,6 @@
 .heroButton:hover {
   color: var(--v-dark);
   background: #fff;
-}
-.heroLink {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--v-dark-text);
-  text-decoration: underline;
-  text-underline-offset: 5px;
-  text-decoration-color: #5f6268;
-  padding: 10px 0;
-}
-.heroLink:hover {
-  color: var(--v-pine-light);
-}
-.promises {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 22px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--v-dark-2);
-}
-.promises li {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.promiseDot {
-  display: flex;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--v-pine-light);
-  color: #0e1a13;
-  align-items: center;
-  justify-content: center;
 }
 
 .heroVisual {
@@ -647,17 +586,6 @@
   color: var(--v-dark);
   background: var(--v-dark-text);
 }
-.showProgress {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 2px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--v-pine);
-  transform-origin: left;
-  transform: scaleX(0);
-}
 .showWindow {
   position: relative;
   border-radius: 20px;
@@ -702,7 +630,7 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.7s ease;
+  transition: opacity 0.3s ease;
 }
 .showSlide[data-on="true"] {
   opacity: 1;
@@ -1015,12 +943,6 @@
 .shareShot {
   position: relative;
   margin: -80px 0 0 32px;
-}
-/* Only the top of the shot (heading and the two person cards down to what is left each month); the rest fades out. */
-.shareShot .shotFrame {
-  aspect-ratio: 1808 / 1400;
-  -webkit-mask-image: linear-gradient(180deg, #000 84%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 84%, transparent 100%);
 }
 
 /* ================= Beskeder og påmindelser ================= */
@@ -1712,13 +1634,6 @@
   .heroButton {
     justify-content: center;
   }
-  .heroLink {
-    text-align: center;
-  }
-  .promises {
-    font-size: 13px;
-    gap: 8px 16px;
-  }
   .heroVisual {
     display: none;
   }
@@ -2064,15 +1979,10 @@
     opacity: 1;
   }
 }
-@keyframes slideProgress {
-  to {
-    transform: scaleX(1);
-  }
-}
-/* The page on screen drifts in a touch, like a camera settling. */
-@keyframes settle {
+/* The next page slides in from the right and stops firmly. */
+@keyframes slideIn {
   from {
-    transform: scale(1.035) translateY(6px);
+    transform: translateX(8%);
   }
   to {
     transform: none;
@@ -2114,14 +2024,8 @@
   .heroMobile {
     animation: riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
   }
-  .showProgress {
-    animation: slideProgress var(--slide-ms, 6000ms) linear forwards;
-  }
-  .showcase:hover .showProgress {
-    animation-play-state: paused;
-  }
   .showSlide[data-on="true"] {
-    animation: settle 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: slideIn 0.5s cubic-bezier(0.25, 1, 0.3, 1) both;
   }
   .showNote {
     animation: noteIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s both;
