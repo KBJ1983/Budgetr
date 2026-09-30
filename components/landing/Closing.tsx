@@ -47,7 +47,7 @@ export function Trust() {
             </h2>
           </div>
           <p className={`${styles.headBody} ${styles.headBodyDark}`}>
-            Et budget indeholder løn, lån og kontonumre. Derfor er det dig, der bestemmer, hvad der kommer ind, og hvad
+            Et budget indeholder løn, lån og opsparing. Derfor er det dig, der bestemmer, hvad der kommer ind, og hvad
             der kommer ud.
           </p>
         </div>
