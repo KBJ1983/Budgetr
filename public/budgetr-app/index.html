@@ -1095,7 +1095,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
           </div></section>
         <section class="setsec" id="set-nyt"><h3>Nyt budget</h3>
           <p class="setnote">Guiden tager dig igennem personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser.</p>
-          <div class="verdict warn" style="margin:0 0 12px">Et nyt budget overskriver det budget, du har nu, også for alle andre, der bruger det. Poster, konti, opsparingsmål og indstillinger bliver erstattet. Gem en sikkerhedskopi først, hvis du vil kunne gå tilbage.</div>
+          <p class="setnote">Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" id="setWizBackup">Gem sikkerhedskopi</button><button type="button" id="setWiz">Start nyt budget …</button></div></section>
       </div>
     </div>
@@ -3422,7 +3422,7 @@ const wzRemDef=()=>({every:0,mail:false,sms:false,milestones:true});
 const wzInBank=x=>x.bank!==undefined?!!x.bank:x.cat!=='Husholdning';
 function openWiz(){W={title:'Mit budget',persons:[{name:'',salary:''},{name:'',salary:''}],acc:{budget:true,budgetName:'Budgetkonto',personal:true,savings:true,savingsName:'Fælles opsparing'},
   exp:WZ_EXP.map(([d,c])=>({desc:d,cat:c,amount:'',freq:1})),split:'indkomst',manualPct:50,auto:true,goals:[{name:'',mode:'target',amount:'',end:''}],
-  bank:{adults:12000,children:0,childRate:3000},bankSet:false,rem:wzRemDef(),replace:false};WS=0;renderWiz();$('dlgWiz').showModal()}
+  bank:{adults:12000,children:0,childRate:3000},bankSet:false,rem:wzRemDef()};WS=0;renderWiz();$('dlgWiz').showModal()}
 function wzCollect(){const b=$('wzBody'),v=id=>{const el=b.querySelector('#'+id);return el?el.value:''};
   if(WS===0)W.title=v('wzName').trim()||'Mit budget';
   if(WS===1)W.persons=[...b.querySelectorAll('[data-wp]')].map(r=>({name:r.querySelector('[data-f=name]').value.trim(),salary:r.querySelector('[data-f=sal]').value}));
@@ -3433,18 +3433,17 @@ function wzCollect(){const b=$('wzBody'),v=id=>{const el=b.querySelector('#'+id)
   if(WS===WS_BANK){b.querySelectorAll('[data-wb]').forEach(c=>{W.exp[+c.dataset.wb].bank=c.checked});
     const n=id=>Math.max(0,Math.round(parseAmt(v(id))||0));W.bank={adults:n('wzBkA'),children:Math.min(10,n('wzBkC')),childRate:n('wzBkR')};W.bankSet=true}
   if(WS===WS_REM)W.rem={every:+v('wzEvery')||0,mail:$('wzRmMail').checked,sms:$('wzRmSms').checked,milestones:$('wzMile').checked};
-  if(WS===WS_END){const c=$('wzRepl');W.replace=c?c.checked:true}}
+}
 function wzValidate(){const e=[];
   if(WS===1){const P=W.persons.filter(p=>p.name);if(!P.length)e.push('Skriv mindst ét navn.');if(new Set(P.map(p=>p.name.toLowerCase())).size!==P.length)e.push('To personer har samme navn.')}
   if(WS===2&&!W.acc.budget&&!W.acc.personal)e.push('Vælg mindst én konto.');
   if(WS===5)W.goals.forEach(g=>{if(!g.name&&!g.amount)return;if(!g.name)e.push('Giv hvert opsparingsmål et navn.');if(!(parseAmt(g.amount)>0))e.push(`Skriv et beløb for "${g.name||'målet'}".`);if(g.mode==='target'&&!g.end)e.push(`Vælg en måldato for "${g.name||'målet'}".`)});
-  if(WS===WS_END&&S&&!W.replace)e.push('Sæt flueben for at erstatte det nuværende budget.');
   return e}
 function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;
   $('wzSteps').innerHTML=WSTEPS.map((n,i)=>`<span class="${i===WS?'on':i<WS?'done':''}" title="${n}">${i+1}</span>`).join('')+`<b style="margin-left:6px;color:var(--ink2)">${WSTEPS[WS]}</b>`;
-  $('wzBack').style.visibility=WS?'visible':'hidden';$('wzNext').textContent=WS===WSTEPS.length-1?'Opret budget':'Næste';$('wzSkip').hidden=!WZ_OPTIONAL.includes(WS);
+  $('wzBack').style.visibility=WS?'visible':'hidden';$('wzNext').textContent=WS===WSTEPS.length-1?(S?'Opret kladde':'Opret budget'):'Næste';$('wzSkip').hidden=!WZ_OPTIONAL.includes(WS);
   const P=W.persons.filter(p=>p.name);
-  if(WS===0)b.innerHTML=(S?'<div class="verdict warn" style="margin:0 0 12px">Du har allerede et budget. Når du opretter et nyt her, overskriver det det nuværende. Gem en sikkerhedskopi først, hvis du vil kunne gå tilbage.<div style="margin-top:8px"><button type="button" id="wzBackup0">Gem sikkerhedskopi</button></div></div>':'')+`<p class="wzp">Hvad skal budgettet hedde? Navnet står øverst på siden og i eksporten.</p><div class="wzgrid"><input id="wzName" value="${esc(W.title)}" placeholder="fx Budget for Anna og Jonas" autocomplete="off"></div>`;
+  if(WS===0)b.innerHTML=(S?'<div class="verdict ok" style="margin:0 0 12px">Du har allerede et budget. Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>':'')+`<p class="wzp">Hvad skal budgettet hedde? Navnet står øverst på siden og i eksporten.</p><div class="wzgrid"><input id="wzName" value="${esc(W.title)}" placeholder="fx Budget for Anna og Jonas" autocomplete="off"></div>`;
   if(WS===1)b.innerHTML=`<p class="wzp">Hvem er med i budgettet? Skriv den løn, der udbetales efter skat hver måned. Beløbet kan springes over og tilføjes senere.</p>
     <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 180px auto"><span class="hd">Navn</span><span class="hd">Udbetalt løn pr. md.</span><span></span>
     ${W.persons.map((p,i)=>`<div style="display:contents" data-wp="${i}"><input data-f="name" value="${esc(p.name)}" placeholder="Person ${i+1}" autocomplete="off"><input data-f="sal" inputmode="decimal" value="${esc(p.salary)}" placeholder="fx 32.000"><button type="button" class="ghost danger" data-wpx="${i}" ${W.persons.length<2?'disabled':''} aria-label="Fjern person">✕</button></div>`).join('')}</div>
@@ -3496,15 +3495,12 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;
       <li>${G.length?G.length+' opsparingsmål: '+G.map(g=>esc(g.name)).join(', '):'Ingen opsparingsmål'}</li>
       <li>Bankens faste udgifter: ${ex.length?`${exB.length} af ${ex.length} udgifter, ${kr(exB.reduce((a,x)=>a+parseAmt(x.amount)/(+x.freq||1),0))} pr. md.`:'ingen endnu'}${W.bankSet?` · krav ${kr(req)} pr. md.`:' · standardkrav'}</li>
       <li>${rTxt?`Påmindelse ${rTxt}${[r.mail&&'på mail',r.sms&&'på sms'].filter(Boolean).map(t=>' · også '+t).join('')}`:'Ingen påmindelser om opdatering'}${r.milestones?' · besked ved milepæle':''}</li></ul>
-      ${S?`<div class="verdict warn" style="margin-top:12px">Der findes allerede et budget. Det nye budget erstatter det, også for alle andre, der bruger det. Gem en sikkerhedskopi først, hvis du vil kunne gå tilbage.</div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px"><button type="button" id="wzBackup">Gem sikkerhedskopi</button><label class="check"><input type="checkbox" id="wzRepl" ${W.replace?'checked':''}> Erstat det nuværende budget</label></div>`:''}`}
+      ${S?`<div class="verdict ok" style="margin-top:12px">Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>`:''}`}
   const on=(id,f)=>{const el=b.querySelector('#'+id);if(el)el.onclick=f};
   on('wzAddP',()=>{wzCollect();W.persons.push({name:'',salary:''});renderWiz()});
   b.querySelectorAll('[data-wpx]').forEach(x=>x.onclick=()=>{wzCollect();W.persons.splice(+x.dataset.wpx,1);renderWiz()});
   on('wzAddE',()=>{wzCollect();W.exp.push({desc:'',cat:'Andet',amount:'',freq:1});renderWiz()});
   on('wzAddG',()=>{wzCollect();W.goals.push({name:'',mode:'target',amount:'',end:''});renderWiz()});
-  on('wzBackup',()=>exportJson());on('wzBackup0',()=>exportJson());
-  const rc=b.querySelector('#wzRepl');if(rc)rc.onchange=()=>{$('wzErr').hidden=true};
   const f=b.querySelector('input,select');if(f)setTimeout(()=>f.focus(),30)}
 function wzBuild(){const id=()=>uid(), P=W.persons.filter(p=>p.name).map(p=>({id:id(),name:p.name,salary:parseAmt(p.salary)}));
   const A=[];let bud=null,sav=null;const pAcc={};
@@ -3529,7 +3525,11 @@ $('wzSkip').onclick=()=>{if(WS===WS_BANK){W.bankSet=false;W.bank={adults:12000,c
   if(WZ_OPTIONAL.includes(WS)){WS++;renderWiz()}};
 $('wzNext').onclick=()=>{wzCollect();const e=wzValidate();if(e.length){$('wzErr').innerHTML=e.map(esc).join(' ');$('wzErr').hidden=false;return}
   if(WS<WSTEPS.length-1){WS++;renderWiz();return}
-  const N=wzBuild();if(!N){toast('Budgettet kunne ikke oprettes');return}setPrimary(N);$('dlgWiz').close();commit();toast('Nyt budget oprettet');
+  const N=wzBuild();if(!N){toast('Budgettet kunne ikke oprettes');return}
+  // With a budget already there, the new one becomes a draft; it only replaces the primary budget via "Sæt som primært budget".
+  if(S){const R=rootS(),id='d'+uid();delete N.drafts;R.drafts=R.drafts||[];R.drafts.push({id,name:W.title,created:DAY(),mode:'blank',files:[],data:N});
+    $('dlgWiz').close();saveSoon();enterDraft(id);toast('Kladden er oprettet. Dit nuværende budget er uændret')}
+  else{setPrimary(N);$('dlgWiz').close();commit();toast('Nyt budget oprettet')}
   const t=document.querySelector('[data-page="budget"]');if(t)t.click()};
 
 
