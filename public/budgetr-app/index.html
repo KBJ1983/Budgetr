@@ -1,4 +1,4 @@
-<!doctype html>
+.replace(/(d) (kr|%)/g,'$1 $2')}<!doctype html>
 <html lang="da">
 <head>
 <script>
@@ -555,6 +555,8 @@ td.act{width:1%;white-space:nowrap}
 #todoMenu .tdempty{margin:0;padding:16px;font-size:14px;line-height:1.45;color:var(--ink2)}
 @media (max-width:760px){.appbar #todoMenu{position:fixed;top:66px;left:12px;right:12px;width:auto;max-height:calc(100vh - 80px)}}
 .acctedit .acttodo{grid-column:1/-1}
+.acctedit .actmade{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding-bottom:8px;font-size:13px;color:var(--ink2)}
+.acctedit .actmade input{width:auto}
 .expmenu .mrow .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .navrow{min-height:64px;align-items:stretch!important;gap:8px 12px!important;margin-bottom:0}
 .navrow .tabs{gap:0;align-items:stretch}
@@ -736,6 +738,25 @@ dialog#dlgNote{width:min(520px,94vw)}
 #dlgNote .nhead h2{margin:0 0 4px;font-size:22px;font-weight:600}
 #dlgNote .nhead p{margin:0;font-size:15px;color:var(--ink2)}
 #dlgNote .dlgfoot{margin:0}
+/* Scenario comparison and the PDF choice */
+dialog#dlgCmp{width:min(1000px,96vw);max-height:92vh}
+dialog#dlgPdf{width:min(560px,94vw)}
+#dlgCmp form,#dlgPdf form{padding:28px;display:flex;flex-direction:column;gap:18px}
+#dlgCmp .dhead,#dlgPdf .dhead{display:flex;align-items:flex-start;gap:16px}
+#dlgCmp .dhead h2,#dlgPdf .dhead h2{margin:0 0 6px;font-size:22px;font-weight:600}
+#dlgCmp .dhead p,#dlgPdf .dhead p{margin:0;font-size:15px;color:var(--ink2)}
+#dlgCmp .dx,#dlgPdf .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
+#dlgCmp .dx svg,#dlgPdf .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#dlgCmp .dlgfoot,#dlgPdf .dlgfoot{margin:0}
+#dlgCmp h3{margin:4px 0 8px;font-size:16px;font-weight:600}
+#dlgCmp .hint{display:block;font-size:13px;color:var(--ink2);margin:-4px 0 8px}
+.cmptbl th.r,.cmptbl td.r{white-space:nowrap;font-variant-numeric:tabular-nums}
+.cmptbl th,.cmptbl td{padding:7px 12px;vertical-align:top}
+.cmptbl td:first-child,.cmptbl th:first-child{min-width:150px;position:sticky;left:0;background:var(--card);z-index:1}
+.cmptbl tr.grp td{position:static}
+.cmptbl small{display:block;font-size:12px;font-weight:500;color:var(--ink3)}
+.cmptbl small.g{color:var(--pine)} .cmptbl small.r{color:var(--brick)}
+.cmptbl tr.grp td{font-weight:600;background:var(--paper)}
 .ntlist{display:flex;flex-direction:column;gap:10px}
 .ntrow{display:flex;gap:14px;align-items:center;padding:14px;border:1px solid var(--rule);border-radius:12px;min-width:0}
 .ntrow>div{min-width:0}
@@ -969,7 +990,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
       </div>
       <div class="field full" id="wTodo">
         <label for="fTodo">Opgave</label>
-        <input id="fTodo" list="todoSug" autocomplete="off" placeholder="fx Opret den faste overførsel i banken">
+        <input id="fTodo" list="todoSug" autocomplete="off" placeholder="fx Opsig aftalen">
         <datalist id="todoSug"></datalist>
         <span class="note">Noget, der mangler at blive gjort. Opgaven vises under klokken i topmenuen, til du markerer den som klaret.</span>
       </div>
@@ -980,6 +1001,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
         <span class="note" id="histNote">Når du retter beløbet, gemmes det gamle beløb automatisk her med datoen, så udviklingen kan følges.</span></div>
       <label class="check"><input type="checkbox" id="fActive" checked> Aktiv</label>
       <label class="check"><input type="checkbox" id="fCheck"> Skal tjekkes</label>
+      <label class="check" id="wMade" style="grid-column:1/-1"><input type="checkbox" id="fMade" checked> Oprettet i banken. Fjern fluebenet, hvis overførslen mangler at blive sat op, så kommer den på listen under klokken</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
       <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
       <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter, fx børnefamilieydelse. Kan holdes ude af Til rådighed på personkortene under Indstillinger</label>
@@ -1172,6 +1194,23 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
         <button type="button" class="dtile" data-imp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Gendan et budget fra en gemt fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
     </div>
+  </form>
+</dialog>
+<dialog id="dlgCmp" aria-labelledby="cmpTitle">
+  <form method="dialog">
+    <div class="dhead"><div><h2 id="cmpTitle">Sammenlign scenarier</h2><p>Nøgletal og hvem der betaler hvad, side om side. Forskellen under hvert beløb er regnet i forhold til den første kolonne.</p></div><button type="button" class="dx" id="btnCmpClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="gscope" id="cmpPick"></div>
+    <div id="cmpBody"></div>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnCmpPdf">Hent som PDF</button><button type="submit" class="primary">Luk</button></div></div>
+  </form>
+</dialog>
+<dialog id="dlgPdf" aria-labelledby="pdfTitle">
+  <form method="dialog">
+    <div class="dhead"><div><h2 id="pdfTitle">Eksportér PDF</h2><p>Vælg hvilke budgetter der skal med.</p></div><button type="button" class="dx" id="btnPdfClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="gscope" id="pdfPick"></div>
+    <div class="field"><span class="flabel">Indhold</span><div class="seg" role="group" aria-label="Indhold" id="pdfMode" style="align-self:flex-start"><button type="button" data-pm="full" aria-pressed="true">Hele rapporten</button><button type="button" data-pm="cmp" aria-pressed="false">Kun sammenligning</button></div></div>
+    <p class="setnote" id="pdfNote"></p>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnPdfCancel">Annullér</button><button type="button" class="primary" id="btnPdfGo">Hent PDF</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgNote" aria-labelledby="noteTitle">
@@ -1613,12 +1652,53 @@ function compareHtml(sc){
   const rows=compareRows(sc), ch=scChanges(sc);
   const good=(label,d)=>/udgifter|bør overføres/i.test(label)?d<=0:d>=0;
   const cell=(l,d)=>Math.abs(d)<0.5?'<td class="r muted">0 kr</td>':`<td class="r" style="color:${good(l,d)?'var(--pine)':'var(--brick)'};font-weight:500">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</td>`;
-  return `<section class="compare" id="cmp"><div class="sechead"><h2>Nuværende og ${esc(sc.name||'scenarie')}${sc.from?' fra '+esc(sc.from):''}</h2><span class="hint">Grøn er en forbedring, rød en forværring. Beløb ${per()}.</span></div>
+  return `<section class="compare" id="cmp"><div class="sechead"><h2>Nuværende og ${esc(sc.name||'scenarie')}${sc.from?' fra '+esc(sc.from):''} <button type="button" class="helplink" data-cmpall>Sammenlign scenarier</button></h2><span class="hint">Grøn er en forbedring, rød en forværring. Beløb ${per()}.</span></div>
    <div class="cmpgrid"><div class="tablewrap"><table><thead><tr><th></th><th class="r">Nuværende</th><th class="r">Scenarie</th><th class="r">Forskel</th></tr></thead><tbody>
    ${rows.map(r=>`<tr><td>${esc(r[0])}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${cell(r[0],r[3])}</tr>`).join('')}</tbody></table></div>
    <div class="tablewrap"><table><thead><tr><th>Ændrede poster</th><th></th><th class="r">Før</th><th class="r">Efter</th></tr></thead><tbody>
    ${ch.length?ch.map(c=>`<tr><td class="desc">${esc(c.desc)}</td><td><span class="badge ${c.kind==='Fjernet'?'un':'chk'}">${c.kind}</span></td><td class="r">${disp(c.b)}</td><td class="r">${disp(c.n)}</td></tr>`).join(''):'<tr><td colspan="4" class="muted" style="white-space:normal">Ingen ændringer endnu. Klik på en post nedenfor for at rette beløbet eller fjerne den i scenariet, eller brug Ny post.</td></tr>'}</tbody></table></div></div></section>`;
 }
+/* Side-by-side comparison of the current budget and its scenarios: key figures and who pays what. keys are 'base' or
+   scenario ids; the first one is the reference for the differences. Shared by the dialog and the PDF.
+   dir: 1 = higher is better, -1 = lower is better, 0 = neither. */
+function cmpKeys(){return ['base'].concat((S.scenarios||[]).map(x=>x.id))}
+function cmpData(keys){
+  const cols=keys.map(k=>{const sc=k==='base'?null:(S.scenarios||[]).find(x=>x.id===k);return {key:k,sc,name:sc?(sc.name||'Scenarie'):'Nuværende',from:sc&&sc.from||''}}).filter(c=>c.key==='base'||c.sc);
+  const fa=S.accounts.filter(a=>a.type==='faelles').map(a=>a.id);
+  const one=()=>{const t=totals(),b=bankCalc(),sh=shares();
+    const kpi=[['Indtægter',t.inc,1],['Faste udgifter',t.exp,-1],['Tilbage efter faste udgifter',t.left,1],['Opsparing',t.sav,0],['Tilbage efter al opsparing',t.afterSav,1],
+      ['Rådighedsbeløb (bankens beregning)',b.rad,1],['Luft over bankens krav',b.buf,1]];
+    S.accounts.forEach(a=>{const c=accountCalc(a.id);kpi.push(a.type==='faelles'?[a.name+': bør overføres',c.need,0]:[a.name+': tilbage',c.left,1])});
+    const ppl=S.persons.map(p=>{const c=personCalc(p.id), tr=act().filter(e=>e.type==='overfoersel'&&fa.includes(e.to)&&!fa.includes(e.from)&&(S.accounts.find(a=>a.id===e.from)||{}).owner===p.id).reduce((s,e)=>s+mAvg(e),0);
+      return [['Andel af fælles udgifter',sh[p.id]||0,0,'pct'],['Indtægter',c.own+c.extra+c.shInc,1],['Egne faste udgifter',c.ownExp,-1],['Betaler af fælles udgifter',c.shExp,-1],
+        ['Overføres til fælles konto',tr,0],['Til rådighed',c.left,1],['Opsparing',c.sav,0],['Tilbage efter opsparing',c.afterSav,1]]});
+    const sp=(S.settings||{}).split, how=sp==='manuel'?'med fast procent':sp==='lige'?'ligeligt':'efter fast indkomst';
+    return {kpi,ppl,split:`Fælles udgifter fordeles ${how}`+(S.persons.length?': '+S.persons.map(p=>p.name+' '+Math.round((sh[p.id]||0)*100)+' %').join(', '):'')}};
+  const R=cols.map(c=>calcWith(entriesFor(c.sc),one));
+  const rows=pick=>pick(R[0]).map((r,i)=>({label:r[0],dir:r[2],fmt:r[3]||'kr',vals:R.map(x=>pick(x)[i][1])}));
+  return {cols,split:R.map(x=>x.split),kpi:rows(x=>x.kpi),people:S.persons.map((p,j)=>({name:p.name,rows:rows(x=>x.ppl[j])})),changes:cols.map(c=>c.sc?scChanges(c.sc).length:0)};
+}
+/* Value and its difference from the first column, as text plus 'g' (better), 'r' (worse) or '' (neutral or none). */
+function cmpFmt(r,i,k){const v=r.vals[i];return r.fmt==='pct'?Math.round(v*100)+' %':k?k(v):kr(v)}
+function cmpDiff(r,i,k){if(!i)return null;const d=r.vals[i]-r.vals[0];
+  if(r.fmt==='pct'){const p=Math.round(d*100);return p?{t:(p>0?'+':'−')+Math.abs(p)+' point',c:''}:null}
+  if(Math.abs(d)<0.5)return null;return {t:(d>0?'+':'−')+(k?k(Math.abs(d)):kr(Math.abs(d))),c:r.dir===0?'':d*r.dir>0?'g':'r'}}
+let CMPK=null;
+function cmpHtml(keys){const D=cmpData(keys), n=D.cols.length;
+  const head=`<thead><tr><th></th>${D.cols.map(c=>`<th class="r">${esc(c.name)}${c.from?`<small>fra ${esc(c.from)}</small>`:''}</th>`).join('')}</tr></thead>`;
+  const body=L=>L.map(r=>`<tr><td>${esc(r.label)}</td>${r.vals.map((_,i)=>{const d=cmpDiff(r,i,disp);return `<td class="r">${r.fmt==='pct'?cmpFmt(r,i):disp(r.vals[i])}${d?`<small class="${d.c}">${d.t}</small>`:''}</td>`}).join('')}</tr>`).join('');
+  return `<h3>Nøgletal</h3><span class="hint">Beløb ${per()}. Grøn er en forbedring, rød en forværring.</span>
+    <div class="tablewrap"><table class="cmptbl">${head}<tbody>${body(D.kpi)}<tr><td>Ændrede poster i forhold til nuværende</td>${D.changes.map((c,i)=>`<td class="r">${D.cols[i].sc?c:'–'}</td>`).join('')}</tr></tbody></table></div>
+    <h3 style="margin-top:18px">Hvem betaler hvad</h3><span class="hint">${D.split.every(s=>s===D.split[0])?esc(D.split[0])+'.':'Andelen af de fælles udgifter er forskellig i budgetterne, fordi indtægterne er forskellige.'}</span>
+    <div class="tablewrap"><table class="cmptbl">${head}<tbody>${D.people.map(p=>`<tr class="grp"><td colspan="${n+1}">${esc(p.name)}</td></tr>${body(p.rows)}`).join('')}</tbody></table></div>`}
+function openCmp(keys){if(!S)return;const all=cmpKeys();CMPK=(keys||CMPK||all).filter(k=>all.includes(k));if(CMPK.length<2)CMPK=all;
+  const name=k=>k==='base'?'Nuværende':((S.scenarios||[]).find(x=>x.id===k)||{}).name||'Scenarie';
+  $('cmpPick').innerHTML='<span>Med i sammenligningen</span>'+all.map(k=>`<label class="chip"><input type="checkbox" data-ck="${k}" ${CMPK.includes(k)?'checked':''}>${esc(name(k))}</label>`).join('');
+  $('cmpBody').innerHTML=CMPK.length>=2?cmpHtml(CMPK):'<p class="muted">Vælg mindst to budgetter.</p>';
+  $('btnCmpPdf').disabled=CMPK.length<2;
+  $('cmpPick').querySelectorAll('[data-ck]').forEach(c=>c.onchange=()=>{const on=[...$('cmpPick').querySelectorAll('[data-ck]:checked')].map(x=>x.dataset.ck);
+    CMPK=all.filter(k=>on.includes(k));$('cmpBody').innerHTML=CMPK.length>=2?cmpHtml(CMPK):'<p class="muted">Vælg mindst to budgetter.</p>';$('btnCmpPdf').disabled=CMPK.length<2});
+  if(!$('dlgCmp').open)$('dlgCmp').showModal()}
 let INFO=[];
 function ib(html){INFO.push(html);return `<button type="button" class="info" data-i="${INFO.length-1}" aria-label="Vis forklaring" aria-expanded="false">i</button>`}
 const howOf=e=>{const f=e.type==='overfoersel'&&e.auto?1:(+e.freq||1);return String(e.freq)==='0'&&!e.auto?'uregelmæssig, gennemsnit':f===1?'hver måned':`${kr(amtOf(e))} ${(FREQ[f]||'').toLowerCase()} (${monthsOf(e).join(', ')})`};
@@ -1896,7 +1976,7 @@ function overfHtml(){
     h+=`<div class="tcard"><div class="ghead"><div><h3 style="margin:0;font-size:16px">Fra ${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div></div>`;
     h+=`<div class="tablewrap"><table><thead><tr><th>Til konto</th><th>Beskrivelse</th><th>Hyppighed</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th></th></tr></thead><tbody>${out.map(e=>{
       const f=e.auto?1:(+e.freq||1), when=f>1?` <span class="muted">(${kr(amtOf(e))} i ${monthsOf(e).join(', ')})</span>`:'';
-      return `<tr class="row ${e.active===false?'off':''}" data-tid="${e.id}" tabindex="0"><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._cover?`<span class="badge gtag">${e._cinc?'Flytter indtægt':'Dækker udgift'}</span>`:''}${e.auto?'<span class="badge auto">Auto</span>':''}${fixIds.has(e.id)?'<span class="badge un">Skal rettes</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.active===false&&!e.removed?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
+      return `<tr class="row ${e.active===false?'off':''}" data-tid="${e.id}" tabindex="0"><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._cover?`<span class="badge gtag">${e._cinc?'Flytter indtægt':'Dækker udgift'}</span>`:''}${e.auto?'<span class="badge auto">Auto</span>':''}${fixIds.has(e.id)?'<span class="badge un">Skal rettes</span>':''}${e.made===false?'<span class="badge un">Ikke oprettet i banken</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.active===false&&!e.removed?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
         <td>${FREQ[f]||''}${when}</td><td class="r">${disp(mAvg(e))}</td><td class="act">${e._goal||e._cover||(e._ovr&&e.removed)?'':`<button type="button" class="ghost danger" data-tdel="${e.id}">Fjern</button>`}</td></tr>`}).join('')}
       <tr class="cat"><td colspan="3">I alt ud</td><td class="r">${disp(sOut)}</td><td></td></tr></tbody></table></div></div>`;
   });
@@ -2379,7 +2459,7 @@ function syncType(){
   $('lAccount').textContent=t==='indtaegt'?'Udbetales til konto':'Betales fra konto';
   $('lPayer').textContent=t==='indtaegt'?'Hvis indtægt':'Hvem betaler';
   $('wStart').style.display=+$('fFreq').value>1?'':'none';
-  $('wBank').style.display=t==='udgift'?'':'none';$('wCover').style.display=t==='overfoersel'?'none':'';
+  $('wBank').style.display=t==='udgift'?'':'none';$('wMade').style.display=t==='overfoersel'&&!curSc()?'':'none';$('wCover').style.display=t==='overfoersel'?'none':'';
   {const inc=t==='indtaegt',v=$('fCover').value;$('lCover').textContent=inc?'Flyttes videre til konto':'Dækkes af fast overførsel fra';
     $('nCover').textContent=inc?'Fx børnepenge, der kommer ind på lønkontoen og fast flyttes til budgetkontoen. Overførslen følger indtægtens beløb og står under Faste overførsler.':'Fx en madkonto, der fyldes op fra budgetkontoen. Overførslen følger udgiftens beløb og står under Faste overførsler.';
     opts($('fCover'),[['',inc?'Ingen, bliver på kontoen':'Ingen, betales direkte fra kontoen'],...S.accounts.map(a=>[a.id,a.name])],v)}
@@ -2431,11 +2511,11 @@ function openEntry(id,preset){
   $('btnReset').style.display=sc&&isBase&&sc.overrides&&sc.overrides[id]?'':'none';
   $('dlgTitle').textContent=(id?'Ret post':'Ny post')+(sc?' i '+(sc.name||'scenarie'):'');
   // Tasks belong to the current budget, so they are not edited inside a scenario.
-  {const base=id?S.entries.find(x=>x.id===id):null;$('fTodo').value=base?(base.todo||''):(e.todo||'');$('wTodo').style.display=sc?'none':''}
+  {const base=id?S.entries.find(x=>x.id===id):null;$('fTodo').value=base?(base.todo||''):(e.todo||'');$('wTodo').style.display=sc?'none':'';$('fMade').checked=(base||e).made!==false}
   syncTodoSug();syncType();$('dlg').showModal();$('fDesc').focus();
 }
 const TODO_SUG={udgift:['Opret betalingsaftalen i banken','Ret beløbet i banken','Opsig aftalen','Flyt betalingen til en anden konto'],indtaegt:['Flyt udbetalingen til en anden konto','Ret beløbet'],
-  overfoersel:['Opret den faste overførsel i banken','Ret beløbet på den faste overførsel','Stop den faste overførsel']};
+  overfoersel:['Ret beløbet på den faste overførsel','Stop den faste overførsel']};
 function syncTodoSug(){$('todoSug').innerHTML=(TODO_SUG[$('fType').value]||[]).map(t=>`<option value="${esc(t)}">`).join('')}
 $('fType').addEventListener('change',syncTodoSug);
 $('fType').onchange=syncType;$('fExtra').onchange=syncType;$('fAuto').onchange=syncType;$('fFreq').onchange=syncType;$('fStart').onchange=updPreview;$('fAmount').oninput=()=>{$('eAmount').textContent='';updPreview()};
@@ -2486,7 +2566,7 @@ $('frm').addEventListener('submit',ev=>{
       if(b&&!b.auto&&(+b.amount!==d.amount||(+b.freq||1)!==d.freq)&&sinceIn===(b.since||'')){d.history.push({date:b.since||DAY(),amount:+b.amount||0,freq:+b.freq||1,desc:b.since?'Gemt ved rettelse':'Gemt ved rettelse, startdato ukendt',unknown:!b.since});d.since=DAY()}
       else d.since=sinceIn||(b?b.since||'':DAY());}
     let x;if(editingId){x=Object.assign(S.entries.find(x=>x.id===editingId),d)}else{x=Object.assign({id:uid()},d);S.entries.push(x)}
-    setTodo(x,$('fTodo').value)}
+    setTodo(x,$('fTodo').value);setMade(x,t!=='overfoersel'||$('fMade').checked)}
   $('dlg').close();commit();toast(editingId?'Post gemt':'Post oprettet');
 });
 
@@ -2499,8 +2579,9 @@ function renderAccts(){
     <select data-f="type" aria-label="Kontotype"><option value="faelles" ${a.type==='faelles'?'selected':''}>Fælles</option><option value="personlig" ${a.type!=='faelles'?'selected':''}>Personlig</option></select>
     <select data-f="owner" aria-label="Ejer"><option value="">Ingen ejer</option>${S.persons.map(p=>`<option value="${p.id}" ${a.owner===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
     <button type="button" class="ghost danger" data-del="${a.id}" aria-label="Slet konto ${esc(a.name)}">Slet</button>
-    <input class="acttodo" data-f="todo" list="acctTodoSug" value="${esc(a.todo||'')}" placeholder="Opgave, fx Opret kontoen i banken" aria-label="Opgave for ${esc(a.name)}"></div>`).join('')
-    +`<datalist id="acctTodoSug">${['Opret kontoen i banken','Bestil kort til kontoen','Luk kontoen i banken','Giv adgang til kontoen'].map(t=>`<option value="${esc(t)}">`).join('')}</datalist>`;
+    <input class="acttodo" data-f="todo" list="acctTodoSug" value="${esc(a.todo||'')}" placeholder="Opgave, fx Bestil kort til kontoen" aria-label="Opgave for ${esc(a.name)}">
+    <label class="actmade"><input type="checkbox" data-f="made" ${a.made!==false?'checked':''}> Oprettet i banken</label></div>`).join('')
+    +`<datalist id="acctTodoSug">${['Bestil kort til kontoen','Luk kontoen i banken','Giv adgang til kontoen'].map(t=>`<option value="${esc(t)}">`).join('')}</datalist>`;
   $('personList').innerHTML=S.persons.map(p=>`<div class="personedit" data-pid="${p.id}"><input data-p="name" value="${esc(p.name)}" aria-label="Navn på person"><button type="button" class="ghost danger" data-pdel="${p.id}" ${S.persons.length<2?'disabled title="Der skal være mindst én person"':''} aria-label="Fjern ${esc(p.name)}">Fjern</button></div>`).join('');
   $('personList').querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{const id=b.dataset.pdel;if(S.persons.length<2)return;
     const n=entryCopies().filter(e=>e.payer===id).length+(S.goals||[]).filter(g=>g.payer===id).length, na=S.accounts.filter(a=>a.owner===id).length;
@@ -2508,7 +2589,7 @@ function renderAccts(){
     entryCopies().forEach(e=>{if(e.payer===id)e.payer=FAELLES});(S.goals||[]).forEach(g=>{if(g.payer===id)g.payer=FAELLES});S.accounts.forEach(a=>{if(a.owner===id)a.owner=''});
     S.persons=S.persons.filter(x=>x.id!==id);if(S.settings.split==='manuel'&&S.persons.length!==2)S.settings.split='indkomst';setCommit()});
   $('acctList').querySelectorAll('.acctedit').forEach(row=>{
-    row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);if(inp.dataset.f==='todo')setTodo(a,inp.value);else a[inp.dataset.f]=inp.value;commit()});
+    row.querySelectorAll('[data-f]').forEach(inp=>inp.onchange=()=>{const a=S.accounts.find(x=>x.id===row.dataset.id);if(inp.dataset.f==='todo')setTodo(a,inp.value);else if(inp.dataset.f==='made')setMade(a,inp.checked);else a[inp.dataset.f]=inp.value;commit()});
   });
   $('acctList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.del, used=S.entries.filter(e=>e.account===id||e.from===id||e.to===id).length;
@@ -2561,7 +2642,8 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
 /* ---------- PDF ---------- */
 /* The report follows the app's four tabs – Budget, Overblik over lån, Faste overførsler, Opsparingsmål – with the
    same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
-function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ')}
+// An amount and its unit are joined by a no-break space, so a line never breaks between '1.234' and 'kr' (or '%').
+function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ').replace(/(\d) (kr\b|%)/g,'$1\u00a0$2')}
 const PC={paper:[244,246,242],card:[255,255,255],ink:[23,33,27],ink2:[95,107,99],ink3:[131,141,134],rule:[223,229,220],pine:[44,106,77],pineBg:[227,238,230],brick:[168,56,42],brickBg:[248,231,226],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
 const PGC=[[79,125,103],[154,125,69],[82,104,138],[143,91,106],PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
 const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
@@ -2576,31 +2658,38 @@ function goalPlan(L){
   const tot=[],xtot=[];for(let i=a;i<b;i++){tot.push(C.reduce((s,x)=>s+val(x,i),0));xtot.push(C.reduce((s,x)=>s+xv(x,i),0))}
   return {C,a,b,N,val,xv,xd,tot,xtot};
 }
-function buildPdf(){
+/* opt.keys: the budgets to include ('base' or scenario ids). opt.compare puts a comparison of them first,
+   opt.full adds the whole report for each. Without opt: the whole report for the budget or scenario shown now. */
+function buildPdf(opt){
+  opt=opt||{keys:[SC||'base'],compare:false,full:true};
   const {jsPDF}=window.jspdf, doc=new jsPDF({unit:'mm',format:'a4'}), W=210,H=297,M=14,CW=W-2*M,TOP=24,BOT=H-16,PT=0.3528;
-  const sc=curSc(), key=sc?sc.id:'base', title=(S.settings&&S.settings.title)||'budgetpro';
-  const stamp='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'})+(sc?' · Scenarie: '+(sc.name||'')+(sc.from?' fra '+sc.from:''):'');
+  const title=(S.settings&&S.settings.title)||'budgetpro';
+  const day='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'});
+  let stamp=day;
   const T=pdfTxt, K=v=>T(kr(v)), cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
   const fill=c=>doc.setFillColor(...c), stroke=c=>doc.setDrawColor(...c), color=c=>doc.setTextColor(...c), lw=v=>doc.setLineWidth(v);
   const font=(sz,b)=>{doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(sz)}, lh=sz=>sz*PT*1.25, base=sz=>sz*PT*0.85;
-  const kfmt=v=>{const k=v/1000;return (Math.abs(k)<10&&Math.round(k*10)%10?k.toLocaleString('da-DK',{maximumFractionDigits:1}):nf.format(Math.round(k)))+'k'};
   doc.setLineHeightFactor(1.25);
-  let y=TOP, chapter='', pages=0;
+  // jsPDF has no width for the no-break space and measures it too wide, which would push right-aligned amounts out of line.
+  [false,true].forEach(b=>{font(8,b);const U=((doc.internal.getFont().metadata||{}).Unicode||{}).widths;if(U&&U[32]!=null)U[160]=U[32]});
+  let y=TOP, chapter='', pages=0, fresh=false;
   function decor(){fill(PC.paper);doc.rect(0,0,W,H,'F');font(8.5,true);color(PC.ink);doc.text(T(title),M,12);const tw=doc.getTextWidth(T(title));
     font(8.5,false);color(PC.ink3);doc.text('  ·  '+T(chapter),M+tw,12);doc.text(T(stamp),W-M,12,{align:'right'});stroke(PC.rule);lw(0.25);doc.line(M,15.5,W-M,15.5)}
   function page(){if(pages++)doc.addPage();decor();y=TOP}
   const need=h=>{if(y+h>BOT)page()};
-  function chapterStart(name){chapter=name;page();font(22,true);color(PC.ink);doc.text(T(name),M,y+6);y+=13}
+  function chapterStart(name,sub){chapter=name;page();font(22,true);color(PC.ink);doc.text(T(name),M,y+6);y+=13;
+    if(sub){font(9.5,true);color(PC.ink2);doc.text(T(sub),M,y);y+=6}fresh=true}
   function para(t,sz,c,maxW,x){if(!t)return;font(sz,false);color(c||PC.ink2);doc.splitTextToSize(T(t),maxW||CW).forEach(l=>{need(lh(sz));doc.text(l,x||M,y+base(sz));y+=lh(sz)})}
   /* Large sentence with bold and coloured amounts, like the hero on each tab. runs: 'text' or ['text', 'b'|'left'|'neg'] */
-  function rich(runs,sz,maxW){const toks=[];runs.forEach(r=>{const [t,s]=typeof r==='string'?[r,'']:r;T(t).replace(/(\d) kr/g,'$1\u0001kr').split(/(\s+)/).forEach(w=>{if(w)toks.push([w.replace(/\u0001/g,' '),s])})});
+  function rich(runs,sz,maxW){const toks=[];runs.forEach(r=>{const [t,s]=typeof r==='string'?[r,'']:r;T(t).replace(/(\d)[  ](kr|%)/g,'$1\u0001$2').split(/(\s+)/).forEach(w=>{if(w)toks.push([w.replace(/\u0001/g,' '),s])})});
     const lines=[[]];let w0=0;
     toks.forEach(([w,s])=>{font(sz,!!s);if(/^\s+$/.test(w)){if(w0>0){const ww=doc.getTextWidth(' ');lines[lines.length-1].push([' ',s,ww]);w0+=ww}return}
       const ww=doc.getTextWidth(w);if(w0+ww>maxW&&w0>0){const L=lines[lines.length-1];while(L.length&&L[L.length-1][0]===' ')L.pop();lines.push([]);w0=0}
       lines[lines.length-1].push([w,s,ww]);w0+=ww});
     lines.forEach(L=>{need(lh(sz));let x=M;L.forEach(([w,s,ww])=>{font(sz,!!s);color(s==='left'?PC.pine:s==='neg'?PC.brick:PC.ink);doc.text(w,x,y+base(sz));x+=ww});y+=lh(sz)*1.04})}
   function hero(runs,small){rich(runs,15,150);if(small){y+=2;para(small,8.5,PC.ink2,155)}y+=4;stroke(PC.rule);lw(0.25);doc.line(M,y,W-M,y);y+=1}
-  function h2(t,hint,minH){need(16+(minH||0));y+=7;font(12.5,true);color(PC.ink);doc.text(T(t),M,y+base(12.5));y+=7;if(hint){para(hint,8,PC.ink3);y+=0.5}y+=2.5}
+  /* Each section starts on a new page; the first one shares the page with the chapter's opening sentence. */
+  function h2(t,hint,minH){if(fresh)fresh=false;else page();need(16+(minH||0));y+=y>TOP?7:2;font(12.5,true);color(PC.ink);doc.text(T(t),M,y+base(12.5));y+=7;if(hint){para(hint,8,PC.ink3);y+=0.5}y+=2.5}
   function h3(t,sub,minH){need(12+(minH||0));y+=2;font(10.5,true);color(PC.ink);doc.text(T(t),M,y+base(10.5));y+=5;if(sub){font(7.5,false);color(PC.ink3);doc.text(T(sub),M,y+base(7.5));y+=4}y+=1.5}
   const VK={ok:[PC.pineBg,PC.pine],bad:[PC.brickBg,PC.brick],warn:[PC.ochreBg,PC.ochre]};
   function verdict(t,kind){font(8.5,false);const L=doc.splitTextToSize(T(t),CW-8),h=L.length*lh(8.5)+4.4;need(h+2);const [bg,fg]=VK[kind];fill(bg);doc.roundedRect(M,y,CW,h,1.6,1.6,'F');color(fg);doc.text(L,M+4,y+2.2+base(8.5));y+=h+3}
@@ -2622,19 +2711,18 @@ function buildPdf(){
     const rows=body.map(r=>{if(Array.isArray(r))return r.map(cell);
       const st=r.cat?{fontStyle:'bold',fillColor:PC.paper}:r.tot?{fontStyle:'bold',lineWidth:{top:0.35,bottom:0.2}}:(r.style||{});
       return r.cells.map(c=>{const x=cell(c);x.styles=Object.assign({},st,x.styles||{});return x})});
+    /* Every column is at least as wide as its widest amount, so "1.234 kr" or "4,10 %" never breaks before the unit and
+       the amounts line up under each other all the way down. Measured bold, the widest case. */
+    const cs=Object.fromEntries(R.map(i=>[i,{halign:'right'}]));Object.entries(o.cs||{}).forEach(([i,v])=>{cs[i]=Object.assign({},cs[i],v)});font(o.fs||8,true);
+    rows.forEach(r=>{let ci=0;r.forEach(c=>{const sp=c.colSpan||1;if(sp===1)String(c.content).split('\n').forEach(l=>(l.match(/[-+]?\d[\d.]*(?:,\d+)?[  ](?:kr(?:\/md\.)?|%)/g)||[]).forEach(m=>{
+      const w=doc.getTextWidth(m)+5;if(w>((cs[ci]||{}).minCellWidth||0))cs[ci]=Object.assign({},cs[ci],{minCellWidth:w})}));ci+=sp})});
     doc.autoTable({startY:y,margin:{left:M,right:M,top:TOP,bottom:H-BOT},head:[head.map(T)],body:rows,theme:'plain',
       styles:{font:'helvetica',fontSize:o.fs||8,cellPadding:{top:1.7,bottom:1.7,left:2.2,right:2.2},textColor:PC.ink,lineColor:PC.rule,lineWidth:{bottom:0.2},fillColor:PC.card,overflow:'linebreak',valign:'top'},
       headStyles:{fontStyle:'normal',textColor:PC.ink2,fontSize:(o.fs||8)-0.5,lineWidth:{bottom:0.35}},
-      columnStyles:Object.assign(Object.fromEntries(R.map(i=>[i,{halign:'right'}])),o.cs||{}),tableLineColor:PC.rule,tableLineWidth:0.25,
-      didParseCell:d=>{if(d.section==='head'&&R.includes(d.column.index))d.cell.styles.halign='right'},
+      columnStyles:cs,tableLineColor:PC.rule,tableLineWidth:0.25,
+      didParseCell:d=>{if(d.section==='head'&&R.includes(d.column.index))d.cell.styles.halign='right';if(o.parse)o.parse(d)},
       didDrawCell:o.draw,willDrawPage:d=>{if(d.pageNumber>1)decor()}});
     y=doc.lastAutoTable.finalY+4}
-  function legend(L){font(7.5,false);let x=M;L.forEach(([c,t,kind])=>{t=T(t);
-    if(kind==='line'){stroke(c);lw(0.8);doc.line(x,y+1.7,x+4,y+1.7)}
-    else if(kind==='dash'){stroke(PC.ink3);lw(0.3);doc.setLineDashPattern([0.8,0.6],0);doc.rect(x,y+0.3,2.8,2.8);doc.setLineDashPattern([],0)}
-    else{fill(c);doc.roundedRect(x,y+0.3,2.8,2.8,0.6,0.6,'F')}
-    color(PC.ink2);const tx=x+(kind==='line'?5.5:4.2);doc.text(t,tx,y+2.7);x=tx+doc.getTextWidth(t)+5});y+=6}
-  function grid(x0,x1,y0,y1,vals,Y){font(6.5,false);vals.forEach(v=>{stroke(PC.rule);lw(0.15);doc.line(x0,Y(v),x1,Y(v));color(PC.ink3);doc.text(kfmt(v),x0-1.5,Y(v)+1,{align:'right'})})}
   /* Card contents as blocks; measured with draw=false, then drawn. */
   function blocks(B,x,y0,w,draw){let cy=y0+6;const iw=w-8,ix=x+4;
     B.forEach(b=>{
@@ -2655,43 +2743,6 @@ function buildPdf(){
       R.forEach((B,j)=>{const x=M+j*(w+g);fill(PC.card);stroke(PC.rule);lw(0.25);doc.roundedRect(x,y,w,h,2,2,'FD');blocks(B,x,y,w,true)});y+=h+g}}
 
   /* charts */
-  function planChart(id){const a=S.accounts.find(x=>x.id===id);if(!a)return;
-    const M0=monthly(id), sd=saldoFor(id), st=planStart(sd), IX=[...Array(12)].map((_,k)=>st+k), Mo=IX.map(i=>M0[((i%12)+12)%12]), LB=IX.map(i=>idxLbl(i,true));
-    if(!Mo.some(x=>x.i||x.o))return;
-    let s=sd.amount;const sal=Mo.map(x=>(s+=x.i-x.o)), ch=50;
-    h3(a.name,'Saldo '+kr(sd.amount)+' pr. '+fmtDate(sd.date)+(sd.legacy?'. Ikke gemt endnu, så saldoen regnes fra 1. januar.':''),ch+22);
-    legend([[PC.pine,'Ind'],[PC.ink3,'Ud'],[PC.ochre,'Saldo','line']]);
-    const x0=M+12,x1=W-M,y0=y+1,y1=y+ch-7, vals=[...Mo.map(x=>x.i),...Mo.map(x=>-x.o),...sal,sd.amount,0], mx=Math.max(...vals), mn=Math.min(...vals), rg=(mx-mn)||1;
-    const Y=v=>y0+(mx-v)/rg*(y1-y0), cw=(x1-x0)/12, bw=Math.min(4.2,cw*0.32);
-    grid(x0,x1,y0,y1,[0,1,2,3,4].map(t=>mn+rg*t/4),Y);stroke(PC.ink3);lw(0.25);doc.line(x0,Y(0),x1,Y(0));
-    Mo.forEach((m,i)=>{const cx=x0+cw*i+cw/2;fill(PC.pine);if(m.i>0)doc.rect(cx-bw-0.2,Y(m.i),bw,Y(0)-Y(m.i),'F');fill(PC.ink3);if(m.o>0)doc.rect(cx+0.2,Y(0),bw,Y(-m.o)-Y(0),'F');
-      font(6.5,false);color(PC.ink2);doc.text(T(LB[i]),cx,y1+4.5,{align:'center'})});
-    stroke(PC.ochre);lw(0.7);for(let i=1;i<12;i++)doc.line(x0+cw*(i-0.5),Y(sal[i-1]),x0+cw*(i+0.5),Y(sal[i]));
-    sal.forEach((v,i)=>{fill(v<0?PC.brick:PC.ochre);stroke(PC.paper);lw(0.4);doc.circle(x0+cw*(i+0.5),Y(v),1,'FD')});
-    y=y1+8;const low=Math.min(...sal), lowM=idxLbl(IX[sal.indexOf(low)]).toLowerCase();
-    verdict(low<0?`Laveste saldo er ${kr(low)} i ${lowM}. Kontoen skal have ${kr(-low+sd.amount)} pr. ${fmtDate(sd.date)} for aldrig at gå i minus.`:`Laveste saldo er ${kr(low)} i ${lowM}. Saldo ultimo ${idxLbl(IX[11]).toLowerCase()}: ${kr(sal[11])}.`,low<0?'bad':'ok')}
-  function goalChartPdf(P){if(!P)return;const {C,a,b,N,val,xv,tot,xtot}=P, ch=56;need(ch+10);
-    legend(C.map(x=>[pgColor(x.g),x.g.name||'Mål']).concat(xtot.some(v=>v)?[[PC.ink3,'Ekstra indbetaling','dash']]:[]));
-    const x0=M+12,x1=W-M,y0=y+1,y1=y+ch-7, mx=Math.max(1,...tot.map((v,k)=>v+xtot[k])), Y=v=>y1-v/mx*(y1-y0), cw=(x1-x0)/N, bw=Math.max(0.3,cw*0.72), step=Math.max(1,Math.ceil(N/12));
-    grid(x0,x1,y0,y1,[0,1,2,3,4].map(t=>mx*t/4),Y);
-    for(let k=0;k<N;k++){const i=a+k,bx=x0+cw*k+(cw-bw)/2;let yb=y1;
-      C.forEach(x=>{const v=val(x,i);if(!v)return;const hh=v/mx*(y1-y0);yb-=hh;fill(pgColor(x.g));doc.rect(bx,yb,bw,hh,'F')});
-      C.forEach(x=>{const v=xv(x,i);if(!v)return;const hh=v/mx*(y1-y0);yb-=hh;const c=pgColor(x.g);fill(tint(c,0.65));stroke(c);lw(0.25);doc.setLineDashPattern([0.8,0.5],0);doc.rect(bx,yb,bw,hh,'FD');doc.setLineDashPattern([],0)});
-      if(k%step===0){font(6.5,false);color(PC.ink2);doc.text(T(idxLbl(i,true)),x0+cw*(k+0.5),y1+4.5,{align:'center'})}}
-    const nw=nowIdx();if(nw>=a&&nw<b){const xn=x0+cw*(nw-a);stroke(PC.ink);lw(0.3);doc.setLineDashPattern([1,1],0);doc.line(xn,y0,xn,y1);doc.setLineDashPattern([],0);font(6.5,false);color(PC.ink);doc.text('i dag',xn+1,y0+2.5)}
-    y=y1+8}
-  function loanChartPdf(L,nw){const a=nw, b=Math.min(a+144,Math.max(a+12,L[L.length-1].en.i+3)), tot=L.reduce((s,x)=>s+x.free,0), ch=50;need(ch+4);
-    const x0=M+12,x1=W-M-2,y0=y+2,y1=y+ch-6, X=i=>x0+(i-a)/(b-a)*(x1-x0), Y=v=>y1-v/Math.max(1,tot*1.18)*(y1-y0);
-    grid(x0,x1,y0,y1,[0,1,2,3,4].map(t=>tot*t/4),Y);
-    const ys=Math.max(1,Math.ceil((b-a)/144));font(6.5,false);for(let yr=Math.ceil(a/12);yr*12<=b;yr+=ys){const x=X(yr*12);stroke(PC.rule);lw(0.15);doc.setLineDashPattern([0.5,1],0);doc.line(x,y0,x,y1);doc.setLineDashPattern([],0);color(PC.ink2);doc.text(String(yr),x,y1+4.5,{align:'center'})}
-    let c2=0,px0=X(a);const pts=[[px0,Y(0)]], mk=[];
-    L.forEach((x,k)=>{const beyond=x.en.i>b, px=beyond?X(b):X(x.en.i);pts.push([px,Y(c2)]);c2+=x.free;pts.push([px,Y(c2)]);mk.push({px,py:Y(c2),k,beyond,x})});
-    pts.push([X(b),Y(c2)]);stroke(PC.pine);lw(0.8);for(let i=1;i<pts.length;i++)doc.line(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]);
-    let lastX=-99,lift=0;mk.forEach(m=>{lift=m.px-lastX<4.6?lift+4:0;m.by=Math.max(y0+2,m.py-3.4-lift);lastX=m.px});
-    mk.forEach(({px,py,by,k,beyond,x})=>{fill(PC.pine);doc.circle(px,py,0.8,'F');if(by<py-2.6){stroke(PC.pine);lw(0.2);doc.line(px,by+1.9,px,py-0.8)}
-      fill(PC.card);stroke(PC.pine);lw(0.3);doc.circle(px,by,1.9,'FD');font(6.5,true);color(PC.pine);doc.text(String(k+1),px,by+0.8,{align:'center'});
-      if(beyond){font(6,false);color(PC.ink3);doc.text('-> '+Math.floor(x.en.i/12),px-2.6,by+0.8,{align:'right'})}});
-    y=y1+8}
   function flowPdf(TT){const froms=acctOrder().filter(a=>TT.some(e=>e.from===a.id)), tos=acctOrder().filter(a=>TT.some(e=>e.to===a.id));
     const nh=11,gap=4,nw=52,rows=Math.max(froms.length,tos.length),hh=rows*(nh+gap)+gap;need(hh+4);
     const y0=y, yOf=(L,i)=>y0+gap+i*(nh+gap)+((rows-L.length)*(nh+gap))/2, mx=Math.max(1,...TT.map(mAvg)), sw=v=>0.45+Math.sqrt(v/mx)*3.4;
@@ -2708,9 +2759,32 @@ function buildPdf(){
     tos.forEach((a,j)=>node(a,W-M-nw,yOf(tos,j),TT.filter(e=>e.to===a.id).reduce((s,e)=>s+mAvg(e),0),'r'));
     y=y0+hh+3}
 
+  /* ===== Sammenligning ===== */
+  function compareReport(keys){const D=cmpData(keys), n=D.cols.length, ref=D.cols[0].name;stamp=day;
+    chapterStart('Sammenligning');
+    hero([`${n} budgetter stillet op ved siden af hinanden: `,...D.cols.flatMap((c,i)=>[[c.name,'b'],i<n-2?', ':i===n-2?' og ':'.'])],
+      `Forskellen under hvert beløb er regnet i forhold til ${ref}. Grøn er en forbedring, rød en forværring. Beløb er pr. måned.`);
+    const head=['Pr. måned',...D.cols.map(c=>c.name+(c.from?'\nfra '+c.from:''))], right=D.cols.map((_,i)=>i+1);
+    // The difference is drawn under the amount, in its own colour, so the cell is made two lines high.
+    const draw=L=>d=>{if(d.section!=='body'||d.column.index<2)return;const r=L[d.row.index];if(!r)return;const df=cmpDiff(r,d.column.index-1);if(!df)return;
+      font(6.5,true);color(df.c==='g'?PC.pine:df.c==='r'?PC.brick:PC.ink3);doc.text(T(df.t),d.cell.x+d.cell.width-2.2,d.cell.y+d.cell.height-1.8,{align:'right'})};
+    const rowsOf=L=>L.map(r=>({cells:[r.label,...r.vals.map((_,i)=>({content:cmpFmt(r,i),styles:i&&n>1?{minCellHeight:9}:{}}))]}));
+    const colW=Math.min(34,(CW-50)/n), cs=Object.fromEntries(right.map(i=>[i,{cellWidth:colW}]));
+    h2('Nøgletal',null,40);
+    table(head,rowsOf(D.kpi).concat([{cells:['Ændrede poster i forhold til nuværende',...D.changes.map((c,i)=>D.cols[i].sc?String(c):'-')]}]),{right,cs,draw:draw(D.kpi)});
+    h2('Hvem betaler hvad',D.split.every(s=>s===D.split[0])?D.split[0]+'.':'Andelen af de fælles udgifter er forskellig i budgetterne, fordi indtægterne er forskellige.',40);
+    D.people.forEach(p=>{h3(p.name,null,30);table(head,rowsOf(p.rows),{right,cs,draw:draw(p.rows)})});
+    const SCs=D.cols.filter(c=>c.sc).map(c=>({c,ch:scChanges(c.sc)})).filter(x=>x.ch.length);
+    if(SCs.length){h2('Ændrede poster','Det, der er ændret i hvert scenarie i forhold til det nuværende budget.',30);
+      SCs.forEach(({c,ch})=>{h3(c.name,c.from?'Gælder fra '+c.from:null,20);table(['Post','','Før pr. md.','Efter pr. md.'],ch.map(x=>[x.desc,x.kind,kr(x.b),kr(x.n)]),{right:[2,3]})})}}
+
   /* ===== 1. Budget ===== */
+  function fullReport(multi){
+  const sc=curSc(), key=sc?sc.id:'base', bname=sc?(sc.name||'Scenarie')+(sc.from?' fra '+sc.from:''):'Nuværende budget';
+  stamp=day+(sc?' · Scenarie: '+bname:'');
+  const sub=sc?'Scenarie: '+bname:multi?bname:'';
   const t=totals(), bk=bankCalc(), sh=shares(), sp=S.settings||{}, unplaced=act().filter(e=>e.type==='udgift'&&!e.account);
-  chapterStart('Budget');
+  chapterStart('Budget',sub);
   const flagged=act().filter(e=>(devOf(e)||{}).flag).length, checks=cur().filter(e=>e.check).length;
   hero(['Husstanden har ',[kr(t.inc),'b'],' i indtægter og ',[kr(t.exp),'b'],' i faste udgifter. Tilbage pr. måned: ',[kr(t.left),t.left>=0?'left':'neg'],'.',...(t.sav?[' Efter opsparing på '+kr(t.sav)+' er der ',[kr(t.afterSav),t.afterSav>=0?'left':'neg'],' tilbage.']:[])],
     [S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening.':'Uden ekstra indtjening.'):'',checks?checks+(checks===1?' post er':' poster er')+' markeret til tjek.':'',flagged?`${flagged} ${flagged===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år.`:'',unplaced.length?unplaced.length+' udgifter er ikke placeret på en konto endnu.':''].filter(Boolean).join(' '));
@@ -2739,8 +2813,6 @@ function buildPdf(){
     const B=[{t:'title',text:p.name},{t:'kv',rows:kv},{t:'big',text:kr(c.left),color:c.left>=0?PC.pine:PC.brick,note:'til rådighed pr. måned efter faste udgifter. Det er det maksimale, der kan spares op.'},
       {t:'kv',rows:[['Opsparingsfelt',K(c.psav)],['Opsparingsmål',K(c.gsav)],['Tilbage efter opsparing',K(c.afterSav),c.afterSav>=0?PC.pine:PC.brick]]}];
     if(c.afterSav<0)B.push({t:'verdict',text:`Opsparingen er ${kr(-c.afterSav)} højere end rådighedsbeløbet.`,kind:'bad'});return B}),Math.min(3,Math.max(1,S.persons.length)));
-  h2('Måned for måned','Kvartals- og årsbetalinger lander i bestemte måneder. Her ses saldoen de næste 12 måneder fra den angivne saldo.',95);
-  S.accounts.forEach(a=>planChart(a.id));
   h2('Poster','Beløb pr. md. er omregnet efter hyppighed. Overførsler mellem konti står under Faste overførsler.');
   const PE=cur().filter(e=>e.type!=='overfoersel'), rowsP=[];
   const grp=(label,L)=>{if(!L.length)return;L.sort(byOrd);
@@ -2759,7 +2831,7 @@ function buildPdf(){
     table(['Post','Kategori','Før','Fra','Nu','Ændring','%'],DL.map(({e,d})=>({style:d.flag?{textColor:PC.brick}:{},cells:[e.desc+(e.type==='indtaegt'?' (indtægt)':''),e.category||'',kr(d.base.m),(d.base.unknown?'før ':'')+fmtDate(d.base.date),kr(d.now.m),(d.d>=0?'+':'-')+kr(Math.abs(d.d)),d.pct===null?'':pctTxt(d.pct)]})),{right:[2,4,5,6],fs:7.5})}
 
   /* ===== 2. Overblik over lån ===== */
-  chapterStart('Overblik over lån');
+  chapterStart('Overblik over lån',sub);
   const LL=(S.loans||[]).map((l,i)=>({l,i,c:loanCalc(l)}));
   if(!LL.length)hero(['Ingen lån registreret endnu.'],'Lån tilføjes under fanen Overblik over lån.');
   else{const IN=LL.filter(x=>x.l.include!==false), AC=IN.filter(x=>!x.l.paused), tO=IN.reduce((a,x)=>a+x.c.O,0), tP=IN.reduce((a,x)=>a+x.c.P,0), tA=AC.reduce((a,x)=>a+x.c.A,0), tI=AC.reduce((a,x)=>a+x.c.interest,0);
@@ -2780,15 +2852,15 @@ function buildPdf(){
         fill(PC.rule);doc.roundedRect(bx,by,bw,1.6,0.8,0.8,'F');if(p>0){fill(PC.pine);doc.roundedRect(bx,by,Math.max(1.6,bw*p),1.6,0.8,0.8,'F')}font(6.5,false);color(PC.ink3);doc.text(Math.round(p*100)+' %',bx,by+4.6)}});
     const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
     if(LE.length){const s12=LE.filter(x=>x.en.i-nw<=12), totF=LE.reduce((s,x)=>s+x.free,0);
-      h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden. Kurven viser det samlede frigivne beløb pr. md. over tid. Numrene svarer til tabellen.',100);
+      h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden.',40);
       kpis([{label:'Frigives inden for 12 md.',value:kr(s12.reduce((s,x)=>s+x.free,0)),small:s12.length?s12.map(x=>x.l.desc||x.l.bank).join(', '):'Ingen lån udløber det næste år',kind:s12.length?'good':''},{label:'Næste udløb',value:idxLbl(LE[0].en.i),small:(LE[0].l.desc||LE[0].l.bank)+', frigiver '+kr(LE[0].free)+'/md.'},
         {label:'Frigivet i alt, når alle er betalt',value:kr(totF),small:'pr. md. · '+kr(totF*12)+' pr. år · '+idxLbl(LE[LE.length-1].en.i).toLowerCase(),kind:'hero'}],3);
-      loanChartPdf(LE,nw);let cum=0;
+      let cum=0;
       table(['Lån','Udløber','Om','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map((x,k)=>{cum+=x.free;const m=x.en.i-nw;return [(k+1)+'. '+(x.l.desc||x.l.bank)+(x.l.bank&&x.l.desc?' ('+x.l.bank+')':'')+(x.l.paused?' · på pause':''),idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),m<=0?'denne måned':m<12?m+' md.':Math.floor(m/12)+' år'+(m%12?' '+(m%12)+' md.':''),{content:kr(x.free),styles:{fontStyle:'bold'}},kr(x.free*12),kr(cum)]}),{right:[2,3,4,5]});
       para('Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb. Frigivet beløb er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen.',7.5,PC.ink3)}}
 
   /* ===== 3. Faste overførsler ===== */
-  chapterStart('Faste overførsler');
+  chapterStart('Faste overførsler',sub);
   const TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), totT=TR.reduce((a,e)=>a+mAvg(e),0), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   hero(TR.length?['Der overføres fast ',[kr(totT),'b'],` pr. måned i ${TR.length} ${TR.length===1?'overførsel':'overførsler'} mellem jeres konti${sc?' i '+(sc.name||'scenariet'):''}.`]:['Ingen faste overførsler endnu.'],
     'Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.');
@@ -2805,7 +2877,7 @@ function buildPdf(){
       para((inn.length?`Modtager ${kr(sIn)} pr. måned fra ${[...new Set(inn.map(e=>accName(e.from)))].join(', ')}.`:'Modtager ingen faste overførsler.')+` Netto ${sIn-sOut>=0?'ind':'ud'}: ${kr(Math.abs(sIn-sOut))}.`,8,PC.ink2);y+=2})}
 
   /* ===== 4. Opsparingsmål ===== */
-  chapterStart('Opsparingsmål');
+  chapterStart('Opsparingsmål',sub);
   const G=S.goals||[], GL=goalsFor(key), ctx=sc?(sc.name||'scenariet'):'det nuværende budget', gc=g=>goalCalc(g);
   const mon=GL.reduce((a,g)=>a+gc(g).monthly,0), TG=GL.reduce((a,g)=>a+(gc(g).T||0),0), est=GL.reduce((a,g)=>a+gc(g).est,0), estT=GL.filter(g=>gc(g).T).reduce((a,g)=>a+gc(g).est,0), nOpen=GL.filter(g=>gc(g).open).length, xsum=GL.reduce((a,g)=>a+gc(g).xs,0);
   hero(GL.length?[`I ${ctx} sparer I `,[kr(mon),'b'],` op pr. måned til ${GL.length} mål. Tilbage efter al opsparing: `,[kr(t.afterSav),t.afterSav>=0?'left':'neg'],'.']:[`Ingen opsparingsmål i ${ctx} endnu.`],
@@ -2829,16 +2901,43 @@ function buildPdf(){
       {right:[3,4],cs:{0:{cellPadding:{top:1.7,bottom:1.7,left:6,right:2.2}}},draw:d=>{if(d.section==='body'&&d.column.index===0&&d.row.index<GL.length){fill(pgColor(GL[d.row.index]));doc.roundedRect(d.cell.x+2.2,d.cell.y+1.9,2.4,2.4,0.6,0.6,'F')}}});
     table(['Person','Egne mål','Andel af fælles','I alt','Tilbage efter opsparing'],S.persons.map(p=>{const c=personCalc(p.id);return [p.name,kr(c.gOwn),kr(c.gSh),{content:kr(c.gsav),styles:{fontStyle:'bold'}},{content:kr(c.afterSav),styles:{textColor:c.afterSav>=0?PC.pine:PC.brick}}]}),{right:[1,2,3,4]});
     table(['Trækkes fra konto','Til mål','Tilbage på kontoen'],[...new Set(GL.map(g=>g.from||''))].map(id=>{const c=accountCalc(id);return [accName(id),kr(GL.filter(g=>(g.from||'')===id).reduce((a,g)=>a+gc(g).monthly,0)),{content:kr(c.left),styles:{textColor:c.left>=0?PC.pine:PC.brick}}]}),{right:[1,2]});
-    const GP=goalPlan(GL);if(GP){h2('Indbetalinger over tid','Hvad der sættes af til målene hver måned i hele perioden.',60);goalChartPdf(GP)}}
+  }
+  }
 
+  const keep=SC;
+  try{if(opt.compare)compareReport(opt.keys);
+    if(opt.full)opt.keys.forEach(k=>{SC=k==='base'?null:k;syncENT();fullReport(opt.compare||opt.keys.length>1)})}
+  finally{SC=keep;syncENT()}
   const n=doc.getNumberOfPages();
   for(let i=1;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetpro. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
   return doc;
 }
-async function exportPdf(){
+/* With scenarios the export asks which budgets to include and whether to print the whole report or only the comparison. */
+let PDFK=null, PDFM='full';
+function exportPdf(){
+  if(!S)return;
+  if(DR||!(S.scenarios||[]).length){runPdf();return}
+  const all=cmpKeys(), name=k=>k==='base'?'Nuværende':((S.scenarios||[]).find(x=>x.id===k)||{}).name||'Scenarie';
+  PDFK=[SC||'base'];PDFM='full';
+  $('pdfPick').innerHTML='<span>Med i PDF\'en</span>'+all.map(k=>`<label class="chip"><input type="checkbox" data-pk="${k}" ${PDFK.includes(k)?'checked':''}>${esc(name(k))}</label>`).join('');
+  const upd=()=>{PDFK=all.filter(k=>$('pdfPick').querySelector(`[data-pk="${k}"]`).checked);const n=PDFK.length;if(n<2&&PDFM==='cmp')PDFM='full';
+    $('pdfMode').querySelectorAll('[data-pm]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.pm===PDFM));if(b.dataset.pm==='cmp')b.disabled=n<2});
+    $('btnPdfGo').disabled=!n;
+    $('pdfNote').textContent=!n?'Vælg mindst ét budget.':PDFM==='cmp'?`Nøgletal, hvem der betaler hvad og de ændrede poster for de ${n} budgetter, side om side.`
+      :n===1?`Hele rapporten for ${name(PDFK[0])}: Budget, Overblik over lån, Faste overførsler og Opsparingsmål.`
+      :`Først en sammenligning af de ${n} budgetter, derefter hele rapporten for hvert af dem. Vælg Kun sammenligning for en kortere udskrift.`};
+  $('pdfPick').querySelectorAll('[data-pk]').forEach(c=>c.onchange=upd);
+  $('pdfMode').querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{PDFM=b.dataset.pm;upd()});
+  upd();$('dlgPdf').showModal()}
+$('btnPdfGo').onclick=()=>{if(!PDFK||!PDFK.length)return;$('dlgPdf').close();const many=PDFK.length>1;runPdf({keys:PDFK,compare:many,full:PDFM!=='cmp'||!many})};
+$('btnPdfCancel').onclick=$('btnPdfClose').onclick=()=>$('dlgPdf').close();
+$('dlgPdf').addEventListener('click',ev=>{if(ev.target===$('dlgPdf'))$('dlgPdf').close()});
+async function runPdf(opt){
   if(!S)return;
   if(!window.jspdf){toast('PDF-modulet kunne ikke indlæses');return}
-  const doc=buildPdf(), name='budgetpro-'+new Date().toISOString().slice(0,10)+'.pdf';
+  opt=opt||{keys:[SC||'base'],compare:false,full:true};
+  const slug=k=>k==='base'?'':(((S.scenarios||[]).find(x=>x.id===k)||{}).name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-').replace(/^-|-$/g,'')+'-';
+  const doc=buildPdf(opt), name='budgetpro-'+(opt.compare?'sammenligning-':opt.keys.length===1?slug(opt.keys[0]):'')+new Date().toISOString().slice(0,10)+'.pdf';
   if(downloads){try{await downloads.save({filename:name,data:doc.output('blob')});toast('PDF gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('PDF kunne ikke gemmes her')}}
   else{try{doc.save(name)}catch(e){window.print()}}
 }
@@ -3026,6 +3125,7 @@ function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!
   const SL=dr?[]:(S&&S.scenarios)||[],D=(R&&R.drafts)||[];
   $('scnMenu').innerHTML=`<div class="mh">Budget</div>`+row('',bn,'Nuværende · det budget, I lever efter i dag',!sc&&!dr,'Indstillinger for budgettet')
     +(SL.length?`<div class="mh">Scenarier</div>`:'')+SL.map(x=>row(x.id,x.name||'Scenarie',x.from?'Fra '+esc(x.from):'Scenarie',!!sc&&sc.id===x.id,'Indstillinger for '+esc(x.name||'scenariet'))).join('')
+    +(SL.length?`<button type="button" role="menuitem" class="scnew" data-sccmp><b>Sammenlign scenarier</b><span>Nøgletal og hvem der betaler hvad, side om side</span></button>`:'')
     +(D.length?`<div class="mh">Kladder</div>`:'')+D.map(x=>row(x.id,x.name||'Kladde',x.mode==='prev'?'Det tidligere primære budget':'Kladde'+(x.files.length?` · ${x.files.length} ${x.files.length===1?'kontoudskrift':'kontoudskrifter'}`:''),!!dr&&dr.id===x.id,'Omdøb eller slet '+esc(x.name||'kladden'),'dft')).join('')
     +`<div class="scsep"></div>`+(dr?'':`<button type="button" role="menuitem" class="scnew" data-scnew><b>+ Nyt scenarie</b><span>Prøv en ændring uden at røre det nuværende budget</span></button>`)
     +`<button type="button" role="menuitem" class="scnew" data-dftnew><b>+ Ny kladde</b><span>Byg et nyt budget ud fra kontoudskrifter fra flere konti</span></button>`}
@@ -3033,6 +3133,7 @@ function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});renderScn();const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));if(o)menu.querySelector('button').focus()};
   menu.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;close();if(b.hasAttribute('data-scnew')){newScenario();return}
     if(b.hasAttribute('data-dftnew')){openDft(null);return}
+    if(b.hasAttribute('data-sccmp')){openCmp();return}
     if(b.hasAttribute('data-dftdots')){openDft(b.dataset.dftdots);return}
     if(b.hasAttribute('data-dft')){if(b.dataset.dft!==DR)enterDraft(b.dataset.dft);return}
     // The budget row and its settings leave an open draft first.
@@ -3602,18 +3703,29 @@ document.addEventListener('click',ev=>{const o=ev.target.closest('[data-open]');
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cmp]');if(!b)return;
   const go=()=>{const c=$('cmp');if(c){c.scrollIntoView({behavior:'smooth',block:'start'});c.animate&&c.animate([{background:'var(--plum-bg)'},{background:'transparent'}],{duration:1400})}};
   if(page!=='budget'){document.querySelector('[data-page="budget"]').click();setTimeout(go,50)}else go()});
+document.addEventListener('click',ev=>{if(ev.target.closest('[data-cmpall]'))openCmp()});
+$('btnCmpClose').onclick=()=>$('dlgCmp').close();
+$('dlgCmp').addEventListener('click',ev=>{if(ev.target===$('dlgCmp'))$('dlgCmp').close()});
+$('btnCmpPdf').onclick=()=>{if(!CMPK||CMPK.length<2)return;$('dlgCmp').close();runPdf({keys:CMPK,compare:true,full:false})};
 $('exAll').onchange=e=>{if(!S)return;S.settings.withExtra=e.target.checked;commit();fillSet()};
 $('btnNew').onclick=()=>{if(!S){S=blank();commit()}openEntry(null)};
 
 /* ---------- opgaver ---------- */
-// Open tasks in the budget on screen (same rule as lib/todos.ts): the task text on accounts, then on entries,
-// and entries marked Skal tjekkes. The update reminder lists them for the primary budget.
+// Open tasks in the budget on screen (same rule as lib/todos.ts): per account the ones not yet created in the bank
+// (made:false) and the task text, then per entry the same for active fixed transfers, the task text and
+// Skal tjekkes. The update reminder lists them for the primary budget.
 function todoList(B){B=B||S;if(!B)return [];const L=[],t=v=>typeof v==='string'?v.trim():'';
-  (B.accounts||[]).forEach(a=>{if(t(a.todo))L.push({k:'a',id:a.id,title:t(a.name)||'Konto',text:t(a.todo),kind:'Konto',since:a.todoSince})});
+  (B.accounts||[]).forEach(a=>{const title=t(a.name)||'Konto';
+    if(a.made===false)L.push({k:'a',id:a.id,f:'made',title,text:'Opret kontoen i banken',kind:'Konto',since:a.madeSince});
+    if(t(a.todo))L.push({k:'a',id:a.id,f:'todo',title,text:t(a.todo),kind:'Konto',since:a.todoSince})});
   (B.entries||[]).forEach(e=>{const title=t(e.desc)||'Budgetpost',kind=e.type==='overfoersel'?'Fast overførsel':e.type==='indtaegt'?'Indtægt':'Udgift';
+    if(e.type==='overfoersel'&&e.active!==false&&e.made===false)L.push({k:'e',id:e.id,f:'made',title,text:'Opret den faste overførsel i banken',kind,since:e.madeSince});
     if(t(e.todo))L.push({k:'e',id:e.id,f:'todo',title,text:t(e.todo),kind,since:e.todoSince});
     if(e.check===true)L.push({k:'e',id:e.id,f:'check',title,text:'Tjek beløbet',kind})});
   return L}
+// made:false = the account or fixed transfer is in the budget but not yet created in the bank; madeSince is the day
+// it was marked so (for the task reminder). Created is the default, so only the missing ones carry the fields.
+function setMade(x,on){if(on){delete x.made;delete x.madeSince;return}if(x.made!==false||!x.madeSince)x.madeSince=DAY();x.made=false}
 const todoCount=n=>n+(n===1?' opgave':' opgaver');
 // Keeps todoSince (the day a task was written, for the task reminder) in step with the task text on x.
 function setTodo(x,v){v=(v||'').trim();if(!v){delete x.todo;delete x.todoSince;return}if(!(x.todo||'').trim()||!x.todoSince)x.todoSince=DAY();x.todo=v}
@@ -3622,7 +3734,7 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
   btn.setAttribute('aria-label',n?'Opgaver, '+todoCount(n):'Opgaver, ingen åbne');
   menu.innerHTML=`<div class="tdhead"><b>Opgaver</b><span>${n?`${todoCount(n)}, der venter`:'Ingen åbne opgaver'}</span></div>`
     +(n?`<div class="tdlist">${L.map(x=>{const key=x.k+':'+x.id+':'+(x.f||'');return `<div class="tdrow"><button type="button" class="tdopen" data-tdopen="${esc(key)}"><b>${esc(x.title)}</b><span>${esc(x.text)}</span><small>${x.kind}</small></button><button type="button" class="tdok" data-tdok="${esc(key)}" aria-label="Markér ${esc(x.title)} som klaret">Klar</button></div>`}).join('')}</div>`
-      :'<p class="tdempty">Skriv en opgave på en budgetpost eller en konto, fx at en fast overførsel mangler at blive oprettet i banken. Den vises her, til du markerer den som klaret.</p>')}
+      :'<p class="tdempty">Konti og faste overførsler, der ikke er oprettet i banken endnu, vises her. Det samme gør opgaver, du skriver på en budgetpost eller en konto. De bliver stående, til du markerer dem som klaret.</p>')}
 {const btn=$('btnTodo'),menu=$('todoMenu');const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));
     if(o){const f=menu.querySelector('button');if(f)f.focus()}};
@@ -3630,10 +3742,10 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
     const [k,id,f]=(ok||op).dataset[ok?'tdok':'tdopen'].split(':');
     // The list is redrawn at once, so the click must not reach the close-on-outside-click handler.
     if(ok){ev.stopPropagation();const x=k==='a'?S.accounts.find(a=>a.id===id):S.entries.find(e=>e.id===id);if(!x)return;
-      if(f==='check')x.check=false;else setTodo(x,'');commit();toast('Opgaven er klaret');
+      if(f==='check')x.check=false;else if(f==='made')setMade(x,true);else setTodo(x,'');commit();toast(f==='made'?'Markeret som oprettet i banken':'Opgaven er klaret');
       const nx=menu.querySelector('button');if(nx)nx.focus();else btn.focus();return}
     close();
-    if(k==='a'){openSet('konti');setTimeout(()=>{const r=document.querySelector(`.acctedit[data-id="${id}"] .acttodo`);if(r){r.scrollIntoView({block:'center'});r.focus()}},0)}
+    if(k==='a'){openSet('konti');setTimeout(()=>{const r=document.querySelector(`.acctedit[data-id="${id}"] ${f==='made'?'.actmade input':'.acttodo'}`);if(r){r.scrollIntoView({block:'center'});r.focus()}},0)}
     else if(S.entries.some(e=>e.id===id))openEntry(id)});
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnTodo')&&!ev.target.closest('#todoMenu'))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}});}
@@ -3674,7 +3786,7 @@ function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=A
   L.filter(v=>+v.amount>0).forEach((v,i)=>x.entries.push({id:'x'+p.id+i+Date.now().toString(36),type:'indtaegt',desc:v.desc||'Ekstra indtjening',key:'',category:'',freq:0,start:1,amount:Math.round(+v.amount),account:acc,payer:p.id,extra:true,split:false,active:true,check:false,note:'',since:DAY()}));
   delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};
   // Tasks written before todoSince existed count from today.
-  [...x.accounts,...x.entries].forEach(o=>{if(o&&typeof o.todo==='string'&&o.todo.trim()&&!o.todoSince)o.todoSince=DAY()});
+  [...x.accounts,...x.entries].forEach(o=>{if(o&&typeof o.todo==='string'&&o.todo.trim()&&!o.todoSince)o.todoSince=DAY();if(o&&o.made===false&&!o.madeSince)o.madeSince=DAY()});
   // Contact details belong on the profile, not in the budget (an early version kept them here).
   const rm=x.settings.remind;if(rm&&typeof rm==='object'){delete rm.email;delete rm.phone}
   // Drafts are whole budgets kept inside the primary one (one level deep).
