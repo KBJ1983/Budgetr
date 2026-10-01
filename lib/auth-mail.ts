@@ -98,19 +98,37 @@ export function authMail(purpose: Exclude<Purpose, "invite">, firstName: string,
 
 /** Sends the mail. Returns false when no mail provider is set up (the link is then only in the server log). */
 export async function sendAuthMail(to: string, mail: { subject: string; text: string }, link: string): Promise<boolean> {
+  // A login link is a key to the account: only print it in development.
+  return sendMail(to, mail, {}, DEV ? ` Link: ${link}` : "");
+}
+
+/** Extra Resend fields: who a reply goes to, and files (content = base64). */
+export interface MailExtra {
+  replyTo?: string;
+  attachments?: { filename: string; content: string }[];
+}
+
+/** Sends a mail through Resend. False when no mail provider is set up (logNote is then added to the warning). */
+export async function sendMail(to: string, mail: { subject: string; text: string }, extra: MailExtra = {}, logNote = ""): Promise<boolean> {
   // Trimmed (and stray quotes dropped): a pasted key often brings a space, line break or quotes along.
   const clean = (s?: string) => s?.trim().replace(/^["']|["']$/g, "").trim();
   const key = clean(process.env.RESEND_API_KEY);
   const from = clean(process.env.MAIL_FROM || process.env.REMINDER_MAIL_FROM);
   if (!key || !from) {
-    // A login link is a key to the account: only print it in development.
-    console.warn(`[budgetr] RESEND_API_KEY / MAIL_FROM mangler – mail til ${to} er ikke sendt.${DEV ? ` Link: ${link}` : ""}`);
+    console.warn(`[budgetr] RESEND_API_KEY / MAIL_FROM mangler – mail til ${to} er ikke sendt.${logNote}`);
     return false;
   }
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [to], subject: mail.subject, text: mail.text }),
+    body: JSON.stringify({
+      from,
+      to: [to],
+      subject: mail.subject,
+      text: mail.text,
+      ...(extra.replyTo ? { reply_to: extra.replyTo } : {}),
+      ...(extra.attachments?.length ? { attachments: extra.attachments } : {}),
+    }),
   });
   if (!r.ok) throw new Error(`mail ${r.status} ${await r.text()}`);
   return true;

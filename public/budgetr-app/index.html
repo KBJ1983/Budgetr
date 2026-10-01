@@ -740,14 +740,15 @@ dialog#dlgNote{width:min(520px,94vw)}
 #dlgNote .dlgfoot{margin:0}
 /* Scenario comparison and the PDF choice */
 dialog#dlgCmp{width:min(1000px,96vw);max-height:92vh}
-dialog#dlgPdf{width:min(560px,94vw)}
-#dlgCmp form,#dlgPdf form{padding:28px;display:flex;flex-direction:column;gap:18px}
-#dlgCmp .dhead,#dlgPdf .dhead{display:flex;align-items:flex-start;gap:16px}
-#dlgCmp .dhead h2,#dlgPdf .dhead h2{margin:0 0 6px;font-size:22px;font-weight:600}
-#dlgCmp .dhead p,#dlgPdf .dhead p{margin:0;font-size:15px;color:var(--ink2)}
-#dlgCmp .dx,#dlgPdf .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
-#dlgCmp .dx svg,#dlgPdf .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
-#dlgCmp .dlgfoot,#dlgPdf .dlgfoot{margin:0}
+dialog#dlgPdf,dialog#dlgMail{width:min(560px,94vw)}
+#dlgMail textarea{resize:vertical;min-height:84px}
+#dlgCmp form,#dlgPdf form,#dlgMail form{padding:28px;display:flex;flex-direction:column;gap:18px}
+#dlgCmp .dhead,#dlgPdf .dhead,#dlgMail .dhead{display:flex;align-items:flex-start;gap:16px}
+#dlgCmp .dhead h2,#dlgPdf .dhead h2,#dlgMail .dhead h2{margin:0 0 6px;font-size:22px;font-weight:600}
+#dlgCmp .dhead p,#dlgPdf .dhead p,#dlgMail .dhead p{margin:0;font-size:15px;color:var(--ink2)}
+#dlgCmp .dx,#dlgPdf .dx,#dlgMail .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
+#dlgCmp .dx svg,#dlgPdf .dx svg,#dlgMail .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#dlgCmp .dlgfoot,#dlgPdf .dlgfoot,#dlgMail .dlgfoot{margin:0}
 #dlgCmp h3{margin:4px 0 8px;font-size:16px;font-weight:600}
 #dlgCmp .hint{display:block;font-size:13px;color:var(--ink2);margin:-4px 0 8px}
 .cmptbl th.r,.cmptbl td.r{white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -1186,6 +1187,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
       <div class="dcol"><h3>Eksportér</h3>
         <button type="button" class="dtile" data-exp="pdf"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 13h5M10 16.5h5"/></svg></span><span class="dtt"><b>PDF</b><span>Budgettet som dokument, klar til print eller banken</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
         <button type="button" class="dtile" data-exp="xlsx"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M10 5v14"/></svg></span><span class="dtt"><b>Excel</b><span>Alle poster i et regneark, klar til egne beregninger</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-exp="mail"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span><span class="dtt"><b>Send på mail</b><span>PDF eller Excel direkte til fx banken eller en rådgiver</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
         <button type="button" class="dtile" data-exp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Hele budgettet gemt i én fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
       <div class="dcol"><h3>Importér</h3>
@@ -1211,6 +1213,17 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
     <div class="field"><span class="flabel">Indhold</span><div class="seg" role="group" aria-label="Indhold" id="pdfMode" style="align-self:flex-start"><button type="button" data-pm="full" aria-pressed="true">Hele rapporten</button><button type="button" data-pm="cmp" aria-pressed="false">Kun sammenligning</button></div></div>
     <p class="setnote" id="pdfNote"></p>
     <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnPdfCancel">Annullér</button><button type="button" class="primary" id="btnPdfGo">Hent PDF</button></div></div>
+  </form>
+</dialog>
+<dialog id="dlgMail" aria-labelledby="mailTitle">
+  <form method="dialog" novalidate>
+    <div class="dhead"><div><h2 id="mailTitle">Send på mail</h2><p>Vi sender filen til modtageren med dit navn som afsender. Svarer modtageren, går svaret til dig.</p></div><button type="button" class="dx" id="btnMailClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="field"><span class="flabel">Fil</span><div class="seg" role="group" aria-label="Fil" id="mailKind" style="align-self:flex-start"><button type="button" data-mk="pdf" aria-pressed="true">PDF</button><button type="button" data-mk="xlsx" aria-pressed="false">Excel</button></div></div>
+    <div class="field"><label for="mailTo">Modtagerens e-mail</label><input id="mailTo" type="email" autocomplete="email" inputmode="email" maxlength="200" placeholder="navn@eksempel.dk"></div>
+    <div class="field"><label for="mailText">Besked (valgfri)</label><textarea id="mailText" rows="3" maxlength="1000"></textarea></div>
+    <p class="setnote" id="mailNote"></p>
+    <div id="mailMsg" class="verdict" role="status" hidden></div>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnMailCancel">Annullér</button><button type="button" class="primary" id="btnMailGo">Send</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgNote" aria-labelledby="noteTitle">
@@ -2988,12 +3001,16 @@ function exportPdf(){
 $('btnPdfGo').onclick=()=>{if(!PDFK||!PDFK.length)return;$('dlgPdf').close();const many=PDFK.length>1;runPdf({keys:PDFK,compare:many,full:PDFM!=='cmp'||!many})};
 $('btnPdfCancel').onclick=$('btnPdfClose').onclick=()=>$('dlgPdf').close();
 $('dlgPdf').addEventListener('click',ev=>{if(ev.target===$('dlgPdf'))$('dlgPdf').close()});
-async function runPdf(opt){
-  if(!S)return;
-  if(!window.jspdf){toast('PDF-modulet kunne ikke indlæses');return}
+/* The file and its name, shared by download and "Send på mail". */
+async function pdfFile(opt){
   opt=Object.assign({keys:[SC||'base'],compare:false,full:true},opt||{});opt.logo=await pdfLogo();
   const slug=k=>k==='base'?'':(((S.scenarios||[]).find(x=>x.id===k)||{}).name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-').replace(/^-|-$/g,'')+'-';
   const doc=buildPdf(opt), name='budgetpro-'+(opt.compare?'sammenligning-':opt.keys.length===1?slug(opt.keys[0]):'')+new Date().toISOString().slice(0,10)+'.pdf';
+  return {doc,name}}
+async function runPdf(opt){
+  if(!S)return;
+  if(!window.jspdf){toast('PDF-modulet kunne ikke indlæses');return}
+  const {doc,name}=await pdfFile(opt);
   if(downloads){try{await downloads.save({filename:name,data:doc.output('blob')});toast('PDF gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('PDF kunne ikke gemmes her')}}
   else{try{doc.save(name)}catch(e){window.print()}}
 }
@@ -3149,13 +3166,45 @@ function buildXlsx(){
 function xlsxNoGrid(buf){try{const C=window.XLSX.CFB, z=C.read(new Uint8Array(buf),{type:'array'});
   z.FileIndex.forEach((f,i)=>{if(!/xl\/worksheets\/sheet\d+\.xml$/.test(z.FullPaths[i]))return;const x=new TextDecoder().decode(f.content);f.content=new TextEncoder().encode(x.replace('<sheetView workbookViewId="0"/>','<sheetView showGridLines="0" workbookViewId="0"/>'));f.size=f.content.length});
   return C.write(z,{fileType:'zip',type:'array'})}catch(e){return buf}}
+function xlsxFile(){
+  const sc=curSc(), name='budgetpro-'+(sc?(sc.name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-').replace(/^-|-$/g,'')+'-':'')+new Date().toISOString().slice(0,10)+'.xlsx';
+  const wb=buildXlsx(), data=new Blob([xlsxNoGrid(window.XLSX.write(wb,{bookType:'xlsx',type:'array'}))],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  return {name,data}}
 async function exportXlsx(){
   if(!S)return;if(!window.XLSX){toast('Excel-modulet kunne ikke indlæses');return}
-  const sc=curSc(), name='budgetpro-'+(sc?(sc.name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-')+'-':'')+new Date().toISOString().slice(0,10)+'.xlsx';
-  const wb=buildXlsx(), data=new Blob([xlsxNoGrid(window.XLSX.write(wb,{bookType:'xlsx',type:'array'}))],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const {name,data}=xlsxFile();
   if(downloads){try{await downloads.save({filename:name,data});toast('Excel-fil gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('Excel-filen kunne ikke gemmes her')}}
   else{try{saveBlob(data,name)}catch(e){toast('Excel-filen kunne ikke gemmes her')}}
 }
+/* ---------- Send på mail ----------
+   The file is built here and posted to /api/send/<user> (lib/send-file.ts), which mails it with the sender's name and
+   reply address. Only signed-in accounts can send; the server allows a limited number of mails a day. */
+let MK='pdf';
+function mailMsg(txt,kind){const m=$('mailMsg');m.hidden=!txt;m.className='verdict'+(kind?' '+kind:'');m.textContent=txt||''}
+function mailUpd(){$('mailKind').querySelectorAll('[data-mk]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mk===MK)));
+  const sc=curSc(), what=sc?'scenariet '+(sc.name||'Scenarie'):DR?'kladden':'budgettet';
+  $('mailNote').textContent=MK==='pdf'?`Hele rapporten for ${what}: Budget, Overblik over lån, Faste overførsler og Opsparingsmål.`:`Alle poster for ${what} i et regneark.`}
+function openMail(){if(!S)return;mailMsg('');$('btnMailGo').disabled=false;mailUpd();$('dlgMail').showModal();$('mailTo').focus()}
+$('mailKind').querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{MK=b.dataset.mk;mailUpd()});
+$('btnMailCancel').onclick=$('btnMailClose').onclick=()=>$('dlgMail').close();
+$('mailTo').oninput=()=>{if(!$('btnMailGo').disabled)mailMsg('')};
+$('dlgMail').addEventListener('click',ev=>{if(ev.target===$('dlgMail'))$('dlgMail').close()});
+const b64=blob=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]||'');r.onerror=no;r.readAsDataURL(blob)});
+$('btnMailGo').onclick=async()=>{const b=$('btnMailGo'),to=$('mailTo').value.trim(),message=$('mailText').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)){mailMsg('Skriv en gyldig e-mail, fx navn@eksempel.dk.','bad');$('mailTo').focus();return}
+  if(MK==='pdf'?!window.jspdf:!window.XLSX){mailMsg(MK==='pdf'?'PDF-modulet kunne ikke indlæses.':'Excel-modulet kunne ikke indlæses.','bad');return}
+  b.disabled=true;mailMsg('Sender …');
+  try{const f=MK==='pdf'?(({doc,name})=>({name,data:doc.output('blob')}))(await pdfFile()):xlsxFile();
+    const r=await fetch('/api/send/'+encodeURIComponent(window.BUDGETR_USER),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to,kind:MK,filename:f.name,content:await b64(f.data),message})});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok){$('dlgMail').close();$('mailText').value='';toast(j.dev?'Ikke sendt: mail er ikke sat op (kun under udvikling)':'Sendt til '+to);return}
+    const E={account:'Det kræver en konto med e-mail at sende. Test-brugere kan ikke sende mails.',email:'Skriv en gyldig e-mail, fx navn@eksempel.dk.',
+      message:'Beskeden må højst være 1.000 tegn.',file:'Filen er for stor til at sende. Hent den i stedet, og vedhæft den selv.',
+      limit:'Du har sendt mange mails i dag. Prøv igen i morgen.'};
+    mailMsg(E[j.error]||'Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')}
+  catch(e){mailMsg('Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')}
+  finally{b.disabled=false}};
 function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));if(o)menu.querySelector('button').focus()};
   menu.querySelectorAll('button[role=menuitem]').forEach(b=>b.onclick=()=>{close();onPick(b)});
@@ -3163,7 +3212,7 @@ function menuSetup(bid,mid,onPick){const btn=$(bid),menu=$(mid);const close=()=>
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}});}
 /* Profile menu: export, import, theme and test user. */
 function umPick(b){const x=b.dataset.exp,y=b.dataset.imp,u=b.dataset.um;
-  if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
+  if(x)x==='pdf'?exportPdf():x==='xlsx'?exportXlsx():x==='mail'?openMail():x==='json'?exportJson():window.extraExport&&window.extraExport(x);
   else if(y==='stmt'){if(!S){toast('Opret først et budget');return}DR?openDImp():openImp()}else if(y==='draft'){if(!S){toast('Opret først et budget');return}openDft(null)}else if(y==='json')$('jsonFile').click();
   else if(u==='set'){if(!S){toast('Opret først et budget');return}openSet()}else if(u==='help')openHelp();else if(u==='data')$('dlgData').showModal();else if(u==='home')location.href='/';else if(u==='user')window.BUDGETR_LOGOUT()}
 menuSetup('btnUserMenu','userMenu',umPick);
