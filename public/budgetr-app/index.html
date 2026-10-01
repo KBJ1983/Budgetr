@@ -1,4 +1,4 @@
-.replace(/(d) (kr|%)/g,'$1 $2')}<!doctype html>
+<!doctype html>
 <html lang="da">
 <head>
 <script>
@@ -2658,12 +2658,26 @@ function goalPlan(L){
   const tot=[],xtot=[];for(let i=a;i<b;i++){tot.push(C.reduce((s,x)=>s+val(x,i),0));xtot.push(C.reduce((s,x)=>s+xv(x,i),0))}
   return {C,a,b,N,val,xv,xd,tot,xtot};
 }
+/* The budgetpro wordmark (logo 11a3: "budget" Bricolage Grotesque 200 + "pro" Instrument Sans 600 + green dot), drawn
+   with the app's own brand fonts on a canvas, so the PDF shows the real logo. base = the baseline as a share of the height. */
+async function pdfLogo(){
+  try{await Promise.all(['200 100px "Bricolage Grotesque"','600 100px "Instrument Sans"'].map(f=>document.fonts.load(f)))}catch(e){}
+  try{const px=160,pad=8,c=document.createElement('canvas');let x=c.getContext('2d');
+    const fb=`200 ${px}px "Bricolage Grotesque", Geist, sans-serif`, fp=`600 ${px}px "Instrument Sans", Geist, sans-serif`, ls=(-0.02*px)+'px';
+    const meas=(f,t)=>{x.font=f;x.letterSpacing=ls;return x.measureText(t)}, mb=meas(fb,'budget'), mp=meas(fp,'pro'), d=0.33*px, gap=0.09*px;
+    const asc=Math.max(mb.actualBoundingBoxAscent,mp.actualBoundingBoxAscent), desc=Math.max(mb.actualBoundingBoxDescent,mp.actualBoundingBoxDescent);
+    c.width=Math.ceil(pad*2+mb.width+mp.width+gap+d);c.height=Math.ceil(pad*2+asc+desc);x=c.getContext('2d');
+    const by=pad+asc;x.fillStyle='#17211B';x.font=fb;x.letterSpacing=ls;x.fillText('budget',pad,by);
+    x.font=fp;x.letterSpacing=ls;x.fillText('pro',pad+mb.width,by);
+    x.fillStyle='#2C6A4D';x.beginPath();x.arc(pad+mb.width+mp.width+gap+d/2,by-d/2,d/2,0,Math.PI*2);x.fill();
+    return {data:c.toDataURL('image/png'),w:c.width,h:c.height,base:by/c.height}}catch(e){return null}}
 /* opt.keys: the budgets to include ('base' or scenario ids). opt.compare puts a comparison of them first,
-   opt.full adds the whole report for each. Without opt: the whole report for the budget or scenario shown now. */
+   opt.full adds the whole report for each. opt.logo: from pdfLogo(). Without opt: the whole report for the budget
+   or scenario shown now. The first page is a cover with the key figures and the contents. */
 function buildPdf(opt){
   opt=opt||{keys:[SC||'base'],compare:false,full:true};
   const {jsPDF}=window.jspdf, doc=new jsPDF({unit:'mm',format:'a4'}), W=210,H=297,M=14,CW=W-2*M,TOP=24,BOT=H-16,PT=0.3528;
-  const title=(S.settings&&S.settings.title)||'budgetpro';
+  const title=(S.settings&&S.settings.title)||'', LOGO=opt.logo||null;
   const day='Udskrevet '+new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'});
   let stamp=day;
   const T=pdfTxt, K=v=>T(kr(v)), cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -2672,12 +2686,16 @@ function buildPdf(opt){
   doc.setLineHeightFactor(1.25);
   // jsPDF has no width for the no-break space and measures it too wide, which would push right-aligned amounts out of line.
   [false,true].forEach(b=>{font(8,b);const U=((doc.internal.getFont().metadata||{}).Unicode||{}).widths;if(U&&U[32]!=null)U[160]=U[32]});
-  let y=TOP, chapter='', pages=0, fresh=false;
-  function decor(){fill(PC.paper);doc.rect(0,0,W,H,'F');font(8.5,true);color(PC.ink);doc.text(T(title),M,12);const tw=doc.getTextWidth(T(title));
-    font(8.5,false);color(PC.ink3);doc.text('  ·  '+T(chapter),M+tw,12);doc.text(T(stamp),W-M,12,{align:'right'});stroke(PC.rule);lw(0.25);doc.line(M,15.5,W-M,15.5)}
+  let y=TOP, chapter='', pages=0, fresh=false;const toc=[];
+  /* The logo with its baseline on yb, h mm high; returns the width. Without the brand fonts: the name in bold. */
+  function logo(x,yb,h){if(LOGO){const w=h*LOGO.w/LOGO.h;doc.addImage(LOGO.data,'PNG',x,yb-h*LOGO.base,w,h,'budgetpro-logo');return w}
+    font(h*2.5,true);color(PC.ink);doc.text('budgetpro',x,yb);return doc.getTextWidth('budgetpro')}
+  function decor(){fill(PC.paper);doc.rect(0,0,W,H,'F');const lw0=logo(M,12,4.4);
+    font(8.5,false);color(PC.ink2);const t1=title?'  ·  '+T(title):'';doc.text(t1,M+lw0,12);color(PC.ink3);doc.text('  ·  '+T(chapter),M+lw0+doc.getTextWidth(t1),12);
+    doc.text(T(stamp),W-M,12,{align:'right'});stroke(PC.rule);lw(0.25);doc.line(M,15.5,W-M,15.5)}
   function page(){if(pages++)doc.addPage();decor();y=TOP}
   const need=h=>{if(y+h>BOT)page()};
-  function chapterStart(name,sub){chapter=name;page();font(22,true);color(PC.ink);doc.text(T(name),M,y+6);y+=13;
+  function chapterStart(name,sub,group){chapter=name;page();toc.push({name,group:group||'',page:doc.getNumberOfPages()});font(22,true);color(PC.ink);doc.text(T(name),M,y+6);y+=13;
     if(sub){font(9.5,true);color(PC.ink2);doc.text(T(sub),M,y);y+=6}fresh=true}
   function para(t,sz,c,maxW,x){if(!t)return;font(sz,false);color(c||PC.ink2);doc.splitTextToSize(T(t),maxW||CW).forEach(l=>{need(lh(sz));doc.text(l,x||M,y+base(sz));y+=lh(sz)})}
   /* Large sentence with bold and coloured amounts, like the hero on each tab. runs: 'text' or ['text', 'b'|'left'|'neg'] */
@@ -2782,9 +2800,9 @@ function buildPdf(opt){
   function fullReport(multi){
   const sc=curSc(), key=sc?sc.id:'base', bname=sc?(sc.name||'Scenarie')+(sc.from?' fra '+sc.from:''):'Nuværende budget';
   stamp=day+(sc?' · Scenarie: '+bname:'');
-  const sub=sc?'Scenarie: '+bname:multi?bname:'';
+  const sub=sc?'Scenarie: '+bname:multi?bname:'', tocGrp=multi?bname:'';
   const t=totals(), bk=bankCalc(), sh=shares(), sp=S.settings||{}, unplaced=act().filter(e=>e.type==='udgift'&&!e.account);
-  chapterStart('Budget',sub);
+  chapterStart('Budget',sub,tocGrp);
   const flagged=act().filter(e=>(devOf(e)||{}).flag).length, checks=cur().filter(e=>e.check).length;
   hero(['Husstanden har ',[kr(t.inc),'b'],' i indtægter og ',[kr(t.exp),'b'],' i faste udgifter. Tilbage pr. måned: ',[kr(t.left),t.left>=0?'left':'neg'],'.',...(t.sav?[' Efter opsparing på '+kr(t.sav)+' er der ',[kr(t.afterSav),t.afterSav>=0?'left':'neg'],' tilbage.']:[])],
     [S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening.':'Uden ekstra indtjening.'):'',checks?checks+(checks===1?' post er':' poster er')+' markeret til tjek.':'',flagged?`${flagged} ${flagged===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år.`:'',unplaced.length?unplaced.length+' udgifter er ikke placeret på en konto endnu.':''].filter(Boolean).join(' '));
@@ -2831,7 +2849,7 @@ function buildPdf(opt){
     table(['Post','Kategori','Før','Fra','Nu','Ændring','%'],DL.map(({e,d})=>({style:d.flag?{textColor:PC.brick}:{},cells:[e.desc+(e.type==='indtaegt'?' (indtægt)':''),e.category||'',kr(d.base.m),(d.base.unknown?'før ':'')+fmtDate(d.base.date),kr(d.now.m),(d.d>=0?'+':'-')+kr(Math.abs(d.d)),d.pct===null?'':pctTxt(d.pct)]})),{right:[2,4,5,6],fs:7.5})}
 
   /* ===== 2. Overblik over lån ===== */
-  chapterStart('Overblik over lån',sub);
+  chapterStart('Overblik over lån',sub,tocGrp);
   const LL=(S.loans||[]).map((l,i)=>({l,i,c:loanCalc(l)}));
   if(!LL.length)hero(['Ingen lån registreret endnu.'],'Lån tilføjes under fanen Overblik over lån.');
   else{const IN=LL.filter(x=>x.l.include!==false), AC=IN.filter(x=>!x.l.paused), tO=IN.reduce((a,x)=>a+x.c.O,0), tP=IN.reduce((a,x)=>a+x.c.P,0), tA=AC.reduce((a,x)=>a+x.c.A,0), tI=AC.reduce((a,x)=>a+x.c.interest,0);
@@ -2860,7 +2878,7 @@ function buildPdf(opt){
       para('Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb. Frigivet beløb er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen.',7.5,PC.ink3)}}
 
   /* ===== 3. Faste overførsler ===== */
-  chapterStart('Faste overførsler',sub);
+  chapterStart('Faste overførsler',sub,tocGrp);
   const TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), totT=TR.reduce((a,e)=>a+mAvg(e),0), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   hero(TR.length?['Der overføres fast ',[kr(totT),'b'],` pr. måned i ${TR.length} ${TR.length===1?'overførsel':'overførsler'} mellem jeres konti${sc?' i '+(sc.name||'scenariet'):''}.`]:['Ingen faste overførsler endnu.'],
     'Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.');
@@ -2877,7 +2895,7 @@ function buildPdf(opt){
       para((inn.length?`Modtager ${kr(sIn)} pr. måned fra ${[...new Set(inn.map(e=>accName(e.from)))].join(', ')}.`:'Modtager ingen faste overførsler.')+` Netto ${sIn-sOut>=0?'ind':'ud'}: ${kr(Math.abs(sIn-sOut))}.`,8,PC.ink2);y+=2})}
 
   /* ===== 4. Opsparingsmål ===== */
-  chapterStart('Opsparingsmål',sub);
+  chapterStart('Opsparingsmål',sub,tocGrp);
   const G=S.goals||[], GL=goalsFor(key), ctx=sc?(sc.name||'scenariet'):'det nuværende budget', gc=g=>goalCalc(g);
   const mon=GL.reduce((a,g)=>a+gc(g).monthly,0), TG=GL.reduce((a,g)=>a+(gc(g).T||0),0), est=GL.reduce((a,g)=>a+gc(g).est,0), estT=GL.filter(g=>gc(g).T).reduce((a,g)=>a+gc(g).est,0), nOpen=GL.filter(g=>gc(g).open).length, xsum=GL.reduce((a,g)=>a+gc(g).xs,0);
   hero(GL.length?[`I ${ctx} sparer I `,[kr(mon),'b'],` op pr. måned til ${GL.length} mål. Tilbage efter al opsparing: `,[kr(t.afterSav),t.afterSav>=0?'left':'neg'],'.']:[`Ingen opsparingsmål i ${ctx} endnu.`],
@@ -2904,12 +2922,50 @@ function buildPdf(opt){
   }
   }
 
+  /* ===== Forside ===== */
+  /* A light green band with the logo, what the report is and for whom, then the key figures. The contents are
+     filled in at the end (tocAt), when the page numbers are known. */
+  let tocAt=0;
+  function cover(){pages++;fill(PC.paper);doc.rect(0,0,W,H,'F');
+    const cols=cmpData(opt.keys).cols, names=cols.map(c=>c.name), and=L=>L.length>1?L.slice(0,-1).join(', ')+' og '+L[L.length-1]:L[0]||'';
+    const one=cols.length===1?cols[0]:null, onlyCmp=opt.compare&&!opt.full;
+    const kicker=onlyCmp?'SAMMENLIGNING AF SCENARIER':opt.compare?'BUDGETRAPPORT MED SAMMENLIGNING':one&&one.sc?'BUDGETRAPPORT FOR ET SCENARIE':'BUDGETRAPPORT';
+    const sub=onlyCmp?and(names)+' side om side':opt.compare?'Sammenligning og hele rapporten for '+and(names)
+      :one&&one.sc?'Scenariet '+one.name+(one.from?' fra '+one.from:''):'Budget, lån, faste overførsler og opsparingsmål';
+    const who=S.persons.map(p=>p.name).filter(Boolean);
+    font(32,true);const TL=doc.splitTextToSize(T(title||'Budget'),CW-10);font(13,false);const SL=doc.splitTextToSize(T(sub),CW-10);
+    const bandH=82+TL.length*lh(32)+SL.length*lh(13);
+    fill(PC.pineBg);doc.rect(0,0,W,bandH,'F');fill(PC.pine);doc.rect(0,bandH-1.2,W,1.2,'F');
+    logo(M,26,10);
+    let cy=50;font(8.5,true);color(PC.pine);doc.setCharSpace(0.6);doc.text(kicker,M,cy);doc.setCharSpace(0);cy+=10;
+    font(32,true);color(PC.ink);TL.forEach(l=>{doc.text(l,M,cy+base(32));cy+=lh(32)});cy+=2;
+    font(13,false);color(PC.ink2);SL.forEach(l=>{doc.text(l,M,cy+base(13));cy+=lh(13)});cy+=4;
+    font(9,false);color(PC.ink3);doc.text(T([who.length?'For '+and(who):'',day].filter(Boolean).join('  ·  ')),M,cy+base(9));
+    y=bandH+14;font(12.5,true);color(PC.ink);doc.text(one?'Nøgletal pr. måned':'Tilbage efter al opsparing pr. måned',M,y+base(12.5));y+=9;
+    if(one){const k=calcWith(entriesFor(one.sc),()=>({t:totals(),b:bankCalc()}));
+      kpis([{label:'Indtægter',value:kr(k.t.inc),small:'efter skat'},{label:'Faste udgifter',value:kr(k.t.exp),small:'uden opsparing'},
+        {label:'Tilbage efter al opsparing',value:kr(k.t.afterSav),small:'efter faste udgifter og opsparing',kind:k.t.afterSav>=0?'good':'bad'},{label:'Rådighedsbeløb',value:kr(k.b.rad),small:'som banken regner det',kind:'hero'}],4)}
+    else{const A=cols.map(c=>calcWith(entriesFor(c.sc),totals).afterSav);
+      kpis(cols.map((c,i)=>{const d=A[i]-A[0];return {label:c.name+(c.from?' fra '+c.from:''),value:kr(A[i]),
+        small:!i?(c.sc?'første budget i sammenligningen':'det nuværende budget'):Math.abs(d)<0.5?'det samme som '+cols[0].name:(d>0?'+':'-')+kr(Math.abs(d))+' i forhold til '+cols[0].name,
+        kind:i?(A[i]>=0?'good':'bad'):'hero'}}),Math.min(3,cols.length))}
+    tocAt=y+8}
+  function contents(){doc.setPage(1);let cy=tocAt;font(12.5,true);color(PC.ink);doc.text('Indhold',M,cy+base(12.5));cy+=9;stroke(PC.rule);lw(0.25);doc.line(M,cy-2,W-M,cy-2);
+    const row=(t,pg,bold)=>{font(10.5,!!bold);color(PC.ink);const tt=T(t);doc.text(tt,M,cy+3.6);const tw=doc.getTextWidth(tt);font(10.5,false);color(PC.ink2);doc.text(String(pg),W-M,cy+3.6,{align:'right'});
+      stroke(PC.rule);lw(0.3);doc.setLineDashPattern([0.4,1.2],0);doc.line(M+tw+2,cy+3.4,W-M-doc.getTextWidth(String(pg))-2,cy+3.4);doc.setLineDashPattern([],0);cy+=7.2};
+    const groups=[...new Set(toc.map(x=>x.group))];
+    if(groups.length<=1)toc.forEach(x=>row(x.name,x.page));
+    else groups.forEach(g=>{const L=toc.filter(x=>x.group===g);if(!g){L.forEach(x=>row(x.name,x.page));return}
+      row(g,L[0].page,true);font(8.5,false);color(PC.ink2);doc.text(T(L.map(x=>x.name+' s. '+x.page).join('   ·   ')),M+4,cy+1.6);cy+=6.6});
+    font(7.5,false);color(PC.ink3);doc.text(doc.splitTextToSize(T('Beløbene er pr. måned, hvis intet andet står. Rapporten bygger på de oplysninger, der er lagt ind i budgetpro, og beregnede datoer og beløb er et skøn.'),CW),M,H-14)}
+
   const keep=SC;
-  try{if(opt.compare)compareReport(opt.keys);
+  try{cover();if(opt.compare)compareReport(opt.keys);
     if(opt.full)opt.keys.forEach(k=>{SC=k==='base'?null:k;syncENT();fullReport(opt.compare||opt.keys.length>1)})}
   finally{SC=keep;syncENT()}
+  contents();
   const n=doc.getNumberOfPages();
-  for(let i=1;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetpro. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
+  for(let i=2;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetpro. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
   return doc;
 }
 /* With scenarios the export asks which budgets to include and whether to print the whole report or only the comparison. */
@@ -2935,7 +2991,7 @@ $('dlgPdf').addEventListener('click',ev=>{if(ev.target===$('dlgPdf'))$('dlgPdf')
 async function runPdf(opt){
   if(!S)return;
   if(!window.jspdf){toast('PDF-modulet kunne ikke indlæses');return}
-  opt=opt||{keys:[SC||'base'],compare:false,full:true};
+  opt=Object.assign({keys:[SC||'base'],compare:false,full:true},opt||{});opt.logo=await pdfLogo();
   const slug=k=>k==='base'?'':(((S.scenarios||[]).find(x=>x.id===k)||{}).name||'scenarie').toLowerCase().replace(/[^a-z0-9æøå]+/gi,'-').replace(/^-|-$/g,'')+'-';
   const doc=buildPdf(opt), name='budgetpro-'+(opt.compare?'sammenligning-':opt.keys.length===1?slug(opt.keys[0]):'')+new Date().toISOString().slice(0,10)+'.pdf';
   if(downloads){try{await downloads.save({filename:name,data:doc.output('blob')});toast('PDF gemt')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('Vent et øjeblik og prøv igen');return}toast('PDF kunne ikke gemmes her')}}
