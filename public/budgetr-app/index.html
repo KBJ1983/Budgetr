@@ -239,6 +239,13 @@ details.acctd .acct>div:first-child>h3,details.acctd .acct>div:first-child>.num{
 .scedit>label{color:var(--plum)} .scedit p{color:var(--ink2)} .scedit .gscope{color:var(--plum)!important}
 .cmpgrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px;align-items:start}
 @media (max-width:860px){.cmpgrid{grid-template-columns:1fr}}
+.cmpgrid tr.cmpsub td{padding-top:14px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pine-ink);border-bottom:1px solid var(--pine)}
+.cmpgrid tr.cmpkey td{background:var(--pine-bg);font-weight:600;font-size:15px}
+.cmpgrid tr.cmpkey td:nth-child(3){font-size:16px;color:var(--ink)}
+.cmpgrid .dpill{display:inline-block;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+.cmpgrid .dpill.up{background:var(--card);color:var(--pine);box-shadow:inset 0 0 0 1px var(--pine)}
+.cmpgrid .dpill.dn{background:var(--brick-bg);color:var(--brick);box-shadow:inset 0 0 0 1px var(--brick)}
+.cmpgrid .dpill.z{background:var(--card);color:var(--ink3)}
 .extog{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--ink2);border:1px solid var(--rule);border-radius:8px;padding:6px 10px;background:var(--card);cursor:pointer}
 .extog.small{padding:3px 8px;font-size:13px;margin-top:8px}
 .info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border-radius:50%;border:1px solid currentColor;background:transparent;color:inherit;opacity:.65;font:italic 700 11px/1 Georgia,serif;vertical-align:2px;margin-left:4px}
@@ -1665,9 +1672,13 @@ function compareHtml(sc){
   const rows=compareRows(sc), ch=scChanges(sc);
   const good=(label,d)=>/udgifter|bør overføres/i.test(label)?d<=0:d>=0;
   const cell=(l,d)=>Math.abs(d)<0.5?'<td class="r muted">0 kr</td>':`<td class="r" style="color:${good(l,d)?'var(--pine)':'var(--brick)'};font-weight:500">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</td>`;
+  // The last rows are what each person has left; they get their own highlighted group.
+  const nKey=rows.length-S.persons.length;
+  const pill=(l,d)=>`<td class="r">${Math.abs(d)<0.5?'<span class="dpill z">0 kr</span>':`<span class="dpill ${good(l,d)?'up':'dn'}">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</span>`}</td>`;
   return `<section class="compare" id="cmp"><div class="sechead"><h2>Nuværende og ${esc(sc.name||'scenarie')}${sc.from?' fra '+esc(sc.from):''} <button type="button" class="helplink" data-cmpall>Sammenlign scenarier</button></h2><span class="hint">Grøn er en forbedring, rød en forværring. Beløb ${per()}.</span></div>
    <div class="cmpgrid"><div class="tablewrap"><table><thead><tr><th></th><th class="r">Nuværende</th><th class="r">Scenarie</th><th class="r">Forskel</th></tr></thead><tbody>
-   ${rows.map(r=>`<tr><td>${esc(r[0])}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${cell(r[0],r[3])}</tr>`).join('')}</tbody></table></div>
+   ${rows.map((r,i)=>i<nKey?`<tr><td>${esc(r[0])}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${cell(r[0],r[3])}</tr>`
+     :(i===nKey?'<tr class="cmpsub"><td colspan="4">Til rådighed pr. person</td></tr>':'')+`<tr class="cmpkey"><td>${esc(r[0].replace(/: til rådighed$/,''))}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${pill(r[0],r[3])}</tr>`).join('')}</tbody></table></div>
    <div class="tablewrap"><table><thead><tr><th>Ændrede poster</th><th></th><th class="r">Før</th><th class="r">Efter</th></tr></thead><tbody>
    ${ch.length?ch.map(c=>`<tr><td class="desc">${esc(c.desc)}</td><td><span class="badge ${c.kind==='Fjernet'?'un':'chk'}">${c.kind}</span></td><td class="r">${disp(c.b)}</td><td class="r">${disp(c.n)}</td></tr>`).join(''):'<tr><td colspan="4" class="muted" style="white-space:normal">Ingen ændringer endnu. Klik på en post nedenfor for at rette beløbet eller fjerne den i scenariet, eller brug Ny post.</td></tr>'}</tbody></table></div></div></section>`;
 }
