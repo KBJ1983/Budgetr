@@ -384,7 +384,7 @@ tr.off td{color:var(--ink3);text-decoration:line-through}
 tr.off td.act{text-decoration:none}
 td.desc{white-space:normal;min-width:200px}
 .badge{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;margin-left:6px;font-weight:500;vertical-align:1px}
-.badge.chk{background:var(--ochre-bg);color:var(--ochre)} .badge.un{background:var(--brick-bg);color:var(--brick)}
+.badge.chk{background:var(--ochre-bg);color:var(--ochre)} .badge.good{background:var(--pine-bg);color:var(--pine-ink)} .badge.un{background:var(--brick-bg);color:var(--brick)}
 .badge.gtag{background:var(--pine-bg);color:var(--pine)} .badge.auto{background:var(--sky-bg);color:var(--sky)} .badge.sc{background:var(--plum-bg);color:var(--plum)} .badge.mute{background:var(--rule);color:var(--ink2)}
 .muted{color:var(--ink3)}
 .note{font-size:12px;color:var(--ink3);display:block;white-space:normal}
@@ -1514,7 +1514,7 @@ function render(){
   const checks=cur().filter(e=>e.check).length;
   const sc=curSc();
   let h=scBarHtml(true);
-  if(sc){h+=`<div class="scedit">${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.legacy?DAY():sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
+  if(sc){h+=`<div class="scedit">${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
     <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}</div>`}
   h+=`<div class="hero"><p>Husstanden har <b>${disp(t.inc)}</b> i indtægter og <b>${disp(t.exp)}</b> i faste udgifter${ib(catInfo('Alle faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal)))}. Tilbage ${per()}: <b class="${t.left>=0?'left':'neg'}">${disp(t.left)}</b>.${t.sav?` Efter opsparing på ${disp(t.sav)}${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''} er der <b class="${t.afterSav>=0?'left':'neg'}">${disp(t.afterSav)}</b> tilbage.`:''}</p>
   <small class="hbar">${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} ${checks===1?'post er':'poster er'} markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>`;
@@ -1637,7 +1637,7 @@ function render(){
   const pa=S.accounts.find(a=>a.id===planAcct);
   h+=`<section class="plan"><div class="sechead"><h2>Måned for måned</h2><span class="hint">Kvartals- og årsbetalinger lander i bestemte måneder. Her ses saldoen de næste 12 måneder fra den angivne saldo.</span></div>
    <div class="ctrl"><label for="planSel">Konto</label><select id="planSel">${S.accounts.map(a=>`<option value="${a.id}" ${a.id===planAcct?'selected':''}>${esc(a.name)}</option>`).join('')}</select>
-   ${(()=>{const sd=pa?saldoFor(pa.id):{amount:0,date:DAY()};return `<label for="startSaldo">Saldo</label><input id="startSaldo" inputmode="decimal" value="${nf.format(sd.amount||0)}"><label for="saldoDate">pr.</label><input id="saldoDate" style="width:160px" type="date" value="${esc(sd.legacy?DAY():sd.date)}">${curSc()?`<span class="badge sc">${sd.sc?'Scenariets saldo':'Samme som nuværende'}</span>${sd.sc?'<button type="button" class="ghost" id="saldoReset" style="font-size:12.5px">Brug nuværende</button>':''}`:''}${sd.legacy?'<span class="muted" style="font-size:12.5px">Ikke gemt endnu. Indtil da regnes saldoen fra 1. januar.</span>':''}`})()}</div>
+   ${(()=>{const sd=pa?saldoFor(pa.id):{amount:0,date:DAY()};return `<label for="startSaldo">Saldo</label><input id="startSaldo" inputmode="decimal" value="${nf.format(sd.amount||0)}"><label for="saldoDate">pr.</label><input id="saldoDate" style="width:160px" type="date" value="${esc(sd.date)}">${curSc()?`<span class="badge sc">${sd.sc?'Scenariets saldo':'Samme som nuværende'}</span>${sd.sc?'<button type="button" class="ghost" id="saldoReset" style="font-size:12.5px">Brug nuværende</button>':''}`:''}`})()}</div>
    <div id="planChart">${planSvg(planAcct)}</div></section>`;
 
   app.innerHTML=page==='poster'?hPost:h;
@@ -2094,7 +2094,56 @@ function loansHtml(){
    </tbody></table></div>
    <p class="muted" style="font-size:13px;margin-top:10px">"I budgettet" viser den tilknyttede budgetpost omregnet til pr. måned. Et gult tal viser forskellen til ydelsen her. Kvartalsvise ydelser, fx Totalkredit, kan afvige lidt, fordi banken opgør pr. måned.</p>
   </section>`;
+  h+=loanProjHtml();
   h+=loanEndsHtml();
+  return h;
+}
+/* Projection: restgæld month by month from the date the overview was updated to a chosen date.
+   Each month: interest = rest × rate ÷ 12, then the payment is drawn; the last payment only covers what is left. */
+function loanProjStart(){const d=S.loanUpdated?new Date(S.loanUpdated+'T00:00:00'):new Date();return isNaN(d)?new Date():d}
+function loanProject(l,months){
+  const c=loanCalc(l), r=(+l.rate||0)/100/12, A=c.A, noRate=l.rate===''||l.rate==null;
+  const skip=c.P<=0?null:l.paused?'pause':noRate?'rate':A<=0?'ydelse':null;
+  let P=c.P, it=0, pr=0, off=null;const ser=[P];
+  for(let k=1;k<=months;k++){
+    if(!skip&&P>0){const ri=P*r, pay=Math.min(A,P+ri);P=P+ri-pay;it+=ri;pr+=pay-ri;if(P<0.5){P=0;off=k}}
+    ser.push(P)}
+  return {c,P0:c.P,P,interest:it,afdrag:pr,paid:it+pr,off,skip,ser,grows:!skip&&P>c.P+0.5}
+}
+function loanProjHtml(){
+  const L=(S.loans||[]).filter(l=>l.include!==false);
+  if(!L.length)return '';
+  const sd=loanProjStart(), si=sd.getFullYear()*12+sd.getMonth();
+  const to=S.loanProjTo||((sd.getFullYear()+1)+'-12-31'), td=new Date(to+'T00:00:00'), ti=isNaN(td)?si:td.getFullYear()*12+td.getMonth(), months=ti-si;
+  const startTxt=S.loanUpdated?fmtDate(S.loanUpdated):'i dag';
+  let h=`<section class="ltl"><div class="sechead"><h2>Fremskriv restgæld</h2><span class="hint">Se, hvad restgælden er nede på til en dato, du vælger. Der regnes ud fra restgæld, rente og ydelse${S.loanUpdated?' fra '+fmtDate(S.loanUpdated):''}.</span></div>
+   <div class="upd"><label for="loanProjTo">Fremskriv til</label><input type="date" id="loanProjTo" value="${esc(to)}">
+    <span>${months>0?`${months} ${months===1?'betaling':'betalinger'} fra ${startTxt}.`:''}</span></div>`;
+  if(months<=0)return h+`<p class="muted" style="font-size:14px">Vælg en dato efter ${startTxt}, hvor restgælden er opgjort.</p></section>`;
+  const R=L.map(l=>({l,p:loanProject(l,months)}));
+  const tP0=R.reduce((a,x)=>a+x.p.P0,0), tP=R.reduce((a,x)=>a+x.p.P,0), tI=R.reduce((a,x)=>a+x.p.interest,0), tPay=R.reduce((a,x)=>a+x.p.paid,0);
+  const offs=R.filter(x=>x.p.off), skips=R.filter(x=>x.p.skip);
+  const toTxt=fmtDate(to);
+  h+=`<div class="kpis" style="margin-bottom:12px">
+    <div class="kpi"><span>Restgæld nu</span><b>${kr(tP0)}</b><small>${S.loanUpdated?'pr. '+fmtDate(S.loanUpdated):'som indtastet'}</small></div>
+    <div class="kpi hero2"><span>Restgæld pr. ${toTxt}</span><b>${kr(tP)}</b><small>${tP0?Math.round((1-tP/tP0)*100)+' % lavere end nu':''}</small></div>
+    <div class="kpi"><span>Afdraget i perioden</span><b>${kr(tP0-tP)}</b><small>af ${kr(tPay)} i ydelser</small></div>
+    <div class="kpi"><span>Renter i perioden ${ib('<b>Renter i perioden</b><p>Hver måned regnes renten som restgæld × rente ÷ 12, og resten af ydelsen trækkes fra restgælden. Det er et skøn: bankens egen beregning, gebyrer og bidrag kan give lidt andre tal.</p>')}</span><b>${kr(tI)}</b><small>${offs.length?offs.length+' lån betalt ud inden':'skønnet'}</small></div></div>`;
+  // chart: total restgæld from start to the chosen date
+  const W=1000,H=200,pl=64,pr=16,pt=14,pb=30,iw=W-pl-pr,ih=H-pt-pb, tot=[];
+  for(let k=0;k<=months;k++)tot.push(R.reduce((a,x)=>a+x.p.ser[k],0));
+  const mx=Math.max(1,...tot)*1.08, X=k=>pl+k/months*iw, Y=v=>pt+ih-v/mx*ih;
+  let g='';for(let t=0;t<=4;t++){const v=mx*t/4;g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="var(--ink3)">${mx>=1.5e6?(v/1e6).toLocaleString('da-DK',{maximumFractionDigits:1})+' mio.':nf.format(Math.round(v/1000))+'k'}</text>`}
+  const ys=Math.max(1,Math.ceil(months/12/10));for(let y=Math.ceil(si/12);y*12<=ti;y+=ys){const x=X(y*12-si);g+=`<line x1="${x}" x2="${x}" y1="${pt}" y2="${pt+ih}" stroke="var(--rule)" stroke-dasharray="2 4"/><text x="${x}" y="${H-10}" text-anchor="middle" font-size="12" fill="var(--ink2)">${y}</text>`}
+  const path=tot.map((v,k)=>(k?'L':'M')+X(k).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
+  h+=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Samlet restgæld frem til ${esc(toTxt)}">${g}<path d="${path} L${X(months)},${Y(0)} L${X(0)},${Y(0)} Z" fill="var(--pine)" opacity=".08"/><path d="${path}" fill="none" stroke="var(--pine)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${X(months)}" cy="${Y(tP)}" r="4" fill="var(--pine)"/></svg>`;
+  const rows=R.map(({l,p})=>{
+    const st=p.skip==='pause'?'<span class="muted">På pause, ikke fremskrevet</span>':p.skip==='rate'?'<span class="muted">Angiv rente</span>':p.skip==='ydelse'?'<span class="muted">Angiv ydelse</span>'
+      :p.P0<=0?'<span class="muted">Betalt ud</span>':p.off?`<span class="badge good">Betalt ud ${idxLbl(si+p.off).toLowerCase()}</span>`:p.grows?'<span class="badge un">Ydelsen dækker ikke renten</span>':'';
+    return `<tr class="row" data-loan="${l.id}" tabindex="0"><td class="desc">${esc(l.desc||l.bank)}<span class="note">${esc(l.desc?l.bank||'':'')}</span></td><td class="r">${kr(p.P0)}</td><td class="r"><b>${kr(p.P)}</b></td><td class="r">${kr(p.P0-p.P)}</td><td class="r">${p.skip?'<span class="muted">–</span>':kr(p.interest)}</td><td style="white-space:nowrap">${st}</td></tr>`}).join('');
+  h+=`<div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Lån</th><th class="r">Restgæld nu</th><th class="r">Pr. ${esc(toTxt)}</th><th class="r">Afdraget</th><th class="r">Renter</th><th></th></tr></thead><tbody>${rows}
+   <tr class="cat"><td>I alt</td><td class="r">${kr(tP0)}</td><td class="r">${kr(tP)}</td><td class="r">${kr(tP0-tP)}</td><td class="r">${kr(tI)}</td><td></td></tr></tbody></table></div>
+   <p class="muted" style="font-size:13px;margin-top:8px">Fremskrivningen forudsætter, at ydelse og rente er de samme i hele perioden, og at der ikke betales ekstra af.${skips.length?' Lån på pause eller uden rente eller ydelse står med restgælden, som den er nu.':''} Kun lån med flueben er med.</p></section>`;
   return h;
 }
 const MSHORT=['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
@@ -2134,6 +2183,7 @@ function loanEndsHtml(){
 function bindLoans(){
   $('btnNewLoan').onclick=()=>openLoan(null);
   $('loanUpd').onchange=e=>{S.loanUpdated=e.target.value||'';commit()};
+  const pj=$('loanProjTo');if(pj)pj.onchange=e=>{const y=+String(e.target.value).slice(0,4);if(!(y>=1900&&y<=2200))return;S.loanProjTo=e.target.value;commit()};
   const s=$('loanSortSel');s.value=loanSort;s.onchange=()=>{loanSort=s.value;render()};
   document.querySelectorAll('[data-linc]').forEach(c=>{c.onclick=e=>e.stopPropagation();c.onchange=()=>{const l=S.loans.find(x=>x.id===c.dataset.linc);l.include=c.checked;commit()}});
   $('loanAll').onchange=e=>{S.loans.forEach(l=>l.include=e.target.checked);commit()};
@@ -2258,6 +2308,7 @@ function helpHtml(){
   +sec('ovrigt','Øvrigt',panel(`Eksempel: ${qName} · ${kr(qAmt)} kvartalsvis = ${kr(qAvg)} pr. måned`,`<div class="hfreq">${qBars}<div class="avg" style="bottom:33.3%"></div><span class="avgl" style="bottom:calc(33.3% + 6px)">Gennemsnit ${kr(qAvg)}/md.</span></div><div class="hfreqm">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`)
       +ul([`Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.`,
         `<b>Ekstra indtjening</b> er indtægter med fluebenet Ekstra indtjening, fx et fritidsjob. De står under Indtægter og tæller kun med, når Medregn ekstra indtjening er slået til. De indgår ikke i fordelingsnøglen. Kommer de ikke fast, vælges hyppigheden Uregelmæssig, og beløbet er et gennemsnit pr. måned over året.`,
+        `<b>Fremskriv restgæld</b> under lån regner måned for måned fra den dato, overblikket er opdateret: renten er restgæld × rente ÷ 12, og resten af ydelsen trækkes fra restgælden. Det forudsætter samme rente og ydelse i hele perioden. Lån på pause eller uden rente eller ydelse står med restgælden, som den er nu.`,
         `Inaktive poster og mål tæller ikke med. Mål, der er nået måldatoen, tæller heller ikke.`,
         `Et scenarie regner på samme måde, bare med scenariets ændringer. Det nuværende budget røres ikke.`]));
 }
@@ -3089,7 +3140,7 @@ function buildXlsx(){
   if(exR.length)B.table(['Ekstra indtjening','Beskrivelse','Pr. md.'],exR);
   B.h2('Måned for måned','Ind, ud og saldo de næste 12 måneder fra kontoens angivne saldo. Kvartals- og årsbetalinger lander i bestemte måneder.');
   S.accounts.forEach(a=>{const M0=monthly(a.id),sd=saldoFor(a.id),st=planStart(sd),IX=[...Array(12)].map((_,k)=>st+k),Mo=IX.map(i=>M0[((i%12)+12)%12]);if(!Mo.some(x=>x.i||x.o))return;
-    let s=sd.amount;const sal=Mo.map(x=>(s+=x.i-x.o));B.h3(a.name,'Saldo '+kr(sd.amount)+' pr. '+fmtDate(sd.date)+(sd.legacy?' (ikke gemt, regnet fra 1. januar)':''));
+    let s=sd.amount;const sal=Mo.map(x=>(s+=x.i-x.o));B.h3(a.name,'Saldo '+kr(sd.amount)+' pr. '+fmtDate(sd.date));
     B.table(['',...IX.map(i=>idxLbl(i,true))],[['Ind',...Mo.map(x=>r0(x.i))],['Ud',...Mo.map(x=>r0(x.o))],{tot:true,cells:['Saldo ultimo',...sal.map(v=>({v:r0(v),s:v<0?XF.brick:null}))]}])});
   const DL=act().map(e=>({e,d:devOf(e)})).filter(x=>x.d).sort((a,b)=>(b.d.pct??1e9)-(a.d.pct??1e9));
   if(DL.length){B.h2('Udvikling i poster',`"Før" er beløbet for cirka et år siden. Udgifter, der er steget mindst ${devPct()} %, står med rødt.`);
