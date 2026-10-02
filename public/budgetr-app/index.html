@@ -756,6 +756,7 @@ dialog#dlgPdf,dialog#dlgMail{width:min(560px,94vw)}
 #dlgCmp .dx,#dlgPdf .dx,#dlgMail .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
 #dlgCmp .dx svg,#dlgPdf .dx svg,#dlgMail .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
 #dlgCmp .dlgfoot,#dlgPdf .dlgfoot,#dlgMail .dlgfoot{margin:0}
+#mailPdfOpt{display:flex;flex-direction:column;gap:18px} #mailPdfOpt[hidden]{display:none}
 #dlgCmp h3{margin:4px 0 8px;font-size:16px;font-weight:600}
 #dlgCmp .hint{display:block;font-size:13px;color:var(--ink2);margin:-4px 0 8px}
 .cmptbl th.r,.cmptbl td.r{white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -1226,6 +1227,8 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   <form method="dialog" novalidate>
     <div class="dhead"><div><h2 id="mailTitle">Send på mail</h2><p>Vi sender filen til modtageren med dit navn som afsender. Svarer modtageren, går svaret til dig.</p></div><button type="button" class="dx" id="btnMailClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <div class="field"><span class="flabel">Fil</span><div class="seg" role="group" aria-label="Fil" id="mailKind" style="align-self:flex-start"><button type="button" data-mk="pdf" aria-pressed="true">PDF</button><button type="button" data-mk="xlsx" aria-pressed="false">Excel</button></div></div>
+    <div id="mailPdfOpt" hidden><div class="gscope" id="mailPick"></div>
+      <div class="field"><span class="flabel">Indhold</span><div class="seg" role="group" aria-label="Indhold" id="mailMode" style="align-self:flex-start"><button type="button" data-pm="full" aria-pressed="true">Hele rapporten</button><button type="button" data-pm="cmp" aria-pressed="false">Kun sammenligning</button></div></div></div>
     <div class="field"><label for="mailTo">Modtagerens e-mail</label><input id="mailTo" type="email" autocomplete="email" inputmode="email" maxlength="200" placeholder="navn@eksempel.dk"></div>
     <div class="field"><label for="mailText">Besked (valgfri)</label><textarea id="mailText" rows="3" maxlength="1000"></textarea></div>
     <p class="setnote" id="mailNote"></p>
@@ -3058,24 +3061,30 @@ function buildPdf(opt){
   for(let i=2;i<=n;i++){doc.setPage(i);font(7.5,false);color(PC.ink3);doc.text('Side '+i+' af '+n,W-M,H-8,{align:'right'});doc.text('Beregnet med budgetpro. Beløb er pr. måned, hvis intet andet står.',M,H-8)}
   return doc;
 }
-/* With scenarios the export asks which budgets to include and whether to print the whole report or only the comparison. */
-let PDFK=null, PDFM='full';
+/* With scenarios the export asks which budgets to include and whether to print the whole report or only the comparison.
+   pdfChoice fills such a picker (used by the PDF dialog and by "Send på mail"); onUpd(n) runs after each change. */
+const pdfChoosable=()=>!DR&&!!(S.scenarios||[]).length;
+function pdfChoice(pick,mode,note,onUpd){
+  const all=cmpKeys(), name=k=>k==='base'?'Nuværende':((S.scenarios||[]).find(x=>x.id===k)||{}).name||'Scenarie';
+  const st={keys:[SC||'base'],mode:'full'};
+  st.opt=()=>{const many=st.keys.length>1;return {keys:st.keys,compare:many,full:st.mode!=='cmp'||!many}};
+  pick.innerHTML='<span>Med i PDF\'en</span>'+all.map(k=>`<label class="chip"><input type="checkbox" data-pk="${k}" ${st.keys.includes(k)?'checked':''}>${esc(name(k))}</label>`).join('');
+  const upd=()=>{st.keys=all.filter(k=>pick.querySelector(`[data-pk="${k}"]`).checked);const n=st.keys.length;if(n<2&&st.mode==='cmp')st.mode='full';
+    mode.querySelectorAll('[data-pm]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.pm===st.mode));if(b.dataset.pm==='cmp')b.disabled=n<2});
+    note.textContent=!n?'Vælg mindst ét budget.':st.mode==='cmp'?`Nøgletal, hvem der betaler hvad og de ændrede poster for de ${n} budgetter, side om side.`
+      :n===1?`Hele rapporten for ${name(st.keys[0])}: Budget, Overblik over lån, Faste overførsler og Opsparingsmål.`
+      :`Først en sammenligning af de ${n} budgetter, derefter hele rapporten for hvert af dem. Vælg Kun sammenligning for en kortere udskrift.`;
+    if(onUpd)onUpd(n)};
+  pick.querySelectorAll('[data-pk]').forEach(c=>c.onchange=upd);
+  mode.querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{st.mode=b.dataset.pm;upd()});
+  st.upd=upd;upd();return st}
+let PDFC=null;
 function exportPdf(){
   if(!S)return;
-  if(DR||!(S.scenarios||[]).length){runPdf();return}
-  const all=cmpKeys(), name=k=>k==='base'?'Nuværende':((S.scenarios||[]).find(x=>x.id===k)||{}).name||'Scenarie';
-  PDFK=[SC||'base'];PDFM='full';
-  $('pdfPick').innerHTML='<span>Med i PDF\'en</span>'+all.map(k=>`<label class="chip"><input type="checkbox" data-pk="${k}" ${PDFK.includes(k)?'checked':''}>${esc(name(k))}</label>`).join('');
-  const upd=()=>{PDFK=all.filter(k=>$('pdfPick').querySelector(`[data-pk="${k}"]`).checked);const n=PDFK.length;if(n<2&&PDFM==='cmp')PDFM='full';
-    $('pdfMode').querySelectorAll('[data-pm]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.pm===PDFM));if(b.dataset.pm==='cmp')b.disabled=n<2});
-    $('btnPdfGo').disabled=!n;
-    $('pdfNote').textContent=!n?'Vælg mindst ét budget.':PDFM==='cmp'?`Nøgletal, hvem der betaler hvad og de ændrede poster for de ${n} budgetter, side om side.`
-      :n===1?`Hele rapporten for ${name(PDFK[0])}: Budget, Overblik over lån, Faste overførsler og Opsparingsmål.`
-      :`Først en sammenligning af de ${n} budgetter, derefter hele rapporten for hvert af dem. Vælg Kun sammenligning for en kortere udskrift.`};
-  $('pdfPick').querySelectorAll('[data-pk]').forEach(c=>c.onchange=upd);
-  $('pdfMode').querySelectorAll('[data-pm]').forEach(b=>b.onclick=()=>{PDFM=b.dataset.pm;upd()});
-  upd();$('dlgPdf').showModal()}
-$('btnPdfGo').onclick=()=>{if(!PDFK||!PDFK.length)return;$('dlgPdf').close();const many=PDFK.length>1;runPdf({keys:PDFK,compare:many,full:PDFM!=='cmp'||!many})};
+  if(!pdfChoosable()){runPdf();return}
+  PDFC=pdfChoice($('pdfPick'),$('pdfMode'),$('pdfNote'),n=>{$('btnPdfGo').disabled=!n});
+  $('dlgPdf').showModal()}
+$('btnPdfGo').onclick=()=>{if(!PDFC||!PDFC.keys.length)return;$('dlgPdf').close();runPdf(PDFC.opt())};
 $('btnPdfCancel').onclick=$('btnPdfClose').onclick=()=>$('dlgPdf').close();
 $('dlgPdf').addEventListener('click',ev=>{if(ev.target===$('dlgPdf'))$('dlgPdf').close()});
 /* The file and its name, shared by download and "Send på mail". */
@@ -3262,12 +3271,17 @@ async function exportXlsx(){
 /* ---------- Send på mail ----------
    The file is built here and posted to /api/send/<user> (lib/send-file.ts), which mails it with the sender's name and
    reply address. Only signed-in accounts can send; the server allows a limited number of mails a day. */
-let MK='pdf';
+let MK='pdf', MAILC=null;
 function mailMsg(txt,kind){const m=$('mailMsg');m.hidden=!txt;m.className='verdict'+(kind?' '+kind:'');m.textContent=txt||''}
+/* The PDF gets the same choices as the download (pdfChoice); Excel has none. */
 function mailUpd(){$('mailKind').querySelectorAll('[data-mk]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mk===MK)));
-  const sc=curSc(), what=sc?'scenariet '+(sc.name||'Scenarie'):DR?'kladden':'budgettet';
-  $('mailNote').textContent=MK==='pdf'?`Hele rapporten for ${what}: Budget, Overblik over lån, Faste overførsler og Opsparingsmål.`:`Alle poster for ${what} i et regneark.`}
-function openMail(){if(!S)return;mailMsg('');$('btnMailGo').disabled=false;mailUpd();$('dlgMail').showModal();$('mailTo').focus()}
+  const sc=curSc(), what=sc?'scenariet '+(sc.name||'Scenarie'):DR?'kladden':'budgettet', pick=MK==='pdf'&&!!MAILC;
+  $('mailPdfOpt').hidden=!pick;
+  if(pick){$('btnMailGo').disabled=!MAILC.keys.length;MAILC.upd()}
+  else{$('btnMailGo').disabled=false;$('mailNote').textContent=MK==='pdf'?`Hele rapporten for ${what}: Budget, Overblik over lån, Faste overførsler og Opsparingsmål.`:`Alle poster for ${what} i et regneark.`}}
+function openMail(){if(!S)return;mailMsg('');
+  MAILC=pdfChoosable()?pdfChoice($('mailPick'),$('mailMode'),$('mailNote'),n=>{if(MK==='pdf')$('btnMailGo').disabled=!n}):null;
+  mailUpd();$('dlgMail').showModal();$('mailTo').focus()}
 $('mailKind').querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{MK=b.dataset.mk;mailUpd()});
 $('btnMailCancel').onclick=$('btnMailClose').onclick=()=>$('dlgMail').close();
 $('mailTo').oninput=()=>{if(!$('btnMailGo').disabled)mailMsg('')};
@@ -3276,8 +3290,9 @@ const b64=blob=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(S
 $('btnMailGo').onclick=async()=>{const b=$('btnMailGo'),to=$('mailTo').value.trim(),message=$('mailText').value.trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)){mailMsg('Skriv en gyldig e-mail, fx navn@eksempel.dk.','bad');$('mailTo').focus();return}
   if(MK==='pdf'?!window.jspdf:!window.XLSX){mailMsg(MK==='pdf'?'PDF-modulet kunne ikke indlæses.':'Excel-modulet kunne ikke indlæses.','bad');return}
+  if(MK==='pdf'&&MAILC&&!MAILC.keys.length){mailMsg('Vælg mindst ét budget.','bad');return}
   b.disabled=true;mailMsg('Sender …');
-  try{const f=MK==='pdf'?(({doc,name})=>({name,data:doc.output('blob')}))(await pdfFile()):xlsxFile();
+  try{const f=MK==='pdf'?(({doc,name})=>({name,data:doc.output('blob')}))(await pdfFile(MAILC?MAILC.opt():null)):xlsxFile();
     const r=await fetch('/api/send/'+encodeURIComponent(window.BUDGETR_USER),{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({to,kind:MK,filename:f.name,content:await b64(f.data),message})});
     const j=await r.json().catch(()=>({}));
