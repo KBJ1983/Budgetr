@@ -2110,20 +2110,28 @@ function loanProject(l,months){
     ser.push(P)}
   return {c,P0:c.P,P,interest:it,afdrag:pr,paid:it+pr,off,skip,ser,grows:!skip&&P>c.P+0.5}
 }
-function loanProjHtml(){
+// Shared by the page, the PDF and the Excel file: the included loans projected to S.loanProjTo (default: end of next year).
+function loanProjData(){
   const L=(S.loans||[]).filter(l=>l.include!==false);
-  if(!L.length)return '';
+  if(!L.length)return null;
   const sd=loanProjStart(), si=sd.getFullYear()*12+sd.getMonth();
   const to=S.loanProjTo||((sd.getFullYear()+1)+'-12-31'), td=new Date(to+'T00:00:00'), ti=isNaN(td)?si:td.getFullYear()*12+td.getMonth(), months=ti-si;
-  const startTxt=S.loanUpdated?fmtDate(S.loanUpdated):'i dag';
+  const d={L,si,ti,to,toTxt:fmtDate(to),months,startTxt:S.loanUpdated?fmtDate(S.loanUpdated):'i dag'};
+  if(months<=0)return d;
+  const R=L.map(l=>({l,p:loanProject(l,months)}));
+  return Object.assign(d,{R,tP0:R.reduce((a,x)=>a+x.p.P0,0),tP:R.reduce((a,x)=>a+x.p.P,0),tI:R.reduce((a,x)=>a+x.p.interest,0),tPay:R.reduce((a,x)=>a+x.p.paid,0),offs:R.filter(x=>x.p.off),skips:R.filter(x=>x.p.skip)});
+}
+function loanProjStatus(p,si){return p.skip==='pause'?'På pause, ikke fremskrevet':p.skip==='rate'?'Angiv rente':p.skip==='ydelse'?'Angiv ydelse':p.P0<=0?'Betalt ud':p.off?'Betalt ud '+idxLbl(si+p.off).toLowerCase():p.grows?'Ydelsen dækker ikke renten':''}
+const LOANPROJ_NOTE='Fremskrivningen forudsætter, at ydelse og rente er de samme i hele perioden, og at der ikke betales ekstra af.', LOANPROJ_SKIP=' Lån på pause eller uden rente eller ydelse står med restgælden, som den er nu.';
+function loanProjHtml(){
+  const D=loanProjData();
+  if(!D)return '';
+  const {si,ti,to,months,startTxt}=D;
   let h=`<section class="ltl"><div class="sechead"><h2>Fremskriv restgæld</h2><span class="hint">Se, hvad restgælden er nede på til en dato, du vælger. Der regnes ud fra restgæld, rente og ydelse${S.loanUpdated?' fra '+fmtDate(S.loanUpdated):''}.</span></div>
    <div class="upd"><label for="loanProjTo">Fremskriv til</label><input type="date" id="loanProjTo" value="${esc(to)}">
     <span>${months>0?`${months} ${months===1?'betaling':'betalinger'} fra ${startTxt}.`:''}</span></div>`;
   if(months<=0)return h+`<p class="muted" style="font-size:14px">Vælg en dato efter ${startTxt}, hvor restgælden er opgjort.</p></section>`;
-  const R=L.map(l=>({l,p:loanProject(l,months)}));
-  const tP0=R.reduce((a,x)=>a+x.p.P0,0), tP=R.reduce((a,x)=>a+x.p.P,0), tI=R.reduce((a,x)=>a+x.p.interest,0), tPay=R.reduce((a,x)=>a+x.p.paid,0);
-  const offs=R.filter(x=>x.p.off), skips=R.filter(x=>x.p.skip);
-  const toTxt=fmtDate(to);
+  const {R,tP0,tP,tI,tPay,offs,skips,toTxt}=D;
   h+=`<div class="kpis" style="margin-bottom:12px">
     <div class="kpi"><span>Restgæld nu</span><b>${kr(tP0)}</b><small>${S.loanUpdated?'pr. '+fmtDate(S.loanUpdated):'som indtastet'}</small></div>
     <div class="kpi hero2"><span>Restgæld pr. ${toTxt}</span><b>${kr(tP)}</b><small>${tP0?Math.round((1-tP/tP0)*100)+' % lavere end nu':''}</small></div>
@@ -2138,12 +2146,11 @@ function loanProjHtml(){
   const path=tot.map((v,k)=>(k?'L':'M')+X(k).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
   h+=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Samlet restgæld frem til ${esc(toTxt)}">${g}<path d="${path} L${X(months)},${Y(0)} L${X(0)},${Y(0)} Z" fill="var(--pine)" opacity=".08"/><path d="${path}" fill="none" stroke="var(--pine)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${X(months)}" cy="${Y(tP)}" r="4" fill="var(--pine)"/></svg>`;
   const rows=R.map(({l,p})=>{
-    const st=p.skip==='pause'?'<span class="muted">På pause, ikke fremskrevet</span>':p.skip==='rate'?'<span class="muted">Angiv rente</span>':p.skip==='ydelse'?'<span class="muted">Angiv ydelse</span>'
-      :p.P0<=0?'<span class="muted">Betalt ud</span>':p.off?`<span class="badge good">Betalt ud ${idxLbl(si+p.off).toLowerCase()}</span>`:p.grows?'<span class="badge un">Ydelsen dækker ikke renten</span>':'';
+    const t=loanProjStatus(p,si), st=!t?'':p.off?`<span class="badge good">${t}</span>`:p.grows&&!p.skip?`<span class="badge un">${t}</span>`:`<span class="muted">${t}</span>`;
     return `<tr class="row" data-loan="${l.id}" tabindex="0"><td class="desc">${esc(l.desc||l.bank)}<span class="note">${esc(l.desc?l.bank||'':'')}</span></td><td class="r">${kr(p.P0)}</td><td class="r"><b>${kr(p.P)}</b></td><td class="r">${kr(p.P0-p.P)}</td><td class="r">${p.skip?'<span class="muted">–</span>':kr(p.interest)}</td><td style="white-space:nowrap">${st}</td></tr>`}).join('');
   h+=`<div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Lån</th><th class="r">Restgæld nu</th><th class="r">Pr. ${esc(toTxt)}</th><th class="r">Afdraget</th><th class="r">Renter</th><th></th></tr></thead><tbody>${rows}
    <tr class="cat"><td>I alt</td><td class="r">${kr(tP0)}</td><td class="r">${kr(tP)}</td><td class="r">${kr(tP0-tP)}</td><td class="r">${kr(tI)}</td><td></td></tr></tbody></table></div>
-   <p class="muted" style="font-size:13px;margin-top:8px">Fremskrivningen forudsætter, at ydelse og rente er de samme i hele perioden, og at der ikke betales ekstra af.${skips.length?' Lån på pause eller uden rente eller ydelse står med restgælden, som den er nu.':''} Kun lån med flueben er med.</p></section>`;
+   <p class="muted" style="font-size:13px;margin-top:8px">${LOANPROJ_NOTE}${skips.length?LOANPROJ_SKIP:''} Kun lån med flueben er med.</p></section>`;
   return h;
 }
 const MSHORT=['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
@@ -2932,6 +2939,14 @@ function buildPdf(opt){
         .concat([{tot:true,cells:[{content:'I alt, '+selTxt,colSpan:2},kr(tO),kr(tP),'',kr(tA),pct(wr),kr(tI),'','']}]),
       {right:[2,3,5,6,7,9],fs:7,cs:{4:{cellWidth:18}},draw:d=>{if(d.section!=='body'||d.column.index!==4||d.row.index>=paid.length)return;const p=paid[d.row.index],bx=d.cell.x+2,bw=d.cell.width-4,by=d.cell.y+2.2;
         fill(PC.rule);doc.roundedRect(bx,by,bw,1.6,0.8,0.8,'F');if(p>0){fill(PC.pine);doc.roundedRect(bx,by,Math.max(1.6,bw*p),1.6,0.8,0.8,'F')}font(6.5,false);color(PC.ink3);doc.text(Math.round(p*100)+' %',bx,by+4.6)}});
+    const PJ=loanProjData();
+    if(PJ&&PJ.months>0){
+      h2('Fremskrevet restgæld','Restgælden pr. '+PJ.toTxt+', regnet ud fra restgæld, rente og ydelse fra '+PJ.startTxt+' ('+PJ.months+' betalinger).',40);
+      kpis([{label:'Restgæld nu',value:kr(PJ.tP0),small:S.loanUpdated?'pr. '+fmtDate(S.loanUpdated):'som indtastet'},{label:'Restgæld pr. '+PJ.toTxt,value:kr(PJ.tP),small:PJ.tP0?Math.round((1-PJ.tP/PJ.tP0)*100)+' % lavere end nu':'',kind:'hero',bar:PJ.tP0?1-PJ.tP/PJ.tP0:0},
+        {label:'Afdraget i perioden',value:kr(PJ.tP0-PJ.tP),small:'af '+kr(PJ.tPay)+' i ydelser'},{label:'Renter i perioden',value:kr(PJ.tI),small:PJ.offs.length?PJ.offs.length+' lån betalt ud inden':'skønnet'}],4);
+      table(['Lån','Restgæld nu','Pr. '+PJ.toTxt,'Afdraget','Renter',''],PJ.R.map(({l,p})=>[(l.desc||l.bank)+(l.bank&&l.desc?' ('+l.bank+')':''),kr(p.P0),{content:kr(p.P),styles:{fontStyle:'bold'}},kr(p.P0-p.P),p.skip?'-':kr(p.interest),loanProjStatus(p,PJ.si)])
+        .concat([{tot:true,cells:['I alt',kr(PJ.tP0),kr(PJ.tP),kr(PJ.tP0-PJ.tP),kr(PJ.tI),'']}]),{right:[1,2,3,4]});
+      para(LOANPROJ_NOTE+(PJ.skips.length?LOANPROJ_SKIP:'')+' Datoen vælges under Fremskriv restgæld på fanen Overblik over lån. Kun lån med flueben er med.',7.5,PC.ink3)}
     const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
     if(LE.length){const s12=LE.filter(x=>x.en.i-nw<=12), totF=LE.reduce((s,x)=>s+x.free,0);
       h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden.',40);
@@ -3166,6 +3181,12 @@ function buildXlsx(){
     Lw.table(['Bank','Beskrivelse','Oprindeligt','Restgæld','Betalt af','Ydelse pr. md.','Rente','Renter pr. md.','Udløber (angivet)','Beregnet slut','I budgettet','Budgetpost'],
       LL.map(({l,c})=>({s:l.include===false?XF.muted:null,cells:[l.bank||'',(l.desc||'')+(l.paused?' (pause)':'')+(l.include===false?' (ikke medtaget)':''),r0(c.O),{v:r0(c.P),s:XF.bold},r0(c.paid),r0(c.A),l.rate===''||l.rate==null?'':(+l.rate)/100,l.rate?r0(c.interest):'',l.ends||'',l.paused?'På pause':c.endTxt||'',c.budget!==null?r0(c.budget):'',c.link?c.link.desc:'']}))
         .concat([{tot:true,cells:['I alt',IN.length===LL.length?'alle lån':IN.length+' af '+LL.length+' lån',r0(tO),r0(tP),tO?r0(1-tP/tO):'',r0(tA),wr/100,r0(tI),'','','','']}]),{pct:[4],pct2:[6]});
+    const PJ=loanProjData();
+    if(PJ&&PJ.months>0){Lw.h2('Fremskrevet restgæld','Restgælden pr. '+PJ.toTxt+', regnet fra '+PJ.startTxt+' ('+PJ.months+' betalinger).');
+      Lw.kpis([{label:'Restgæld nu',value:r0(PJ.tP0),small:S.loanUpdated?'pr. '+fmtDate(S.loanUpdated):'som indtastet'},{label:'Restgæld pr. '+PJ.toTxt,value:r0(PJ.tP),small:PJ.tP0?Math.round((1-PJ.tP/PJ.tP0)*100)+' % lavere end nu':'',kind:'hero'},{label:'Afdraget i perioden',value:r0(PJ.tP0-PJ.tP),small:'af '+kr(PJ.tPay)+' i ydelser'},{label:'Renter i perioden',value:r0(PJ.tI),small:PJ.offs.length?PJ.offs.length+' lån betalt ud inden':'skønnet'}]);
+      Lw.table(['Bank','Lån','Restgæld nu','Pr. '+PJ.toTxt,'Afdraget','Renter','Status'],PJ.R.map(({l,p})=>[l.bank||'',l.desc||'',r0(p.P0),{v:r0(p.P),s:XF.bold},r0(p.P0-p.P),p.skip?'':r0(p.interest),loanProjStatus(p,PJ.si)])
+        .concat([{tot:true,cells:['I alt','',r0(PJ.tP0),r0(PJ.tP),r0(PJ.tP0-PJ.tP),r0(PJ.tI),'']}]),{headH:30});
+      Lw.note(LOANPROJ_NOTE+(PJ.skips.length?LOANPROJ_SKIP:'')+' Kun lån med flueben er med.')}
     const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
     if(LE.length){let cum=0;Lw.h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden.');
       Lw.table(['Lån','Bank','Udløber','Om (md.)','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map(x=>{cum+=x.free;return [x.l.desc||x.l.bank,x.l.bank||'',idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),Math.max(0,x.en.i-nw),{v:r0(x.free),s:XF.bold},r0(x.free*12),r0(cum)]}),{plain:[3],headH:30})}}
