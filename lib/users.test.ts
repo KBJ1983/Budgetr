@@ -9,8 +9,8 @@ describe("test users", () => {
     expect(findUser("")).toBeUndefined();
     expect(findUser("TEST6")).toBeUndefined();
   });
-  it("has KBJ and five test users with unique logins and URL-safe ids", () => {
-    expect(USERS.map((u) => u.id)).toEqual(["kbj", "test1", "test2", "test3", "test4", "test5"]);
+  it("has KBJ, five test users and the demo customer with unique logins and URL-safe ids", () => {
+    expect(USERS.map((u) => u.id)).toEqual(["kbj", "test1", "test2", "test3", "test4", "test5", "demo"]);
     const logins = USERS.flatMap((u) => u.logins.map((l) => l.toLowerCase()));
     expect(new Set(logins).size).toBe(logins.length);
     // The id is used in the storage key and in /private/<id>.legacy.json.
