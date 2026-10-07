@@ -1,0 +1,120 @@
+/* Owner overview (/ejer). Builds on the app's .bx styles in app/login/app.css. */
+.ow .bx-main > .bx-note {
+  margin-top: 8px;
+}
+
+.ow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ow-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.ow-lines-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ow-lines p {
+  margin: 0;
+}
+.ow-lines ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.ow-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+}
+.ow-lines li > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ow-lines small {
+  display: block;
+  color: var(--tx-3);
+  font-size: 11px;
+}
+.ow-amt {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.ow-total td {
+  font-weight: 700;
+  border-bottom: 0;
+}
+.ow-neg {
+  color: var(--neg);
+}
+
+.ow-months .ow-bars {
+  width: 28%;
+  min-width: 120px;
+  padding-left: 16px;
+}
+.ow-bar {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  min-width: 1px;
+}
+.ow-bar + .ow-bar {
+  margin-top: 3px;
+}
+.ow-bar.is-rev {
+  background: var(--pos);
+}
+.ow-bar.is-exp {
+  background: var(--tx-3);
+}
+
+.ow-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ow-search {
+  flex: 1 1 220px;
+  width: auto;
+  height: 38px;
+}
+.ow-org {
+  height: 34px;
+  font-size: 13px;
+  min-width: 150px;
+}
+
+.ow .bx-section > .bx-muted {
+  margin: 8px 0 0;
+}
+
+@media (max-width: 900px) {
+  .ow-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ow-months td:first-child {
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .ow-months .ow-bars {
+    display: none;
+  }
+}

@@ -125,7 +125,7 @@ try {
 
   // No horizontal scroll on mobile
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const path of ["/", "/login", "/opret", "/login/bekraeft?t=x", "/app"]) {
+  for (const path of ["/", "/login", "/opret", "/login/bekraeft?t=x", "/app", "/ejer"]) {
     await page.goto(`${BASE}${path}`);
     await page.waitForTimeout(800);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
