@@ -310,6 +310,20 @@ tr.paused td{color:var(--ink3)}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .filters select,.filters input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:6px 10px;font-size:14px}
 .filters input{min-width:180px}
+/* Search on Poster: matching posts drop down under the field; picking one jumps to its row */
+.qbox{position:relative}
+.qbox input{width:100%}
+.qlist{position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:max(100%,min(360px,calc(100vw - 32px)));max-height:min(60vh,420px);overflow:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column;gap:2px}
+.qlist[hidden]{display:none}
+.qlist button{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:7px;padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer}
+.qlist button[aria-selected="true"],.qlist button:hover{background:var(--pine-bg)}
+.qlist .qn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qlist .qc{color:var(--ink3);font-size:12.5px;white-space:nowrap}
+.qlist .qa{font-family:var(--mono);font-size:13px;white-space:nowrap}
+.qlist .qnone{padding:8px 10px;color:var(--ink3);font-size:14px}
+tr.row td{transition:background-color .6s}
+tr.row.hit td{background:var(--pine-bg)!important}
+@media (max-width:760px){.qbox{flex:1 1 100%}}
 .tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--rule);white-space:normal;vertical-align:top}
@@ -1635,7 +1649,7 @@ function render(){
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
     <select id="flPayer" aria-label="Filtrér betaler"><option value="alle">Alle betalere</option><option value="${FAELLES}">Fælles</option>${S.persons.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
-    <input id="flQ" type="search" placeholder="Søg beskrivelse eller nøgle" aria-label="Søg" value="${esc(F.q)}">
+    <div class="qbox"><input id="flQ" type="search" placeholder="Søg og hop til en post" aria-label="Søg i posterne" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="flQList" autocomplete="off" value="${esc(F.q)}"><div class="qlist" id="flQList" role="listbox" aria-label="Poster der matcher" hidden></div></div>
     <div class="ptools"><button type="button" class="tbtn" id="btnFoldPosts">${foldAllHtml()}</button><button type="button" class="tbtn" id="btnCats" title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg><span>Rediger kategorier</span></button></div>
   </div>
   <div class="tablewrap ptbl"><table><thead><tr><th>Beskrivelse</th><th>Nøgle</th><th>Hyppighed</th><th class="r">Beløb</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th class="r">Udvikling</th><th>Konto</th><th>Betaler</th></tr></thead><tbody id="tbody">${rowsHtml()}</tbody></table></div></section>`;
@@ -2371,6 +2385,36 @@ function rowHtml(e){
   const hd=e._goal?'<span class="dragh off" aria-hidden="true"></span>':`<span class="dragh" data-dragpost="${e.id}" role="button" tabindex="0" aria-label="Flyt ${esc(e.desc)}. Træk, eller brug pil op og ned" title="Træk for at flytte posten">⋮⋮</span>`;
   return `<tr class="row ${e.active===false?'off':''}" data-id="${e.id}" data-type="${e.type}" data-cat="${esc(e.type==='udgift'?(e.category||''):'')}" tabindex="0"><td class="desc"><div class="dwrap">${hd}<div class="dtext">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e.extra?`<span class="badge mute" title="Ekstra indtjening">${exOn()?'Ekstra':'Ekstra · ikke medregnet'}</span>`:''}${isBound(e)?'<span class="badge mute" title="Bundet til bestemte udgifter">Bundet</span>':''}${e.type==='indtaegt'&&!e.extra&&!inSplit(e)&&(S.settings||{}).split==='indkomst'?'<span class="badge mute" title="Tæller ikke med i fordelingsnøglen">Uden for nøglen</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.check?'<span class="badge chk">Tjek</span>':''}${e.todo?`<span class="badge chk" title="${esc(e.todo)}">Opgave</span>`:''}${e.active===false?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</div></div></td>
         <td class="muted">${esc(e.key||'')}</td><td>${freq}<span class="muted">${when}</span></td><td class="r">${kr(amtOf(e))}${e.type==='overfoersel'&&e.auto?'<span class="badge auto">Auto</span>':''}</td><td class="r">${disp(mAvg(e))}</td><td class="r">${devBadge(e)}</td><td>${acc}</td><td>${e.type==='overfoersel'?'':esc(perName(e.payer))}</td></tr>`}
+/* Search on Poster: typing still filters the table, and the field lists matching posts (expenses first,
+   names that start with the text before the rest). Picking one clears the filters, unfolds its group and
+   category, and scrolls to the row with a short highlight. */
+function qMatches(q){q=q.trim().toLowerCase();if(!q)return [];
+  const st=e=>(e.desc||'').toLowerCase().startsWith(q)?0:1;
+  return cur().filter(e=>e.type!=='overfoersel'&&!e.removed&&((e.desc||'').toLowerCase().includes(q)||(e.key||'').toLowerCase().includes(q)))
+    .sort((a,b)=>((a.type==='udgift'?0:1)-(b.type==='udgift'?0:1))||(st(a)-st(b))||(a.desc||'').localeCompare(b.desc||'','da')).slice(0,12)}
+function jumpPost(id){const e=cur().find(x=>x.id===id);if(!e||!$('tbody'))return;
+  F.type=F.account=F.payer='alle';F.q='';$('flType').value=F.type;$('flAcct').value=F.account;$('flPayer').value=F.payer;$('flQ').value='';
+  delete PFOLD['g:'+e.type];if(e.type==='udgift')delete PFOLD['c:'+postCat(e)];savePFold();
+  $('tbody').innerHTML=rowsHtml();if($('btnFoldPosts'))$('btnFoldPosts').innerHTML=foldAllHtml();
+  const tr=$('tbody').querySelector(`tr.row[data-id="${CSS.escape(id)}"]`);if(!tr)return;
+  tr.scrollIntoView({block:'center',behavior:'smooth'});tr.focus({preventScroll:true});tr.classList.add('hit');setTimeout(()=>tr.classList.remove('hit'),2200)}
+function bindPostSearch(){const inp=$('flQ'),box=$('flQList');let M=[],act=-1;
+  const close=()=>{box.hidden=true;inp.setAttribute('aria-expanded','false');inp.removeAttribute('aria-activedescendant');act=-1};
+  const mark=()=>{[...box.querySelectorAll('[data-qid]')].forEach((b,i)=>b.setAttribute('aria-selected',String(i===act)));
+    if(act>=0){inp.setAttribute('aria-activedescendant','q_'+act);box.querySelector('#q_'+act).scrollIntoView({block:'nearest'})}else inp.removeAttribute('aria-activedescendant')};
+  const show=()=>{M=qMatches(inp.value);act=-1;if(!inp.value.trim()){close();return}
+    box.innerHTML=M.length?M.map((e,i)=>`<button type="button" role="option" id="q_${i}" data-qid="${esc(e.id)}" aria-selected="false" tabindex="-1"><span class="qn">${esc(e.desc||'Uden navn')}</span><span class="qc">${e.type==='udgift'?esc(postCat(e)):'Indtægt'}</span><span class="qa">${disp(mAvg(e))}</span></button>`).join('')
+      :`<div class="qnone">Ingen poster matcher "${esc(inp.value.trim())}"</div>`;
+    box.hidden=false;inp.setAttribute('aria-expanded','true')};
+  inp.oninput=()=>{F.q=inp.value;$('tbody').innerHTML=rowsHtml();show()};
+  inp.onfocus=()=>{if(inp.value.trim())show()};
+  inp.onblur=()=>setTimeout(close,120);
+  inp.onkeydown=ev=>{if(ev.key==='Escape'){if(!box.hidden){ev.preventDefault();close()}return}
+    if(box.hidden||!M.length)return;
+    if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){ev.preventDefault();act=(act+(ev.key==='ArrowDown'?1:-1)+M.length+1)%(M.length+1);if(act===M.length)act=-1;mark()}
+    else if(ev.key==='Enter'){ev.preventDefault();const e=M[act<0?0:act];close();jumpPost(e.id)}};
+  box.onmousedown=ev=>ev.preventDefault();
+  box.onclick=ev=>{const b=ev.target.closest('[data-qid]');if(!b)return;close();jumpPost(b.dataset.qid)}}
 function rowsHtml(){
   const L=filtered(), plain=F.type==='alle'&&F.account==='alle'&&F.payer==='alle'&&!F.q.trim();
   if(!L.length&&!plain)return `<tr><td colspan="8" class="muted">Ingen poster matcher filtret. Ret filtret eller opret en ny post.</td></tr>`;
@@ -2513,7 +2557,7 @@ function bindMain(){
   $('flType').onchange=e=>{F.type=e.target.value;$('tbody').innerHTML=rowsHtml()};
   $('flAcct').onchange=e=>{F.account=e.target.value;$('tbody').innerHTML=rowsHtml()};
   $('flPayer').onchange=e=>{F.payer=e.target.value;$('tbody').innerHTML=rowsHtml()};
-  $('flQ').oninput=e=>{F.q=e.target.value;$('tbody').innerHTML=rowsHtml()};
+  bindPostSearch();
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
   $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!PFOLD[k];savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
