@@ -246,3 +246,93 @@ export function canNext(f: Flow, revealed: boolean): boolean {
 export function isOk(f: Flow): boolean | null {
   return f.maxStep >= 7 ? totals(f).leftBase >= 0 : null;
 }
+
+// ---- Mit budget --------------------------------------------------------------------------------------------------
+
+export const CATS: { key: Cat; label: string; color: string }[] = [
+  { key: "ind", label: "Indtægt", color: "#16201D" },
+  { key: "bolig", label: "Bolig", color: "#1F5C4A" },
+  { key: "faste", label: "Faste udgifter", color: "#2E7A62" },
+  { key: "hverdag", label: "Hverdag", color: "#E4B758" },
+  { key: "ops", label: "Opsparing", color: "#86B8EE" },
+];
+
+export const FREQS: Record<Freq, { div: number; long: string; short: string }> = {
+  md: { div: 1, long: "pr. md.", short: "md." },
+  kv: { div: 3, long: "pr. kvartal", short: "kvt." },
+  aar: { div: 12, long: "pr. år", short: "år" },
+};
+export const MAX_POSTS = 60;
+
+export const monthly = (p: Post) => p.amt / FREQS[p.freq].div;
+
+/** The pupil's choices as budget posts (what "Mit budget" starts from, and "Hent mine valg fra trinene igen"). */
+export function seedPosts(f: Flow): Post[] {
+  const c = caseById(f.caseId);
+  let n = 0;
+  const P = (cat: Cat, name: string, amt: number, freq: Freq = "md"): Post => ({ id: `s${n++}`, cat, name, amt, freq });
+  const bolig = BOLIG.find((b) => b.amt === f.bolig) ?? BOLIG[1];
+  return [
+    P("ind", "Løn, udbetalt", c.net),
+    P("bolig", "Husleje, " + bolig.label.toLowerCase(), bolig.amt),
+    ...FASTE.filter((x) => f.faste[x.key]).map((x) => (x.key === "forsikring" ? P("faste", "Forsikring", 1800, "aar") : P("faste", x.label, x.amt))),
+    P("hverdag", "Mad", f.mad ?? 2800),
+    P("hverdag", "Tøj og fritid", f.toj ?? 1500),
+    ...f.cFaste.map((p) => P("faste", p.name, p.amt)),
+    P("ops", "Buffer", f.buffer),
+    P("ops", c.dream, dreamMonthly(c, f.months)),
+    ...f.cOps.map((p) => P("ops", p.name, p.amt)),
+  ];
+}
+
+export interface BudgetNumbers {
+  income: number;
+  byCat: Record<Cat, number>;
+  left: number;
+  /** Income minus housing and fixed costs. */
+  raad: number;
+  boligPct: number;
+  opsPct: number;
+  /** Months until the dream, from the savings post named like the dream; null without one. */
+  monthsToDream: number | null;
+}
+
+export function budgetNumbers(posts: Post[], c: Case): BudgetNumbers {
+  const byCat: Record<Cat, number> = { ind: 0, bolig: 0, faste: 0, hverdag: 0, ops: 0 };
+  for (const p of posts) byCat[p.cat] += monthly(p);
+  const income = byCat.ind;
+  const pct = (a: number) => (income > 0 ? Math.round((a / income) * 100) : 0);
+  const dream = posts.find((p) => p.cat === "ops" && p.name === c.dream);
+  const dm = dream ? monthly(dream) : 0;
+  return {
+    income,
+    byCat,
+    left: income - byCat.bolig - byCat.faste - byCat.hverdag - byCat.ops,
+    raad: income - byCat.bolig - byCat.faste,
+    boligPct: pct(byCat.bolig),
+    opsPct: pct(byCat.ops),
+    monthsToDream: dm > 0 ? Math.ceil(c.dreamAmt / dm) : null,
+  };
+}
+
+/** 0 fine, 1 watch, 2 too high – housing should be at most 30 % of the income. */
+export const boligLevel = (pct: number) => (pct <= 30 ? 0 : pct <= 40 ? 1 : 2);
+/** 0 fine, 1 a bit low, 2 too low – save at least 10 % of the income. */
+export const opsLevel = (pct: number) => (pct >= 10 ? 0 : pct >= 5 ? 1 : 2);
+
+// ---- Pupil codes -------------------------------------------------------------------------------------------------
+
+// 16 × 24 × 90 = 34,560 codes. Short Danish words, easy to read aloud and type on a Chromebook.
+const COLORS = ["BLÅ", "GUL", "RØD", "GRØN", "LILLA", "SORT", "HVID", "BRUN", "GRÅ", "LYS", "MØRK", "GLAD", "VILD", "STOR", "LILLE", "SJOV"];
+const ANIMALS = ["ORM", "RÆV", "UGLE", "ULV", "HARE", "SÆL", "MÅGE", "LAKS", "BJØRN", "ODDER", "MUS", "HJORT", "KAT", "HUND", "GED", "HEST", "ELG", "LØVE", "TIGER", "PANDA", "KRAGE", "SVANE", "ØRN", "FRØ"];
+const CODE_RE = new RegExp(`^(?:${COLORS.join("|")})-(?:${ANIMALS.join("|")})-[1-9][0-9]$`);
+
+/** " blå orm 47 " → "BLÅ-ORM-47". */
+export const normalizeCode = (s: string) => s.trim().toUpperCase().replace(/[\s_]+/g, "-").replace(/-{2,}/g, "-");
+export const isCode = (s: string) => CODE_RE.test(s);
+
+/** A random code; `rnd` returns a number in [0, 1). */
+export function randomCode(rnd: () => number = Math.random): string {
+  const at = <T,>(xs: readonly T[]) => xs[Math.floor(rnd() * xs.length)];
+  return `${at(COLORS)}-${at(ANIMALS)}-${10 + Math.floor(rnd() * 90)}`;
+}
