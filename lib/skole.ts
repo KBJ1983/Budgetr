@@ -55,7 +55,7 @@ export const CASES: Case[] = [
 ];
 
 /** The chosen case, or Sara when none is chosen yet. */
-export const caseById = (id: string | null | undefined): Case => CASES.find((c) => c.id === id) ?? CASES[0];
+export const caseById = (id: string | null | undefined): Case => CASES.find((c) => c.id === id) ?? CASES[0]!;
 
 // ---- The steps ---------------------------------------------------------------------------------------------------
 

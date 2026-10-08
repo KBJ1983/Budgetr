@@ -99,9 +99,9 @@ describe("skole money", () => {
   it("names the case in the step questions", () => {
     const s = steps(caseById("jonas"));
     expect(s).toHaveLength(8);
-    expect(s[2].q).toBe("Hvor skal Jonas bo?");
-    expect(s[0].fact).toBeUndefined();
-    expect(s[7].refl).toBe("Hvilket scenarie rammer hårdest?");
+    expect(s[2]?.q).toBe("Hvor skal Jonas bo?");
+    expect(s[0]?.fact).toBeUndefined();
+    expect(s[7]?.refl).toBe("Hvilket scenarie rammer hårdest?");
   });
 });
 
