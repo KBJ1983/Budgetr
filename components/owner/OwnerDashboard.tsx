@@ -212,7 +212,7 @@ type Editing =
   | { kind: "expense"; expense?: Expense }
   | null;
 
-export function OwnerDashboard({ initial, dev }: { initial: Overview; dev: boolean }) {
+export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview; dev: boolean; canLogOut?: boolean }) {
   const [data, setData] = useState(initial);
   const [editing, setEditing] = useState<Editing>(null);
   const [error, setError] = useState("");
@@ -280,6 +280,18 @@ export function OwnerDashboard({ initial, dev }: { initial: Overview; dev: boole
             <button type="button" className="bx-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
               {theme === "dark" ? "Lyst tema" : "Mørkt tema"}
             </button>
+            {canLogOut ? (
+              <button
+                type="button"
+                className="bx-btn"
+                onClick={async () => {
+                  await fetch("/api/admin/login", { method: "DELETE" }).catch(() => {});
+                  window.location.reload();
+                }}
+              >
+                Log ud
+              </button>
+            ) : null}
           </div>
         </div>
       </header>
@@ -288,7 +300,8 @@ export function OwnerDashboard({ initial, dev }: { initial: Overview; dev: boole
         {dev ? (
           <div className="bx-note is-info">
             <span>
-              Udviklingstilstand: siden er åben for alle. I drift kræver den login med en e-mail fra OWNER_EMAILS.
+              Udviklingstilstand: siden er åben uden login. Sæt ADMIN_PASSWORD og OWNER_EMAILS i .env.local for at prøve
+              login her. I drift kræver siden altid login.
             </span>
           </div>
         ) : null}

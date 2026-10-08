@@ -1,4 +1,4 @@
-/* Owner overview (/ejer). Builds on the app's .bx styles in app/login/app.css. */
+/* Owner overview (/admin). Builds on the app's .bx styles in app/login/app.css. */
 .ow .bx-main > .bx-note {
   margin-top: 8px;
 }
@@ -117,4 +117,23 @@
   .ow-months .ow-bars {
     display: none;
   }
+}
+
+/* Owner login (components/owner/AdminLogin.tsx). */
+.ow-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.ow-login-card {
+  width: min(380px, 100%);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ow-login-card h1 {
+  margin: 4px 0 0;
+  font-size: 20px;
 }

@@ -1,5 +1,5 @@
 /**
- * Owner overview (/ejer): users, active users, paying users, revenue, expenses and customer categories.
+ * Owner overview (/admin): users, active users, paying users, revenue, expenses and customer categories.
  *
  * There is no payment provider yet, so the owner keeps the money side by hand in a ledger
  * ({ orgs, expenses, accounts: { <accountId>: { org?, plan? } } }; stored by lib/owner-store.ts).

@@ -82,6 +82,33 @@ export async function canAccess(userId: string, cookie: string | undefined, now 
   return isAccountId(userId) && !!(await sessionLogin(userId, cookie, now, dir));
 }
 
+// ---- Owner (admin) session: "admin.<expires ms>.<HMAC>", set by app/api/admin/login (lib/owner-store.ts) ----
+
+export const ADMIN_COOKIE = "budgetr_admin";
+export const ADMIN_MAX_AGE_S = 7 * 24 * 60 * 60;
+
+export async function makeAdminSession(now = new Date(), dir?: string): Promise<string> {
+  const body = `admin.${now.getTime() + ADMIN_MAX_AGE_S * 1000}`;
+  return `${body}.${sign(await key(dir), body)}`;
+}
+
+/** True for a valid, unexpired admin cookie. */
+export async function readAdminSession(value: string | undefined, now = new Date(), dir?: string): Promise<boolean> {
+  const m = /^admin\.(\d+)\.([\w-]+)$/.exec(value || "");
+  if (!m) return false;
+  const want = Buffer.from(sign(await key(dir), `admin.${m[1]}`)), got = Buffer.from(m[2]!);
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return false;
+  return Number(m[1]) > now.getTime();
+}
+
+export const adminCookieOptions = {
+  httpOnly: true,
+  sameSite: "strict" as const,
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+  maxAge: ADMIN_MAX_AGE_S,
+};
+
 export const sessionCookieOptions = {
   httpOnly: true,
   sameSite: "lax" as const,

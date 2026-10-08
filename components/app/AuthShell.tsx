@@ -8,7 +8,7 @@ import { startAccountSession } from "@/lib/store";
 
 /** Only allow in-app redirects (and the owner page). */
 export const safeNext = (next: string | undefined) =>
-  next && (next.startsWith("/app") || next === "/ejer") ? next : "/app";
+  next && (next.startsWith("/app") || next === "/admin") ? next : "/app";
 
 // Only promises the product keeps (same as the landing page's Tryghed band).
 const TRUST: readonly { icon: ReactNode; title: string; body: string }[] = [
