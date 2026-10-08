@@ -34,6 +34,7 @@ export function StudentApp() {
   const [flow, setFlow] = useState<Flow>(emptyFlow);
   const [reveal, setReveal] = useState(0);
   const [refl, setRefl] = useState<Record<number, string>>({});
+  const [busy, setBusy] = useState(false);
   const [toast, showToast] = useToast();
   // Read in an effect so the server render and the first browser render match.
   const [mainSite, setMainSite] = useState("/");
@@ -55,6 +56,16 @@ export function StudentApp() {
     window.scrollTo(0, 0);
   }, [screen, flow.step]);
 
+  // Save the choices a moment after each change. keepalive lets the last save finish if the tab closes. It also
+  // runs once right after the code is opened, which marks the pupil as started in the teacher's table.
+  useEffect(() => {
+    if (!opened) return;
+    const timer = setTimeout(() => {
+      fetch("/api/skole/elev", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: opened, flow }), keepalive: true }).catch(() => {});
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [opened, flow]);
+
   const open = (c: string, f: Flow) => {
     setCode(c);
     setOpened(c);
@@ -64,11 +75,22 @@ export function StudentApp() {
     setScreen(f.done ? "sum" : "flow");
   };
 
-  const begin = () => {
+  const begin = async () => {
     const c = normalizeCode(code);
     if (!isCode(c)) return setCodeErr("Skriv den kode, du har fået af din lærer.");
-    if (c === opened) return setScreen("flow");
-    open(c, emptyFlow());
+    if (c === opened) return setScreen(flow.done ? "sum" : "flow");
+    setBusy(true);
+    try {
+      const r = await fetch("/api/skole/elev", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: c }) });
+      if (r.status === 404) return setCodeErr("Den kode kender vi ikke. Tjek, at den er skrevet rigtigt, eller spørg din lærer.");
+      if (!r.ok) throw new Error(String(r.status));
+      const saved = (await r.json()) as { flow: Flow | null };
+      open(c, saved.flow ?? emptyFlow());
+    } catch {
+      setCodeErr("Der er ingen forbindelse lige nu. Prøv igen om lidt.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const go = (n: number) => {
@@ -110,12 +132,12 @@ export function StudentApp() {
         <Start
           code={code}
           error={codeErr}
-          busy={false}
+          busy={busy}
           onCode={(v) => {
             setCode(v);
             setCodeErr(null);
           }}
-          onStart={begin}
+          onStart={() => void begin()}
         />
       )}
       {screen === "flow" && (
