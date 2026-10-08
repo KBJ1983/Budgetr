@@ -1,10 +1,32 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isSkoleHost, skoleRoute } from "./lib/skole-host";
 
-// Pre-launch gate: while SITE_PASSWORD is set, every request (pages, the app, API, files)
-// needs HTTP Basic Auth with that password. Any user name is accepted. Unset = open (local dev).
+// 1. Pre-launch gate: while SITE_PASSWORD is set, every request (pages, the app, API, files) needs HTTP Basic Auth
+//    with that password. Any user name is accepted. Unset = open (local dev).
+// 2. budgetpro Skole's subdomain (lib/skole-host.ts): on skole.<domain> the pages come from /skole and the rest of
+//    the site is blocked.
 export function proxy(request: NextRequest) {
+  const locked = siteGate(request);
+  if (locked) return locked;
+
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? "";
+  if (isSkoleHost(host)) {
+    const r = skoleRoute(request.nextUrl.pathname);
+    if (r.kind === "block") {
+      return new NextResponse("Siden findes ikke.", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    }
+    if (r.kind === "rewrite") {
+      const url = request.nextUrl.clone();
+      url.pathname = r.path;
+      return NextResponse.rewrite(url);
+    }
+  }
+  return NextResponse.next();
+}
+
+function siteGate(request: NextRequest): NextResponse | null {
   const password = process.env.SITE_PASSWORD?.trim();
-  if (!password) return NextResponse.next();
+  if (!password) return null;
 
   const header = request.headers.get("authorization") ?? "";
   if (header.startsWith("Basic ")) {
@@ -13,7 +35,7 @@ export function proxy(request: NextRequest) {
       decoded = atob(header.slice(6));
     } catch {}
     const given = decoded.slice(decoded.indexOf(":") + 1);
-    if (safeEqual(given, password)) return NextResponse.next();
+    if (safeEqual(given, password)) return null;
   }
 
   return new NextResponse("Siden er ikke åben endnu.", {
