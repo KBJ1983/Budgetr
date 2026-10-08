@@ -267,6 +267,102 @@ try {
     check(st?.bank?.children === 2 && ex.length === 3 && ex.filter((e) => e.bank).length === 1, "guide: bank choices are saved");
     await ctx.close();
   }
+  // budgetpro Skole: a teacher makes a class, a pupil goes through the 8 steps, the overview shows it, and deleting
+  // the class ends the codes. Writes one class under data/skole/ and deletes it again; nothing else in data/.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
+    const open = async () => {
+      const pg = await ctx.newPage();
+      pg.on("pageerror", (e) => errors.push(e.message));
+      pg.on("dialog", (d) => d.accept());
+      return pg;
+    };
+    const enterCode = async (pg, code) => {
+      await pg.goto(`${BASE}/skole`);
+      await pg.getByLabel("Din elevkode").fill(code);
+      await pg.getByRole("button", { name: "Start" }).click();
+    };
+
+    const t = await open();
+    await t.goto(`${BASE}/skole/laerer`);
+    for (let i = 0; i < 21; i++) await t.getByRole("button", { name: "Færre elever" }).click();
+    await t.getByRole("button", { name: "Lav elevkoder" }).click();
+    const link = await t.getByLabel("Lærerlink").inputValue();
+    const codes = await t.locator("[data-code]").allTextContents();
+    check(codes.length === 3 && /\/klasse\/[0-9a-f]{10}\./.test(link), `teacher gets 3 codes and a link (${codes.join(", ")})`);
+
+    const p = await open();
+    await enterCode(p, "BLÅ-ORM-09");
+    await p.getByText("Skriv den kode, du har fået af din lærer.").waitFor();
+    check(true, "a code in the wrong format is refused");
+    await enterCode(p, codes[0].toLowerCase());
+    await p.getByRole("heading", { name: "Mød din fremtidsperson" }).waitFor();
+    check(true, "a class code opens the flow");
+    const next = () => p.getByRole("button", { name: "Næste" }).click();
+    await p.getByRole("button", { name: /Sara, 20/ }).click();
+    await next(); // Indtægt – "Næste" waits until the pay slip is shown
+    await next(); // Bolig
+    await p.getByRole("radio", { name: /Delelejlighed/ }).click();
+    await next(); // Faste udgifter
+    await next(); // Mad og hverdag
+    await p.getByRole("radiogroup", { name: "Mad" }).getByRole("radio", { name: /Normalt/ }).click();
+    await p.getByRole("radiogroup", { name: "Tøj og fritid" }).getByRole("radio", { name: /Normalt/ }).click();
+    await next(); // Opsparing
+    await next(); // Går det op?
+    await p.getByText(/Budgettet går op\./).waitFor();
+    check((await p.getByText("+2.473 kr.").count()) > 0, "step 7: Sara's budget adds up to +2.473 kr.");
+    await next(); // Hvad nu hvis?
+    await p.getByRole("switch", { name: /Huslejen stiger/ }).click();
+    check((await p.getByText("Forskel").count()) === 1, "step 8: a scenario shows the difference");
+    await p.getByRole("button", { name: "Se opsummering" }).click();
+    await p.getByRole("heading", { name: "Saras budget" }).waitFor();
+    await p.getByLabel(/Hvor stor en del af lønnen gik til skat/).fill("En tredjedel");
+    const [pdf] = await Promise.all([p.waitForEvent("download"), p.getByRole("button", { name: "Gem som PDF" }).click()]);
+    check(pdf.suggestedFilename() === `budget-${codes[0]}.pdf`, `the summary downloads a PDF (${pdf.suggestedFilename()})`);
+    await p.getByRole("button", { name: "Lav dit eget budget med budgetposter" }).click();
+    await p.getByText("Tilbage pr. måned").waitFor();
+    check((await p.getByText("+2.473 kr.").count()) > 0, "Mit budget starts from the pupil's choices");
+    await p.screenshot({ path: `${OUT}/skole-budget.png`, fullPage: true });
+    await p.waitForTimeout(1500); // the last autosave
+
+    await t.goto(link);
+    const row = t.getByRole("row", { name: new RegExp(codes[0]) });
+    check((await row.getByText("Færdig").count()) === 1 && (await row.getByText("Sara").count()) === 1, "the overview shows the pupil as finished with Sara");
+    check((await t.getByText("1 af 3 elever i gang").count()) === 1, "the overview counts the pupils who started");
+    await t.screenshot({ path: `${OUT}/skole-klasse.png`, fullPage: true });
+
+    // The same code on a new page goes on at the summary; the answer stayed in this browser.
+    const p2 = await open();
+    await p2.setViewportSize({ width: 390, height: 844 });
+    await enterCode(p2, codes[0]);
+    await p2.getByRole("heading", { name: "Saras budget" }).waitFor();
+    check((await p2.getByLabel(/Hvor stor en del af lønnen gik til skat/).inputValue()) === "En tredjedel", "a pupil can go on later, with their answers");
+    for (const where of ["summary", "/skole", "/skole/laerer", new URL(link).pathname]) {
+      if (where !== "summary") await p2.goto(`${BASE}${where}`);
+      await p2.waitForTimeout(600);
+      const over = await p2.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      check(over <= 0, `no horizontal scroll at 390px on the school's ${where} (${over}px)`);
+    }
+
+    await t.getByRole("button", { name: "Slet klassen" }).click();
+    await t.getByText("Klassen er slettet").waitFor();
+    await enterCode(p, codes[0]);
+    await p.getByText(/Den kode kender vi ikke/).waitFor();
+    check(true, "deleting the class ends its codes");
+
+    const sub = BASE.replace("//localhost", "//skole.localhost");
+    if (sub !== BASE) {
+      const home = await p.goto(`${sub}/`);
+      await p.getByRole("heading", { name: "Hvad koster det at være voksen?" }).waitFor();
+      check(home?.status() === 200, "skole.localhost shows the school's start page");
+      await p.goto(`${sub}/laerer`);
+      await p.getByRole("heading", { name: "Opret klasse" }).waitFor();
+      check(true, "skole.localhost/laerer is the teacher page");
+      const app = await p.goto(`${sub}/app`);
+      check(app?.status() === 404, "the budget app is not reachable on the school subdomain");
+    }
+    await ctx.close();
+  }
   check(errors.length === 0, `no page errors ${errors.join(" | ")}`);
 } catch (e) {
   await page.screenshot({ path: `${OUT}/failure.png`, fullPage: true }).catch(() => {});
