@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { emptyFlow, isCode, normalizeCode, seedPosts, type Flow } from "@/lib/skole";
+import { mainSiteUrl } from "@/lib/skole-host";
 import { FlowView } from "./FlowView";
 import { MyBudget } from "./MyBudget";
 import { summaryPdf } from "./pdf";
@@ -34,6 +35,11 @@ export function StudentApp() {
   const [reveal, setReveal] = useState(0);
   const [refl, setRefl] = useState<Record<number, string>>({});
   const [toast, showToast] = useToast();
+  // Read in an effect so the server render and the first browser render match.
+  const [mainSite, setMainSite] = useState("/");
+  useEffect(() => {
+    setMainSite(mainSiteUrl(window.location));
+  }, []);
 
   const update: Update = (patch) => setFlow((f) => ({ ...f, ...(typeof patch === "function" ? patch(f) : patch) }));
 
@@ -137,7 +143,7 @@ export function StudentApp() {
           }}
           onPdf={() => summaryPdf(code, flow, refl).catch(() => showToast("PDF’en kunne ikke laves. Prøv igen."))}
           onRestart={restart}
-          mainSite="/"
+          mainSite={mainSite}
         />
       )}
       {screen === "budget" && <MyBudget flow={flow} update={update} onBack={() => setScreen("sum")} />}
