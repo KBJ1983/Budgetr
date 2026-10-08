@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  boligLevel, budgetNumbers, canNext, caseById, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, randomCode, scenarios, seedPosts,
+  boligLevel, budgetNumbers, canNext, caseById, classStats, pupilRow, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, randomCode, scenarios, seedPosts,
   signedKr, steps, totals, type Flow,
 } from "./skole";
 
@@ -154,5 +154,54 @@ describe("pupil codes", () => {
     expect(randomCode(() => 0)).toBe("BLÅ-ORM-10");
     expect(randomCode(() => 0.999)).toBe("SJOV-FRØ-99");
     for (let i = 0; i < 200; i++) expect(isCode(randomCode())).toBe(true);
+  });
+});
+
+describe("saved flows", () => {
+  it("keeps a valid flow as it is", () => {
+    const f = sara({ cFaste: [{ name: "Fitness", amt: 250 }], scen: { rent: true }, posts: seedPosts(sara()) });
+    expect(sanitizeFlow(JSON.parse(JSON.stringify(f)))).toEqual(f);
+    expect(sanitizeFlow(emptyFlow())).toEqual(emptyFlow());
+  });
+
+  it("rejects what is not a flow", () => {
+    expect(sanitizeFlow(null)).toBeNull();
+    expect(sanitizeFlow("x")).toBeNull();
+    expect(sanitizeFlow({ ...emptyFlow(), step: 9 })).toBeNull();
+    expect(sanitizeFlow({ ...emptyFlow(), step: 3, maxStep: 2 })).toBeNull();
+  });
+
+  it("drops values that are not one of the choices", () => {
+    const f = sanitizeFlow({ ...sara(), caseId: "bob", bolig: 1234, mad: 99, buffer: 5000, months: 1, scen: { rent: true, hack: true }, faste: { mobil: "ja" } });
+    expect(f).toMatchObject({ caseId: null, bolig: null, mad: null, buffer: 500, months: 12, scen: { rent: true } });
+    expect(f?.faste).toEqual({ forsikring: false, mobil: false, internet: false, transport: false, fag: false, stream: false });
+  });
+
+  it("trims own lines and posts", () => {
+    const f = sanitizeFlow({
+      ...sara(),
+      cOps: [{ name: "  Ferie  ", amt: 300 }, { name: "", amt: 10 }, { name: "x".repeat(60), amt: -5 }, ...Array(20).fill({ name: "Gave", amt: 100 })],
+      posts: [{ id: "a", cat: "ops", name: "Ferie", amt: 300, freq: "md" }, { id: "b", cat: "nope", name: "X", amt: 1, freq: "md" }],
+    });
+    expect(f?.cOps[0]).toEqual({ name: "Ferie", amt: 300 });
+    expect(f?.cOps[1]).toEqual({ name: "x".repeat(40), amt: 0 });
+    expect(f?.cOps).toHaveLength(10);
+    expect(f?.posts).toEqual([{ id: "a", cat: "ops", name: "Ferie", amt: 300, freq: "md" }]);
+  });
+});
+
+describe("class overview", () => {
+  const done = (patch: Partial<Flow>) => sara({ step: 8, maxStep: 8, done: true, ...patch });
+
+  it("shows each pupil's progress without names", () => {
+    expect(pupilRow("BLÅ-ORM-47", null)).toEqual({ code: "BLÅ-ORM-47", status: "Ikke startet", ok: null, caseName: null });
+    expect(pupilRow("BLÅ-ORM-47", sara({ step: 4, maxStep: 5 }))).toEqual({ code: "BLÅ-ORM-47", status: "Trin 5", ok: null, caseName: "Sara" });
+    expect(pupilRow("BLÅ-ORM-47", done({}))).toEqual({ code: "BLÅ-ORM-47", status: "Færdig", ok: true, caseName: "Sara" });
+  });
+
+  it("sums up the class", () => {
+    const flows = [done({}), done({ caseId: "mira", bolig: 6900 }), done({ bolig: 3500 }), sara({ caseId: "jonas", step: 3, maxStep: 3 }), null];
+    expect(classStats(flows)).toEqual({ started: 4, finished: 3, finishedOk: 2, topCase: "Sara", topBolig: { label: "Delelejlighed", pct: 50 } });
+    expect(classStats([null, null])).toEqual({ started: 0, finished: 0, finishedOk: 0, topCase: null, topBolig: null });
   });
 });

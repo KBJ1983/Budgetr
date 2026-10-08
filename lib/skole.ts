@@ -336,3 +336,125 @@ export function randomCode(rnd: () => number = Math.random): string {
   const at = <T,>(xs: readonly T[]) => xs[Math.floor(rnd() * xs.length)];
   return `${at(COLORS)}-${at(ANIMALS)}-${10 + Math.floor(rnd() * 90)}`;
 }
+
+// ---- Classes -----------------------------------------------------------------------------------------------------
+
+/** Grades a class can be made for. */
+export const TRIN: readonly number[] = [7, 8, 9];
+export const MAX_PUPILS = 40;
+/** A class, its codes and the pupils' choices are deleted this many days after the class was made. */
+export const CLASS_DAYS = 90;
+
+const isNum = (x: unknown, lo: number, hi: number): x is number => typeof x === "number" && Number.isFinite(x) && x >= lo && x <= hi;
+const isInt = (x: unknown, lo: number, hi: number): x is number => Number.isInteger(x) && isNum(x, lo, hi);
+const text = (x: unknown, max: number) => (typeof x === "string" ? x.trim().slice(0, max) : "");
+const pick = <T,>(x: unknown, allowed: readonly T[]): T | null => (allowed.includes(x as T) ? (x as T) : null);
+const field = (o: unknown, k: string): unknown => (o && typeof o === "object" ? (o as Record<string, unknown>)[k] : undefined);
+
+function ownLines(x: unknown): Own[] {
+  if (!Array.isArray(x)) return [];
+  return x
+    .map((o) => {
+      const amt = field(o, "amt");
+      return { name: text(field(o, "name"), 40), amt: isNum(amt, 0, 100000) ? Math.round(amt) : 0 };
+    })
+    .filter((o) => o.name)
+    .slice(0, MAX_OWN);
+}
+
+function postLines(x: unknown): Post[] | null {
+  if (!Array.isArray(x)) return null;
+  return x.slice(0, MAX_POSTS).flatMap((p): Post[] => {
+    const cat = pick(field(p, "cat"), CATS.map((c) => c.key));
+    const freq = pick(field(p, "freq"), Object.keys(FREQS) as Freq[]);
+    const id = text(field(p, "id"), 24);
+    const amt = field(p, "amt");
+    return cat && freq && id && isNum(amt, 0, 1_000_000) ? [{ id, cat, freq, name: text(field(p, "name"), 40), amt }] : [];
+  });
+}
+
+/** A flow sent by the browser, checked: only known choices, short texts, bounded numbers. null if it isn't one. */
+export function sanitizeFlow(x: unknown): Flow | null {
+  if (!x || typeof x !== "object") return null;
+  const o = x as Record<string, unknown>;
+  const step = o.step;
+  const maxStep = o.maxStep;
+  if (!isInt(step, 1, STEP_COUNT) || !isInt(maxStep, step, STEP_COUNT)) return null;
+  const e = emptyFlow();
+  const buffer = o.buffer;
+  const months = o.months;
+  return {
+    caseId: pick(o.caseId, CASES.map((c) => c.id)),
+    step,
+    maxStep,
+    done: o.done === true,
+    bolig: pick(o.bolig, BOLIG.map((b) => b.amt)),
+    faste: Object.fromEntries(FASTE.map((f) => [f.key, field(o.faste, f.key) === true])) as Record<FasteKey, boolean>,
+    cFaste: ownLines(o.cFaste),
+    mad: pick(o.mad, HVERDAG[0].vals),
+    toj: pick(o.toj, HVERDAG[1].vals),
+    buffer: isInt(buffer, 0, BUFFER_MAX) && buffer % 100 === 0 ? buffer : e.buffer,
+    months: isInt(months, MONTHS_MIN, MONTHS_MAX) ? months : e.months,
+    cOps: ownLines(o.cOps),
+    scen: Object.fromEntries(SCEN_KEYS.filter((k) => field(o.scen, k) === true).map((k) => [k, true])),
+    posts: postLines(o.posts),
+  };
+}
+
+/** One line of the teacher's table. */
+export interface PupilRow {
+  code: string;
+  /** "Ikke startet", "Trin 5" or "Færdig". */
+  status: string;
+  ok: boolean | null;
+  caseName: string | null;
+}
+
+export function pupilRow(code: string, f: Flow | null): PupilRow {
+  if (!f) return { code, status: "Ikke startet", ok: null, caseName: null };
+  return { code, status: f.done ? "Færdig" : `Trin ${f.maxStep}`, ok: isOk(f), caseName: f.caseId ? caseById(f.caseId).name : null };
+}
+
+export interface ClassStats {
+  started: number;
+  finished: number;
+  /** Finished pupils whose budget adds up. */
+  finishedOk: number;
+  topCase: string | null;
+  /** The most chosen home, and its share of the pupils who chose one. */
+  topBolig: { label: string; pct: number } | null;
+}
+
+/** The most common value and its count; ties go to the one seen first. */
+function mostCommon<T>(xs: T[]): [T, number] | null {
+  const counts = new Map<T, number>();
+  for (const x of xs) counts.set(x, (counts.get(x) ?? 0) + 1);
+  let best: [T, number] | null = null;
+  for (const e of counts) if (!best || e[1] > best[1]) best = e;
+  return best;
+}
+
+export function classStats(flows: (Flow | null)[]): ClassStats {
+  const started = flows.filter((f): f is Flow => !!f);
+  const finished = started.filter((f) => f.done);
+  const cases = started.map((f) => f.caseId).filter((c): c is CaseId => !!c);
+  const homes = started.map((f) => f.bolig).filter((b): b is number => b != null);
+  const topCase = mostCommon(cases);
+  const topHome = mostCommon(homes);
+  return {
+    started: started.length,
+    finished: finished.length,
+    finishedOk: finished.filter((f) => isOk(f) === true).length,
+    topCase: topCase ? caseById(topCase[0]).name : null,
+    topBolig: topHome ? { label: BOLIG.find((b) => b.amt === topHome[0])?.label ?? "", pct: Math.round((topHome[1] / homes.length) * 100) } : null,
+  };
+}
+
+/** What the teacher's overview shows (lib/skole-store.ts builds it). */
+export interface ClassView {
+  trin: number;
+  created: string;
+  expires: string;
+  rows: PupilRow[];
+  stats: ClassStats;
+}
