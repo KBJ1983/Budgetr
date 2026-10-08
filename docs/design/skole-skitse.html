@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="2b8a0287-82d5-48cf-9fb6-bfa3a38003bd"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 200;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9334fd3-f318-4945-a069-2a0aab0585db") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 200;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c715175b-f335-41b5-99fe-cc6946a23d84") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 200;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("741e43a3-5a63-426d-87c6-d35df94967e1") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("52817fdc-a350-4e29-9640-37ab70b50a83") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("573ad84b-8365-449d-ac62-e97aafa0debf") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("73e5ffb6-c60f-4bd5-86c8-cd4ec4f6f890") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("54e86fde-d904-4757-a834-ed1cb9a25540") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("828167da-936f-4279-87f1-5f9378bf143c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e3dc1ad5-8527-463d-9ab0-b2d6852d105a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("828167da-936f-4279-87f1-5f9378bf143c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e3dc1ad5-8527-463d-9ab0-b2d6852d105a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("828167da-936f-4279-87f1-5f9378bf143c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e3dc1ad5-8527-463d-9ab0-b2d6852d105a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("828167da-936f-4279-87f1-5f9378bf143c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e3dc1ad5-8527-463d-9ab0-b2d6852d105a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>html,body{margin:0;background:#E4E6E0}body{font-family:'Schibsted Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#16201D}a{color:#1F5C4A}a:hover{color:#16201D}input,button,textarea{font-family:inherit}input[type=range]{accent-color:#1F5C4A}</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="min-height:100vh;padding:24px 32px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px;align-items:center;overflow-x:hidden">
+
+  <div style="width:100%;max-width:1366px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px">
+    <div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+      <span style="font:700 18px 'Schibsted Grotesk';letter-spacing:-.01em">budgetpro Skole · klikbar skitse</span>
+      <span style="font:400 13px 'Schibsted Grotesk';color:#46534E">Hop direkte til en skærm, eller klik dig igennem fra start.</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;width:100%;order:3">
+      <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="13">
+        <button sc-camel-on-click="{{ j.onClick }}" style="border:1px solid {{ j.bd }};background:{{ j.bg }};color:{{ j.fg }};border-radius:999px;padding:6px 12px;font:500 13px 'Schibsted Grotesk';cursor:pointer">{{ j.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;background:#FFFFFF;border:1px solid #DCE0DA;border-radius:999px;padding:3px;gap:2px">
+      <sc-for list="{{ devices }}" as="d" hint-placeholder-count="2">
+        <button sc-camel-on-click="{{ d.onClick }}" style="border:0;background:{{ d.bg }};color:{{ d.fg }};border-radius:999px;padding:6px 14px;font:600 13px 'Schibsted Grotesk';cursor:pointer">{{ d.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="width:{{ wrapW }};height:{{ wrapH }};position:relative;flex-shrink:0">
+    <div style="position:absolute;top:0;left:0;width:{{ frameW }};height:{{ frameH }};transform:{{ scaleT }};transform-origin:top left;background:#F4F5F1;border-radius:{{ frameR }};overflow:hidden;box-shadow:0 30px 60px -30px rgba(22,32,29,.35),0 0 0 1px #DCE0DA;display:flex;flex-direction:column">
+
+      <div style="height:{{ hdrH }};flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 {{ padX }};border-bottom:1px solid #DCE0DA;background:#FFFFFF">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="display:flex;align-items:baseline;line-height:1"><span style="font:200 24px/1 'Bricolage Grotesque';letter-spacing:-.02em">budget</span><span style="font:600 24px/1 'Instrument Sans';letter-spacing:-.02em">pro</span><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#1F5C4A;margin-left:2px"></span></div>
+          <span style="font:600 13px 'Schibsted Grotesk';background:#E4B758;color:#16201D;border-radius:999px;padding:4px 10px">Skole</span>
+        </div>
+        <sc-if value="{{ showCode }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;font:500 14px 'Schibsted Grotesk';color:#46534E;white-space:nowrap"><span style="display:{{ labelDisp }}">Elevkode</span><span style="font:600 14px 'Schibsted Grotesk';color:#16201D;background:#F4F5F1;border:1px solid #DCE0DA;border-radius:8px;padding:5px 9px;letter-spacing:.04em">{{ codeShown }}</span></div>
+        </sc-if>
+        <sc-if value="{{ isTeacher }}" hint-placeholder-val="{{ false }}">
+          <span style="font:600 14px 'Schibsted Grotesk';color:#1F5C4A;background:#E3EEE9;border-radius:999px;padding:6px 12px">Lærer</span>
+        </sc-if>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow:auto;position:relative">
+
+        <sc-if value="{{ isStart }}" hint-placeholder-val="{{ true }}">
+          <div style="min-height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:32px 24px">
+            <div style="width:100%;max-width:460px;display:flex;flex-direction:column;gap:22px">
+              <div style="display:flex;gap:10px">
+                <sc-for list="{{ cases }}" as="c" hint-placeholder-count="3">
+                  <svg sc-camel-view-box="0 0 120 120" style="width:64px;height:64px;border-radius:50%;display:block"><rect width="120" height="120" fill="{{ c.bg }}"></rect><path d="M24 120c0-26 16-40 36-40s36 14 36 40z" fill="{{ c.shirt }}"></path><circle cx="60" cy="54" r="20" fill="{{ c.skin }}"></circle><path d="M39 52c0-15 9-24 21-24s21 9 21 24c-6-7-13-10-21-10s-15 3-21 10z" fill="{{ c.hair }}"></path></svg>
+                </sc-for>
+              </div>
+              <h1 style="margin:0;font:700 {{ startH }}/1.05 'Schibsted Grotesk';letter-spacing:-.03em;text-wrap:balance">Hvad koster det at være voksen?</h1>
+              <p style="margin:0;font:400 18px/1.5 'Schibsted Grotesk';color:#46534E">Lav et månedsbudget for en fremtidsperson i 8 trin.</p>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <label style="font:600 17px 'Schibsted Grotesk'">Din elevkode</label>
+                <input value="{{ code }}" sc-camel-on-change="{{ onCode }}" sc-camel-on-key-down="{{ onCodeKey }}" placeholder="BLÅ-ORM-47" style="height:56px;box-sizing:border-box;border:2px solid {{ codeBd }};border-radius:14px;padding:0 18px;font:600 22px 'Schibsted Grotesk';letter-spacing:.06em;background:#FFFFFF;color:#16201D;outline:none">
+                <sc-if value="{{ codeErr }}" hint-placeholder-val="{{ false }}"><span style="font:500 15px 'Schibsted Grotesk';color:#A8412C">Skriv den kode, du har fået af din lærer.</span></sc-if>
+                <span style="font:400 14px 'Schibsted Grotesk';color:#46534E">Format: ORD-ORD-00</span>
+              </div>
+              <button sc-camel-on-click="{{ onStart }}" style="height:56px;border:0;border-radius:14px;background:#1F5C4A;color:#FFFFFF;font:600 19px 'Schibsted Grotesk';cursor:pointer">Start</button>
+              <a href="#" sc-camel-on-click="{{ toTeacher }}" style="font:500 15px 'Schibsted Grotesk'">Er du lærer? Opret en klasse.</a>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isFlow }}" hint-placeholder-val="{{ false }}">
+          <div style="min-height:100%;display:flex;flex-direction:column">
+            <div style="padding:{{ progPad }};display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-bottom:1px solid #DCE0DA">
+              <div style="display:flex">
+                <sc-for list="{{ prog }}" as="p" hint-placeholder-count="8">
+                  <button sc-camel-on-click="{{ p.onClick }}" style="all:unset;flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;cursor:{{ p.cursor }}">
+                    <span style="position:absolute;top:{{ lineTop }};right:50%;width:100%;height:2px;background:{{ p.line }};display:{{ p.lineDisp }}"></span>
+                    <span style="position:relative;width:{{ dotSize }};height:{{ dotSize }};border-radius:50%;background:{{ p.bg }};color:{{ p.fg }};border:2px solid {{ p.bd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:600 13px 'Schibsted Grotesk'">{{ p.mark }}<sc-if value="{{ p.check }}" hint-placeholder-val="{{ false }}"><svg sc-camel-view-box="0 0 24 24" style="width:14px;height:14px"><path d="M5 12l5 5 9-10" fill="none" stroke="#1F5C4A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if></span>
+                    <span style="display:{{ labelDisp }};font:{{ p.weight }} 13px 'Schibsted Grotesk';color:{{ p.labelC }};white-space:nowrap">{{ p.label }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}"><span style="font:600 14px 'Schibsted Grotesk';color:#46534E;text-align:center">Trin {{ step }} af 8 · {{ cur.short }}</span></sc-if>
+            </div>
+
+            <div style="flex:1;display:grid;grid-template-columns:{{ cols }};gap:{{ gap }};padding:{{ mainPad }};align-items:start">
+              <div style="display:flex;flex-direction:column;gap:20px;min-width:0;order:{{ leftOrder }}">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span style="font:600 14px 'Schibsted Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#1F5C4A">Trin {{ step }} · {{ cur.short }}</span>
+                  <h1 style="margin:0;font:700 {{ qSize }}/1.12 'Schibsted Grotesk';letter-spacing:-.025em;text-wrap:balance">{{ cur.q }}</h1>
+                </div>
+
+                <sc-if value="{{ isS1 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:{{ caseCols }};gap:14px">
+                    <sc-for list="{{ caseCards }}" as="c" hint-placeholder-count="3">
+                      <button sc-camel-on-click="{{ c.onClick }}" style="all:unset;cursor:pointer;background:#FFFFFF;border:2px solid {{ c.bd }};border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;position:relative">
+                        <sc-if value="{{ c.sel }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:#1F5C4A;display:flex;align-items:center;justify-content:center"><svg sc-camel-view-box="0 0 24 24" style="width:16px;height:16px"><path d="M5 12l5 5 9-10" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></sc-if>
+                        <svg sc-camel-view-box="0 0 120 120" style="width:84px;height:84px;border-radius:50%;display:block"><rect width="120" height="120" fill="{{ c.bg }}"></rect><path d="M24 120c0-26 16-40 36-40s36 14 36 40z" fill="{{ c.shirt }}"></path><circle cx="60" cy="54" r="20" fill="{{ c.skin }}"></circle><path d="M39 52c0-15 9-24 21-24s21 9 21 24c-6-7-13-10-21-10s-15 3-21 10z" fill="{{ c.hair }}"></path></svg>
+                        <span style="font:700 22px 'Schibsted Grotesk';letter-spacing:-.02em">{{ c.name }}, {{ c.age }}</span>
+                        <span style="font:400 17px/1.35 'Schibsted Grotesk';color:#46534E;min-height:46px">{{ c.job }}</span>
+                        <span style="font:600 17px 'Schibsted Grotesk'">{{ c.netT }} <span style="font-weight:400;color:#46534E">udbetalt/md.</span></span>
+                        <span style="font:500 15px/1.35 'Schibsted Grotesk';background:#FBF0D9;color:#8A5F0F;border-radius:10px;padding:8px 10px">Drøm: {{ c.dream }}, {{ c.dreamT }}</span>
+                      </button>
+                    </sc-for>
+                    <div style="background:#ECEDE8;border:2px dashed #DCE0DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;color:#46534E;min-height:200px">
+                      <span style="font:700 22px 'Schibsted Grotesk'">Byg din egen</span>
+                      <span style="font:500 15px 'Schibsted Grotesk'">Kommer senere</span>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS2 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <sc-for list="{{ payRows }}" as="r" hint-placeholder-count="3">
+                      <div style="opacity:{{ r.op }};transform:{{ r.tf }};transition:opacity .4s,transform .4s;background:{{ r.bg }};border:1px solid {{ r.bd }};border-radius:16px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+                        <span style="font:500 19px 'Schibsted Grotesk';color:{{ r.fg }}">{{ r.label }}</span>
+                        <span style="font:700 28px 'Schibsted Grotesk';letter-spacing:-.02em;color:{{ r.fg }};white-space:nowrap">{{ r.amt }}</span>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ revealDone }}" hint-placeholder-val="{{ false }}"><span style="font:400 17px/1.5 'Schibsted Grotesk';color:#46534E"><b style="color:#16201D">AM-bidrag</b> er 8 % af lønnen og går til staten. Skatten afhænger af, hvor meget man tjener.</span></sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS3 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <sc-for list="{{ boligOpts }}" as="o" hint-placeholder-count="3">
+                      <button sc-camel-on-click="{{ o.onClick }}" style="all:unset;cursor:pointer;min-height:76px;box-sizing:border-box;background:{{ o.bg }};border:2px solid {{ o.bd }};border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:16px">
+                        <span style="width:44px;height:44px;border-radius:12px;background:#E3EEE9;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg sc-camel-view-box="0 0 24 24" style="width:24px;height:24px"><path d="M4 11l8-7 8 7v9H4z M10 20v-5h4v5" fill="none" stroke="#1F5C4A" stroke-width="2" stroke-linejoin="round"></path></svg></span>
+                        <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:600 19px 'Schibsted Grotesk'">{{ o.label }}</span><span style="font:400 15px 'Schibsted Grotesk';color:#46534E">{{ o.sub }}</span></span>
+                        <span style="font:700 20px 'Schibsted Grotesk';white-space:nowrap">{{ o.amtT }}</span>
+                        <span style="width:26px;height:26px;border-radius:50%;border:2px solid {{ o.ckBd }};background:{{ o.ckBg }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg sc-camel-view-box="0 0 24 24" style="width:14px;height:14px"><path d="M5 12l5 5 9-10" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS4 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <div style="display:grid;grid-template-columns:{{ fasteCols }};gap:10px">
+                      <sc-for list="{{ fasteOpts }}" as="o" hint-placeholder-count="6">
+                        <button sc-camel-on-click="{{ o.onClick }}" style="all:unset;cursor:pointer;min-height:60px;box-sizing:border-box;background:{{ o.bg }};border:2px solid {{ o.bd }};border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+                          <span style="width:26px;height:26px;border-radius:8px;border:2px solid {{ o.ckBd }};background:{{ o.ckBg }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg sc-camel-view-box="0 0 24 24" style="width:14px;height:14px"><path d="M5 12l5 5 9-10" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                          <svg sc-camel-view-box="0 0 24 24" style="width:22px;height:22px;flex-shrink:0"><path d="{{ o.icon }}" fill="none" stroke="#46534E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                          <span style="flex:1;font:500 17px/1.25 'Schibsted Grotesk'">{{ o.label }}</span>
+                          <span style="font:600 17px 'Schibsted Grotesk';white-space:nowrap;color:{{ o.amtC }}">{{ o.amtT }}</span>
+                        </button>
+                      </sc-for>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font:600 19px 'Schibsted Grotesk';padding:4px 4px 0"><span>Faste udgifter i alt</span><span>{{ fasteT }}/md.</span></div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS4 }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+                    <span style="font:600 18px 'Schibsted Grotesk'">Egne faste udgifter</span>
+                    <sc-for list="{{ cFaste }}" as="p" hint-placeholder-count="0">
+                      <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid #ECEDE8"><span style="flex:1;font:500 17px 'Schibsted Grotesk'">{{ p.name }}</span><span style="font:600 17px 'Schibsted Grotesk';white-space:nowrap">{{ p.amtT }}</span><button sc-camel-on-click="{{ p.onDel }}" aria-label="Slet" style="width:40px;height:40px;border:0;border-radius:10px;background:#F4F5F1;cursor:pointer;color:#46534E;font:500 22px/1 'Schibsted Grotesk'">×</button></div>
+                    </sc-for>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                      <input value="{{ dFaste.name }}" sc-camel-on-change="{{ onDFName }}" placeholder="Fx Fitness" style="flex:2 1 160px;height:46px;box-sizing:border-box;border:1px solid #DCE0DA;border-radius:12px;padding:0 14px;font:500 17px 'Schibsted Grotesk';color:#16201D;outline-color:#1F5C4A">
+                      <input type="number" value="{{ dFaste.amt }}" sc-camel-on-change="{{ onDFAmt }}" placeholder="kr./md." style="flex:1 1 100px;min-width:0;height:46px;box-sizing:border-box;border:1px solid #DCE0DA;border-radius:12px;padding:0 14px;font:600 17px 'Schibsted Grotesk';color:#16201D;outline-color:#1F5C4A">
+                      <button sc-camel-on-click="{{ addFaste }}" style="height:46px;border:0;border-radius:12px;background:{{ addFBg }};color:{{ addFFg }};padding:0 18px;font:600 16px 'Schibsted Grotesk';cursor:pointer">Tilføj</button>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS6 }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+                    <span style="font:600 18px 'Schibsted Grotesk'">Anden opsparing</span>
+                    <sc-for list="{{ cOps }}" as="p" hint-placeholder-count="0">
+                      <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid #ECEDE8"><span style="flex:1;font:500 17px 'Schibsted Grotesk'">{{ p.name }}</span><span style="font:600 17px 'Schibsted Grotesk';white-space:nowrap">{{ p.amtT }}</span><button sc-camel-on-click="{{ p.onDel }}" aria-label="Slet" style="width:40px;height:40px;border:0;border-radius:10px;background:#F4F5F1;cursor:pointer;color:#46534E;font:500 22px/1 'Schibsted Grotesk'">×</button></div>
+                    </sc-for>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                      <input value="{{ dOps.name }}" sc-camel-on-change="{{ onDOName }}" placeholder="Fx Ferie, Gaver, Pension" style="flex:2 1 160px;height:46px;box-sizing:border-box;border:1px solid #DCE0DA;border-radius:12px;padding:0 14px;font:500 17px 'Schibsted Grotesk';color:#16201D;outline-color:#1F5C4A">
+                      <input type="number" value="{{ dOps.amt }}" sc-camel-on-change="{{ onDOAmt }}" placeholder="kr./md." style="flex:1 1 100px;min-width:0;height:46px;box-sizing:border-box;border:1px solid #DCE0DA;border-radius:12px;padding:0 14px;font:600 17px 'Schibsted Grotesk';color:#16201D;outline-color:#1F5C4A">
+                      <button sc-camel-on-click="{{ addOps }}" style="height:46px;border:0;border-radius:12px;background:{{ addOBg }};color:{{ addOFg }};padding:0 18px;font:600 16px 'Schibsted Grotesk';cursor:pointer">Tilføj</button>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS5 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:18px">
+                    <sc-for list="{{ hverdagGroups }}" as="g" hint-placeholder-count="2">
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <div style="display:flex;align-items:center;gap:10px"><svg sc-camel-view-box="0 0 24 24" style="width:22px;height:22px"><path d="{{ g.icon }}" fill="none" stroke="#1F5C4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font:600 19px 'Schibsted Grotesk'">{{ g.title }}</span></div>
+                        <div style="display:grid;grid-template-columns:{{ threeCols }};gap:10px">
+                          <sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="3">
+                            <button sc-camel-on-click="{{ o.onClick }}" style="all:unset;cursor:pointer;min-height:72px;box-sizing:border-box;background:{{ o.bg }};border:2px solid {{ o.bd }};border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;position:relative">
+                              <span style="font:600 17px 'Schibsted Grotesk'">{{ o.label }}</span>
+                              <span style="font:700 20px 'Schibsted Grotesk';letter-spacing:-.01em">{{ o.amtT }}</span>
+                              <sc-if value="{{ o.sel }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#1F5C4A;display:flex;align-items:center;justify-content:center"><svg sc-camel-view-box="0 0 24 24" style="width:13px;height:13px"><path d="M5 12l5 5 9-10" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></sc-if>
+                            </button>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS6 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+                      <div style="display:flex;justify-content:space-between;gap:12px"><span style="font:600 19px 'Schibsted Grotesk'">Buffer til uforudsete udgifter</span><span style="font:700 19px 'Schibsted Grotesk';white-space:nowrap">{{ bufferT }}/md.</span></div>
+                      <input type="range" min="0" max="1500" step="100" value="{{ buffer }}" sc-camel-on-change="{{ onBuffer }}" style="width:100%;height:28px">
+                    </div>
+                    <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+                      <div style="display:flex;justify-content:space-between;gap:12px"><span style="font:600 19px 'Schibsted Grotesk'">Mål: {{ c.dream }}</span><span style="font:700 19px 'Schibsted Grotesk';white-space:nowrap">{{ c.dreamT }}</span></div>
+                      <div style="display:flex;justify-content:space-between;font:400 15px 'Schibsted Grotesk';color:#46534E"><span>Hvornår skal drømmen være klar?</span><span>om {{ months }} mdr.</span></div>
+                      <input type="range" min="3" max="24" step="1" value="{{ months }}" sc-camel-on-change="{{ onMonths }}" style="width:100%;height:28px">
+                      <div style="background:#E3EEE9;border-radius:12px;padding:12px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px"><span style="font:700 19px 'Schibsted Grotesk';color:#1F5C4A">Spar {{ dreamMonthlyT }}/md. → klar om {{ months }} mdr.</span><span style="font:500 15px 'Schibsted Grotesk';color:#1F5C4A;align-self:center">Klar i {{ dreamDate }}</span></div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS7 }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FFFFFF;border:2px solid {{ resultC }};border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+                    <span style="font:500 17px 'Schibsted Grotesk';color:#46534E">Tilbage hver måned</span>
+                    <span style="font:700 64px/1 'Schibsted Grotesk';letter-spacing:-.04em;color:{{ resultC }}">{{ leftSigned }}</span>
+                    <span style="font:400 17px/1.5 'Schibsted Grotesk';color:#46534E">{{ resultText }}</span>
+                    <sc-if value="{{ isNeg }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ toStep3 }}" style="align-self:flex-start;height:48px;border:0;border-radius:12px;background:#A8412C;color:#FFFFFF;font:600 17px 'Schibsted Grotesk';padding:0 20px;cursor:pointer">Gå tilbage og ændr</button></sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isS8 }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:10px">
+                    <div style="display:grid;grid-template-columns:{{ fasteCols }};gap:10px">
+                      <sc-for list="{{ scenCards }}" as="s" hint-placeholder-count="4">
+                        <button sc-camel-on-click="{{ s.onClick }}" style="all:unset;cursor:pointer;min-height:92px;box-sizing:border-box;background:{{ s.bg }};border:2px solid {{ s.bd }};border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+                          <span style="font:600 17px/1.3 'Schibsted Grotesk'">{{ s.label }}</span>
+                          <span style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 19px 'Schibsted Grotesk';color:{{ s.dc }}">{{ s.deltaT }}</span><span style="width:40px;height:24px;border-radius:12px;background:{{ s.tg }};position:relative;flex-shrink:0"><span style="position:absolute;top:3px;left:{{ s.knob }};width:18px;height:18px;border-radius:50%;background:#FFFFFF;transition:left .2s"></span></span></span>
+                        </button>
+                      </sc-for>
+                    </div>
+                    <button sc-camel-on-click="{{ resetScen }}" style="align-self:flex-start;height:44px;border:1px solid #DCE0DA;background:#FFFFFF;border-radius:12px;padding:0 16px;font:600 15px 'Schibsted Grotesk';cursor:pointer;color:#16201D">Nulstil</button>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ hasFact }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#FBF0D9;border-radius:16px;padding:14px 18px;display:flex;flex-direction:column;gap:8px">
+                    <button sc-camel-on-click="{{ toggleFact }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:28px">
+                      <span style="width:26px;height:26px;border-radius:50%;background:#8A5F0F;color:#FFFFFF;font:700 15px 'Schibsted Grotesk';display:flex;align-items:center;justify-content:center">?</span>
+                      <span style="font:700 17px 'Schibsted Grotesk';color:#5E410A">Hvorfor?</span>
+                      <span style="margin-left:auto;font:600 14px 'Schibsted Grotesk';color:#8A5F0F">{{ factLabel }}</span>
+                    </button>
+                    <sc-if value="{{ factOpen }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font:400 17px/1.5 'Schibsted Grotesk';color:#3D2B07;text-wrap:pretty">{{ cur.fact }}</p></sc-if>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;font:italic 400 17px 'Schibsted Grotesk';color:#46534E">
+                    <svg sc-camel-view-box="0 0 24 24" style="width:22px;height:22px;flex-shrink:0"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="#46534E" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+                    <span>{{ cur.refl }}</span>
+                  </div>
+                </sc-if>
+
+                <div style="display:flex;justify-content:space-between;gap:12px;padding-top:4px">
+                  <button sc-camel-on-click="{{ back }}" style="height:52px;border:1px solid #DCE0DA;background:#FFFFFF;border-radius:14px;padding:0 22px;font:600 17px 'Schibsted Grotesk';cursor:pointer;color:#16201D">Tilbage</button>
+                  <button sc-camel-on-click="{{ next }}" style="height:52px;border:0;background:{{ nextBg }};color:{{ nextFg }};border-radius:14px;padding:0 28px;font:600 17px 'Schibsted Grotesk';cursor:{{ nextCursor }}">{{ nextLabel }}</button>
+                </div>
+              </div>
+
+              <sc-if value="{{ showMeter }}" hint-placeholder-val="{{ false }}">
+                <div style="position:sticky;top:0;order:{{ meterOrder }};background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:{{ meterPad }};display:flex;flex-direction:{{ meterDir }};align-items:center;gap:{{ meterGap }}">
+                  <div style="position:relative;width:{{ donutPx }};height:{{ donutPx }};flex-shrink:0">
+                    <svg sc-camel-view-box="0 0 200 200" style="width:100%;height:100%;display:block"><circle cx="100" cy="100" r="80" fill="none" stroke="#ECEDE8" stroke-width="26"></circle><sc-for list="{{ segs }}" as="s" hint-placeholder-count="4"><circle cx="100" cy="100" r="80" fill="none" stroke="{{ s.c }}" stroke-width="26" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.off }}" transform="rotate(-90 100 100)" style="transition:stroke-dasharray .4s,stroke-dashoffset .4s"></circle></sc-for></svg>
+                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+                      <span style="font:500 {{ cLabelSize }} 'Schibsted Grotesk';color:#46534E">Tilbage</span>
+                      <span style="font:700 {{ cAmtSize }} 'Schibsted Grotesk';letter-spacing:-.03em;color:{{ leftC }};white-space:nowrap">{{ leftT }}</span>
+                    </div>
+                  </div>
+                  <div style="width:100%;display:flex;flex-direction:column;gap:8px;min-width:0">
+                    <div style="display:flex;justify-content:space-between;font:600 17px 'Schibsted Grotesk';padding-bottom:6px;border-bottom:1px solid #ECEDE8"><span>Indtægt</span><span style="white-space:nowrap">{{ incomeT }}</span></div>
+                    <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4">
+                      <div style="display:flex;align-items:center;gap:10px;font:400 16px 'Schibsted Grotesk'"><span style="width:12px;height:12px;border-radius:4px;background:{{ l.c }};flex-shrink:0"></span><span style="flex:1;color:#46534E">{{ l.label }}</span><span style="font-weight:600;white-space:nowrap;flex-shrink:0">{{ l.amtT }}</span></div>
+                    </sc-for>
+                    <sc-if value="{{ showDiff }}" hint-placeholder-val="{{ false }}"><div style="margin-top:4px;background:{{ diffBg }};color:{{ diffC }};border-radius:10px;padding:8px 12px;font:600 16px 'Schibsted Grotesk';display:flex;justify-content:space-between"><span>Forskel</span><span>{{ diffT }}</span></div></sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSum }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:1120px;margin:0 auto;padding:{{ mainPad }};display:flex;flex-direction:column;gap:22px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <h1 style="margin:0;font:700 {{ startH }}/1.05 'Schibsted Grotesk';letter-spacing:-.03em">{{ c.gen }} budget</h1>
+              <span style="font:500 16px 'Schibsted Grotesk';color:#46534E">Elevkode <b style="color:#16201D;letter-spacing:.04em">{{ codeShown }}</b> · {{ today }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:{{ sumCols }};gap:18px;align-items:start">
+              <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:18px">
+                <div style="position:relative;width:{{ sumDonut }};height:{{ sumDonut }}">
+                  <svg sc-camel-view-box="0 0 200 200" style="width:100%;height:100%;display:block"><circle cx="100" cy="100" r="80" fill="none" stroke="#ECEDE8" stroke-width="26"></circle><sc-for list="{{ segs }}" as="s" hint-placeholder-count="4"><circle cx="100" cy="100" r="80" fill="none" stroke="{{ s.c }}" stroke-width="26" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.off }}" transform="rotate(-90 100 100)"></circle></sc-for></svg>
+                  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font:500 15px 'Schibsted Grotesk';color:#46534E">Tilbage</span><span style="font:700 32px 'Schibsted Grotesk';letter-spacing:-.03em;color:{{ leftC }}">{{ leftT }}</span></div>
+                </div>
+                <div style="width:100%;display:flex;flex-direction:column;gap:9px">
+                  <div style="display:flex;justify-content:space-between;font:600 17px 'Schibsted Grotesk';padding-bottom:6px;border-bottom:1px solid #ECEDE8"><span>Indtægt</span><span style="white-space:nowrap">{{ incomeT }}</span></div>
+                  <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:10px;font:400 17px 'Schibsted Grotesk'"><span style="width:12px;height:12px;border-radius:4px;background:{{ l.c }}"></span><span style="flex:1;color:#46534E">{{ l.label }}</span><span style="font-weight:600;white-space:nowrap;flex-shrink:0">{{ l.amtT }}</span></div>
+                  </sc-for>
+                </div>
+                <div style="width:100%;box-sizing:border-box;background:#FBF0D9;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+                  <svg sc-camel-view-box="0 0 24 24" style="width:24px;height:24px;flex-shrink:0"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" fill="#E4B758" stroke="#8A5F0F" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+                  <span style="font:600 17px 'Schibsted Grotesk';color:#5E410A">{{ c.dream }} klar i {{ dreamDate }}</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <span style="font:700 22px 'Schibsted Grotesk';letter-spacing:-.01em">Dine svar</span>
+                <sc-for list="{{ reflFields }}" as="r" hint-placeholder-count="7">
+                  <label style="display:flex;flex-direction:column;gap:6px">
+                    <span style="font:italic 400 16px 'Schibsted Grotesk';color:#46534E">{{ r.n }}. {{ r.q }}</span>
+                    <textarea value="{{ r.val }}" sc-camel-on-change="{{ r.onChange }}" rows="2" placeholder="Skriv dit svar" style="resize:vertical;border:1px solid #DCE0DA;border-radius:12px;padding:10px 14px;font:400 17px/1.4 'Schibsted Grotesk';background:#FFFFFF;color:#16201D;outline-color:#1F5C4A"></textarea>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px">
+              <button sc-camel-on-click="{{ openBudget }}" style="height:52px;border:2px solid #1F5C4A;background:#FFFFFF;color:#1F5C4A;border-radius:14px;padding:0 24px;font:600 17px 'Schibsted Grotesk';cursor:pointer">Lav dit eget budget med budgetposter</button>
+              <button sc-camel-on-click="{{ onPdf }}" style="height:52px;border:0;background:#1F5C4A;color:#FFFFFF;border-radius:14px;padding:0 24px;font:600 17px 'Schibsted Grotesk';cursor:pointer">Gem som PDF</button>
+              <button sc-camel-on-click="{{ restart }}" style="height:52px;border:1px solid #DCE0DA;background:#FFFFFF;border-radius:14px;padding:0 24px;font:600 17px 'Schibsted Grotesk';cursor:pointer;color:#16201D">Start forfra</button>
+            </div>
+            <a href="#" sc-camel-on-click="{{ noop }}" style="font:400 15px 'Schibsted Grotesk';color:#46534E;padding-bottom:8px">Vil du lave et rigtigt budget derhjemme? Prøv budgetpro.</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isT1 }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:960px;margin:0 auto;padding:{{ mainPad }};display:flex;flex-direction:column;gap:22px">
+            <h1 style="margin:0;font:700 36px 'Schibsted Grotesk';letter-spacing:-.03em">Opret klasse</h1>
+            <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:22px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <span style="font:600 17px 'Schibsted Grotesk'">Klassetrin</span>
+                <div style="display:flex;gap:6px">
+                  <sc-for list="{{ trinOpts }}" as="t" hint-placeholder-count="3">
+                    <button sc-camel-on-click="{{ t.onClick }}" style="width:64px;height:48px;border:2px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};border-radius:12px;font:700 18px 'Schibsted Grotesk';cursor:pointer">{{ t.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <span style="font:600 17px 'Schibsted Grotesk'">Antal elever</span>
+                <div style="display:flex;align-items:center;border:1px solid #DCE0DA;border-radius:12px;height:48px;overflow:hidden">
+                  <button sc-camel-on-click="{{ antalMinus }}" style="width:48px;height:48px;border:0;background:#F4F5F1;font:600 22px 'Schibsted Grotesk';cursor:pointer;color:#16201D">−</button>
+                  <span style="width:64px;text-align:center;font:700 19px 'Schibsted Grotesk'">{{ antal }}</span>
+                  <button sc-camel-on-click="{{ antalPlus }}" style="width:48px;height:48px;border:0;background:#F4F5F1;font:600 22px 'Schibsted Grotesk';cursor:pointer;color:#16201D">+</button>
+                </div>
+              </div>
+              <button sc-camel-on-click="{{ makeCodes }}" style="height:48px;border:0;background:#1F5C4A;color:#FFFFFF;border-radius:12px;padding:0 22px;font:600 17px 'Schibsted Grotesk';cursor:pointer">Lav elevkoder</button>
+            </div>
+            <p style="margin:0;font:500 17px/1.5 'Schibsted Grotesk';color:#1F5C4A;background:#E3EEE9;border-radius:12px;padding:12px 16px">budgetpro gemmer ingen navne. Skriv selv, hvem der har hvilken kode.</p>
+            <sc-if value="{{ hasCodes }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+                  <span style="font:700 20px 'Schibsted Grotesk';margin-right:auto">{{ antal }} elevkoder · {{ klassetrin }}. klasse</span>
+                  <button sc-camel-on-click="{{ copyCodes }}" style="height:44px;border:1px solid #DCE0DA;background:#FFFFFF;border-radius:12px;padding:0 16px;font:600 15px 'Schibsted Grotesk';cursor:pointer;color:#16201D">Kopiér</button>
+                  <button sc-camel-on-click="{{ printCodes }}" style="height:44px;border:1px solid #DCE0DA;background:#FFFFFF;border-radius:12px;padding:0 16px;font:600 15px 'Schibsted Grotesk';cursor:pointer;color:#16201D">Print</button>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+                  <sc-for list="{{ codes }}" as="k" hint-placeholder-count="12">
+                    <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:baseline"><span style="font:500 13px 'Schibsted Grotesk';color:#46534E;width:20px">{{ k.n }}</span><span style="font:600 16px 'Schibsted Grotesk';letter-spacing:.04em">{{ k.code }}</span></div>
+                  </sc-for>
+                </div>
+                <a href="#" sc-camel-on-click="{{ toT2 }}" style="font:600 16px 'Schibsted Grotesk'">Gå til klasseoverblik →</a>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isT2 }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:1120px;margin:0 auto;padding:{{ mainPad }};display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px"><h1 style="margin:0;font:700 36px 'Schibsted Grotesk';letter-spacing:-.03em">Klasseoverblik</h1><span style="font:500 17px 'Schibsted Grotesk';color:#46534E">8. klasse · 10 elever i gang</span></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+              <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
+                <div style="background:{{ s.bg }};color:{{ s.fg }};border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:4px">
+                  <span style="font:700 44px/1 'Schibsted Grotesk';letter-spacing:-.03em">{{ s.v }}</span>
+                  <span style="font:500 17px/1.35 'Schibsted Grotesk'">{{ s.l }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;background:#16201D;color:#F4F5F1;font:600 15px 'Schibsted Grotesk'"><span style="padding:12px 18px">Elevkode</span><span style="padding:12px 18px">Trin nået</span><span style="padding:12px 18px">Går budgettet op</span><span style="padding:12px 18px">Valgt case</span></div>
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+                <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;border-top:1px solid #ECEDE8;font:400 16px 'Schibsted Grotesk'"><span style="padding:11px 18px;font-weight:600;letter-spacing:.04em">{{ r.code }}</span><span style="padding:11px 18px">{{ r.trin }}</span><span style="padding:11px 18px;font-weight:700;color:{{ r.okC }}">{{ r.ok }}</span><span style="padding:11px 18px">{{ r.case }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:1200px;margin:0 auto;padding:{{ mainPad }};display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <h1 style="margin:0;font:700 {{ qSize }}/1.1 'Schibsted Grotesk';letter-spacing:-.03em">{{ c.gen }} budget</h1>
+              <span style="font:400 17px/1.5 'Schibsted Grotesk';color:#46534E">Tilføj, ret og slet budgetposter. Nøgletallene regnes med det samme.</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:{{ kpiCols }};gap:12px">
+              <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+                <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <span style="font:500 15px 'Schibsted Grotesk';color:#46534E">{{ k.l }}</span>
+                  <span style="font:700 30px/1.05 'Schibsted Grotesk';letter-spacing:-.03em;color:{{ k.vc }};white-space:nowrap">{{ k.v }}</span>
+                  <sc-if value="{{ k.hasPill }}" hint-placeholder-val="{{ false }}"><span style="align-self:flex-start;font:600 13px 'Schibsted Grotesk';color:{{ k.pc }};background:{{ k.pbg }};border-radius:999px;padding:3px 10px">{{ k.pill }}</span></sc-if>
+                  <span style="font:400 14px/1.4 'Schibsted Grotesk';color:#46534E;text-wrap:pretty">{{ k.note }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:grid;grid-template-columns:{{ bCols }};gap:18px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+                <sc-for list="{{ bGroups }}" as="g" hint-placeholder-count="5">
+                  <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:14px 18px;display:flex;flex-direction:column">
+                    <div style="display:flex;align-items:center;gap:10px;padding-bottom:8px"><span style="width:12px;height:12px;border-radius:4px;background:{{ g.c }}"></span><span style="flex:1;font:700 18px 'Schibsted Grotesk'">{{ g.title }}</span><span style="font:700 17px 'Schibsted Grotesk';white-space:nowrap">{{ g.sumT }}/md.</span></div>
+                    <sc-for list="{{ g.items }}" as="p" hint-placeholder-count="2">
+                      <div style="display:grid;grid-template-columns:minmax(0,1fr) 140px 40px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid #ECEDE8">
+                        <div style="display:flex;flex-direction:column;min-width:0">
+                          <input value="{{ p.name }}" sc-camel-on-change="{{ p.onName }}" style="border:0;background:transparent;font:500 17px 'Schibsted Grotesk';color:#16201D;padding:6px 0;outline-color:#1F5C4A;min-width:0">
+                          <sc-if value="{{ p.showMon }}" hint-placeholder-val="{{ false }}"><span style="font:400 13px 'Schibsted Grotesk';color:#46534E">{{ p.freqT }} · {{ p.monT }}/md.</span></sc-if>
+                        </div>
+                        <div style="display:flex;align-items:center;border:1px solid #DCE0DA;border-radius:10px;padding:0 10px;height:42px;background:#FFFFFF"><input type="number" value="{{ p.amt }}" sc-camel-on-change="{{ p.onAmt }}" style="width:100%;min-width:0;border:0;outline:none;font:600 17px 'Schibsted Grotesk';text-align:right;background:transparent;color:#16201D"><span style="font:400 14px 'Schibsted Grotesk';color:#46534E;margin-left:4px">kr.</span></div>
+                        <button sc-camel-on-click="{{ p.onDel }}" aria-label="Slet post" style="width:40px;height:40px;border:0;border-radius:10px;background:#F4F5F1;cursor:pointer;color:#46534E;font:500 22px/1 'Schibsted Grotesk'">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="position:sticky;top:0;display:flex;flex-direction:column;gap:14px">
+                <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                  <span style="font:700 19px 'Schibsted Grotesk'">Ny budgetpost</span>
+                  <input value="{{ nf.name }}" sc-camel-on-change="{{ onNfName }}" placeholder="Fx Fitness, Gave, Telefon" style="height:46px;box-sizing:border-box;border:1px solid #DCE0DA;border-radius:12px;padding:0 14px;font:500 17px 'Schibsted Grotesk';color:#16201D;outline-color:#1F5C4A">
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ nfCats }}" as="o" hint-placeholder-count="5">
+                      <button sc-camel-on-click="{{ o.onClick }}" style="height:36px;border:2px solid {{ o.bd }};background:{{ o.bg }};color:#16201D;border-radius:999px;padding:0 12px;font:600 14px 'Schibsted Grotesk';cursor:pointer;display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:3px;background:{{ o.c }}"></span>{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;gap:8px">
+                    <div style="flex:1;display:flex;align-items:center;border:1px solid #DCE0DA;border-radius:12px;padding:0 12px;height:46px"><input type="number" value="{{ nf.amt }}" sc-camel-on-change="{{ onNfAmt }}" placeholder="Beløb" style="width:100%;min-width:0;border:0;outline:none;font:600 17px 'Schibsted Grotesk';background:transparent;color:#16201D"><span style="font:400 14px 'Schibsted Grotesk';color:#46534E">kr.</span></div>
+                    <div style="display:flex;background:#F4F5F1;border-radius:12px;padding:3px;gap:2px">
+                      <sc-for list="{{ nfFreqs }}" as="o" hint-placeholder-count="3">
+                        <button sc-camel-on-click="{{ o.onClick }}" style="border:0;background:{{ o.bg }};color:{{ o.fg }};border-radius:9px;padding:0 10px;font:600 14px 'Schibsted Grotesk';cursor:pointer">{{ o.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <button sc-camel-on-click="{{ addPost }}" style="height:48px;border:0;border-radius:12px;background:{{ addBg }};color:{{ addFg }};font:600 17px 'Schibsted Grotesk';cursor:{{ addCursor }}">Tilføj post</button>
+                </div>
+                <div style="background:#FFFFFF;border:1px solid #DCE0DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;justify-content:space-between;font:700 17px 'Schibsted Grotesk'"><span>Hvor går pengene hen?</span><span style="white-space:nowrap">{{ bIncT }}</span></div>
+                  <div style="display:flex;height:20px;border-radius:10px;overflow:hidden;background:#ECEDE8">
+                    <sc-for list="{{ bBar }}" as="b" hint-placeholder-count="4"><div style="width:{{ b.w }};background:{{ b.c }};transition:width .3s"></div></sc-for>
+                  </div>
+                  <sc-for list="{{ bBar }}" as="b" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:10px;font:400 15px 'Schibsted Grotesk'"><span style="width:10px;height:10px;border-radius:3px;background:{{ b.c }}"></span><span style="flex:1;color:#46534E">{{ b.label }}</span><span style="font-weight:600">{{ b.pct }}</span></div>
+                  </sc-for>
+                  <button sc-camel-on-click="{{ resetPosts }}" style="align-self:flex-start;height:40px;border:1px solid #DCE0DA;background:#FFFFFF;border-radius:10px;padding:0 14px;font:600 14px 'Schibsted Grotesk';cursor:pointer;color:#16201D">Hent mine valg fra trinene igen</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+          <div style="position:sticky;bottom:16px;display:flex;justify-content:center;pointer-events:none"><span style="background:#16201D;color:#F4F5F1;border-radius:12px;padding:12px 18px;font:500 15px 'Schibsted Grotesk'">{{ toast }}</span></div>
+        </sc-if>
+      </div>
+
+      <div style="height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 {{ padX }};border-top:1px solid #DCE0DA;background:#FFFFFF;font:400 12px 'Schibsted Grotesk';color:#46534E"><span>Eksempeltal</span><span>Ingen data gemmes</span></div>
+    </div>
+  </div>
+
+  <div style="width:100%;max-width:1366px;display:flex;flex-direction:column;gap:6px;font:400 14px/1.5 'Schibsted Grotesk';color:#46534E">
+    <span style="font:600 14px 'Schibsted Grotesk';color:#16201D">Kun skitse</span>
+    <span>"Byg din egen" er ikke bygget. "Gem som PDF" og "Print" viser kun en besked. Enhver elevkode virker. Klasseoverblikket bruger eksempeldata. Intet gemmes, og en genindlæsning starter forfra. Mobil er vist for start, ét trin og opsummering.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="">
+class Component extends DCLogic {
+  base() {
+    return { screen: 'start', code: '', codeErr: false, caseId: null, step: 1, maxStep: 1, bolig: null,
+      faste: { forsikring: true, mobil: true, internet: true, transport: true, fag: true, stream: true },
+      mad: null, toj: null, buffer: 500, months: 12, scen: {}, factClosed: {}, reveal: 0, refl: {},
+      klassetrin: 8, antal: 24, codes: [], toast: null, posts: null, cFaste: [], cOps: [], dFaste: { name: '', amt: '' }, dOps: { name: '', amt: '' }, nf: { name: '', cat: 'hverdag', amt: '', freq: 'md' } };
+  }
+  state = { ...this.base(), device: 'desk', vw: 0 };
+  timers = [];
+  rootRef = React.createRef();
+  componentDidMount() {
+    this.onResize = () => this.forceUpdate();
+    this.lastW = -1;
+    this.poll = setInterval(() => { const w = document.documentElement.clientWidth; if (w !== this.lastW) { this.lastW = w; this.forceUpdate(); } }, 250);
+    window.addEventListener('resize', this.onResize);
+    if (window.ResizeObserver) { this.ro = new ResizeObserver(this.onResize); this.ro.observe(document.documentElement); }
+    this.onResize();
+    requestAnimationFrame(this.onResize);
+    this.timers.push(setTimeout(this.onResize, 100), setTimeout(this.onResize, 500));
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); if (this.ro) this.ro.disconnect(); clearInterval(this.poll); this.timers.forEach(clearTimeout); }
+
+  runReveal() {
+    this.timers.forEach(clearTimeout); this.timers = [];
+    this.setState({ reveal: 0 });
+    [1, 2, 3].forEach(i => this.timers.push(setTimeout(() => this.setState({ reveal: i }), 500 * i)));
+  }
+  go(n) {
+    this.setState(s => ({ screen: 'flow', step: n, maxStep: Math.max(s.maxStep, n) }));
+    if (n === 2 && this.state.reveal < 3) this.runReveal();
+  }
+  fill(n) {
+    const s = this.state, o = {};
+    if (!s.caseId) o.caseId = 'sara';
+    if (n >= 3) o.reveal = 3;
+    if (n > 3 && s.bolig == null) o.bolig = 4800;
+    if (n > 5) { if (!s.mad) o.mad = 2800; if (!s.toj) o.toj = 1500; }
+    return o;
+  }
+  showToast(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2600); }
+  makeCodes(trin, antal) {
+    const A = ['BLÅ', 'GUL', 'RØD', 'GRØN', 'LILLA', 'SORT', 'HVID', 'BRUN', 'GRÅ', 'LYS'];
+    const B = ['ORM', 'RÆV', 'UGLE', 'ULV', 'HARE', 'SÆL', 'MÅGE', 'LAKS', 'BJØRN', 'ODDER', 'MUS', 'HJORT'];
+    let seed = trin * 97 + antal;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    const out = ['BLÅ-ORM-47', 'GUL-RÆV-12'], set = new Set(out);
+    while (out.length < antal) {
+      const c = `${A[Math.floor(rnd() * A.length)]}-${B[Math.floor(rnd() * B.length)]}-${10 + Math.floor(rnd() * 90)}`;
+      if (!set.has(c)) { set.add(c); out.push(c); }
+    }
+    return out.slice(0, antal);
+  }
+
+  renderVals() {
+    const s = this.state, mob = s.device === 'mob';
+    const fmt = n => Math.round(Math.abs(n)).toLocaleString('da-DK');
+    const kr = n => (n < 0 ? '−' : '') + fmt(n) + ' kr.';
+    const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(n) + ' kr.';
+    const MONTHS = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december'];
+    const now = new Date();
+    const today = `${now.getDate()}. ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+
+    const CASES = [
+      { id: 'sara', name: 'Sara', gen: 'Saras', age: 20, job: 'Tømrerlærling', gross: 23000, tax: 7800, net: 15200, dream: 'Kørekort', dreamAmt: 18000, bg: '#FBF0D9', skin: '#E8B48A', hair: '#8A5F0F', shirt: '#1F5C4A' },
+      { id: 'jonas', name: 'Jonas', gen: 'Jonas’', age: 22, job: 'Social- og sundhedsassistent', gross: 30400, tax: 10600, net: 19800, dream: 'Rejse til Japan', dreamAmt: 25000, bg: '#E3EEE9', skin: '#C98B62', hair: '#16201D', shirt: '#86B8EE' },
+      { id: 'mira', name: 'Mira', gen: 'Miras', age: 21, job: 'Studerende på SU + fritidsjob', gross: 12000, tax: 2100, net: 9900, dream: 'Ny computer', dreamAmt: 8000, bg: '#E6EEF8', skin: '#F1C6A0', hair: '#A8412C', shirt: '#E4B758' }
+    ].map(c => ({ ...c, netT: kr(c.net), dreamT: kr(c.dreamAmt) }));
+    const c = CASES.find(x => x.id === s.caseId) || CASES[0];
+
+    const STEPS = [
+      { short: 'Fremtidsperson', q: 'Mød din fremtidsperson' },
+      { short: 'Indtægt', q: `Hvor mange penge får ${c.name} udbetalt?`, fact: 'Man kan kun bruge de penge, der kommer ind på kontoen. Skat og AM-bidrag trækkes fra, før lønnen bliver udbetalt.', refl: 'Hvor stor en del af lønnen gik til skat?' },
+      { short: 'Bolig', q: `Hvor skal ${c.name} bo?`, fact: 'Boligen er som regel den største faste udgift og svær at ændre hurtigt. Derfor vælger man den først.', refl: 'Hvad fik du for at betale mere?' },
+      { short: 'Faste udgifter', q: `Hvad betaler ${c.name} hver måned?`, fact: 'Faste udgifter kommer uanset hvad. Dem skal man kende, før man ved, hvad der er tilbage.', refl: `Hvilke kunne ${c.name} undvære?` },
+      { short: 'Mad og hverdag', q: `Hvordan vil ${c.name} leve i hverdagen?`, fact: 'Det, der er tilbage efter de faste udgifter, er rådighedsbeløbet. Det skal række til hverdagen, og det er det tal, banken kigger på.', refl: 'Hvad er et behov, og hvad er et ønske?' },
+      { short: 'Opsparing', q: `Hvordan når ${c.name} sin drøm?`, fact: 'Uforudsete udgifter kommer altid. Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.', refl: 'Kan det gå hurtigere?' },
+      { short: 'Går det op?', q: `Har ${c.name} penge nok?`, fact: 'Et budget, der ikke går op, bliver betalt med lån eller kreditkort, og det koster renter. Det er bedre at prioritere nu.', refl: 'Hvad valgte du at ændre?' },
+      { short: 'Hvad nu hvis?', q: 'Hvad sker der, hvis …?', fact: 'Livet ændrer sig. Et budget er en plan, der skal kunne tilpasses, ikke et regnestykke, man laver én gang.', refl: 'Hvilket scenarie rammer hårdest?' }
+    ];
+    const cur = STEPS[s.step - 1];
+
+    const IC = {
+      shield: 'M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z', phone: 'M8 3h8v18H8z M11 18h2',
+      wifi: 'M2 9a15 15 0 0 1 20 0 M5 13a10 10 0 0 1 14 0 M8.5 16.5a5 5 0 0 1 7 0 M12 20h.01',
+      bus: 'M5 4h14v13H5z M5 11h14 M8 20v-3 M16 20v-3', people: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M3 20c0-3 3-5 6-5s6 2 6 5 M17 11a3 3 0 1 0 0-6 M21 20c0-3-2-5-4-5',
+      play: 'M4 5h16v14H4z M10 9l5 3-5 3z', food: 'M4 11h16a8 8 0 0 1-16 0z M9 7c0-2 2-2 2-4 M14 7c0-2 2-2 2-4', shirt: 'M8 4l-5 3 2 4 3-1v10h8V10l3 1 2-4-5-3c-1 2-2 3-4 3s-3-1-4-3z'
+    };
+    const FASTE = [
+      ['forsikring', 'Forsikring', 150, IC.shield], ['mobil', 'Mobil', 129, IC.phone], ['internet', 'Internet', 199, IC.wifi],
+      ['transport', 'Transport', 400, IC.bus], ['fag', 'Fagforening og a-kasse', 650, IC.people], ['stream', 'Streaming', 99, IC.play]
+    ];
+    const BOLIG = [[3500, 'Værelse', 'Lejer et værelse hos en anden'], [4800, 'Delelejlighed', 'Deler en lejlighed med en ven'], [6900, '1-værelses', 'Egen lille lejlighed']];
+
+    const income = s.scen.job ? 11500 : c.net;
+    const boligBase = s.bolig || 0;
+    const boligV = Math.round(boligBase * (s.scen.rent ? 1.1 : 1) * (s.scen.together ? 0.5 : 1));
+    const cSum = l => l.reduce((a, p) => a + (+p.amt || 0), 0);
+    const fasteBase = FASTE.reduce((a, f) => a + (s.faste[f[0]] ? f[2] : 0), 0) + cSum(s.cFaste);
+    const fasteV = fasteBase + (s.scen.car ? 2100 : 0);
+    const hverdag = (s.mad || 0) + (s.toj || 0);
+    const dreamMonthly = Math.ceil(c.dreamAmt / s.months / 50) * 50;
+    const opsparing = s.maxStep >= 6 ? s.buffer + dreamMonthly + cSum(s.cOps) : 0;
+    const spend = boligV + fasteV + hverdag + opsparing;
+    const left = income - spend;
+    const leftBase = c.net - boligBase - fasteBase - hverdag - opsparing;
+    const dd = new Date(now.getFullYear(), now.getMonth() + s.months, 1);
+    const dreamDate = `${MONTHS[dd.getMonth()]} ${dd.getFullYear()}`;
+
+    const C = 2 * Math.PI * 80, tot = Math.max(income, spend);
+    let cum = 0;
+    const SEG = [['Bolig', boligV, '#1F5C4A'], ['Faste udgifter', fasteV, '#2E7A62'], ['Hverdag', hverdag, '#E4B758'], ['Opsparing', opsparing, '#86B8EE']];
+    const segs = SEG.map(([, v, col]) => { const len = tot ? v / tot * C : 0; const o = { c: col, dash: `${len} ${C}`, off: -cum }; cum += len; return o; });
+    const legend = SEG.map(([label, v, col]) => ({ label, c: col, amtT: kr(v) }));
+
+    const sel = on => ({ bd: on ? '#1F5C4A' : '#DCE0DA', bg: on ? '#F1F7F4' : '#FFFFFF', ckBd: on ? '#1F5C4A' : '#C9CEC7', ckBg: on ? '#1F5C4A' : '#FFFFFF', sel: on });
+
+    const canNext = s.step === 1 ? !!s.caseId : s.step === 2 ? s.reveal >= 3 : s.step === 3 ? s.bolig != null : s.step === 5 ? !!(s.mad && s.toj) : true;
+    const next = () => { if (!canNext) return; if (s.step === 8) this.setState({ screen: 'sum' }); else this.go(s.step + 1); };
+    const back = () => { if (s.step === 1) this.setState({ screen: 'start' }); else this.go(s.step - 1); };
+
+    const prog = STEPS.map((st, i) => {
+      const n = i + 1, done = n < s.step && n <= s.maxStep, isCur = n === s.step, reach = n <= s.maxStep;
+      return { label: st.short, mark: mob || done ? '' : String(n), check: !mob && done,
+        bg: isCur ? '#1F5C4A' : done ? '#E3EEE9' : '#FFFFFF', fg: isCur ? '#FFFFFF' : done ? '#1F5C4A' : '#46534E',
+        bd: isCur || done ? '#1F5C4A' : '#DCE0DA', line: n <= s.maxStep ? '#1F5C4A' : '#DCE0DA', lineDisp: n > 1 ? 'block' : 'none',
+        labelC: isCur ? '#16201D' : '#46534E', weight: isCur ? 700 : 500, cursor: reach ? 'pointer' : 'default',
+        onClick: () => { if (reach) this.go(n); } };
+    });
+
+    const scenDefs = [
+      ['rent', 'Huslejen stiger 10 %', -Math.round(boligBase * 0.1)],
+      ['job', `${c.name} mister jobbet (indtægt 11.500 kr.)`, 11500 - c.net],
+      ['together', 'Flytter sammen (husleje halveres)', Math.round(boligBase / 2)],
+      ['car', 'Køber brugt bil på lån (2.100 kr./md.)', -2100]
+    ];
+    const scenCards = scenDefs.map(([k, label, d]) => { const on = !!s.scen[k]; return { label, deltaT: signed(d), dc: d < 0 ? '#A8412C' : '#1F5C4A',
+      bd: on ? '#1F5C4A' : '#DCE0DA', bg: on ? '#F1F7F4' : '#FFFFFF', tg: on ? '#1F5C4A' : '#C9CEC7', knob: on ? '19px' : '3px',
+      onClick: () => this.setState(st => ({ scen: { ...st.scen, [k]: !st.scen[k] } })) }; });
+    const diff = left - leftBase, anyScen = Object.values(s.scen).some(Boolean);
+
+    const vw = document.documentElement.clientWidth || window.innerWidth || 1024;
+    const scale = Math.max(0.3, Math.min(1, (vw - 64) / (mob ? 390 : 1366)));
+    const fw = mob ? 390 : 1366, fh = mob ? 844 : 768;
+    const jumpList = [['start', 'A Start'], ['s1', 'B Trin 1'], ['s2', '2'], ['s3', '3'], ['s4', '4'], ['s5', '5'], ['s6', '6'], ['s7', '7'], ['s8', '8'], ['sum', 'D Opsummering'], ['t1', 'E1 Opret klasse'], ['t2', 'E2 Klasseoverblik'], ['budget', 'F Mit budget']];
+    const curJump = s.screen === 'flow' ? 's' + s.step : s.screen;
+    const jump = id => {
+      if (id === 'start' || id === 't1' || id === 't2') return this.setState({ screen: id });
+      if (id === 'budget') return this.setState(st => ({ ...this.fill(9), maxStep: 8, screen: 'budget' }));
+      if (id === 'sum') return this.setState(st => ({ ...this.fill(9), screen: 'sum', maxStep: 8 }));
+      const n = +id.slice(1);
+      this.setState(st => ({ ...this.fill(n), screen: 'flow', step: n, maxStep: Math.max(st.maxStep, n) }));
+      if (n === 2) this.runReveal();
+    };
+
+    const payRows = [
+      { label: 'Løn før skat', amt: kr(c.gross), bg: '#FFFFFF', bd: '#DCE0DA', fg: '#16201D' },
+      { label: 'Skat og AM-bidrag', amt: '−' + kr(c.tax), bg: '#FFFFFF', bd: '#DCE0DA', fg: '#A8412C' },
+      { label: 'Udbetalt', amt: kr(c.net), bg: '#1F5C4A', bd: '#1F5C4A', fg: '#FFFFFF' }
+    ].map((r, i) => ({ ...r, op: s.reveal > i ? 1 : 0, tf: s.reveal > i ? 'none' : 'translateY(10px)' }));
+
+    const ROWS = [['BLÅ-ORM-47', 'Færdig', true, 'Sara'], ['GUL-RÆV-12', 'Færdig', true, 'Jonas'], ['RØD-UGLE-33', 'Trin 7', false, 'Sara'], ['GRØN-ULV-58', 'Færdig', true, 'Mira'],
+      ['LILLA-HARE-21', 'Trin 5', null, 'Sara'], ['SORT-SÆL-90', 'Færdig', false, 'Mira'], ['HVID-MÅGE-14', 'Færdig', true, 'Sara'], ['BRUN-LAKS-66', 'Trin 3', null, 'Jonas'],
+      ['GRÅ-BJØRN-72', 'Færdig', true, 'Sara'], ['LYS-ODDER-29', 'Trin 8', true, 'Mira']];
+
+    const CATS = [['ind', 'Indtægt', '#16201D'], ['bolig', 'Bolig', '#1F5C4A'], ['faste', 'Faste udgifter', '#2E7A62'], ['hverdag', 'Hverdag', '#E4B758'], ['ops', 'Opsparing', '#86B8EE']];
+    const FREQ = { md: [1, 'pr. md.', 'md.'], kv: [3, 'pr. kvartal', 'kvt.'], aar: [12, 'pr. år', 'år'] };
+    let pid = 0;
+    const P = (cat, name, amt, freq = 'md') => ({ id: 's' + (pid++), cat, name, amt, freq });
+    const boligPick = BOLIG.find(b => b[0] === s.bolig) || BOLIG[1];
+    const seed = [P('ind', 'Løn, udbetalt', c.net), P('bolig', 'Husleje, ' + boligPick[1].toLowerCase(), boligPick[0]),
+      ...FASTE.filter(f => s.faste[f[0]]).map(f => f[0] === 'forsikring' ? P('faste', 'Forsikring', 1800, 'aar') : P('faste', f[1], f[2])),
+      P('hverdag', 'Mad', s.mad || 2800), P('hverdag', 'Tøj og fritid', s.toj || 1500),
+      ...s.cFaste.map(p => P('faste', p.name, p.amt)),
+      P('ops', 'Buffer', s.buffer), P('ops', c.dream, dreamMonthly), ...s.cOps.map(p => P('ops', p.name, p.amt))];
+    const posts = s.posts || seed;
+    const mon = p => (+p.amt || 0) / FREQ[p.freq][0];
+    const sumCat = k => posts.filter(p => p.cat === k).reduce((a, p) => a + mon(p), 0);
+    const bInc = sumCat('ind'), bBol = sumCat('bolig'), bFas = sumCat('faste'), bHv = sumCat('hverdag'), bOps = sumCat('ops');
+    const bLeft = bInc - bBol - bFas - bHv - bOps, bRaad = bInc - bBol - bFas;
+    const pct = (a, b) => b > 0 ? Math.round(a / b * 100) : 0;
+    const boligPct = pct(bBol, bInc), opsPct = pct(bOps, bInc);
+    const dreamPost = posts.find(p => p.cat === 'ops' && p.name === c.dream);
+    const dreamM = dreamPost ? mon(dreamPost) : 0;
+    const mToDream = dreamM > 0 ? Math.ceil(c.dreamAmt / dreamM) : null;
+    const ddB = mToDream ? new Date(now.getFullYear(), now.getMonth() + mToDream, 1) : null;
+    const LV = [['#1F5C4A', '#E3EEE9'], ['#8A5F0F', '#FBF0D9'], ['#A8412C', '#F6E4DF']];
+    const K = (l, v, note, lvl, pill, vc = '#16201D') => ({ l, v, note, vc, hasPill: lvl != null, pill, pc: lvl != null ? LV[lvl][0] : '', pbg: lvl != null ? LV[lvl][1] : '' });
+    const bl = boligPct <= 30 ? 0 : boligPct <= 40 ? 1 : 2, ol = opsPct >= 10 ? 0 : opsPct >= 5 ? 1 : 2;
+    const kpis = [
+      K('Tilbage pr. måned', signed(bLeft), 'Indtægt minus alle udgifter og opsparing.', bLeft >= 0 ? 0 : 2, bLeft >= 0 ? 'Går op' : 'Går ikke op', bLeft < 0 ? '#A8412C' : '#1F5C4A'),
+      K('Rådighed pr. dag', kr(bRaad / 30), `Rådighedsbeløb ${kr(bRaad)}/md. efter bolig og faste udgifter.`, null),
+      K('Boligandel', boligPct + ' %', 'Tommelfingerregel: højst 30 % af indtægten.', bl, ['Fint', 'Hold øje', 'For højt'][bl]),
+      K('Opsparingsrate', opsPct + ' %', 'Tommelfingerregel: mindst 10 % af indtægten.', ol, ['Fint', 'Lidt lavt', 'For lavt'][ol]),
+      K(c.dream + ' klar om', mToDream ? mToDream + ' mdr.' : '–', mToDream ? `${c.dreamT} · klar i ${MONTHS[ddB.getMonth()]} ${ddB.getFullYear()}` : `Tilføj en opsparingspost, der hedder "${c.dream}".`, null)
+    ];
+    const setPosts = fn => this.setState(st => ({ posts: fn(st.posts || seed) }));
+    const bGroups = CATS.map(([k, title, col]) => ({ title, c: col, sumT: kr(sumCat(k)),
+      items: posts.filter(p => p.cat === k).map(p => ({ name: p.name, amt: p.amt, showMon: p.freq !== 'md', freqT: kr(+p.amt || 0) + ' ' + FREQ[p.freq][1], monT: kr(mon(p)),
+        onName: e => { const v = e.target.value; setPosts(ps => ps.map(x => x.id === p.id ? { ...x, name: v } : x)); },
+        onAmt: e => { const v = e.target.value; setPosts(ps => ps.map(x => x.id === p.id ? { ...x, amt: v } : x)); },
+        onDel: () => setPosts(ps => ps.filter(x => x.id !== p.id)) })) }));
+    const spendB = bBol + bFas + bHv + bOps, totB = Math.max(bInc, spendB) || 1;
+    const bBar = CATS.slice(1).map(([k, label, col]) => { const v = sumCat(k); return { label, c: col, w: (v / totB * 100) + '%', pct: pct(v, bInc) + ' %' }; });
+    const nf = s.nf, canAdd = nf.name.trim() && +nf.amt > 0;
+    const setNf = patch => this.setState(st => ({ nf: { ...st.nf, ...patch } }));
+    const openBudget = () => this.setState(st => ({ screen: 'budget', posts: st.posts || seed }));
+    const cList = key => s[key].map((p, i) => ({ name: p.name, amtT: kr(+p.amt) + '/md.', onDel: () => this.setState(st => ({ [key]: st[key].filter((_, j) => j !== i) })) }));
+    const okF = s.dFaste.name.trim() && +s.dFaste.amt > 0, okO = s.dOps.name.trim() && +s.dOps.amt > 0;
+    const addTo = (key, dKey, ok) => () => { if (!ok) return; this.setState(st => ({ [key]: [...st[key], { name: st[dKey].name.trim(), amt: st[dKey].amt }], [dKey]: { name: '', amt: '' } })); };
+    return {
+      cFaste: cList('cFaste'), cOps: cList('cOps'), dFaste: s.dFaste, dOps: s.dOps,
+      onDFName: e => { const v = e.target.value; this.setState(st => ({ dFaste: { ...st.dFaste, name: v } })); },
+      onDFAmt: e => { const v = e.target.value; this.setState(st => ({ dFaste: { ...st.dFaste, amt: v } })); },
+      onDOName: e => { const v = e.target.value; this.setState(st => ({ dOps: { ...st.dOps, name: v } })); },
+      onDOAmt: e => { const v = e.target.value; this.setState(st => ({ dOps: { ...st.dOps, amt: v } })); },
+      addFaste: addTo('cFaste', 'dFaste', okF), addOps: addTo('cOps', 'dOps', okO),
+      addFBg: okF ? '#1F5C4A' : '#DCE0DA', addFFg: okF ? '#FFFFFF' : '#7C8682', addOBg: okO ? '#1F5C4A' : '#DCE0DA', addOFg: okO ? '#FFFFFF' : '#7C8682',
+      isB: s.screen === 'budget', kpis, bGroups, bBar, bIncT: kr(bInc) + '/md.', nf, openBudget,
+      kpiCols: mob ? 'repeat(2,minmax(0,1fr))' : 'repeat(5,minmax(0,1fr))', bCols: mob ? 'minmax(0,1fr)' : 'minmax(0,1.5fr) minmax(0,1fr)',
+      onNfName: e => setNf({ name: e.target.value }), onNfAmt: e => setNf({ amt: e.target.value }),
+      nfCats: CATS.map(([k, label, col]) => ({ label, c: col, bd: nf.cat === k ? '#1F5C4A' : '#DCE0DA', bg: nf.cat === k ? '#F1F7F4' : '#FFFFFF', onClick: () => setNf({ cat: k }) })),
+      nfFreqs: Object.entries(FREQ).map(([k, f]) => ({ label: f[2], bg: nf.freq === k ? '#FFFFFF' : 'transparent', fg: nf.freq === k ? '#16201D' : '#46534E', onClick: () => setNf({ freq: k }) })),
+      addPost: () => { if (!canAdd) return; setPosts(ps => [...ps, { id: 'n' + Date.now(), cat: nf.cat, name: nf.name.trim(), amt: nf.amt, freq: nf.freq }]); setNf({ name: '', amt: '' }); },
+      addBg: canAdd ? '#1F5C4A' : '#DCE0DA', addFg: canAdd ? '#FFFFFF' : '#7C8682', addCursor: canAdd ? 'pointer' : 'not-allowed',
+      resetPosts: () => this.setState({ posts: seed }),
+      jumps: jumpList.map(([id, label]) => { const on = id === curJump; return { label, bd: on ? '#16201D' : '#DCE0DA', bg: on ? '#16201D' : '#FFFFFF', fg: on ? '#FFFFFF' : '#16201D', onClick: () => jump(id) }; }),
+      devices: [['desk', 'Chromebook'], ['mob', 'Mobil']].map(([id, label]) => ({ label, bg: s.device === id ? '#1F5C4A' : 'transparent', fg: s.device === id ? '#FFFFFF' : '#16201D', onClick: () => this.setState({ device: id }) })),
+      wrapW: fw * scale + 'px', wrapH: fh * scale + 'px', frameW: fw + 'px', frameH: fh + 'px', scaleT: `scale(${scale})`, frameR: mob ? '36px' : '14px',
+      hdrH: mob ? '56px' : '60px', padX: mob ? '18px' : '40px', isMob: mob,
+      isStart: s.screen === 'start', isFlow: s.screen === 'flow', isSum: s.screen === 'sum', isT1: s.screen === 't1', isT2: s.screen === 't2',
+      isTeacher: s.screen === 't1' || s.screen === 't2', showCode: s.screen === 'flow' || s.screen === 'sum' || s.screen === 'budget',
+      codeShown: s.code.trim() || 'BLÅ-ORM-47', code: s.code, codeErr: s.codeErr, codeBd: s.codeErr ? '#A8412C' : '#DCE0DA',
+      onCode: e => this.setState({ code: e.target.value.toUpperCase(), codeErr: false }),
+      onStart: () => { if (!s.code.trim()) return this.setState({ codeErr: true }); this.go(1); },
+      onCodeKey: e => { if (e.key === 'Enter') { if (!s.code.trim()) this.setState({ codeErr: true }); else this.go(1); } },
+      toTeacher: e => { e.preventDefault(); this.setState({ screen: 't1' }); },
+      startH: mob ? '34px' : '48px', cases: CASES,
+      progPad: mob ? '14px 18px 10px' : '14px 40px', dotSize: mob ? '12px' : '28px', lineTop: mob ? '5px' : '13px', labelDisp: mob ? 'none' : 'block',
+      prog, step: s.step, cur, c,
+      cols: mob ? 'minmax(0,1fr)' : s.step === 1 ? 'minmax(0,1fr)' : 'minmax(0,3fr) minmax(0,2fr)', gap: mob ? '16px' : '40px',
+      mainPad: mob ? '18px' : '28px 40px', leftOrder: mob ? 2 : 1, meterOrder: mob ? 1 : 2, qSize: mob ? '26px' : '32px',
+      showMeter: s.step > 1, meterPad: mob ? '14px' : '22px', meterDir: mob ? 'row' : 'column', meterGap: mob ? '14px' : '18px',
+      donutPx: mob ? '120px' : '220px', cLabelSize: mob ? '12px' : '15px', cAmtSize: mob ? '16px' : '30px',
+      isS1: s.step === 1, isS2: s.step === 2, isS3: s.step === 3, isS4: s.step === 4, isS5: s.step === 5, isS6: s.step === 6, isS7: s.step === 7, isS8: s.step === 8,
+      caseCols: mob ? 'minmax(0,1fr)' : 'repeat(4,minmax(0,1fr))',
+      caseCards: CASES.map(x => ({ ...x, ...sel(s.caseId === x.id), onClick: () => this.setState({ caseId: x.id }) })),
+      payRows, revealDone: s.reveal >= 3,
+      boligOpts: BOLIG.map(([amt, label, sub]) => ({ label, sub, amtT: kr(amt), ...sel(s.bolig === amt), onClick: () => this.setState({ bolig: amt }) })),
+      fasteCols: mob ? 'minmax(0,1fr)' : 'repeat(2,minmax(0,1fr))', threeCols: mob ? 'minmax(0,1fr)' : 'repeat(3,minmax(0,1fr))',
+      fasteOpts: FASTE.map(([k, label, amt, icon]) => { const on = !!s.faste[k]; return { label, icon, amtT: kr(amt), amtC: on ? '#16201D' : '#9AA39E', ...sel(on), onClick: () => this.setState(st => ({ faste: { ...st.faste, [k]: !st.faste[k] } })) }; }),
+      fasteT: kr(fasteBase),
+      hverdagGroups: [
+        { title: 'Mad', icon: IC.food, key: 'mad', vals: [2000, 2800, 3800] },
+        { title: 'Tøj og fritid', icon: IC.shirt, key: 'toj', vals: [800, 1500, 2500] }
+      ].map(g => ({ ...g, opts: g.vals.map((v, i) => ({ label: ['Stramt', 'Normalt', 'Rummeligt'][i], amtT: kr(v), ...sel(s[g.key] === v), onClick: () => this.setState({ [g.key]: v }) })) })),
+      buffer: s.buffer, bufferT: kr(s.buffer), onBuffer: e => this.setState({ buffer: +e.target.value }),
+      months: s.months, onMonths: e => this.setState({ months: +e.target.value }), dreamMonthlyT: fmt(dreamMonthly) + ' kr.', dreamDate,
+      isNeg: left < 0, resultC: left < 0 ? '#A8412C' : '#1F5C4A', leftSigned: signed(left),
+      resultText: left < 0 ? `${c.name} bruger flere penge, end der kommer ind. Gå tilbage og vælg en billigere bolig eller en strammere hverdag.` : `Budgettet går op. ${c.name} har penge tilbage, når alt er betalt og der er sparet op.`,
+      toStep3: () => this.go(3),
+      scenCards, resetScen: () => this.setState({ scen: {} }),
+      showDiff: s.step === 8 && anyScen, diffT: signed(diff), diffC: diff < 0 ? '#A8412C' : '#1F5C4A', diffBg: diff < 0 ? '#F6E4DF' : '#E3EEE9',
+      hasFact: s.step > 1, factOpen: !s.factClosed[s.step], factLabel: s.factClosed[s.step] ? 'Vis' : 'Skjul',
+      toggleFact: () => this.setState(st => ({ factClosed: { ...st.factClosed, [st.step]: !st.factClosed[st.step] } })),
+      back, next, nextLabel: s.step === 8 ? 'Se opsummering' : 'Næste',
+      nextBg: canNext ? '#1F5C4A' : '#DCE0DA', nextFg: canNext ? '#FFFFFF' : '#7C8682', nextCursor: canNext ? 'pointer' : 'not-allowed',
+      segs, legend, incomeT: kr(income), leftT: kr(left), leftC: left < 0 ? '#A8412C' : '#1F5C4A',
+      today, sumCols: mob ? 'minmax(0,1fr)' : 'minmax(0,1fr) minmax(0,1.2fr)', sumDonut: mob ? '200px' : '240px',
+      reflFields: STEPS.slice(1).map((st, i) => ({ n: i + 1, q: st.refl, val: s.refl[i + 2] || '', onChange: e => { const v = e.target.value; this.setState(x => ({ refl: { ...x.refl, [i + 2]: v } })); } })),
+      onPdf: () => this.showToast('Kun skitse: PDF-download kommer senere.'),
+      restart: () => { this.timers.forEach(clearTimeout); this.setState({ ...this.base() }); },
+      noop: e => e.preventDefault(),
+      trinOpts: [7, 8, 9].map(t => ({ label: String(t), bd: s.klassetrin === t ? '#1F5C4A' : '#DCE0DA', bg: s.klassetrin === t ? '#1F5C4A' : '#FFFFFF', fg: s.klassetrin === t ? '#FFFFFF' : '#16201D', onClick: () => this.setState({ klassetrin: t }) })),
+      antal: s.antal, klassetrin: s.klassetrin,
+      antalMinus: () => this.setState(st => ({ antal: Math.max(1, st.antal - 1) })), antalPlus: () => this.setState(st => ({ antal: Math.min(40, st.antal + 1) })),
+      makeCodes: () => this.setState({ codes: this.makeCodes(s.klassetrin, s.antal) }),
+      hasCodes: s.codes.length > 0, codes: s.codes.map((code, i) => ({ n: i + 1, code })),
+      copyCodes: () => { try { navigator.clipboard.writeText(s.codes.join('\n')); } catch (e) {} this.showToast(`${s.codes.length} koder kopieret.`); },
+      printCodes: () => this.showToast('Kun skitse: print kommer senere.'),
+      toT2: e => { e.preventDefault(); this.setState({ screen: 't2' }); },
+      stats: [
+        { v: '60 %', l: 'valgte delelejlighed', bg: '#1F5C4A', fg: '#FFFFFF' },
+        { v: '6 af 8', l: 'færdige elever fik budgettet til at gå op', bg: '#FFFFFF', fg: '#16201D' },
+        { v: 'Sara', l: 'var den mest valgte case', bg: '#FBF0D9', fg: '#5E410A' }
+      ],
+      rows: ROWS.map(([code, trin, ok, cs]) => ({ code, trin, case: cs, ok: ok == null ? '–' : ok ? '✓' : '✗', okC: ok == null ? '#46534E' : ok ? '#1F5C4A' : '#A8412C' })),
+      hasToast: !!s.toast, toast: s.toast, rootRef: this.rootRef
+    };
+  }
+}
+</script>
+
+
+</body></html>
