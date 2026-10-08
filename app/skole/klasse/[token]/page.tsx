@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ClassOverview } from "@/components/skole/ClassOverview";
 import { Shell } from "@/components/skole/Shell";
 import s from "@/components/skole/skole.module.css";
-import { CLASS_DAYS } from "@/lib/skole";
 import { classOverview, readClass } from "@/lib/skole-store";
 
 export const metadata: Metadata = {
@@ -22,10 +21,17 @@ export default async function ClassPage({ params }: PageProps<"/skole/klasse/[to
         <div className={`${s.wrap} ${s.wrapNarrow}`}>
           <div className={s.card}>
             <span className={s.cardTitle}>Linket virker ikke</span>
-            <span className={s.note}>Klassen findes ikke længere, eller linket er ikke kopieret helt. En klasse slettes {CLASS_DAYS} dage efter, at den er oprettet.</span>
-            <Link className={`${s.btn} ${s.btnPrimary}`} href="/skole/laerer" style={{ alignSelf: "flex-start" }}>
-              Opret en ny klasse
-            </Link>
+            <span className={s.note}>
+              Klassen er udløbet eller slettet, linket er ikke kopieret helt, eller du har fået et nyt link på mail siden. Har du mistet linket, kan du få et nyt på mail.
+            </span>
+            <div className={s.actions}>
+              <Link className={`${s.btn} ${s.btnPrimary}`} href="/skole/laerer#mistet">
+                Få et nyt link
+              </Link>
+              <Link className={s.btn} href="/skole/laerer">
+                Opret en ny klasse
+              </Link>
+            </div>
           </div>
         </div>
       </Shell>

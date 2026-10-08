@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { emptyFlow, isCode, normalizeCode, seedPosts, type Flow } from "@/lib/skole";
+import { emptyFlow, isCode, normalizeCode, seedPosts, type Answers, type Flow } from "@/lib/skole";
 import { mainSiteUrl } from "@/lib/skole-host";
 import { FlowView } from "./FlowView";
 import { MyBudget } from "./MyBudget";
@@ -15,16 +15,6 @@ import { useToast } from "./useToast";
 type Screen = "start" | "flow" | "sum" | "budget";
 export type Update = (patch: Partial<Flow> | ((f: Flow) => Partial<Flow>)) => void;
 
-// The reflection answers stay in this browser only (free text may hold names).
-const answersKey = (code: string) => `budgetpro-skole:svar:${code}`;
-function loadAnswers(code: string): Record<number, string> {
-  try {
-    return JSON.parse(localStorage.getItem(answersKey(code)) ?? "{}") ?? {};
-  } catch {
-    return {};
-  }
-}
-
 export function StudentApp() {
   const [screen, setScreen] = useState<Screen>("start");
   const [code, setCode] = useState("");
@@ -33,7 +23,10 @@ export function StudentApp() {
   const [codeErr, setCodeErr] = useState<string | null>(null);
   const [flow, setFlow] = useState<Flow>(emptyFlow);
   const [reveal, setReveal] = useState(0);
-  const [refl, setRefl] = useState<Record<number, string>>({});
+  /** The reflection answers; saved with the code, so the teacher can read them. */
+  const [refl, setRefl] = useState<Answers>({});
+  /** When the code stops working (ISO). */
+  const [expires, setExpires] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, showToast] = useToast();
   // Read in an effect so the server render and the first browser render match.
@@ -56,22 +49,24 @@ export function StudentApp() {
     window.scrollTo(0, 0);
   }, [screen, flow.step]);
 
-  // Save the choices a moment after each change. keepalive lets the last save finish if the tab closes. It also
-  // runs once right after the code is opened, which marks the pupil as started in the teacher's table.
+  // Save the choices and answers a moment after each change. keepalive lets the last save finish if the tab closes.
+  // It also runs once right after the code is opened, which marks the pupil as started in the teacher's table.
   useEffect(() => {
     if (!opened) return;
     const timer = setTimeout(() => {
-      fetch("/api/skole/elev", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: opened, flow }), keepalive: true }).catch(() => {});
+      const body = JSON.stringify({ code: opened, flow, answers: refl });
+      fetch("/api/skole/elev", { method: "PUT", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
     }, 600);
     return () => clearTimeout(timer);
-  }, [opened, flow]);
+  }, [opened, flow, refl]);
 
-  const open = (c: string, f: Flow) => {
+  const open = (c: string, f: Flow, answers: Answers, until: string) => {
     setCode(c);
     setOpened(c);
     setFlow(f);
     setReveal(f.maxStep > 2 ? 3 : 0);
-    setRefl(loadAnswers(c));
+    setRefl(answers);
+    setExpires(until);
     setScreen(f.done ? "sum" : "flow");
   };
 
@@ -82,10 +77,10 @@ export function StudentApp() {
     setBusy(true);
     try {
       const r = await fetch("/api/skole/elev", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: c }) });
-      if (r.status === 404) return setCodeErr("Den kode kender vi ikke. Tjek, at den er skrevet rigtigt, eller spørg din lærer.");
+      if (r.status === 404) return setCodeErr("Den kode kender vi ikke, eller den er udløbet. Tjek, at den er skrevet rigtigt, eller spørg din lærer.");
       if (!r.ok) throw new Error(String(r.status));
-      const saved = (await r.json()) as { flow: Flow | null };
-      open(c, saved.flow ?? emptyFlow());
+      const saved = (await r.json()) as { flow: Flow | null; answers: Answers; expires: string };
+      open(c, saved.flow ?? emptyFlow(), saved.answers ?? {}, saved.expires);
     } catch {
       setCodeErr("Der er ingen forbindelse lige nu. Prøv igen om lidt.");
     } finally {
@@ -98,20 +93,10 @@ export function StudentApp() {
     setScreen("flow");
   };
 
-  const answer = (step: number, text: string) =>
-    setRefl((r) => {
-      const next = { ...r, [step]: text };
-      try {
-        localStorage.setItem(answersKey(code), JSON.stringify(next));
-      } catch {}
-      return next;
-    });
+  const answer = (step: number, text: string) => setRefl((r) => ({ ...r, [step]: text }));
 
   const restart = () => {
     if (!window.confirm("Vil du starte forfra? Dine valg og svar bliver slettet.")) return;
-    try {
-      localStorage.removeItem(answersKey(code));
-    } catch {}
     setFlow(emptyFlow());
     setReveal(0);
     setRefl({});
@@ -158,6 +143,7 @@ export function StudentApp() {
           code={code}
           flow={flow}
           refl={refl}
+          expires={expires}
           onRefl={answer}
           onBudget={() => {
             update((f) => ({ posts: f.posts ?? seedPosts(f) }));

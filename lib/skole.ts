@@ -342,8 +342,12 @@ export function randomCode(rnd: () => number = Math.random): string {
 /** Grades a class can be made for. */
 export const TRIN: readonly number[] = [7, 8, 9];
 export const MAX_PUPILS = 40;
-/** A class, its codes and the pupils' choices are deleted this many days after the class was made. */
-export const CLASS_DAYS = 90;
+/** How long a class lives, in days; the teacher picks one. Then the class, its codes and the pupils' work are deleted. */
+export const LIFETIMES: readonly number[] = [30, 60, 90];
+/** For classes made before the teacher could pick (and the default choice). */
+export const DEFAULT_DAYS = 90;
+/** Longest reflection answer. */
+export const MAX_ANSWER = 1000;
 
 const isNum = (x: unknown, lo: number, hi: number): x is number => typeof x === "number" && Number.isFinite(x) && x >= lo && x <= hi;
 const isInt = (x: unknown, lo: number, hi: number): x is number => Number.isInteger(x) && isNum(x, lo, hi);
@@ -401,6 +405,18 @@ export function sanitizeFlow(x: unknown): Flow | null {
   };
 }
 
+/** The reflection answers by step (2–8). Saved with the pupil's code, so the teacher can read them. */
+export type Answers = Record<number, string>;
+
+export function sanitizeAnswers(x: unknown): Answers {
+  const out: Answers = {};
+  for (let n = 2; n <= STEP_COUNT; n++) {
+    const a = text(field(x, String(n)), MAX_ANSWER);
+    if (a) out[n] = a;
+  }
+  return out;
+}
+
 /** One line of the teacher's table. */
 export interface PupilRow {
   code: string;
@@ -450,11 +466,58 @@ export function classStats(flows: (Flow | null)[]): ClassStats {
   };
 }
 
+/** One pupil as the teacher sees it: the choices in words and the reflection answers. */
+export interface PupilDetail extends PupilRow {
+  choices: { label: string; value: string }[];
+  answers: { q: string; a: string }[];
+}
+
+export function pupilDetail(code: string, f: Flow | null, answers: Answers): PupilDetail {
+  const row = pupilRow(code, f);
+  if (!f) return { ...row, choices: [], answers: [] };
+  const c = caseById(f.caseId);
+  const t = totals(f);
+  const choices: { label: string; value: string }[] = [];
+  const add = (label: string, value: string) => choices.push({ label, value });
+  const own = (l: Own[]) => l.map((o) => `${o.name} ${kr(o.amt)}`);
+  const level = (vals: readonly number[], v: number) => `${LEVELS[vals.indexOf(v)] ?? ""}, ${kr(v)}`;
+
+  if (f.caseId) add("Fremtidsperson", `${c.name}, ${c.age} år, ${c.job.toLowerCase()} – ${kr(c.net)} udbetalt`);
+  const home = BOLIG.find((b) => b.amt === f.bolig);
+  if (home) add("Bolig", `${home.label}, ${kr(home.amt)}`);
+  if (f.maxStep >= 4) {
+    const off = FASTE.filter((x) => !f.faste[x.key]).map((x) => x.label);
+    const parts = [`${kr(t.fasteBase)} i alt`];
+    if (off.length) parts.push(`fravalgt: ${off.join(", ")}`);
+    if (f.cFaste.length) parts.push(`egne: ${own(f.cFaste).join(", ")}`);
+    add("Faste udgifter", parts.join(" · "));
+  }
+  if (f.mad != null) add("Mad", level(HVERDAG[0].vals, f.mad));
+  if (f.toj != null) add("Tøj og fritid", level(HVERDAG[1].vals, f.toj));
+  if (f.maxStep >= 6) {
+    add("Opsparing", [`Buffer ${kr(f.buffer)}`, `${c.dream} ${kr(dreamMonthly(c, f.months))} (klar om ${f.months} mdr.)`, ...own(f.cOps)].join(" · "));
+  }
+  if (f.maxStep >= 7) add("Tilbage pr. måned", signedKr(t.leftBase));
+  if (f.maxStep >= 8) {
+    const on = scenarios(c, f.bolig ?? 0).filter((x) => f.scen[x.key]).map((x) => x.label);
+    add("Hvad nu hvis", on.length ? on.join(", ") : "Ingen slået til");
+  }
+  return {
+    ...row,
+    choices,
+    answers: steps(c)
+      .slice(1)
+      .map((st, i) => ({ q: st.refl ?? "", a: answers[i + 2] ?? "" })),
+  };
+}
+
 /** What the teacher's overview shows (lib/skole-store.ts builds it). */
 export interface ClassView {
   trin: number;
   created: string;
+  /** When the codes stop working and everything is deleted. */
   expires: string;
+  days: number;
   rows: PupilRow[];
   stats: ClassStats;
 }

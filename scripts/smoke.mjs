@@ -286,10 +286,18 @@ try {
     const t = await open();
     await t.goto(`${BASE}/skole/laerer`);
     for (let i = 0; i < 21; i++) await t.getByRole("button", { name: "Færre elever" }).click();
+    await t.getByRole("button", { name: "30 dage" }).click();
+    await t.getByRole("button", { name: "Lav elevkoder" }).click();
+    await t.getByText("Skriv en gyldig e-mail, fx navn@skole.dk.").waitFor();
+    check(true, "making a class asks for the teacher's e-mail");
+    await t.getByLabel("Din e-mail").fill("laerer@eksempel.dk");
     await t.getByRole("button", { name: "Lav elevkoder" }).click();
     const link = await t.getByLabel("Lærerlink").inputValue();
     const codes = await t.locator("[data-code]").allTextContents();
     check(codes.length === 3 && /\/klasse\/[0-9a-f]{10}\./.test(link), `teacher gets 3 codes and a link (${codes.join(", ")})`);
+    // No mail provider in development: the page says so and shows the link instead.
+    check((await t.getByText(/Vi har sendt linket|Mailen kunne ikke sendes/).count()) === 1, "the teacher is told whether the link was mailed");
+    check((await t.getByText(/Elevkoderne udløber den/).count()) === 1, "the codes' expiry date is shown");
 
     const p = await open();
     await enterCode(p, "BLÅ-ORM-09");
@@ -316,6 +324,7 @@ try {
     check((await p.getByText("Forskel").count()) === 1, "step 8: a scenario shows the difference");
     await p.getByRole("button", { name: "Se opsummering" }).click();
     await p.getByRole("heading", { name: "Saras budget" }).waitFor();
+    check((await p.getByText(/Din kode udløber den/).count()) === 1 && (await p.getByText(/Din lærer kan se dine svar/).count()) === 1, "the pupil sees the expiry date and that the teacher reads the answers");
     await p.getByLabel(/Hvor stor en del af lønnen gik til skat/).fill("En tredjedel");
     const [pdf] = await Promise.all([p.waitForEvent("download"), p.getByRole("button", { name: "Gem som PDF" }).click()]);
     check(pdf.suggestedFilename() === `budget-${codes[0]}.pdf`, `the summary downloads a PDF (${pdf.suggestedFilename()})`);
@@ -329,6 +338,11 @@ try {
     const row = t.getByRole("row", { name: new RegExp(codes[0]) });
     check((await row.getByText("Færdig").count()) === 1 && (await row.getByText("Sara").count()) === 1, "the overview shows the pupil as finished with Sara");
     check((await t.getByText("1 af 3 elever i gang").count()) === 1, "the overview counts the pupils who started");
+    check((await t.getByText(/Elevkoderne udløber den .* \(om 30 dage\)/).count()) === 1, "the overview shows when the codes expire");
+    await row.getByRole("button", { name: codes[0] }).click();
+    const detail = t.getByRole("region", { name: `Elev ${codes[0]}` });
+    await detail.getByText("En tredjedel").waitFor();
+    check((await detail.getByText("Delelejlighed, 4.800 kr.").count()) === 1, "the teacher sees the pupil's choices and answers");
     await t.screenshot({ path: `${OUT}/skole-klasse.png`, fullPage: true });
 
     // The same code on a new page goes on at the summary; the answer stayed in this browser.
@@ -349,6 +363,11 @@ try {
     await enterCode(p, codes[0]);
     await p.getByText(/Den kode kender vi ikke/).waitFor();
     check(true, "deleting the class ends its codes");
+    await p.goto(`${BASE}/skole/laerer`);
+    await p.getByLabel("E-mail til nye links").fill("laerer@eksempel.dk");
+    await p.getByRole("button", { name: "Send nye links" }).click();
+    await p.getByText("Hvis der er klasser på den e-mail, har vi sendt nye links nu.").waitFor();
+    check(true, "a teacher who lost the link can ask for new ones");
 
     const sub = BASE.replace("//localhost", "//skole.localhost");
     if (sub !== BASE) {

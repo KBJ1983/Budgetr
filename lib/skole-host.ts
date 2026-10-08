@@ -26,6 +26,17 @@ export const skoleBase = (host: string) => (isSkoleHost(host) ? "" : "/skole");
 /** The address pupils type, for the printed codes: "skole.budgetpro.dk" or "budgetpro.dk/skole". */
 export const pupilAddress = (host: string) => `${host}${skoleBase(host)}`;
 
+/**
+ * The address of the request as the visitor sees it, for links in mails: "https://skole.budgetpro.dk" or
+ * "http://localhost:3200". Behind Vercel the public host and scheme come in the x-forwarded-* headers.
+ */
+export function requestOrigin(headers: { get(name: string): string | null }, url: string): { origin: string; host: string } {
+  const u = new URL(url);
+  const host = headers.get("x-forwarded-host") ?? headers.get("host") ?? u.host;
+  const proto = headers.get("x-forwarded-proto") ?? u.protocol.replace(":", "");
+  return { origin: `${proto}://${host}`, host };
+}
+
 /** The main site, for "Prøv budgetpro": the same domain without "skole.", or "/" when already on it. */
 export function mainSiteUrl(loc: { protocol: string; host: string }): string {
   return isSkoleHost(loc.host) ? `${loc.protocol}//${loc.host.slice("skole.".length)}/` : "/";

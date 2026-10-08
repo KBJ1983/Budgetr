@@ -7,6 +7,8 @@ interface Props {
   code: string;
   flow: Flow;
   refl: Record<number, string>;
+  /** When the code stops working (ISO). */
+  expires: string | null;
   onRefl: (step: number, text: string) => void;
   onBudget: () => void;
   onPdf: () => void;
@@ -15,7 +17,7 @@ interface Props {
   mainSite: string;
 }
 
-export function Summary({ code, flow, refl, onRefl, onBudget, onPdf, onRestart, mainSite }: Props) {
+export function Summary({ code, flow, refl, expires, onRefl, onBudget, onPdf, onRestart, mainSite }: Props) {
   const c = caseById(flow.caseId);
   const t = totals(flow);
   const now = new Date();
@@ -26,6 +28,7 @@ export function Summary({ code, flow, refl, onRefl, onBudget, onPdf, onRestart, 
         <span className={s.sub}>
           Elevkode <b>{code}</b> · {dayMonthYear(now)}
         </span>
+        {expires && <span className={s.small}>Din kode udløber den {dayMonthYear(new Date(expires))}. Derefter bliver dine valg og svar slettet.</span>}
       </div>
       <div className={s.sumGrid}>
         <div className={`${s.card} ${s.sumCard}`}>
@@ -40,6 +43,7 @@ export function Summary({ code, flow, refl, onRefl, onBudget, onPdf, onRestart, 
         </div>
         <div className={s.stack}>
           <h2 className={s.h2}>Dine svar</h2>
+          <p className={s.warn}>Din lærer kan se dine svar. Skriv ikke navne på dig selv eller andre.</p>
           {steps(c)
             .slice(1)
             .map((st, i) => (
@@ -50,7 +54,6 @@ export function Summary({ code, flow, refl, onRefl, onBudget, onPdf, onRestart, 
                 <textarea className={s.textarea} rows={2} maxLength={1000} placeholder="Skriv dit svar" value={refl[i + 2] ?? ""} onChange={(e) => onRefl(i + 2, e.target.value)} />
               </label>
             ))}
-          <span className={s.small}>Dine svar bliver kun gemt på denne computer.</span>
         </div>
       </div>
       <div className={s.actions}>

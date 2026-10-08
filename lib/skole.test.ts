@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  boligLevel, budgetNumbers, canNext, caseById, classStats, pupilRow, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, randomCode, scenarios, seedPosts,
+  boligLevel, budgetNumbers, canNext, caseById, classStats, pupilDetail, pupilRow, sanitizeAnswers, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, randomCode, scenarios, seedPosts,
   signedKr, steps, totals, type Flow,
 } from "./skole";
 
@@ -197,6 +197,31 @@ describe("class overview", () => {
     expect(pupilRow("BLÅ-ORM-47", null)).toEqual({ code: "BLÅ-ORM-47", status: "Ikke startet", ok: null, caseName: null });
     expect(pupilRow("BLÅ-ORM-47", sara({ step: 4, maxStep: 5 }))).toEqual({ code: "BLÅ-ORM-47", status: "Trin 5", ok: null, caseName: "Sara" });
     expect(pupilRow("BLÅ-ORM-47", done({}))).toEqual({ code: "BLÅ-ORM-47", status: "Færdig", ok: true, caseName: "Sara" });
+  });
+
+  it("keeps only the reflection answers, trimmed and bounded", () => {
+    expect(sanitizeAnswers({ 1: "nej", 2: "  En tredjedel ", 5: "", 8: "x".repeat(1200), 9: "nej", hack: "x" })).toEqual({ 2: "En tredjedel", 8: "x".repeat(1000) });
+    expect(sanitizeAnswers(null)).toEqual({});
+  });
+
+  it("shows the teacher a pupil's choices in words and the answers", () => {
+    const f = done({ faste: { ...emptyFlow().faste, stream: false }, cFaste: [{ name: "Fitness", amt: 250 }], scen: { rent: true } });
+    const d = pupilDetail("BLÅ-ORM-47", f, { 2: "En tredjedel" });
+    expect(d).toMatchObject({ code: "BLÅ-ORM-47", status: "Færdig", caseName: "Sara" });
+    expect(d.choices).toEqual([
+      { label: "Fremtidsperson", value: "Sara, 20 år, tømrerlærling – 15.200 kr. udbetalt" },
+      { label: "Bolig", value: "Delelejlighed, 4.800 kr." },
+      { label: "Faste udgifter", value: "1.778 kr. i alt · fravalgt: Streaming · egne: Fitness 250 kr." },
+      { label: "Mad", value: "Normalt, 2.800 kr." },
+      { label: "Tøj og fritid", value: "Normalt, 1.500 kr." },
+      { label: "Opsparing", value: "Buffer 500 kr. · Kørekort 1.500 kr. (klar om 12 mdr.)" },
+      { label: "Tilbage pr. måned", value: "+2.322 kr." },
+      { label: "Hvad nu hvis", value: "Huslejen stiger 10 %" },
+    ]);
+    expect(d.answers).toHaveLength(7);
+    expect(d.answers[0]).toEqual({ q: "Hvor stor en del af lønnen gik til skat?", a: "En tredjedel" });
+    expect(d.answers[1]?.a).toBe("");
+    expect(pupilDetail("BLÅ-ORM-47", null, {})).toMatchObject({ status: "Ikke startet", choices: [], answers: [] });
   });
 
   it("sums up the class", () => {
