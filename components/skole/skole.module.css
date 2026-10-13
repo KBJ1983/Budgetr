@@ -243,8 +243,8 @@
 /* Teacher */
 .createForm { gap: 18px; padding: 22px; }
 .createRow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 24px; }
-.trinRow { display: flex; gap: 6px; }
-.daysBtn { width: auto; padding: 0 12px; font-size: 16px; white-space: nowrap; }
+.trinRow { display: flex; flex-wrap: wrap; gap: 6px; }
+.trinBtn.daysBtn { width: auto; min-width: 64px; padding: 0 12px; font-size: 16px; white-space: nowrap; }
 .expiry { margin: 0; font-weight: 600; font-size: 17px; line-height: 1.5; color: var(--gold-ink-2); background: var(--gold-bg); border-left: 4px solid var(--gold); border-radius: 12px; padding: 12px 16px; }
 .codeUntil { margin-left: auto; font-size: 12px; color: var(--ink-2); }
 .linkBtn { all: unset; cursor: pointer; font-weight: 600; letter-spacing: 0.04em; color: var(--pine); text-decoration: underline; text-underline-offset: 3px; }
