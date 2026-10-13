@@ -386,6 +386,29 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
     if (window.matchMedia("(prefers-color-scheme: light)").matches) setTheme("light");
   }, []);
 
+  // New henvendelser show up without a reload: fetch again when the tab is back in view, and once a minute.
+  const editingRef = useRef(false);
+  editingRef.current = editing !== null;
+  useEffect(() => {
+    const refresh = async () => {
+      if (document.hidden || editingRef.current) return;
+      try {
+        const r = await fetch("/api/owner", { cache: "no-store" });
+        if (r.ok && !editingRef.current) setData((await r.json()) as OwnerData);
+      } catch {
+        // Offline for a moment; the next try catches up.
+      }
+    };
+    const timer = window.setInterval(refresh, 60_000);
+    document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
+
   const send = async (change: object) => {
     setError("");
     try {
