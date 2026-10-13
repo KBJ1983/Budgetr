@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "@/components/landing/landing.module.css";
-import { AnimationPlaceholder } from "@/components/AnimationPlaceholder";
+import { Film } from "@/components/Film";
 import { CheckList } from "@/components/landing/CheckList";
 import { Features } from "@/components/landing/Features";
 import { InPageLinks } from "@/components/landing/InPageLinks";
@@ -121,7 +121,7 @@ function Explainer() {
           </div>
           <p className={styles.headBody}>Der er intet at installere. I giver adgangen, resten klarer kunden og budgetpro.</p>
         </div>
-        <AnimationPlaceholder label="Animation om budgetpro Erhverv kommer her" />
+        <Film name="erhverv" label="Film: sådan giver I jeres kunder budgetpro" />
         <ol className={e.beats} data-reveal-group>
           {BEATS.map((b, i) => (
             <li key={b.title} className={e.beat}>

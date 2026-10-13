@@ -35,7 +35,7 @@ export function siteLinks(loc: { protocol: string; host: string }): Record<Site,
 
 export type ErhvervRoute = { kind: "pass" } | { kind: "rewrite"; path: string } | { kind: "main" };
 
-const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|js|mjs|css|map|json|txt|xml|woff2?|pdf|webmanifest)$/i;
+const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|js|mjs|css|map|json|txt|xml|woff2?|pdf|webmanifest|mp4)$/i;
 
 /**
  * What to do with a request path on erhverv.<domain>: "/" is the Erhverv page, its files and API pass, and everything

@@ -10,7 +10,7 @@ import { SiteHeader } from "@/components/landing/SiteHeader";
 
 /**
  * Landing page, layout from docs/design/forside-v2.html ("Forside v2"): header and hero share a dark rounded card,
- * followed by a placeholder for a short explainer animation (components/AnimationPlaceholder),
+ * followed by a short explainer film (components/Film, made from video/privat.html),
  * a photo banner and Tryghed follow "Sådan virker det", and the product is shown with real screenshots (`pnpm shots`), not mock-ups.
  * Funktioner is a dark band between the light sections: a sideways tour of the features (opsparing and scenarier with
  * photos, beskeder and påmindelser included) and the full list to unfold. A short Erhverv teaser sits before the final call

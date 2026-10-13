@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AnimationPlaceholder } from "@/components/AnimationPlaceholder";
+import { Film } from "@/components/Film";
 import { Wordmark } from "@/components/Logo";
 import { SiteSwitch } from "@/components/SiteSwitch";
 import l from "./skoleLanding.module.css";
@@ -8,7 +8,7 @@ import l from "./skoleLanding.module.css";
  * budgetpro Skole's front page (skole.<domain>/, design "Skole forside", Oct 2026). A server component: `base` is the
  * school pages' prefix as the visitor sees it ("" on the subdomain, "/skole" on the main site), `mainSite` the main
  * site's address. The laptop and phone show real screenshots (`pnpm shots:skole`); the hero card is a drawn miniature.
- * Under the hero sits a placeholder for a short explainer animation (components/AnimationPlaceholder).
+ * Under the hero sits a short explainer film (components/Film, made from video/skole.html).
  */
 export function SkoleLanding({ base, mainSite }: { base: string; mainSite: string }) {
   return (
@@ -80,12 +80,12 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
             <div className={l.col}>
               <span className={l.kicker}>Se forløbet</span>
               <h2 id="film-h" className={l.h2}>
-                budgetpro Skole på et minut.
+                budgetpro Skole på under et minut.
               </h2>
             </div>
             <p className={l.body}>Se, hvad eleverne laver i forløbet, og hvad du som lærer kan følge med i undervejs.</p>
           </div>
-          <AnimationPlaceholder label="Animation om budgetpro Skole kommer her" />
+          <Film name="skole" label="Film: budgetpro Skole for elever og lærere" />
         </div>
       </section>
 

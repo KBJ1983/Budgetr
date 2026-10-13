@@ -21,7 +21,7 @@ describe("school subdomain", () => {
   });
 
   it("lets the school's own paths and the site's files through", () => {
-    for (const p of ["/skole", "/skole/laerer", "/_next/static/chunks/x.js", "/api/skole/elev", "/api/skole/klasse/abc", "/icon.svg", "/robots.txt", "/budgetr-app/vendor/jspdf.umd.min.js"]) {
+    for (const p of ["/skole", "/skole/laerer", "/_next/static/chunks/x.js", "/api/skole/elev", "/api/skole/klasse/abc", "/icon.svg", "/robots.txt", "/budgetr-app/vendor/jspdf.umd.min.js", "/video/budgetpro-skole.mp4"]) {
       expect(skoleRoute(p)).toEqual({ kind: "pass" });
     }
   });

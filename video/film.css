@@ -27,7 +27,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .pill { display: inline-flex; align-items: center; height: 1.6em; padding: 0 .6em; border-radius: 999px; background: var(--gold); color: #2a1d05; font-weight: 600; }
 
 /* Dark card (intro and end) */
-.darkcard { position: absolute; inset: 24px; border-radius: 40px; background: var(--dark); color: var(--dark-text); overflow: hidden; }
+.darkcard { position: absolute; inset: 0; background: var(--dark); color: var(--dark-text); overflow: hidden; }
 .darkcard .ring { position: absolute; border-radius: 50%; border: 1px solid var(--dark-rule); }
 .end { background: var(--paper); }
 .end .darkcard { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }

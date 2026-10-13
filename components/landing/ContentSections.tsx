@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
-import { AnimationPlaceholder } from "@/components/AnimationPlaceholder";
+import { Film } from "@/components/Film";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { ShotFrame, ThemeShot } from "./Shots";
@@ -16,12 +16,12 @@ export function Explainer() {
           <div className={styles.sectionHeadTitle}>
             <span className={styles.eyebrow}>Hvad er budgetpro</span>
             <h2 id="film-title" className={styles.h2}>
-              budgetpro på et minut.
+              budgetpro på under et minut.
             </h2>
           </div>
           <p className={styles.headBody}>Se, hvordan budgettet bliver til, og hvad du får ud af det hver måned.</p>
         </div>
-        <AnimationPlaceholder label="Animation om budgetpro kommer her" />
+        <Film name="privat" label="Film: hvad du får med budgetpro" />
       </div>
     </section>
   );

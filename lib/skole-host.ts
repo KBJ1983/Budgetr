@@ -10,7 +10,7 @@ export const isSkoleHost = (host: string) => host.toLowerCase().startsWith("skol
 export type SkoleRoute = { kind: "pass" } | { kind: "block" } | { kind: "rewrite"; path: string };
 
 // Files from public/ and Next's own; a teacher token ("<hex>.<24 chars>") never ends like one of these.
-const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|js|mjs|css|map|json|txt|xml|woff2?|pdf|webmanifest)$/i;
+const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|js|mjs|css|map|json|txt|xml|woff2?|pdf|webmanifest|mp4)$/i;
 
 /** What to do with a request path on the school host. */
 export function skoleRoute(pathname: string): SkoleRoute {

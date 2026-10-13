@@ -43,7 +43,7 @@ describe("site switch", () => {
 
   it("routes the business subdomain", () => {
     expect(erhvervRoute("/")).toEqual({ kind: "rewrite", path: "/erhverv" });
-    for (const p of ["/erhverv", "/_next/static/x.js", "/api/erhverv/kontakt", "/icon.svg", "/landing/foto-sofa.jpg"]) {
+    for (const p of ["/erhverv", "/_next/static/x.js", "/api/erhverv/kontakt", "/icon.svg", "/landing/foto-sofa.jpg", "/video/budgetpro-erhverv.mp4"]) {
       expect(erhvervRoute(p)).toEqual({ kind: "pass" });
     }
     for (const p of ["/login", "/opret", "/aftale", "/app", "/api/budget/kbj", "/budgetr-app/index.html", "/private/kbj.legacy.json"]) {
