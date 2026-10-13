@@ -360,6 +360,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
   };
   const waiting = data.inquiries.filter((x) => !x.doneAt);
   const handled = data.inquiries.filter((x) => x.doneAt);
+  const newest = waiting[0];
 
   const q = query.trim().toLowerCase();
   const customers = data.customers.filter(
@@ -400,6 +401,10 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           </Link>
           <div className="bx-top-right">
             <span className="bx-muted">Ejeroverblik · {date(data.today)}</span>
+            <a href="#henvendelser" className={`bx-btn ow-inq-link${waiting.length ? " is-waiting" : ""}`}>
+              Henvendelser
+              {waiting.length ? <span className="ow-badge">{num(waiting.length)}</span> : null}
+            </a>
             <button type="button" className="bx-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
               {theme === "dark" ? "Lyst tema" : "Mørkt tema"}
             </button>
@@ -429,6 +434,18 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           </div>
         ) : null}
 
+        {newest ? (
+          <a href="#henvendelser" className="ow-alert">
+            <span className="ow-badge">{num(waiting.length)}</span>
+            <span>
+              <b>{waiting.length === 1 ? "Der ligger en ny kundehenvendelse" : `Der ligger ${num(waiting.length)} nye kundehenvendelser`}</b>
+              <small>
+                Seneste fra {newest.company}, {time(newest.at)}. Se {waiting.length === 1 ? "den" : "dem"} under Henvendelser.
+              </small>
+            </span>
+          </a>
+        ) : null}
+
         <div className="ow-hero">
           <p>
             budgetpro har <b>{num(data.users.logins)} {data.users.logins === 1 ? "bruger" : "brugere"}</b>, og{" "}
@@ -436,13 +453,6 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             månedlige omsætning er <b className="pos">{kr(data.mrr)}</b>. I {data.nextMonth} venter <b>{kr(data.next.revenue)}</b> ind og{" "}
             <b>{kr(data.next.expenses)}</b> ud, så resultatet bliver <b className={result < 0 ? "neg" : "pos"}>{kr(result)}</b>.
           </p>
-          {waiting.length ? (
-            <small className="ow-hbar">
-              <a href="#henvendelser">
-                {num(waiting.length)} {waiting.length === 1 ? "henvendelse venter" : "henvendelser venter"} på svar
-              </a>
-            </small>
-          ) : null}
           {watch.length ? (
             <small className="ow-hbar">
               Hold øje med {data.nextMonth}: {watch.join(" og ")}.
@@ -450,10 +460,12 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           ) : null}
         </div>
 
-        {data.inquiries.length ? (
-          <section className="bx-section" id="henvendelser">
+        <section className={`bx-section${waiting.length ? " ow-inq-section is-waiting" : ""}`} id="henvendelser">
             <div className="bx-section-head">
-              <h2>Henvendelser</h2>
+              <h2>
+                Henvendelser
+                {waiting.length ? <span className="ow-badge">{num(waiting.length)} venter</span> : null}
+              </h2>
               <span className="bx-muted">Fra formularen på Erhverv. De venter her, til du har oprettet en aftale eller markeret dem som klaret.</span>
             </div>
             {waiting.length ? (
@@ -468,7 +480,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                 ))}
               </div>
             ) : (
-              <div className="bx-empty">Ingen henvendelser venter.</div>
+              <div className="bx-empty">Ingen henvendelser venter. Nye fra prisformularen på Erhverv kommer her.</div>
             )}
             {handled.length ? (
               <details className="ow-fold ow-inq-done">
@@ -483,7 +495,6 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
               </details>
             ) : null}
           </section>
-        ) : null}
 
         <section className="bx-section">
           <div className="bx-section-head">

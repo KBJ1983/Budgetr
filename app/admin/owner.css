@@ -43,6 +43,81 @@
 }
 
 /* Henvendelser from the Erhverv form */
+.ow-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--warn);
+  color: var(--warn-bg);
+  font: 600 12px var(--font-mono);
+  vertical-align: middle;
+}
+.ow-inq-link {
+  gap: 8px;
+  text-decoration: none;
+}
+.ow-inq-link.is-waiting {
+  border-color: var(--warn-rule);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-weight: 600;
+}
+.ow-alert {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--warn-rule);
+  border-left: 5px solid var(--warn);
+  background: var(--warn-bg);
+  color: var(--warn);
+  text-decoration: none;
+}
+.ow-alert b,
+.ow-alert small {
+  color: var(--warn);
+}
+.ow-alert .ow-badge {
+  min-width: 34px;
+  height: 34px;
+  font-size: 16px;
+  flex: none;
+}
+.ow-alert b {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+}
+.ow-alert small {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.ow-alert:hover b {
+  text-decoration: underline;
+}
+.ow-inq-section.is-waiting > .bx-section-head {
+  border-color: var(--warn-rule);
+  background: var(--warn-bg);
+}
+.ow .bx-section-head h2 .ow-badge {
+  margin-left: 10px;
+  font-family: inherit;
+  font-size: 13px;
+}
+.ow-inq-section.is-waiting .ow-inqs > .ow-inq {
+  border-left: 4px solid var(--warn);
+}
+#henvendelser {
+  scroll-margin-top: 80px;
+}
 .ow-inqs {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
