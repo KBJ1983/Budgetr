@@ -13,6 +13,7 @@ describe("school subdomain", () => {
   it("serves the school pages from the root", () => {
     expect(skoleRoute("/")).toEqual({ kind: "rewrite", path: "/skole" });
     expect(skoleRoute("/laerer")).toEqual({ kind: "rewrite", path: "/skole/laerer" });
+    expect(skoleRoute("/elev")).toEqual({ kind: "rewrite", path: "/skole/elev" });
     expect(skoleRoute("/klasse/0123456789.abcdefghijklmnopqrstuvwx")).toEqual({ kind: "rewrite", path: "/skole/klasse/0123456789.abcdefghijklmnopqrstuvwx" });
     // Not a school page: rewritten too, so it ends as the school's 404 instead of the main site's page.
     expect(skoleRoute("/app")).toEqual({ kind: "rewrite", path: "/skole/app" });
@@ -34,8 +35,8 @@ describe("school subdomain", () => {
   it("gives the addresses as the visitor sees them", () => {
     expect(skoleBase("skole.budgetpro.dk")).toBe("");
     expect(skoleBase("localhost:3200")).toBe("/skole");
-    expect(pupilAddress("skole.budgetpro.dk")).toBe("skole.budgetpro.dk");
-    expect(pupilAddress("localhost:3200")).toBe("localhost:3200/skole");
+    expect(pupilAddress("skole.budgetpro.dk")).toBe("skole.budgetpro.dk/elev");
+    expect(pupilAddress("localhost:3200")).toBe("localhost:3200/skole/elev");
     expect(mainSiteUrl({ protocol: "https:", host: "skole.budgetpro.dk" })).toBe("https://budgetpro.dk/");
     expect(mainSiteUrl({ protocol: "http:", host: "skole.localhost:3200" })).toBe("http://localhost:3200/");
     expect(mainSiteUrl({ protocol: "http:", host: "localhost:3200" })).toBe("/");

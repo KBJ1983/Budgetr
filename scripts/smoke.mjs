@@ -279,7 +279,7 @@ try {
       return pg;
     };
     const enterCode = async (pg, code) => {
-      await pg.goto(`${BASE}/skole`);
+      await pg.goto(`${BASE}/skole/elev`);
       await pg.getByLabel("Din elevkode").fill(code);
       await pg.getByRole("button", { name: "Start" }).click();
     };
@@ -367,7 +367,7 @@ try {
     await enterCode(p2, codes[0]);
     await p2.getByRole("heading", { name: "Saras budget" }).waitFor();
     check((await p2.getByLabel(/Hvor stor en del af lønnen gik til skat/).inputValue()) === "En tredjedel", "a pupil can go on later, with their answers");
-    for (const where of ["summary", "/skole", "/skole/laerer", new URL(link).pathname]) {
+    for (const where of ["summary", "/skole", "/skole/elev", "/skole/laerer", new URL(link).pathname]) {
       if (where !== "summary") await p2.goto(`${BASE}${where}`);
       await p2.waitForTimeout(600);
       const over = await p2.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -405,7 +405,10 @@ try {
     if (sub !== BASE) {
       const home = await p.goto(`${sub}/`);
       await p.getByRole("heading", { name: "Hvad koster det at være voksen?" }).waitFor();
-      check(home?.status() === 200, "skole.localhost shows the school's start page");
+      check(home?.status() === 200, "skole.localhost shows the school's front page");
+      await p.goto(`${sub}/elev`);
+      await p.getByLabel("Din elevkode").waitFor();
+      check(true, "skole.localhost/elev is where pupils type their code");
       await p.goto(`${sub}/laerer`);
       await p.getByRole("heading", { name: "Log ind som lærer" }).waitFor();
       check(true, "skole.localhost/laerer is the teacher login");

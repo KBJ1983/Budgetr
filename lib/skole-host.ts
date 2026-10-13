@@ -1,7 +1,7 @@
 /**
  * budgetpro Skole on its own subdomain. On a host starting with "skole." (skole.<domain> in production,
- * skole.localhost:3200 in development) page paths are served from /skole: "/" is the pupils' start page, "/laerer"
- * the teacher page, "/klasse/<token>" the overview. The rest of the site (the app, login, other APIs) is not
+ * skole.localhost:3200 in development) page paths are served from /skole: "/" is the front page, "/elev" where pupils
+ * type their code, "/laerer" the teacher page, "/klasse/<id>" a class. The rest of the site (the app, login, other APIs) is not
  * reachable there. Pure functions: proxy.ts and the browser both use them.
  */
 
@@ -23,8 +23,8 @@ export function skoleRoute(pathname: string): SkoleRoute {
 /** The school pages' path prefix as the visitor sees it: "" on the subdomain, "/skole" elsewhere. */
 export const skoleBase = (host: string) => (isSkoleHost(host) ? "" : "/skole");
 
-/** The address pupils type, for the printed codes: "skole.budgetpro.dk" or "budgetpro.dk/skole". */
-export const pupilAddress = (host: string) => `${host}${skoleBase(host)}`;
+/** The address pupils type, for the printed codes: "skole.budgetpro.dk/elev" or "budgetpro.dk/skole/elev". */
+export const pupilAddress = (host: string) => `${host}${skoleBase(host)}/elev`;
 
 /**
  * The address of the request as the visitor sees it, for links in mails: "https://skole.budgetpro.dk" or
