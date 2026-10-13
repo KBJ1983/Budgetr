@@ -11,7 +11,8 @@ import { useToast } from "./useToast";
 const REFRESH_MS = 15_000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export function ClassOverview({ teacher, initial }: { teacher: string; initial: ClassView }) {
+/** `demo` = the made-up demo class (lib/skole-demo.ts) with its pupils: shown read-only, nothing is fetched. */
+export function ClassOverview({ teacher, initial, demo }: { teacher: string; initial: ClassView; demo?: Record<string, PupilDetail> }) {
   const [view, setView] = useState(initial);
   const [gone, setGone] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -22,15 +23,17 @@ export function ClassOverview({ teacher, initial }: { teacher: string; initial: 
 
   const loadPupil = useCallback(
     async (code: string) => {
+      if (demo) return setPupil(demo[code] ?? null);
       const r = await fetch(`${url}/elev?kode=${encodeURIComponent(code)}`, { cache: "no-store" });
       if (r.ok) setPupil((await r.json()) as PupilDetail);
     },
-    [url],
+    [url, demo],
   );
 
   // Pupils work while the teacher watches: fetch the numbers (and the open pupil) again now and then, not while the
   // tab is hidden.
   useEffect(() => {
+    if (demo) return;
     const timer = setInterval(async () => {
       if (document.hidden) return;
       try {
@@ -41,7 +44,7 @@ export function ClassOverview({ teacher, initial }: { teacher: string; initial: 
       } catch {}
     }, REFRESH_MS);
     return () => clearInterval(timer);
-  }, [url, open, loadPupil]);
+  }, [url, open, loadPupil, demo]);
 
   const show = async (code: string) => {
     setOpen(code);
@@ -96,7 +99,13 @@ export function ClassOverview({ teacher, initial }: { teacher: string; initial: 
             {view.trin}. klasse · {st.started} af {view.rows.length} elever i gang
           </span>
         </div>
-        <p className={`${s.expiry} ${s.noPrint}`} suppressHydrationWarning>
+        {demo && (
+          <p className={`${s.agreeNote} ${s.noPrint}`}>
+            Det her er en demoklasse med opdigtede elever, så du kan se, hvad du får at se, når dine elever arbejder. Klik på en elevkode for at se
+            elevens valg og svar.
+          </p>
+        )}
+        <p className={`${s.expiry} ${s.noPrint}`} suppressHydrationWarning hidden={!!demo}>
           Elevkoderne udløber den {dayMonthYear(expires)} (om {daysLeft} {daysLeft === 1 ? "dag" : "dage"}). Så slettes klassen, koderne og elevernes svar.
         </p>
         <div className={`${s.stats} ${s.noPrint}`}>
@@ -167,18 +176,23 @@ export function ClassOverview({ teacher, initial }: { teacher: string; initial: 
           </section>
         )}
 
-        <div className={`${s.card} ${s.classCard}`}>
-          <CodeSheet trin={view.trin} codes={view.codes} expires={view.expires} onCopied={showToast} />
-        </div>
-
-        <span className={`${s.small} ${s.noPrint}`}>Opdateres af sig selv.</span>
+        {!demo && (
+          <>
+            <div className={`${s.card} ${s.classCard}`}>
+              <CodeSheet trin={view.trin} codes={view.codes} expires={view.expires} onCopied={showToast} />
+            </div>
+            <span className={`${s.small} ${s.noPrint}`}>Opdateres af sig selv.</span>
+          </>
+        )}
         <div className={`${s.actions} ${s.noPrint}`}>
           <Link className={s.btn} href="/skole/laerer">
             Til mine klasser
           </Link>
-          <button type="button" className={`${s.btn} ${s.btnDanger}`} onClick={() => void remove()}>
-            Slet klassen
-          </button>
+          {!demo && (
+            <button type="button" className={`${s.btn} ${s.btnDanger}`} onClick={() => void remove()}>
+              Slet klassen
+            </button>
+          )}
         </div>
       </div>
     </Shell>

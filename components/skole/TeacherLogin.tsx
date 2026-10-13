@@ -13,9 +13,9 @@ interface Sent {
 }
 
 /** The teacher's way in: log in or sign up with the e-mail, then type the 6-digit code from the mail. */
-export function TeacherLogin() {
-  const [mode, setMode] = useState<Mode>("login");
-  const [values, setValues] = useState<TeacherInput>({ name: "", school: "", email: "" });
+export function TeacherLogin({ email = "", start = "login" }: { email?: string; start?: Mode }) {
+  const [mode, setMode] = useState<Mode>(start);
+  const [values, setValues] = useState<TeacherInput>({ name: "", school: "", email });
   const [errors, setErrors] = useState<Partial<Record<TeacherField, string>>>({});
   const [sent, setSent] = useState<Sent | null>(null);
   const [busy, setBusy] = useState(false);

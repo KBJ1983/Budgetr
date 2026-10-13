@@ -2,7 +2,7 @@
  * Request helpers for /aftale: who is logged in (the "budgetr_aftale" cookie, lib/session.ts) and the mails –
  * the kundeadmin's login, the note to a new kundeadmin, and the seat mail (the only place a code is ever shown).
  */
-import { adminInviteMail, adminLoginMail, grantMail } from "./agreement-mail";
+import { adminInviteMail, adminLoginMail, grantMail, seatRequestMail } from "./agreement-mail";
 import { adminWithOrgs, type AdminMail, type AgreementAdmin } from "./agreement-admins";
 import { formatCode, type Grant } from "./agreements";
 import { sendAuthMail, sendMail } from "./auth-mail";
@@ -54,4 +54,19 @@ export async function mailGrant(origin: string, org: Org, grant: Grant, code: st
   const link = `${siteUrl(origin)}/aftale/brug?kode=${shown}`;
   const mail = grantMail({ orgName: org.name, category: org.category, months: grant.months, sendBy: grant.sendBy, code: shown, link });
   return sendAuthMail(grant.email, mail, link);
+}
+
+/** Asks a school's kundeadmins for a seat for a teacher. True when at least one mail went out. */
+export async function mailSeatRequest(origin: string, org: Org, teacher: { name: string; email: string }): Promise<boolean> {
+  const link = `${siteUrl(origin)}/aftale?org=${encodeURIComponent(org.id)}&giv=${encodeURIComponent(teacher.email)}`;
+  const mail = seatRequestMail({ teacherName: teacher.name, teacherEmail: teacher.email, orgName: org.name, link });
+  let any = false;
+  for (const to of org.admins ?? []) {
+    try {
+      any = (await sendMail(to, mail, { replyTo: teacher.email })) || any;
+    } catch (e) {
+      console.error("[budgetr] seat request mail failed", e);
+    }
+  }
+  return any;
 }

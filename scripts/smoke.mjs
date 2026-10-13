@@ -367,12 +367,18 @@ try {
     await enterCode(p2, codes[0]);
     await p2.getByRole("heading", { name: "Saras budget" }).waitFor();
     check((await p2.getByLabel(/Hvor stor en del af lønnen gik til skat/).inputValue()) === "En tredjedel", "a pupil can go on later, with their answers");
-    for (const where of ["summary", "/skole", "/skole/elev", "/skole/laerer", new URL(link).pathname]) {
+    for (const where of ["summary", "/skole", "/skole/elev", "/skole/laerer", new URL(link).pathname, "/skole/klasse/demo"]) {
       if (where !== "summary") await p2.goto(`${BASE}${where}`);
       await p2.waitForTimeout(600);
       const over = await p2.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       check(over <= 0, `no horizontal scroll at 390px on the school's ${where} (${over}px)`);
     }
+
+    // The demo class (for teachers without a seat) shows made-up pupils and their answers, read-only.
+    await t.goto(`${BASE}/skole/klasse/demo`);
+    await t.getByRole("button", { name: "BLÅ-ODDER-23" }).click();
+    await t.getByText("Næsten en tredjedel", { exact: false }).waitFor();
+    check((await t.getByRole("button", { name: "Slet klassen" }).count()) === 0, "the demo class shows made-up pupils' answers and can't be deleted");
 
     // The teacher's front page lists the class with its codes.
     await t.goto(`${BASE}/skole/laerer`);

@@ -6,14 +6,20 @@ import { Shell } from "@/components/skole/Shell";
 import s from "@/components/skole/skole.module.css";
 import { TEACHER_COOKIE } from "@/lib/session";
 import { currentTeacher } from "@/lib/skole-auth";
+import { DEMO_CLASS_ID, demoClass } from "@/lib/skole-demo";
 import { classOverview, readClassFor } from "@/lib/skole-store";
 
 export const metadata: Metadata = { title: "budgetpro Skole – klasseoverblik", robots: { index: false } };
 
-// One of the logged-in teacher's classes. Not logged in, or not their class: a short note instead.
+// One of the logged-in teacher's classes (or the demo class). Not logged in, or not their class: a short note instead.
 export default async function ClassPage({ params }: PageProps<"/skole/klasse/[id]">) {
   const { id } = await params;
   const t = await currentTeacher((await cookies()).get(TEACHER_COOKIE)?.value);
+  // The made-up demo class, for anyone who wants to look before the school signs up.
+  if (id === DEMO_CLASS_ID) {
+    const demo = demoClass();
+    return <ClassOverview teacher={t ? t.name : "Lærer"} initial={demo.view} demo={demo.pupils} />;
+  }
   const cls = t ? await readClassFor(t.id, id) : null;
   if (!t || !cls) {
     return (

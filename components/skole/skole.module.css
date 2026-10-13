@@ -363,3 +363,12 @@
   .codeText { font-size: 20px; }
   .wrap { padding: 0; }
 }
+
+/* Teacher without a seat (SeatPanel): a field with its button, or a row of school buttons; stacked on phones. */
+.seatRow { display: flex; gap: 10px; align-items: center; }
+.seatRow .input { flex: 1; }
+.seatLine { margin: 0; font-size: 15px; color: var(--ink-2); }
+@media (max-width: 560px) {
+  .seatRow { flex-direction: column; align-items: stretch; }
+  .seatRow .input { flex: none; }
+}

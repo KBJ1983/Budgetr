@@ -178,3 +178,25 @@ export async function useCode(input: unknown, holder: string, now = new Date(), 
   await saveGrant(taken, dir);
   return { ok: true, grant: taken };
 }
+
+/** A school takes a seat back from a teacher who no longer needs it: the grant goes, and the seat is free again. */
+export async function releaseSeat(orgId: string, grantId: string, dir?: string): Promise<{ ok: boolean; error?: "unknown" }> {
+  const store = openStore(dir);
+  const grant = await readGrant(orgId, grantId, dir);
+  if (!grant) return { ok: false, error: "unknown" };
+  await store.del(codeKey(await grantCode(grant.id, dir)));
+  await store.del(usedKey(grant.id));
+  await store.del(grantKey(orgId, grantId));
+  return { ok: true };
+}
+
+/** A seat sent to this e-mail in one of these agreements that is not used yet and can still be taken. */
+export async function waitingGrant(orgIds: string[], email: string, now = new Date(), dir?: string): Promise<Grant | null> {
+  const to = normalizeEmail(email);
+  const day = today(now);
+  for (const id of orgIds) {
+    const g = (await listGrants(id, dir)).find((x) => x.email === to && !x.usedBy && day <= x.sendBy);
+    if (g) return g;
+  }
+  return null;
+}

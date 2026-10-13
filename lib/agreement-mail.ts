@@ -81,3 +81,22 @@ export function grantMail(o: { orgName: string; category: OrgCategory; months: n
       .join("\n"),
   };
 }
+
+/** To a school's kundeadmins when a teacher asks for a seat. The link opens /aftale with the teacher's e-mail filled in. */
+export function seatRequestMail(o: { teacherName: string; teacherEmail: string; orgName: string; link: string }) {
+  return {
+    subject: `${o.teacherName} beder om en lærerplads på budgetpro Skole`,
+    text: [
+      "Hej",
+      "",
+      `${o.teacherName} (${o.teacherEmail}) har oprettet sig på budgetpro Skole og beder om en plads fra ${o.orgName}s aftale, så de kan oprette klasser.`,
+      "",
+      "Åbn linket for at give adgang. E-mailen står allerede udfyldt:",
+      "",
+      o.link,
+      "",
+      "Kender du ikke læreren, kan du se bort fra denne mail. Der sker ikke noget, før du selv giver adgang.",
+      ...signOff,
+    ].join("\n"),
+  };
+}

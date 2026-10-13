@@ -26,6 +26,8 @@ function message(result: string, email: string, max: number): { tone: "pos" | "e
       return { tone: "pos", text: `Koden er sendt til ${email}.` };
     case "again":
       return { tone: "pos", text: `Den samme kode er sendt igen til ${email}.` };
+    case "released":
+      return { tone: "pos", text: `${email} kan ikke længere oprette klasser, og pladsen er fri igen.` };
     case "withdrawn":
       return { tone: "pos", text: "Adgangen er trukket tilbage, og pladsen er fri igen." };
     case "adminAdded":
@@ -61,11 +63,12 @@ function message(result: string, email: string, max: number): { tone: "pos" | "e
  * /aftale for a logged-in kundeadmin: free seats, "give access" (an e-mail – nothing else), the list of e-mails with
  * send again / withdraw, the packs and the colleagues who are administrators too. No code is ever on this page.
  */
-export function AgreementHome({ initial, orgs }: { initial: AgreementView; orgs: { id: string; name: string }[] }) {
+export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initial: AgreementView; orgs: { id: string; name: string }[]; give?: string }) {
   const [view, setView] = useState(initial);
   const [note, setNote] = useState<{ tone: "pos" | "err"; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
-  const [email, setEmail] = useState("");
+  // ?giv=… from a teacher's "Bed om adgang" mail fills in the e-mail.
+  const [email, setEmail] = useState(initialGive);
   const [colleague, setColleague] = useState("");
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<"dark" | "light">("light");
@@ -240,6 +243,20 @@ export function AgreementHome({ initial, orgs }: { initial: AgreementView; orgs:
                         }}
                       >
                         Træk tilbage
+                      </button>
+                    </div>
+                  ) : g.release ? (
+                    <div className="af-grant-actions">
+                      <button
+                        type="button"
+                        className="bx-btn"
+                        disabled={busy}
+                        onClick={() => {
+                          if (window.confirm(`Fjern ${g.email} fra aftalen? Læreren kan ikke længere oprette klasser, og pladsen bliver fri til en anden lærer.`))
+                            void act({ action: "release", grant: g.id }, g.email);
+                        }}
+                      >
+                        Fjern lærer
                       </button>
                     </div>
                   ) : null}

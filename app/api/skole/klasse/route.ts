@@ -2,9 +2,11 @@ import { cookies } from "next/headers";
 import { TEACHER_COOKIE } from "@/lib/session";
 import { LIFETIMES, MAX_PUPILS, TRIN } from "@/lib/skole";
 import { currentTeacher } from "@/lib/skole-auth";
+import { teacherSeat } from "@/lib/skole-seats";
 import { createClass, teacherClasses } from "@/lib/skole-store";
 
-// budgetpro Skole: the logged-in teacher's classes. GET lists them; POST { trin, antal, days } makes one.
+// budgetpro Skole: the logged-in teacher's classes. GET lists them; POST { trin, antal, days } makes one – only with a
+// seat from a school's agreement (lib/skole-seats.ts), else 403.
 const noStore = { "Cache-Control": "no-store" };
 
 export async function GET() {
@@ -16,6 +18,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const t = await currentTeacher((await cookies()).get(TEACHER_COOKIE)?.value);
   if (!t) return new Response(null, { status: 401, headers: noStore });
+  if (!(await teacherSeat(t))) return Response.json({ error: "seat" }, { status: 403, headers: noStore });
   let body: unknown;
   try {
     body = await req.json();

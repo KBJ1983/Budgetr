@@ -30,6 +30,10 @@ export interface Teacher {
   verifiedAt?: string;
   token?: { hash: string; code: string; tries: number; expires: string };
   lastMailAt?: string;
+  /** The school seat the teacher took (lib/skole-seats.ts); only valid while its grant is theirs and `until` is ahead. */
+  seat?: { org: string; grant: string; until: string };
+  /** Last "Bed om adgang" to a school, so it isn't sent again and again. */
+  lastRequestAt?: string;
 }
 
 /** A mail to send: "signup" until the e-mail is confirmed, then "login". */
@@ -67,7 +71,7 @@ export async function readTeacher(id: string, dir?: string): Promise<Teacher | n
   return parse<Teacher>(await openStore(dir).get(accountKey(id)));
 }
 
-async function saveTeacher(t: Teacher, dir?: string): Promise<void> {
+export async function saveTeacher(t: Teacher, dir?: string): Promise<void> {
   await openStore(dir).set(accountKey(t.id), JSON.stringify(t));
 }
 

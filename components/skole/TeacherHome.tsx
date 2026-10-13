@@ -4,15 +4,20 @@ import Link from "next/link";
 import { useState } from "react";
 import { DEFAULT_DAYS, dayMonthYear, LIFETIMES, MAX_PUPILS, TRIN, type ClassSummary } from "@/lib/skole";
 import { skoleBase } from "@/lib/skole-host";
+import type { SeatInfo } from "@/lib/skole-seats";
 import { CodeSheet } from "./CodeSheet";
+import { SeatPanel } from "./SeatPanel";
 import { Shell } from "./Shell";
 import s from "./skole.module.css";
 import { useToast } from "./useToast";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** The logged-in teacher's front page: make a class, and all live classes with their codes. */
-export function TeacherHome({ name, school, initial }: { name: string; school: string; initial: ClassSummary[] }) {
+/**
+ * The logged-in teacher's front page: make a class, and all live classes with their codes. Without a seat from a
+ * school's agreement the create form gives way to the demo class and the ways to a seat (SeatPanel).
+ */
+export function TeacherHome({ name, school, initial, seat, code }: { name: string; school: string; initial: ClassSummary[]; seat: SeatInfo | null; code?: string }) {
   const [classes] = useState(initial);
   const [trin, setTrin] = useState(8);
   const [antal, setAntal] = useState(24);
@@ -26,7 +31,7 @@ export function TeacherHome({ name, school, initial }: { name: string; school: s
     setErr(null);
     try {
       const r = await fetch("/api/skole/klasse", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trin, antal, days }) });
-      if (r.status === 401) return window.location.reload();
+      if (r.status === 401 || r.status === 403) return window.location.reload();
       if (!r.ok) throw new Error(String(r.status));
       const { id } = (await r.json()) as { id: string };
       window.location.href = `${skoleBase(window.location.host)}/klasse/${id}`;
@@ -52,6 +57,17 @@ export function TeacherHome({ name, school, initial }: { name: string; school: s
           </button>
         </div>
 
+        {seat ? (
+          <p className={`${s.seatLine} ${s.noPrint}`} suppressHydrationWarning>
+            {seat.early
+              ? `Du kan oprette klasser til og med ${dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS))}.`
+              : `Din lærerplads fra ${seat.school || "din skole"} gælder til og med ${dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS))}.`}
+          </p>
+        ) : (
+          <SeatPanel code={code} school={school} />
+        )}
+
+        {seat && (
         <form
           className={`${s.card} ${s.createForm} ${s.noPrint}`}
           onSubmit={(e) => {
@@ -111,6 +127,7 @@ export function TeacherHome({ name, school, initial }: { name: string; school: s
             Lav elevkoder
           </button>
         </form>
+        )}
 
         {classes.length === 0 ? (
           <p className={`${s.info} ${s.noPrint}`}>Du har ingen klasser endnu. Når du opretter en, kommer den her med sine elevkoder.</p>

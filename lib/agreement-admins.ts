@@ -164,6 +164,8 @@ export interface GrantRow {
   until?: string;
   /** Unused and still within the pack's last day: can be sent again or withdrawn. */
   open: boolean;
+  /** A school's teacher using the seat: the school can take it back for another teacher. */
+  release: boolean;
 }
 
 export interface AgreementView {
@@ -179,11 +181,14 @@ export interface AgreementView {
   grants: GrantRow[];
 }
 
-export function grantRow(g: Grant, day: string): GrantRow {
+export function grantRow(g: Grant, day: string, school = false): GrantRow {
   const lastSentAt = g.sends.at(-1) ?? g.sentAt;
-  if (g.usedBy) return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status: g.until && g.until > day ? "active" : "ended", usedAt: g.usedAt, until: g.until, open: false };
+  if (g.usedBy) {
+    const status = g.until && g.until > day ? "active" : "ended";
+    return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status, usedAt: g.usedAt, until: g.until, open: false, release: school && status === "active" };
+  }
   const open = day <= g.sendBy;
-  return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status: open ? "sent" : "lapsed", open };
+  return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status: open ? "sent" : "lapsed", open, release: false };
 }
 
 export function buildAgreementView(org: Org, me: string, grants: Grant[], now = new Date()): AgreementView {
@@ -216,7 +221,7 @@ export function buildAgreementView(org: Org, me: string, grants: Grant[], now = 
       used: packs.reduce((s, p) => s + p.used, 0),
       free: packs.filter((p) => p.open).reduce((s, p) => s + Math.max(0, p.count - p.sent), 0),
     },
-    grants: grants.map((g) => grantRow(g, day)).sort((a, b) => b.lastSentAt.localeCompare(a.lastSentAt)),
+    grants: grants.map((g) => grantRow(g, day, org.category === "skole")).sort((a, b) => b.lastSentAt.localeCompare(a.lastSentAt)),
   };
 }
 
