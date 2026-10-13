@@ -726,6 +726,11 @@
   display: none;
 }
 
+/* A section on white, the same as around the hero card, so the card does not run straight into a coloured band. */
+.white {
+  background: var(--v-white);
+}
+
 /* ================= Sådan virker det ================= */
 
 .steps {

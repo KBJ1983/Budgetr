@@ -110,10 +110,7 @@ export function PriceRequest() {
 
         <fieldset className={e.choice} disabled={talk}>
           <legend>Antal koder</legend>
-          <p className={e.choiceHint}>
-            Én kode giver én kunde adgang. Skal I bruge flere end {MAX_PACK_COUNT}, så vælg “Vi vil hellere tale om pakken først” og skriv antallet
-            nedenfor.
-          </p>
+          <p className={e.choiceHint}>Én kode giver én kunde adgang.</p>
           <div className={e.pills}>
             {PACK_COUNTS.map((c) => (
               <label key={c} className={e.pill}>
@@ -192,7 +189,9 @@ export function PriceRequest() {
           <span>Vi vil hellere tale om pakken først</span>
         </label>
         {errors.pack ? <p className={e.fieldError}>{errors.pack}</p> : null}
-        <p className={e.packNote}>Pakken er et udgangspunkt, og I kan altid ændre den eller købe flere koder senere.</p>
+        <p className={e.packNote}>
+          I kan altid ændre pakken eller købe flere koder senere. Skal I bruge flere end {MAX_PACK_COUNT} koder, så sæt kryds ovenfor.
+        </p>
       </div>
 
       <div className={e.calcAsk}>
@@ -201,8 +200,7 @@ export function PriceRequest() {
           <h3>Få et tilbud</h3>
         </div>
         <p className={e.notice}>
-          <b>Det er kun en prisforespørgsel.</b> I opretter ikke en aftale og binder jer ikke til noget. Vi sender et tilbud, og aftalen bliver
-          først lavet, når I har sagt ja.
+          <b>Det er kun en prisforespørgsel.</b> Vi sender et tilbud, og I binder jer ikke til noget.
         </p>
         <div className={e.formRow}>
           {field("company", "Virksomhed", <input {...a11y("company")} className={e.input} autoComplete="organization" />)}
@@ -233,7 +231,7 @@ export function PriceRequest() {
           {field("phone", "Telefon (valgfri)", <input {...a11y("phone")} className={e.input} type="tel" autoComplete="tel" inputMode="tel" />)}
         </div>
         {field("email", "Arbejdsmail", <input {...a11y("email")} className={e.input} type="email" autoComplete="email" inputMode="email" placeholder="navn@firma.dk" />)}
-        {field("message", "Andet, vi skal vide? (valgfri)", <textarea {...a11y("message")} className={`${e.input} ${e.textarea}`} rows={3} placeholder="Fx hvornår I gerne vil i gang" />)}
+        {field("message", "Andet, vi skal vide? (valgfri)", <textarea {...a11y("message")} className={`${e.input} ${e.textarea}`} rows={2} placeholder="Fx hvornår I gerne vil i gang" />)}
         {/* Never shown; bots fill it in. */}
         <input type="text" name="website" tabIndex={-1} autoComplete="off" className={e.trap} aria-hidden="true" />
         {failed ? (

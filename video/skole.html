@@ -1,0 +1,256 @@
+<!doctype html>
+<!--
+  Skole film (36 s): what budgetpro Skole gives the class and how little the teacher has to do – make a class, share
+  the codes, the pupils work, follow the class. Runtime and shared styles: film.js / film.css. Render:
+  `pnpm video skole`. Codes, numbers and answers are made up; screenshots from public/skole/ (`pnpm shots:skole`).
+-->
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>budgetpro Skole film</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200&family=Geist+Mono:wght@500&family=Instrument+Sans:wght@600&family=Schibsted+Grotesk:wght@400;500;600;700&display=block" rel="stylesheet" />
+<link rel="stylesheet" href="film.css" />
+<style>
+  :root { --font: "Schibsted Grotesk", system-ui, sans-serif; }
+  #create { left: 900px; top: 190px; width: 860px; padding: 48px 52px; }
+  #create h3, #codes h3, #klasse h3 { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 30px; }
+  .row { display: flex; gap: 12px; margin-bottom: 30px; align-items: center; }
+  .stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--rule); border-radius: 14px; overflow: hidden; height: 56px; }
+  .stepper span { display: grid; place-items: center; width: 60px; height: 100%; font-size: 26px; background: var(--card); }
+  .stepper b { width: 84px; text-align: center; font: 500 26px/1 "Geist Mono", monospace; }
+  .small { font-size: 18px; line-height: 1.45; color: var(--ink-3); margin-bottom: 28px; }
+  #codes { left: 900px; top: 170px; width: 860px; padding: 44px 48px; }
+  .codes-head { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+  .codes-head h3 { margin: 0 auto 0 0 !important; }
+  .codes-head .btn { height: 48px; font-size: 19px; padding: 0 20px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .code { height: 64px; border-radius: 14px; background: var(--stone); display: grid; place-items: center; font: 500 22px/1 "Geist Mono", monospace; letter-spacing: .04em; }
+  .slip { position: absolute; width: 340px; padding: 26px 28px; background: var(--white); border-radius: 12px; border: 1px dashed #bdb9ad; box-shadow: var(--shadow); }
+  .slip small { display: block; font-size: 16px; color: var(--ink-3); margin: 14px 0 6px; }
+  .slip b { display: block; font: 500 30px/1 "Geist Mono", monospace; letter-spacing: .05em; }
+  .slip .note { display: block; font-size: 15px; color: var(--ink-3); margin-top: 14px; }
+  #laptop { left: 820px; top: 200px; width: 960px; }
+  #laptop .view { height: 540px; }
+  #phone { left: 1540px; top: 300px; }
+  #klasse { left: 880px; top: 150px; width: 880px; padding: 40px 44px; }
+  #klasse .sub { font-size: 18px; color: var(--ink-3); margin: -18px 0 24px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { border-radius: 16px; padding: 18px 20px; border: 1px solid var(--rule); }
+  .stat b { display: block; font-size: 38px; font-weight: 700; letter-spacing: -0.02em; }
+  .stat span { font-size: 16px; }
+  .pr { display: grid; grid-template-columns: 190px 1fr 130px; align-items: center; gap: 18px; padding: 13px 8px; border-top: 1px solid var(--rule); font-size: 18px; }
+  .pr .c { font: 500 19px/1 "Geist Mono", monospace; }
+  .pr .seg { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .pr .seg i { height: 10px; border-radius: 5px; background: var(--stone); }
+  .pr .seg i.on { background: var(--pine); }
+  .pr .st { text-align: right; color: var(--ink-3); }
+  .pr .st.ok { color: var(--pine); font-weight: 600; }
+  .pr.sel { background: var(--pine-bg); border-radius: 12px; }
+  #detail { left: 1240px; top: 470px; width: 600px; padding: 32px 34px; }
+  #detail h4 { font: 500 24px/1 "Geist Mono", monospace; margin-bottom: 20px; }
+  .qa { margin-bottom: 18px; }
+  .qa small { display: block; font-size: 16px; font-weight: 600; color: var(--pine); margin-bottom: 6px; }
+  .qa p { font-size: 20px; line-height: 1.45; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · Intro -->
+  <div class="layer intro" id="s1">
+    <div class="darkcard">
+      <div class="ring" style="width:1100px;height:1100px;right:-380px;top:-420px"></div>
+      <div class="ring" style="width:700px;height:700px;right:-180px;top:-220px"></div>
+      <div class="abs" style="left:116px;top:92px;display:flex;align-items:center;gap:16px"><span class="wm dark" style="font-size:44px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span><span class="pill" style="font-size:22px">Skole</span></div>
+      <div class="abs" id="s1-eyebrow" style="left:116px;top:330px;font-size:28px;font-weight:500;color:var(--pine-light)">Privatøkonomi i 7.–9. klasse</div>
+      <h1 style="top:390px;width:1720px"><span id="s1-l1">Hvad koster det at være voksen?</span><span id="s1-l2" style="color:var(--pine-light)">Eleverne regner det selv ud.</span></h1>
+      <div class="abs" style="left:116px;top:700px;display:flex;gap:16px">
+        <span class="dchip s1-chip">Ingen elevnavne gemmes</span><span class="dchip s1-chip">Virker på Chromebook og mobil</span><span class="dchip s1-chip">Klar på 2 minutter</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · Make a class -->
+  <div class="layer" id="s2">
+    <div class="cap" id="c2">
+      <div class="step"><b>1</b>Opret en klasse</div>
+      <h2>Klassen er klar på to minutter</h2>
+      <p>Vælg klassetrin, antal elever, og hvor længe koderne skal virke.</p>
+    </div>
+    <div class="abs card" id="create">
+      <h3>Opret klasse</h3>
+      <div class="legend">Klassetrin</div>
+      <div class="row"><span class="chip">7</span><span class="chip" id="g8">8</span><span class="chip">9</span></div>
+      <div class="legend">Antal elever</div>
+      <div class="row"><span class="stepper"><span>−</span><b id="n">20</b><span id="plus">+</span></span></div>
+      <div class="legend">Koderne virker i</div>
+      <div class="row"><span class="chip">30 dage</span><span class="chip" id="d60">60 dage</span><span class="chip">90 dage</span></div>
+      <p class="small">budgetpro gemmer ingen navne – skriv selv, hvem der har hvilken kode.</p>
+      <span class="btn pine" id="make">Opret klasse</span>
+    </div>
+  </div>
+
+  <!-- 3 · Share the codes -->
+  <div class="layer" id="s3">
+    <div class="cap" id="c3">
+      <div class="step"><b>2</b>Del elevkoderne</div>
+      <h2>Eleverne skal ikke have en bruger</h2>
+      <p>Print koderne, eller kopiér listen. Eleven skriver sin kode, og så er de i gang.</p>
+    </div>
+    <div class="abs card" id="codes">
+      <div class="codes-head"><h3>24 elevkoder · 8. klasse</h3><span class="btn ghost">Kopiér</span><span class="btn ghost" id="print">Print</span></div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="slip" id="slip1" style="left:1290px;top:590px"><span class="wm" style="font-size:22px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span><small>Din elevkode</small><b>BLÅ-ORM-47</b><span class="note">Skriv koden på skole.budgetpro.dk/elev</span></div>
+    <div class="slip" id="slip2" style="left:1350px;top:640px"><span class="wm" style="font-size:22px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span><small>Din elevkode</small><b>GUL-RÆV-12</b><span class="note">Skriv koden på skole.budgetpro.dk/elev</span></div>
+  </div>
+
+  <!-- 4 · The pupils work -->
+  <div class="layer" id="s4">
+    <div class="cap" id="c4">
+      <div class="step"><b>3</b>Eleverne går i gang</div>
+      <h2>Et månedsbudget i 8 trin</h2>
+      <p>For en fremtidsperson: løn og skat, bolig, faste udgifter, hverdag, opsparing – og hvad nu hvis huslejen stiger?</p>
+    </div>
+    <div class="abs card shot" id="laptop">
+      <div class="bar"><i></i><i></i><i></i><div class="url">skole.budgetpro.dk</div></div>
+      <div class="view"><img src="../public/skole/mit-budget.jpg" alt="" /></div>
+    </div>
+    <div class="abs phone" id="phone"><div class="scr"><img id="phoneImg" src="../public/skole/trin3-mobil.jpg" alt="" /></div></div>
+  </div>
+
+  <!-- 5 · Follow the class -->
+  <div class="layer" id="s5">
+    <div class="cap" id="c5">
+      <div class="step"><b>4</b>Følg klassen</div>
+      <h2>Se, hvor langt eleverne er</h2>
+      <p>Og læs deres svar på refleksionsspørgsmålene. Brug tallene i opsamlingen.</p>
+    </div>
+    <div class="abs card" id="klasse">
+      <h3>8. klasse · 24 elever</h3>
+      <p class="sub">Koderne virker 52 dage endnu</p>
+      <div class="stats">
+        <div class="stat" style="background:#1f5c4a;color:#fff;border-color:transparent"><b id="stA">0 %</b><span>valgte delelejlighed</span></div>
+        <div class="stat"><b id="stB">0 af 24</b><span>fik budgettet til at gå op</span></div>
+        <div class="stat" style="background:#fbf0d9;color:#5e410a;border-color:transparent"><b>Sara</b><span>mest valgte case</span></div>
+      </div>
+      <div id="rows"></div>
+    </div>
+    <div class="abs card" id="detail">
+      <h4>BLÅ-ORM-47</h4>
+      <div class="qa"><small>Hvad fik du for at betale mere?</small><p>Med delelejligheden bor Sara ikke alene, og der er stadig råd til at spare op til kørekort.</p></div>
+      <div class="qa"><small>Hvilket scenarie rammer hårdest?</small><p>At miste jobbet. Så kan hun ikke betale huslejen.</p></div>
+    </div>
+  </div>
+
+  <div id="steps"></div>
+
+  <!-- End card -->
+  <div class="layer end" id="end">
+    <div class="darkcard">
+      <div class="ring" style="width:1300px;height:1300px;left:50%;top:50%;margin:-650px 0 0 -650px"></div>
+      <div class="ring" style="width:860px;height:860px;left:50%;top:50%;margin:-430px 0 0 -430px"></div>
+      <div class="row" id="endWm" style="gap:28px;margin:0"><span class="wm dark" style="font-size:130px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span><span class="pill" style="font-size:44px">Skole</span></div>
+      <p id="endLine" style="margin-top:48px;font-size:46px;font-weight:500;letter-spacing:-0.02em">Privatøkonomi, eleverne selv regner ud</p>
+      <p id="endSub" style="margin-top:18px;font-size:30px;color:var(--dark-2)">Prøv gratis med én klasse.</p>
+      <p id="endUrl" style="margin-top:36px;font-size:34px;color:var(--pine-light)">skole.budgetpro.dk</p>
+    </div>
+  </div>
+</div>
+
+<script src="film.js"></script>
+<script>
+  const { $, $$, p, out, inOut, lerp, put, rise, slide, vis, cursor, press, bars } = F;
+  const S1 = [0, 5.4], S2 = [5.0, 11.6], S3 = [11.2, 17.2], S4 = [16.8, 23.2], S5 = [22.8, 30.0], END = 29.6;
+  const DURATION = 36;
+
+  const CODES = ["BLÅ-ORM-47", "GUL-RÆV-12", "GRØN-SÆL-31", "RØD-LAKS-05", "HVID-UGLE-63", "SORT-KAT-28", "BRUN-BI-74", "GRÅ-MÅGE-40", "BLÅ-HJORT-22", "GUL-KRAGE-87", "GRØN-FRØ-16", "RØD-RÆV-59"];
+  $("#grid").innerHTML = CODES.map((c) => `<span class="code">${c}</span>`).join("");
+  const ROWS = [["BLÅ-ORM-47", 8], ["GUL-RÆV-12", 8], ["GRØN-SÆL-31", 6], ["RØD-LAKS-05", 8], ["HVID-UGLE-63", 4], ["SORT-KAT-28", 7]];
+  $("#rows").innerHTML = ROWS.map(([c]) => `<div class="pr"><span class="c">${c}</span><span class="seg">${"<i></i>".repeat(8)}</span><span class="st"></span></div>`).join("");
+
+  function frame(t) {
+    // 1 · Intro
+    put("#s1", { o: t < S1[1] - 0.5 ? 1 : 1 - inOut(p(t, S1[1] - 0.5, S1[1])) });
+    rise("#s1-eyebrow", t, 0.2);
+    rise("#s1-l1", t, 0.4, 1e9, 60);
+    rise("#s1-l2", t, 0.8, 1e9, 60);
+    $$(".s1-chip").forEach((el, i) => rise(el, t, 1.8 + i * 0.25, 1e9, 24));
+
+    // 2 · Make a class
+    const u2 = t - S2[0];
+    put("#s2", { o: vis(t, S2[0], S2[1]) });
+    rise("#c2", t, S2[0] + 0.2);
+    rise("#create", t, S2[0] + 0.4, 1e9, 60);
+    $("#g8").classList.toggle("on", u2 >= 1.7);
+    $("#n").textContent = 20 + [2.5, 2.85, 3.2, 3.55].filter((c) => u2 >= c).length;
+    $("#d60").classList.toggle("on", u2 >= 4.3);
+    press("#make", u2, 5.3);
+
+    // 3 · Share the codes
+    const u3 = t - S3[0];
+    put("#s3", { o: vis(t, S3[0], S3[1]) });
+    rise("#c3", t, S3[0] + 0.2);
+    rise("#codes", t, S3[0] + 0.3, 1e9, 60);
+    $$("#grid .code").forEach((el, i) => {
+      const k = out(p(u3, 0.8 + i * 0.07, 1.2 + i * 0.07));
+      put(el, { o: k, s: lerp(0.9, 1, k) });
+    });
+    press("#print", u3, 3.0);
+    [["#slip1", -6, 3.3], ["#slip2", 5, 3.55]].forEach(([s, r, a]) => {
+      const k = out(p(u3, a, a + 0.6));
+      const el = $(s);
+      put(el, { o: k, x: (1 - k) * 200, y: (1 - k) * -120 });
+      el.style.transform += ` rotate(${r * k}deg)`;
+    });
+
+    // 4 · The pupils work
+    put("#s4", { o: vis(t, S4[0], S4[1]) });
+    rise("#c4", t, S4[0] + 0.2);
+    rise("#laptop", t, S4[0] + 0.3, 1e9, 60);
+    slide("#phone", t, S4[0] + 1.0, 1e9, { x: 120, y: 0 });
+    $("#phoneImg").style.transform = `translateY(${-320 * inOut(p(t, S4[0] + 3.0, S4[0] + 4.4))}px)`;
+
+    // 5 · Follow the class
+    const u5 = t - S5[0];
+    put("#s5", { o: vis(t, S5[0], S5[1]) });
+    rise("#c5", t, S5[0] + 0.2);
+    rise("#klasse", t, S5[0] + 0.3, 1e9, 60);
+    const fill = out(p(u5, 1.0, 2.6));
+    $("#stA").textContent = `${Math.round(63 * fill)} %`;
+    $("#stB").textContent = `${Math.round(18 * fill)} af 24`;
+    $$("#rows .pr").forEach((r, i) => {
+      const n = Math.round(ROWS[i][1] * out(p(u5, 1.0 + i * 0.1, 2.4 + i * 0.1)));
+      $$(".seg i", r).forEach((s, j) => s.classList.toggle("on", j < n));
+      const st = $(".st", r);
+      st.textContent = n === 8 ? "Færdig" : n ? `Trin ${n} af 8` : "";
+      st.classList.toggle("ok", n === 8);
+      r.classList.toggle("sel", i === 0 && u5 >= 3.6);
+    });
+    slide("#detail", t, S5[0] + 3.8, 1e9, { x: 80, y: 20 });
+
+    bars(t, [S2, S3, S4, S5].map(([a, b]) => [a + 0.3, b - 0.2]), [5.2, END + 0.3]);
+
+    // End card
+    const ek = out(p(t, END, END + 0.7));
+    put("#end", { o: ek, s: lerp(1.03, 1, ek) });
+    rise("#endWm", t, END + 0.3, 1e9, 30);
+    rise("#endLine", t, END + 0.7, 1e9, 24);
+    rise("#endSub", t, END + 1.0, 1e9, 20);
+    rise("#endUrl", t, END + 1.3, 1e9, 20);
+
+    cursor(t, [
+      { keys: [[S2[0] + 1.7, "#g8"], [S2[0] + 2.5, "#plus"], [S2[0] + 3.55, "#plus"], [S2[0] + 4.3, "#d60"], [S2[0] + 5.3, "#make"]],
+        clicks: [1.7, 2.5, 2.85, 3.2, 3.55, 4.3, 5.3].map((c) => S2[0] + c) },
+      { keys: [[S3[0] + 3.0, "#print"]], clicks: [S3[0] + 3.0] },
+      { keys: [[S5[0] + 3.6, "#rows .pr"]], clicks: [S5[0] + 3.6] },
+    ]);
+  }
+
+  F.film({ duration: DURATION, frame });
+</script>
+</body>
+</html>

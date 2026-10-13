@@ -28,99 +28,9 @@
   object-position: 50% 62%;
 }
 
-/* ================= USP band under the hero ================= */
+/* ================= Hvad er budgetpro: the three beats under the animation (components/AnimationPlaceholder) ================= */
 
-.uspWrap {
-  padding: var(--gutter) var(--gutter) 0;
-}
-.usp {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 44px 56px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 40px;
-  align-items: center;
-  background: var(--v-pine);
-  color: #fff;
-  border-radius: 32px;
-}
-.uspText {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-.uspTitle {
-  margin: 0;
-  font-size: 40px;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-  font-weight: 700;
-  text-wrap: balance;
-}
-.uspBody {
-  margin: 0;
-  max-width: 520px;
-  font-size: 16px;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.82);
-}
-.uspPrice {
-  justify-self: end;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 28px 32px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  min-width: 0;
-}
-.uspFrom {
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--v-pine-light);
-}
-.uspAmount {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 64px;
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
-.uspUnit {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.82);
-}
-.uspButton {
-  margin-top: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 22px;
-  background: #fff;
-  color: var(--v-ink);
-  border-radius: 999px;
-  font-size: 15px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.uspButton:hover {
-  background: var(--v-pine-bg);
-}
-
-/* ================= Forberedte kunder ================= */
-
-.preparedPhoto {
-  position: relative;
-  aspect-ratio: 6 / 5;
-  border-radius: 24px;
-  overflow: hidden;
-}
-.journey {
+.beats {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -128,7 +38,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
-.journeyStep {
+.beat {
   min-width: 0;
   padding: 24px 24px 26px;
   background: var(--v-white);
@@ -138,7 +48,7 @@
   flex-direction: column;
   gap: 8px;
 }
-.journeyWhen {
+.beatNum {
   align-self: flex-start;
   font-size: 12.5px;
   font-weight: 600;
@@ -146,181 +56,17 @@
   text-transform: uppercase;
   color: var(--v-pine);
 }
-.journeyTitle {
+.beatTitle {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.015em;
 }
-.journeyBody {
+.beatBody {
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
   color: var(--v-ink-2);
-}
-
-/* ================= Sådan virker det: steps next to the /aftale miniature ================= */
-
-.how {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-  gap: 56px;
-  align-items: center;
-}
-.howSteps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-.howStep {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 18px;
-  align-items: start;
-}
-.howStep > div {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-.howNum {
-  color: var(--v-pine);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.8em;
-  margin-right: 4px;
-}
-
-/* Drawn miniature of /aftale */
-.mock {
-  position: relative;
-  min-width: 0;
-  margin: 0;
-  background: var(--v-white);
-  color: var(--v-ink);
-  border: 1px solid var(--v-rule);
-  border-radius: 24px;
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: var(--product-shadow);
-}
-.mockBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.mockOrg {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--v-pine);
-  background: var(--v-pine-bg);
-  border-radius: 999px;
-  padding: 4px 10px;
-  white-space: nowrap;
-}
-.mockTiles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-.mockTile {
-  border: 1px solid var(--v-rule);
-  border-radius: 14px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 12.5px;
-  color: var(--v-ink-3);
-}
-.mockTile b {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--v-ink);
-}
-.mockTileHi {
-  background: var(--v-pine-bg);
-  border-color: transparent;
-}
-.mockTileHi b {
-  color: var(--v-pine);
-}
-.mockGive {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.mockLabel {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--v-ink-3);
-}
-.mockGiveRow {
-  display: flex;
-  gap: 8px;
-}
-.mockInput {
-  flex: 1;
-  min-width: 0;
-  border: 1px solid var(--v-rule);
-  border-radius: 999px;
-  padding: 9px 14px;
-  font-size: 14px;
-  color: var(--v-ink-3);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.mockButton {
-  flex-shrink: 0;
-  border-radius: 999px;
-  padding: 9px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--v-pine);
-}
-.mockList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--v-rule);
-  border-radius: 14px;
-}
-.mockList li {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--v-rule-2);
-  font-size: 14px;
-  min-width: 0;
-}
-.mockList li:last-child {
-  border-bottom: 0;
-}
-.mockList b {
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.mockList small {
-  font-size: 12.5px;
-  color: var(--v-ink-3);
-}
-.mockCaption {
-  font-size: 13px;
-  color: var(--v-ink-3);
-  text-align: center;
 }
 
 /* ================= Brancher ================= */
@@ -330,7 +76,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 .sector {
@@ -344,7 +90,7 @@
 }
 .sectorPhoto {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 8;
   background: var(--v-rule-2);
 }
 .sectorText {
@@ -379,22 +125,6 @@
 }
 .sectorList {
   margin-top: 4px;
-}
-.sectorLink {
-  margin-top: auto;
-  padding-top: 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  align-self: flex-start;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--v-pine);
-  text-decoration: none;
-}
-.sectorLink:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 /* ================= Andre brancher ================= */
@@ -437,7 +167,6 @@
   border: 1px solid var(--v-rule);
   border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 30px 60px -30px rgba(21, 25, 26, 0.2);
 }
 .calcChoose,
 .calcAsk {
@@ -458,20 +187,20 @@
 }
 .calcHead h3 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
 }
 .step {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--v-dark);
-  color: var(--v-pine-light);
-  font-size: 14px;
+  background: var(--v-pine-bg);
+  color: var(--v-pine);
+  font-size: 13px;
   font-weight: 600;
 }
 .choice {
@@ -498,7 +227,7 @@
 }
 .pills {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
   gap: 6px;
   margin-top: 4px;
 }
@@ -517,18 +246,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 44px;
+  height: 40px;
   border-radius: 12px;
   border: 1px solid var(--v-rule);
   background: var(--v-white);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
 }
 .pill input:checked + span {
-  border-color: var(--v-ink);
-  background: var(--v-ink);
-  color: #fff;
+  border-color: var(--v-pine);
+  background: var(--v-pine-bg);
+  color: var(--v-pine);
+  font-weight: 600;
 }
 .pill input:focus-visible + span {
   outline: 2px solid var(--v-pine);
@@ -536,10 +266,10 @@
 }
 .priceBox {
   margin-top: 4px;
-  padding: 22px;
-  border-radius: 20px;
-  background: var(--v-dark);
-  color: var(--v-dark-text);
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -550,51 +280,49 @@
   padding: 3px;
   margin-bottom: 8px;
   border-radius: 999px;
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
+  background: var(--v-stone);
 }
 .billing button {
   border: 0;
   border-radius: 999px;
   padding: 6px 14px;
   background: transparent;
-  color: var(--v-dark-2);
+  color: var(--v-ink-3);
   font: inherit;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
 }
 .billing button[aria-pressed="true"] {
-  background: var(--v-dark-text);
-  color: var(--v-dark);
+  background: var(--v-white);
+  color: var(--v-ink);
   font-weight: 600;
 }
 .priceBig {
   margin: 0;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 44px;
-  line-height: 1.05;
+  font-size: 32px;
+  line-height: 1.1;
   font-weight: 600;
-  letter-spacing: -0.03em;
-  color: #fff;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--v-ink);
 }
 .priceBig span {
-  font-family: var(--font-geist), system-ui, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: 0;
-  color: var(--v-dark-2);
+  color: var(--v-ink-3);
 }
 .priceSub {
   margin: 0;
-  font-size: 15px;
-  color: var(--v-dark-text);
+  font-size: 14.5px;
+  color: var(--v-ink-2);
 }
 .pricePer {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   font-size: 13.5px;
   line-height: 1.5;
-  color: var(--v-dark-2);
+  color: var(--v-ink-3);
 }
 .priceTalk {
   margin: 0;
@@ -622,12 +350,9 @@
 }
 .notice {
   margin: 0;
-  padding: 14px 16px;
-  border-radius: 14px;
-  background: var(--v-pine-bg);
   font-size: 14.5px;
   line-height: 1.5;
-  color: var(--v-ink-2);
+  color: var(--v-ink-3);
 }
 .notice b {
   color: var(--v-ink);
@@ -734,11 +459,77 @@
 
 /* ================= Spørgsmål og svar ================= */
 
-.faqInner {
-  max-width: 760px;
+.faqWrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 64px;
+  align-items: start;
+}
+.faqIntro {
+  position: sticky;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.faqLead {
+  margin: 0;
+  max-width: 360px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--v-ink-2);
+}
+.faqList {
+  min-width: 0;
+  border-top: 1px solid var(--v-rule);
+}
+.faqItem {
+  border-bottom: 1px solid var(--v-rule);
+}
+.faqQ {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.faqQ::-webkit-details-marker {
+  display: none;
+}
+.faqQ:hover {
+  color: var(--v-pine);
+}
+.faqIcon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--v-rule);
+  color: var(--v-ink-3);
+  transition: transform 0.2s;
+}
+.faqItem[open] .faqIcon {
+  transform: rotate(45deg);
+  border-color: var(--v-pine);
+  color: var(--v-pine);
+}
+.faqA {
+  margin: 0;
+  padding: 0 52px 24px 0;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--v-ink-2);
+  text-wrap: pretty;
 }
 .demoLink {
-  margin-top: 12px;
+  margin-top: 4px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -770,14 +561,7 @@
   .heroPhoto img {
     object-position: 50% 55%;
   }
-  .how {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-  }
-  .mock {
-    max-width: 560px;
-  }
-  .journey,
+  .beats,
   .sectorGrid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -794,13 +578,12 @@
 }
 
 @media (max-width: 1019.98px) {
-  .usp {
+  .faqWrap {
     grid-template-columns: minmax(0, 1fr);
-    padding: 36px 32px;
-    gap: 28px;
+    gap: 32px;
   }
-  .uspPrice {
-    justify-self: stretch;
+  .faqIntro {
+    position: static;
   }
 }
 
@@ -808,34 +591,18 @@
   .heroTitle {
     font-size: 40px;
   }
-  .usp {
-    padding: 28px 20px;
-    border-radius: 24px;
+  .faqQ {
+    font-size: 16px;
+    padding: 18px 0;
   }
-  .uspTitle {
-    font-size: 28px;
-  }
-  .uspPrice {
-    padding: 22px 20px;
-  }
-  .uspAmount {
-    font-size: 48px;
+  .faqA {
+    padding-right: 0;
   }
   .heroPhoto {
     border-radius: 18px;
   }
-  .preparedPhoto {
-    border-radius: 20px;
-  }
-  .journeyStep {
+  .beat {
     padding: 20px;
-  }
-  .mock {
-    padding: 16px;
-    border-radius: 20px;
-  }
-  .mockTile b {
-    font-size: 18px;
   }
   .sector {
     border-radius: 20px;
@@ -855,7 +622,7 @@
     padding: 22px 18px;
   }
   .priceBig {
-    font-size: 36px;
+    font-size: 28px;
   }
   .sentCard {
     padding: 24px;

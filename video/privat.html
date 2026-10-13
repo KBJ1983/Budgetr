@@ -1,0 +1,265 @@
+<!doctype html>
+<!--
+  Privat film (48 s) for budgetpro.dk: what you get with budgetpro – statement import, the overview, sharing, goals,
+  loans, reminders and the rest – and the price. Runtime and shared styles: film.js / film.css. Render:
+  `pnpm video privat`. Screenshots show the fictional demo budget (public/landing/, `pnpm shots`).
+-->
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>budgetpro film</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200&family=Geist+Mono:wght@500&family=Geist:wght@400;500;600&family=Instrument+Sans:wght@600&display=block" rel="stylesheet" />
+<link rel="stylesheet" href="film.css" />
+<style>
+  .tag { display: inline-flex; align-items: center; gap: 14px; font-size: 24px; font-weight: 500; color: var(--pine); margin-bottom: 28px; }
+  .tag i { width: 14px; height: 14px; border-radius: 50%; background: var(--pine); box-shadow: 0 0 0 6px rgba(44,106,77,.15); }
+
+  #imp { left: 900px; top: 160px; }
+  #overblik { left: 820px; top: 170px; width: 960px; }
+  #overblik .view { height: 460px; }
+  #mob { left: 1560px; top: 360px; }
+  #hvem { left: 860px; top: 150px; width: 900px; }
+  #logins { left: 800px; top: 690px; width: 460px; padding: 28px 30px; }
+  #logins h4 { font-size: 22px; font-weight: 600; margin-bottom: 16px; }
+  .who { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 20px; }
+  .who .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; font-size: 16px; font-weight: 600; }
+  .who small { margin-left: auto; font-size: 16px; color: var(--ink-3); }
+  .who.add { color: var(--pine); font-weight: 500; }
+  .who.add .av { background: var(--pine-bg); color: var(--pine); font-size: 24px; }
+  #photo { left: 860px; top: 140px; width: 470px; height: 760px; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); }
+  #photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 70%; }
+  #goalphone { left: 1390px; top: 200px; }
+  #milestone { left: 1010px; top: 780px; width: 520px; padding: 22px 26px; display: flex; align-items: center; gap: 22px; }
+  #milestone b { display: block; font-size: 22px; margin-bottom: 4px; }
+  #milestone span { font-size: 18px; color: var(--ink-3); }
+  #laan { left: 820px; top: 180px; width: 960px; }
+  #paamind { left: 820px; top: 160px; width: 780px; }
+  #besked { left: 1330px; top: 420px; width: 480px; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+  #besked img { display: block; width: 100%; }
+  #more { left: 860px; top: 230px; width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mc { display: flex; align-items: center; gap: 18px; height: 112px; padding: 0 28px; background: var(--white); border: 1px solid var(--rule); border-radius: 20px; box-shadow: 0 14px 30px -18px rgba(21,25,26,.25); }
+  .mc i { width: 52px; height: 52px; border-radius: 14px; background: var(--pine-bg); display: grid; place-items: center; flex: none; }
+  .mc b { display: block; font-size: 24px; font-weight: 600; }
+  .mc span { font-size: 17px; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · Intro -->
+  <div class="layer intro" id="s1">
+    <div class="darkcard">
+      <div class="ring" style="width:1100px;height:1100px;right:-380px;top:-420px"></div>
+      <div class="ring" style="width:700px;height:700px;right:-180px;top:-220px"></div>
+      <div class="abs" style="left:116px;top:92px"><span class="wm dark" style="font-size:44px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span></div>
+      <div class="abs" id="s1-eyebrow" style="left:116px;top:330px;font-size:28px;font-weight:500;color:var(--pine-light)">Dit overblik. Dine drømme.</div>
+      <h1 style="top:390px"><span id="s1-l1">Hele din økonomi.</span><span id="s1-l2" style="color:var(--pine-light)">Ét roligt overblik.</span></h1>
+      <p class="abs" id="s1-sub" style="left:116px;top:648px;width:1300px;font-size:34px;line-height:1.4;color:var(--dark-2)">Løn, faste udgifter, lån og opsparing ét sted – for dig alene eller jer sammen.</p>
+    </div>
+  </div>
+
+  <!-- 2 · Statement import -->
+  <div class="layer" id="s2">
+    <div class="cap" id="c2">
+      <div class="tag"><i></i>Kontoudskrifter</div>
+      <h2>Start med tallene fra netbanken</h2>
+      <p>Læg CSV, Excel eller PDF ind. budgetpro finder de faste poster, og du vælger selv, hvad der kommer med.</p>
+    </div>
+    <div class="abs" id="imp"></div>
+  </div>
+
+  <!-- 3 · Overview -->
+  <div class="layer" id="s3">
+    <div class="cap" id="c3">
+      <div class="tag"><i></i>Overblik</div>
+      <h2>Se, hvad der er tilbage</h2>
+      <p>Efter faste udgifter og opsparing – og rådighedsbeløbet, som banken regner det.</p>
+    </div>
+    <div class="abs card shot" id="overblik">
+      <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
+      <div class="view"><img id="overImg" src="../public/landing/overblik-light.jpg" alt="" /></div>
+      <div class="spot" id="spot1" style="left:165px;top:334px;width:268px;height:52px"></div>
+      <div class="spot" id="spot2" style="left:384px;top:438px;width:194px;height:74px"></div>
+    </div>
+    <div class="abs phone" id="mob"><div class="scr"><img src="../public/landing/mobil-light.jpg" alt="" /></div></div>
+  </div>
+
+  <!-- 4 · Together -->
+  <div class="layer" id="s4">
+    <div class="cap" id="c4">
+      <div class="tag"><i></i>Sammen</div>
+      <h2>Del budgettet fair</h2>
+      <p>Fordel de fælles udgifter efter indkomst, ligeligt eller med en fast procent. I kan være op til tre om budgettet.</p>
+    </div>
+    <div class="abs card shot" id="hvem">
+      <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
+      <div class="view"><img src="../public/landing/hvem-light.jpg" alt="" /></div>
+    </div>
+    <div class="abs card" id="logins">
+      <h4>Hvem kan logge ind</h4>
+      <div class="who" id="w1"><span class="av">A</span>Anna<small>Primær</small></div>
+      <div class="who" id="w2"><span class="av">J</span>Jonas<small>Har fået en invitation</small></div>
+      <div class="who add" id="w3"><span class="av">+</span>Tilføj en e-mail</div>
+    </div>
+  </div>
+
+  <!-- 5 · Dreams -->
+  <div class="layer" id="s5">
+    <div class="cap" id="c5">
+      <div class="tag"><i></i>Opsparingsmål</div>
+      <h2>Giv drømmen en dato</h2>
+      <p>Et fast beløb til en dato, eller et fast beløb hver måned. Du får besked, når du når 10, 25, 50, 75 og 100 %.</p>
+    </div>
+    <div class="abs" id="photo"><img src="../public/landing/foto-strand.jpg" alt="" /></div>
+    <div class="abs phone" id="goalphone"><div class="scr"><img src="../public/landing/mobil-maal-light.jpg" alt="" /></div></div>
+    <div class="abs card" id="milestone">
+      <svg width="76" height="76" viewBox="0 0 76 76" style="flex:none"><circle cx="38" cy="38" r="30" fill="none" stroke="#dfe5df" stroke-width="10"/><circle id="ring" cx="38" cy="38" r="30" fill="none" stroke="#2c6a4d" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 38 38)"/><text id="ringPct" x="38" y="44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="17" font-weight="500" fill="#15191a">0 %</text></svg>
+      <div><b>Udbetaling til hus</b><span>Du er nået en milepæl i din opsparing.</span></div>
+    </div>
+  </div>
+
+  <!-- 6 · Loans -->
+  <div class="layer" id="s6">
+    <div class="cap" id="c6">
+      <div class="tag"><i></i>Lån</div>
+      <h2>Se, hvornår lånene er betalt ud</h2>
+      <p>Restgæld, rente og ydelse giver en slutdato for hvert lån – og en tidslinje over det, der frigives.</p>
+    </div>
+    <div class="abs card shot" id="laan">
+      <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
+      <div class="view"><img src="../public/landing/laan-light.jpg" alt="" /></div>
+    </div>
+  </div>
+
+  <!-- 7 · Messages -->
+  <div class="layer" id="s7">
+    <div class="cap" id="c7">
+      <div class="tag"><i></i>Beskeder</div>
+      <h2>Besked, når det betyder noget</h2>
+      <p>Når du når et mål, og når budgettet trænger til at blive set igennem. I appen, på mail eller sms.</p>
+    </div>
+    <div class="abs card shot" id="paamind"><div class="view"><img src="../public/landing/paamind-light.jpg" alt="" /></div></div>
+    <div class="abs" id="besked"><img src="../public/landing/besked-light.jpg" alt="" /></div>
+  </div>
+
+  <!-- 8 · And the rest -->
+  <div class="layer" id="s8">
+    <div class="cap" id="c8">
+      <div class="tag"><i></i>Og meget mere</div>
+      <h2>Alt det, et regneark ellers skal klare</h2>
+    </div>
+    <div class="abs" id="more">
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 9c0 6 12 0 12 6"/></svg></i><div><b>Scenarier</b><span>Hvad hvis I flytter eller skifter job?</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></i><div><b>Kladder</b><span>Et nyt budget ved siden af</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></i><div><b>Faste overførsler</b><span>Pengene, der flytter sig selv</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><b>Måned for måned</b><span>Saldoen på hver konto</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></i><div><b>Opgaver</b><span>Noter, hvad der skal gøres</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></i><div><b>PDF og Excel</b><span>Dine tal, når du vil have dem</span></div></div>
+    </div>
+  </div>
+
+  <div id="steps"></div>
+
+  <!-- End card -->
+  <div class="layer end" id="end">
+    <div class="darkcard">
+      <div class="ring" style="width:1300px;height:1300px;left:50%;top:50%;margin:-650px 0 0 -650px"></div>
+      <div class="ring" style="width:860px;height:860px;left:50%;top:50%;margin:-430px 0 0 -430px"></div>
+      <span class="wm dark" id="endWm" style="font-size:150px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span>
+      <p id="endLine" style="margin-top:48px;font-size:46px;font-weight:500;letter-spacing:-0.02em">Hele din økonomi. Ét roligt overblik.</p>
+      <p id="endSub" style="margin-top:18px;font-size:30px;color:var(--dark-2)">Prøv det gratis i 30 dage. Derefter 29 kr om måneden.</p>
+      <p id="endUrl" style="margin-top:36px;font-size:34px;color:var(--pine-light)">budgetpro.dk</p>
+    </div>
+  </div>
+</div>
+
+<script src="film.js"></script>
+<script>
+  const { $, $$, p, out, inOut, lerp, put, rise, slide, vis, cursor, bars } = F;
+  const S1 = [0, 5.6], S2 = [5.2, 12.8], S3 = [12.4, 18.8], S4 = [18.4, 24.2], S5 = [23.8, 29.6], S6 = [29.2, 34.8],
+    S7 = [34.4, 40.0], S8 = [39.6, 43.2], END = 42.8;
+  const DURATION = 48;
+
+  const imp = F.importScene($("#imp"));
+  const IMP0 = S2[0] + 0.5;
+
+  function frame(t) {
+    // 1 · Intro
+    put("#s1", { o: t < S1[1] - 0.5 ? 1 : 1 - inOut(p(t, S1[1] - 0.5, S1[1])) });
+    rise("#s1-eyebrow", t, 0.2);
+    rise("#s1-l1", t, 0.4, 1e9, 60);
+    rise("#s1-l2", t, 0.75, 1e9, 60);
+    rise("#s1-sub", t, 1.5);
+
+    // 2 · Import
+    put("#s2", { o: vis(t, S2[0], S2[1]) });
+    rise("#c2", t, S2[0] + 0.2);
+    rise("#imp", t, S2[0] + 0.3, 1e9, 60);
+    imp.update(t - IMP0);
+
+    // 3 · Overview: the amount left, then the bank's disposable amount
+    const u3 = t - S3[0];
+    put("#s3", { o: vis(t, S3[0], S3[1]) });
+    rise("#c3", t, S3[0] + 0.2);
+    rise("#overblik", t, S3[0] + 0.3, 1e9, 60);
+    slide("#mob", t, S3[0] + 1.0, 1e9, { x: 120, y: 0 });
+    const s1 = Math.min(out(p(u3, 1.4, 1.8)), 1 - inOut(p(u3, 3.2, 3.5)));
+    put("#spot1", { o: s1, s: lerp(1.08, 1, out(p(u3, 1.4, 1.9))) });
+    $("#overImg").style.transform = `translateY(${-140 * inOut(p(u3, 3.4, 4.2))}px)`;
+    put("#spot2", { o: out(p(u3, 4.3, 4.7)), s: lerp(1.08, 1, out(p(u3, 4.3, 4.8))) });
+
+    // 4 · Together
+    const u4 = t - S4[0];
+    put("#s4", { o: vis(t, S4[0], S4[1]) });
+    rise("#c4", t, S4[0] + 0.2);
+    rise("#hvem", t, S4[0] + 0.3, 1e9, 60);
+    slide("#logins", t, S4[0] + 1.3, 1e9, { x: -60, y: 20 });
+    ["#w1", "#w2", "#w3"].forEach((w, i) => rise(w, t, S4[0] + 1.7 + i * 0.3, 1e9, 12));
+
+    // 5 · Dreams
+    const u5 = t - S5[0];
+    put("#s5", { o: vis(t, S5[0], S5[1]) });
+    rise("#c5", t, S5[0] + 0.2);
+    rise("#photo", t, S5[0] + 0.3, 1e9, 60);
+    slide("#goalphone", t, S5[0] + 0.8, 1e9, { x: 120, y: 0 });
+    slide("#milestone", t, S5[0] + 2.0, 1e9, { x: 0, y: 30 });
+    const pct = Math.round(50 * out(p(u5, 2.4, 3.6)));
+    $("#ring").setAttribute("stroke-dashoffset", (188.5 * (1 - pct / 100)).toFixed(1));
+    $("#ringPct").textContent = `${pct} %`;
+
+    // 6 · Loans
+    put("#s6", { o: vis(t, S6[0], S6[1]) });
+    rise("#c6", t, S6[0] + 0.2);
+    rise("#laan", t, S6[0] + 0.3, 1e9, 60);
+
+    // 7 · Messages
+    put("#s7", { o: vis(t, S7[0], S7[1]) });
+    rise("#c7", t, S7[0] + 0.2);
+    rise("#paamind", t, S7[0] + 0.3, 1e9, 60);
+    slide("#besked", t, S7[0] + 1.4, 1e9, { x: 80, y: 30 });
+
+    // 8 · And the rest
+    put("#s8", { o: vis(t, S8[0], S8[1]) });
+    rise("#c8", t, S8[0] + 0.2);
+    $$("#more .mc").forEach((el, i) => rise(el, t, S8[0] + 0.4 + i * 0.18, 1e9, 30));
+
+    bars(t, [S2, S3, S4, S5, S6, S7, S8].map(([a, b]) => [a + 0.3, b - 0.2]), [5.4, END + 0.3]);
+
+    // End card
+    const ek = out(p(t, END, END + 0.7));
+    put("#end", { o: ek, s: lerp(1.03, 1, ek) });
+    rise("#endWm", t, END + 0.3, 1e9, 30);
+    rise("#endLine", t, END + 0.7, 1e9, 24);
+    rise("#endSub", t, END + 1.0, 1e9, 20);
+    rise("#endUrl", t, END + 1.3, 1e9, 20);
+
+    cursor(t, [{ keys: [[IMP0 + imp.T.next, imp.next], [IMP0 + imp.T.add, imp.add]], clicks: [IMP0 + imp.T.next, IMP0 + imp.T.add] }]);
+  }
+
+  F.film({ duration: DURATION, frame });
+</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!doctype html>
+<!--
+  Erhverv film (44 s): how a bank, an estate agent or another business gets an agreement with budgetpro, gives its
+  customers access, and what the customer gets (statement import + features). Runtime and shared styles: film.js /
+  film.css. Render: `pnpm video erhverv`. All names, e-mails and codes are made up.
+-->
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>budgetpro Erhverv film</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200&family=Geist+Mono:wght@500&family=Geist:wght@400;500;600&family=Instrument+Sans:wght@600&display=block" rel="stylesheet" />
+<link rel="stylesheet" href="film.css" />
+<style>
+  /* Scene 2: price card */
+  #price { left: 900px; top: 170px; width: 860px; height: 740px; padding: 52px 56px; }
+  #price h3 { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 36px; }
+  #price .row { display: flex; gap: 12px; margin-bottom: 36px; }
+  #price .sum { display: flex; align-items: flex-end; justify-content: space-between; padding: 28px 32px; border-radius: 20px; background: var(--pine-bg); margin-bottom: 32px; }
+  #price .sum .big { font-size: 64px; letter-spacing: -0.02em; color: var(--pine); line-height: 1; }
+  #price .sum .big small { font-family: var(--font); font-size: 26px; color: var(--ink-2); font-weight: 500; }
+  #price .sum .meta { font-size: 21px; color: var(--ink-2); text-align: right; line-height: 1.45; }
+  #price .note { margin-top: 20px; font-size: 19px; color: var(--ink-3); }
+  #sent { position: absolute; inset: 0; background: var(--white); display: flex; flex-direction: column; justify-content: center; padding: 0 72px; }
+  #sent .check { width: 88px; height: 88px; border-radius: 50%; background: var(--pine-bg); display: grid; place-items: center; margin-bottom: 36px; }
+  #sent h3 { font-size: 44px; line-height: 1.15; margin-bottom: 20px; }
+  #sent p { font-size: 26px; line-height: 1.45; color: var(--ink-2); }
+
+  /* Scenes 3–4: the agreement page */
+  #win { left: 880px; top: 170px; width: 900px; height: 740px; }
+  .af { background: var(--paper); height: calc(100% - 56px); }
+  .af-top { height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; background: var(--white); border-bottom: 1px solid var(--rule); }
+  .af-top .out { font-size: 16px; padding: 8px 14px; border: 1px solid var(--rule); border-radius: 10px; color: var(--ink-2); }
+  .af-main { padding: 32px 40px; }
+  .af-main h1 { font-size: 38px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 10px; }
+  .af-main .lead { font-size: 18px; line-height: 1.45; color: var(--ink-3); margin-bottom: 24px; max-width: 760px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+  .tile { background: var(--white); border: 1px solid var(--rule); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: var(--ink-3); }
+  .tile b { font: 500 40px/1.1 "Geist Mono", monospace; color: var(--ink); }
+  .tile.hi { background: var(--pine-bg); border-color: transparent; }
+  .tile.hi b { color: var(--pine); }
+  .af-main h2 { font-size: 24px; font-weight: 600; margin-bottom: 14px; }
+  .give { display: flex; align-items: flex-end; gap: 14px; padding: 22px; background: var(--white); border: 1px solid var(--rule); border-radius: 18px; }
+  .give label { flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 16px; font-weight: 500; color: var(--ink-2); }
+  .input { height: 56px; border-radius: 12px; border: 1.5px solid var(--rule); background: var(--card); display: flex; align-items: center; padding: 0 18px; font-size: 21px; color: var(--ink); }
+  .input.focus { border-color: var(--pine); box-shadow: 0 0 0 4px rgba(44,106,77,.14); }
+  .input .ph { color: #a3a8a4; }
+  .caret { display: inline-block; width: 2px; height: 26px; background: var(--ink); margin-left: 1px; }
+  .give .btn { height: 56px; }
+  .okline { margin-top: 16px; display: inline-flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 12px; background: var(--pine-bg); color: var(--pine); font-size: 18px; font-weight: 500; }
+
+  #notif { left: 980px; top: 330px; width: 700px; padding: 26px 30px; display: flex; gap: 22px; border-radius: 26px; }
+  #notif .who { font-size: 18px; color: var(--ink-3); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  #notif h4 { font-size: 25px; line-height: 1.3; font-weight: 600; margin-bottom: 8px; }
+  #notif p { font-size: 19px; line-height: 1.45; color: var(--ink-2); }
+
+  #mailphone { left: 1500px; top: 300px; }
+  .mail { padding: 64px 24px 24px; }
+  .mail .from { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--ink-3); margin-bottom: 18px; }
+  .mail h4 { font-size: 21px; line-height: 1.3; margin-bottom: 14px; }
+  .mail p { font-size: 15px; line-height: 1.5; color: var(--ink-2); margin-bottom: 14px; }
+  .mail .code { font: 500 26px/1 "Geist Mono", monospace; letter-spacing: .08em; text-align: center; padding: 18px; border-radius: 14px; background: var(--stone); margin-bottom: 16px; }
+  .mail .btn { width: 100%; height: 50px; font-size: 18px; }
+
+  #imp { left: 900px; top: 160px; }
+  #deck { left: 860px; top: 220px; }
+  #c6 .labels { margin-top: 8px; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · Intro -->
+  <div class="layer intro" id="s1">
+    <div class="darkcard">
+      <div class="ring" style="width:1100px;height:1100px;right:-380px;top:-420px"></div>
+      <div class="ring" style="width:700px;height:700px;right:-180px;top:-220px"></div>
+      <div class="abs" style="left:116px;top:92px"><span class="wm dark" style="font-size:44px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span></div>
+      <div class="abs" id="s1-eyebrow" style="left:116px;top:330px;font-size:28px;font-weight:500;color:var(--pine-light)">budgetpro Erhverv</div>
+      <h1 style="top:390px"><span id="s1-l1">Giv jeres kunder overblik</span><span id="s1-l2">over deres økonomi</span></h1>
+      <p class="abs" id="s1-sub" style="left:116px;top:648px;width:1200px;font-size:34px;line-height:1.4;color:var(--dark-2)">En fordel ved at være kunde hos jer – og nemt at komme i gang med.</p>
+      <div class="abs" style="left:116px;top:790px;display:flex;gap:16px">
+        <span class="dchip s1-chip">Banker</span><span class="dchip s1-chip">Ejendomsmæglere</span><span class="dchip s1-chip">Andre virksomheder</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · Pick a pack -->
+  <div class="layer" id="s2">
+    <div class="cap" id="c2">
+      <div class="step"><b>1</b>Vælg en pakke</div>
+      <h2>Vælg antal koder og måneder</h2>
+      <p>Send en prisforespørgsel. Det binder jer ikke til noget – vi skriver til jer med et tilbud.</p>
+    </div>
+    <div class="abs card" id="price">
+      <h3>Vælg pakke</h3>
+      <div class="legend">Antal koder</div>
+      <div class="row"><span class="chip">10</span><span class="chip">25</span><span class="chip" id="c50">50</span><span class="chip">100</span><span class="chip">200</span></div>
+      <div class="legend">Varighed pr. kode</div>
+      <div class="row"><span class="chip">3 md.</span><span class="chip">6 md.</span><span class="chip" id="m12">12 md.</span><span class="chip">24 md.</span></div>
+      <div class="sum" id="sum">
+        <div class="big mono"><span id="perMonth">–</span> kr<small> /md.</small></div>
+        <div class="meta">50 koder × 12 måneder<br /><span id="total">7.200</span> kr i alt</div>
+      </div>
+      <span class="btn" id="sendReq">Send prisforespørgsel <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <div class="note">Det er kun en prisforespørgsel. I opretter ikke en aftale.</div>
+      <div id="sent">
+        <div class="check"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2c6a4d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h3>Tak. Jeres prisforespørgsel er sendt.</h3>
+        <p>Vi skriver til jer med et tilbud på 50 koder × 12 måneder.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 · The agreement is ready -->
+  <div class="layer" id="s3">
+    <div class="cap" id="c3">
+      <div class="step"><b>2</b>Aftalen er klar</div>
+      <h2>I får jeres egen aftaleside</h2>
+      <p>Når aftalen er på plads, får I en mail og logger ind med jeres e-mail. Ingen adgangskoder.</p>
+    </div>
+  </div>
+
+  <!-- 4 · Give access -->
+  <div class="layer" id="s4">
+    <div class="cap" id="c4">
+      <div class="step"><b>3</b>Send adgang</div>
+      <h2>Skriv kundens <span class="nw">e-mail</span></h2>
+      <p>Kunden får en kode på mail. Ingen andre kan se koden – heller ikke jer.</p>
+    </div>
+  </div>
+
+  <div class="abs card" id="win">
+    <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/aftale</div></div>
+    <div class="af">
+      <div class="af-top"><span class="wm" style="font-size:26px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span><span class="out">Log ud</span></div>
+      <div class="af-main">
+        <h1>Eksempelbanken</h1>
+        <p class="lead">Her giver du jeres kunder adgang til budgetpro. Du skriver kun en e-mail, så sender vi personen en kode.</p>
+        <div class="tiles">
+          <div class="tile hi"><span>Fri pladser</span><b id="tFree">50</b><span>kan sendes nu</span></div>
+          <div class="tile"><span>I brug</span><b>0</b><span>har brugt koden</span></div>
+          <div class="tile"><span>Sendt</span><b id="tSent">0</b><span>venter</span></div>
+          <div class="tile"><span>Pladser i alt</span><b>50</b><span>12 md. pr. plads</span></div>
+        </div>
+        <h2>Giv en kunde adgang</h2>
+        <div class="give">
+          <label>Kundens e-mail<div class="input" id="email"><span class="ph">navn@eksempel.dk</span></div></label>
+          <span class="btn pine" id="sendCode">Send kode</span>
+        </div>
+        <div class="okline" id="ok"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Koden er sendt til maja@eksempel.dk.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="abs card" id="notif">
+    <svg width="64" height="64" viewBox="0 0 120 120" style="flex:none"><rect width="120" height="120" rx="27" fill="#121513"/><circle cx="60" cy="60" r="26" fill="#7ed4a8"/></svg>
+    <div>
+      <div class="who"><span>budgetpro</span><span>nu</span></div>
+      <h4>Du kan nu give adgang til budgetpro for Eksempelbanken</h4>
+      <p>Vi har gjort dig til administrator af Eksempelbankens aftale med budgetpro. Du giver adgang ved at skrive en e-mail.</p>
+    </div>
+  </div>
+
+  <div class="abs phone" id="mailphone">
+    <div class="scr"><div class="notch"></div>
+      <div class="mail">
+        <div class="from"><svg width="36" height="36" viewBox="0 0 120 120"><rect width="120" height="120" rx="27" fill="#121513"/><circle cx="60" cy="60" r="26" fill="#7ed4a8"/></svg>budgetpro · til Maja</div>
+        <h4>Eksempelbanken har givet dig adgang til budgetpro</h4>
+        <p>Eksempelbanken har givet dig budgetpro i 12 måneder uden betaling. budgetpro giver dig et roligt overblik over din økonomi.</p>
+        <div class="code">K7QM-4TRA</div>
+        <span class="btn pine">Kom i gang</span>
+        <p style="margin-top:14px;font-size:13px;color:var(--ink-3)">Eksempelbanken kan ikke se dit budget.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 · The customer imports statements -->
+  <div class="layer" id="s5">
+    <div class="cap" id="c5">
+      <div class="step"><b>4</b>Kunden er i gang</div>
+      <h2>Kontoudskrifter ind, budget ud</h2>
+      <p>Kunden lægger kontoudskrifter fra netbanken ind, og budgetpro finder de faste poster. I kan ikke se kundens budget.</p>
+    </div>
+    <div class="abs" id="imp"></div>
+  </div>
+
+  <!-- 6 · What the customer gets -->
+  <div class="layer" id="s6">
+    <div class="cap" id="c6">
+      <div class="step"><b>5</b>Det får kunden</div>
+      <h2>Alt samlet ét sted</h2>
+      <ul id="deckLabels"></ul>
+    </div>
+    <div class="abs" id="deck"></div>
+  </div>
+
+  <div id="steps"></div>
+
+  <!-- End card -->
+  <div class="layer end" id="end">
+    <div class="darkcard">
+      <div class="ring" style="width:1300px;height:1300px;left:50%;top:50%;margin:-650px 0 0 -650px"></div>
+      <div class="ring" style="width:860px;height:860px;left:50%;top:50%;margin:-430px 0 0 -430px"></div>
+      <span class="wm dark" id="endWm" style="font-size:150px"><span class="b">budget</span><span class="p">pro</span><span class="d"></span></span>
+      <p id="endLine" style="margin-top:48px;font-size:46px;font-weight:500;letter-spacing:-0.02em">Et gratis budgetværktøj til jeres kunder</p>
+      <p id="endSub" style="margin-top:18px;font-size:30px;color:var(--dark-2)">Vælg en pakke, og send koderne selv.</p>
+      <p id="endUrl" style="margin-top:36px;font-size:34px;color:var(--pine-light)">erhverv.budgetpro.dk</p>
+    </div>
+  </div>
+</div>
+
+<script src="film.js"></script>
+<script>
+  const { $, $$, p, out, inOut, lerp, kr, put, rise, slide, vis, cursor, press, bars } = F;
+  const S1 = [0, 6], S2 = [5.6, 12.2], S3 = [11.8, 18], S4 = [17.6, 24.2], S5 = [23.8, 30.6], S6 = [30.2, 37.8], END = 37.4;
+  const DURATION = 44;
+  const EMAIL = "maja@eksempel.dk";
+
+  const imp = F.importScene($("#imp"));
+  const IMP0 = S5[0] + 0.5; // the import's own clock starts here
+  const deck = F.deck($("#deck"), $("#deckLabels"), [
+    { label: "Rådighedsbeløbet, som banken regner det", img: "../public/landing/overblik-light.jpg", pos: "left 100%" },
+    { label: "Alle faste poster ét sted", img: "../public/landing/poster-light.jpg" },
+    { label: "Opsparingsmål med en dato", img: "../public/landing/maal-light.jpg" },
+    { label: "Lån med beregnet slutdato", img: "../public/landing/laan-light.jpg" },
+    { label: "Fair fordeling, når man er flere", img: "../public/landing/hvem-light.jpg" },
+  ], 1.45);
+  const DECK0 = S6[0] + 0.3;
+
+  function frame(t) {
+    // 1 · Intro
+    put("#s1", { o: t < S1[1] - 0.5 ? 1 : 1 - inOut(p(t, S1[1] - 0.5, S1[1])) });
+    rise("#s1-eyebrow", t, 0.2);
+    rise("#s1-l1", t, 0.4, 1e9, 60);
+    rise("#s1-l2", t, 0.65, 1e9, 60);
+    rise("#s1-sub", t, 1.3);
+    $$(".s1-chip").forEach((el, i) => rise(el, t, 2.2 + i * 0.25, 1e9, 24));
+
+    // 2 · Pick a pack
+    const u2 = t - S2[0];
+    put("#s2", { o: vis(t, S2[0], S2[1]) });
+    rise("#c2", t, S2[0] + 0.2);
+    rise("#price", t, S2[0] + 0.4, 1e9, 60);
+    $("#c50").classList.toggle("on", u2 >= 1.9);
+    $("#m12").classList.toggle("on", u2 >= 2.8);
+    const priceK = out(p(u2, 2.9, 3.7));
+    put("#sum", { o: lerp(0.35, 1, out(p(u2, 2.8, 3.1))) });
+    $("#perMonth").textContent = priceK ? kr(600 * priceK) : "–";
+    $("#total").textContent = kr(7200 * priceK);
+    put("#sent", { o: out(p(u2, 4.75, 5.15)), y: (1 - out(p(u2, 4.75, 5.3))) * 16 });
+    press("#sendReq", t, 10.3);
+
+    // 3 · Mail to the kundeadmin, then the agreement page
+    put("#s3", { o: vis(t, S3[0], S3[1]) });
+    rise("#c3", t, S3[0] + 0.2);
+    const nk = out(p(t, 12.4, 13.1)), nOut = inOut(p(t, 14.6, 15.2));
+    put("#notif", { o: Math.min(nk, 1 - nOut), y: (1 - nk) * -50 + nOut * -40, s: 1 - nOut * 0.06 });
+    const wk = out(p(t, 14.9, 15.7));
+    put("#win", { o: Math.min(wk, 1 - inOut(p(t, S4[1] - 0.5, S4[1]))), y: (1 - wk) * 60 });
+
+    // 4 · Give access
+    put("#s4", { o: vis(t, S4[0], S4[1]) });
+    rise("#c4", t, S4[0] + 0.2);
+    const u4 = t - S4[0];
+    const typed = Math.round(EMAIL.length * p(u4, 1.4, 2.7));
+    const focus = u4 >= 1.1 && u4 < 3.4;
+    const caret = focus && Math.floor(t * 2.5) % 2 === 0 ? '<span class="caret"></span>' : "";
+    $("#email").classList.toggle("focus", focus);
+    $("#email").innerHTML = typed ? EMAIL.slice(0, typed) + caret : caret + '<span class="ph">navn@eksempel.dk</span>';
+    const sentDone = u4 >= 3.3;
+    $("#tFree").textContent = sentDone ? "49" : "50";
+    $("#tSent").textContent = sentDone ? "1" : "0";
+    put("#ok", { o: out(p(u4, 3.3, 3.6)), y: (1 - out(p(u4, 3.3, 3.7))) * 10 });
+    const mk = out(p(u4, 3.9, 4.7));
+    put("#mailphone", { o: Math.min(mk, 1 - inOut(p(t, S4[1] - 0.5, S4[1]))), x: (1 - mk) * 120, y: (1 - mk) * 20 });
+    press("#sendCode", t, 20.9);
+
+    // 5 · Statement import
+    put("#s5", { o: vis(t, S5[0], S5[1]) });
+    rise("#c5", t, S5[0] + 0.2);
+    rise("#imp", t, S5[0] + 0.3, 1e9, 60);
+    imp.update(t - IMP0);
+
+    // 6 · Feature montage
+    put("#s6", { o: vis(t, S6[0], S6[1]) });
+    rise("#c6", t, S6[0] + 0.2);
+    slide("#deck", t, S6[0] + 0.2, 1e9, { x: 0, y: 60 });
+    deck.update(t - DECK0);
+
+    bars(t, [[S2[0] + 0.3, S2[1]], [S3[0] + 0.3, S3[1]], [S4[0] + 0.3, S4[1]], [S5[0] + 0.3, S5[1]], [S6[0] + 0.3, S6[1] - 0.4]], [5.8, END + 0.3]);
+
+    // End card, held for the last six seconds
+    const ek = out(p(t, END, END + 0.7));
+    put("#end", { o: ek, s: lerp(1.03, 1, ek) });
+    rise("#endWm", t, END + 0.3, 1e9, 30);
+    rise("#endLine", t, END + 0.7, 1e9, 24);
+    rise("#endSub", t, END + 0.95, 1e9, 20);
+    rise("#endUrl", t, END + 1.2, 1e9, 20);
+
+    cursor(t, [
+      { keys: [[7.4, "#c50"], [8.4, "#m12"], [10.2, "#sendReq"]], clicks: [7.4, 8.4, 10.3] },
+      { keys: [[18.7, "#email"], [20.6, "#sendCode"]], clicks: [18.7, 20.9] },
+      { keys: [[IMP0 + imp.T.next, imp.next], [IMP0 + imp.T.add, imp.add]], clicks: [IMP0 + imp.T.next, IMP0 + imp.T.add] },
+    ]);
+  }
+
+  F.film({ duration: DURATION, frame });
+</script>
+</body>
+</html>

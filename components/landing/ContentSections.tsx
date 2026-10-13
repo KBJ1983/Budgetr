@@ -1,10 +1,31 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
+import { AnimationPlaceholder } from "@/components/AnimationPlaceholder";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { ShotFrame, ThemeShot } from "./Shots";
 import { SwipeList } from "./Swipe";
 import { ArrowRightIcon, PeopleIcon, UploadIcon, WandIcon } from "./icons";
+
+/** Right under the hero: a short animation about budgetpro (a placeholder until it is made). */
+export function Explainer() {
+  return (
+    <section id="film" className={`${styles.section} ${styles.white}`} aria-labelledby="film-title">
+      <div className={styles.sectionInner}>
+        <div className={styles.sectionHead} data-reveal>
+          <div className={styles.sectionHeadTitle}>
+            <span className={styles.eyebrow}>Hvad er budgetpro</span>
+            <h2 id="film-title" className={styles.h2}>
+              budgetpro på et minut.
+            </h2>
+          </div>
+          <p className={styles.headBody}>Se, hvordan budgettet bliver til, og hvad du får ud af det hver måned.</p>
+        </div>
+        <AnimationPlaceholder label="Animation om budgetpro kommer her" />
+      </div>
+    </section>
+  );
+}
 
 const STEPS = [
   {

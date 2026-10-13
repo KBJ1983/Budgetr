@@ -44,11 +44,6 @@ export const PRIVATE_MONTHLY = 29;
 /** The private price for the same: count customers × months at 29 kr – what the pack saves the customers. */
 export const privateValue = (count: number, months: number) => count * months * PRIVATE_MONTHLY;
 
-/** The lowest price per code-month on the list and the pack that gives it – the Erhverv page's "fra 8 kr". */
-export const CHEAPEST = PACK_COUNTS.flatMap((count) => PACK_MONTHS.map((months) => ({ count, months, rate: RATE[count][months] }))).reduce(
-  (best, p) => (p.rate < best.rate ? p : best),
-);
-
 /** The form's default: 50 codes, 12 months. */
 export const DEFAULT_PACK = { count: 50 as PackCount, months: 12 as PackMonths };
 

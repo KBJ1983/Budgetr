@@ -1,0 +1,37 @@
+/* Colours as in the landing palette (.page in components/landing/landing.module.css). */
+
+.frame {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  max-height: 560px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: #151617;
+  color: #b4b6ba;
+  border-radius: 28px;
+}
+.play {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #2c6a4d;
+  color: #fff;
+}
+.caption {
+  padding: 0 20px;
+  font-size: 15px;
+  text-align: center;
+}
+
+@media (max-width: 767.98px) {
+  .frame {
+    aspect-ratio: 4 / 3;
+    border-radius: 20px;
+  }
+}

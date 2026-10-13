@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CHEAPEST, MAX_PACK_COUNT, PRIVATE_MONTHLY, PACK_COUNTS, PACK_MONTHS, isBilling, isPackCount, isPackMonths, packMonthly, packPrice, packYearly, perCodeMonth } from "./erhverv-packs";
+import { MAX_PACK_COUNT, PACK_COUNTS, PACK_MONTHS, isBilling, isPackCount, isPackMonths, packMonthly, packPrice, packYearly, perCodeMonth } from "./erhverv-packs";
 
 describe("Erhverv packs", () => {
   it("prices 50 codes on the list", () => {
@@ -23,12 +23,6 @@ describe("Erhverv packs", () => {
       for (const [a, b] of pairs(PACK_MONTHS)) expect(perCodeMonth(c, b)).toBeLessThan(perCodeMonth(c, a));
     for (const m of PACK_MONTHS)
       for (const [a, b] of pairs(PACK_COUNTS)) expect(perCodeMonth(b, m)).toBeLessThan(perCodeMonth(a, m));
-  });
-
-  it("finds the lowest price per customer a month (the Erhverv page's USP)", () => {
-    expect(CHEAPEST).toEqual({ count: 200, months: 24, rate: 8 });
-    for (const c of PACK_COUNTS) for (const m of PACK_MONTHS) expect(perCodeMonth(c, m)).toBeGreaterThanOrEqual(CHEAPEST.rate);
-    expect(CHEAPEST.rate).toBeLessThan(PRIVATE_MONTHLY);
   });
 
   it("knows its own sizes only", () => {

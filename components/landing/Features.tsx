@@ -114,21 +114,28 @@ const ALL: readonly { title: string; items: readonly string[] }[] = [
   },
 ];
 
-/** All the features in a dark band between the light sections: a sideways tour, and the full list to unfold. */
-export function Features() {
+type FeaturesHead = { eyebrow?: string; title?: string; body?: string };
+
+/**
+ * All the features in a dark band between the light sections: a sideways tour, and the full list to unfold. The Erhverv
+ * page passes its own head ("Det får kunderne med budgetpro").
+ */
+export function Features({
+  eyebrow = "Funktioner",
+  title = "Alt det, budgettet holder styr på.",
+  body = "Opsparing, lån, påmindelser og det, der ellers kræver et regneark. Bladr i funktionerne, eller se dem alle.",
+}: FeaturesHead = {}) {
   return (
     <section id="mere" className={`${styles.section} ${styles.featureBand}`} aria-labelledby="mere-title">
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Funktioner</span>
+            <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>{eyebrow}</span>
             <h2 id="mere-title" className={`${styles.h2} ${styles.h2Light}`}>
-              Alt det, budgettet holder styr på.
+              {title}
             </h2>
           </div>
-          <p className={`${styles.headBody} ${styles.headBodyDark}`}>
-            Opsparing, lån, påmindelser og det, der ellers kræver et regneark. Bladr i funktionerne, eller se dem alle.
-          </p>
+          <p className={`${styles.headBody} ${styles.headBodyDark}`}>{body}</p>
         </div>
         <div data-reveal>
           <FeatureTour slides={SLIDES} />
