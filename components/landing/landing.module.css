@@ -936,6 +936,66 @@
   order: -1;
 }
 
+/* Rådighed: laptop + phone with real screenshots (same drawing as the Skole front page). */
+.devices {
+  position: relative;
+  width: 100%;
+  padding-bottom: 28px;
+}
+.devLaptop {
+  width: 88%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.devLid {
+  width: 100%;
+  background: #1a1c1d;
+  border-radius: 16px 16px 0 0;
+  padding: 10px 10px 14px;
+  box-shadow: 0 40px 80px -30px rgba(21, 25, 26, 0.45);
+}
+.devScreen {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f4f5f1;
+}
+.devBase {
+  width: 112%;
+  height: 13px;
+  background: linear-gradient(180deg, #d9d8d3, #b9b8b2);
+  border-radius: 0 0 14px 14px;
+  position: relative;
+}
+.devBase span {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 16%;
+  height: 5px;
+  background: #a9a8a2;
+  border-radius: 0 0 6px 6px;
+}
+.devPhone {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 26%;
+  min-width: 96px;
+  background: #1a1c1d;
+  border-radius: 26px;
+  padding: 6px;
+  box-shadow: 0 30px 60px -20px rgba(21, 25, 26, 0.55);
+}
+.devPhoneScreen {
+  aspect-ratio: 390 / 844;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f4f5f1;
+}
+
 /* Deler du økonomi: photo with the screenshot overlapping its lower edge. */
 .sharePhotoWrap {
   display: flex;

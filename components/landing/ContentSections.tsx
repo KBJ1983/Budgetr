@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
-import { ShotFrame } from "./Shots";
+import { ShotFrame, ThemeShot } from "./Shots";
 import { SwipeList } from "./Swipe";
 import { ArrowRightIcon, PeopleIcon, UploadIcon, WandIcon } from "./icons";
 
@@ -134,8 +134,37 @@ export function Availability() {
         "Se hvornår et lån udløber og giver luft i budgettet",
         "Klik på en post for at rette den med det samme",
       ]}
-      visual={<ShotFrame name="bank" alt="Rådighedsbeløb som banken regner det, med nettoindtægt, bankens faste udgifter, rådighedsbeløb og vejledende krav" width={1692} height={1352} />}
+      visual={<AvailabilityDevices />}
     />
+  );
+}
+
+/** A laptop and a phone with the overview (bank's rådighedsbeløb), like the devices on the Skole front page. */
+function AvailabilityDevices() {
+  return (
+    <div className={styles.devices}>
+      <div className={styles.devLaptop}>
+        <div className={styles.devLid}>
+          <div className={styles.devScreen}>
+            <ThemeShot
+              name="overblik"
+              alt="Overblik på en bærbar: hvad der er tilbage hver måned, og rådighedsbeløbet som banken regner det, med nettoindtægt, bankens faste udgifter og vejledende krav"
+              width={2360}
+              height={1474}
+              sizes="(max-width: 1019px) 90vw, 560px"
+            />
+          </div>
+        </div>
+        <div className={styles.devBase}>
+          <span />
+        </div>
+      </div>
+      <div className={styles.devPhone}>
+        <div className={styles.devPhoneScreen}>
+          <ThemeShot name="mobil" alt="Overblik og rådighedsbeløbet på en mobil" width={780} height={1560} sizes="160px" />
+        </div>
+      </div>
+    </div>
   );
 }
 
