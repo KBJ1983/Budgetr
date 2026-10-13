@@ -22,6 +22,7 @@ export function Hero() {
             <Link href="/opret" className={styles.heroButton}>
               Prøv gratis i 30 dage <ArrowRightIcon size={16} />
             </Link>
+            <p className={styles.heroNote}>Intet betalingskort nu. Det skal først bruges, når de 30 dage er gået.</p>
           </div>
         </div>
         <div className={styles.heroVisual}>

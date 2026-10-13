@@ -78,7 +78,8 @@ export function CreateAccountForm({ email }: { email?: string }) {
       <h1>Opret gratis konto</h1>
       <p className="bx-guide-lead">
         Udfyld felterne, så sender vi dig en kode, som bekræfter din e-mail. Der er ingen adgangskode – du logger ind
-        med en kode eller et link på mail.
+        med en kode eller et link på mail. De første 30 dage er gratis, og du skal ikke bruge betalingskort, før de er
+        gået.
       </p>
       <form onSubmit={submit} noValidate className="bx-auth-form">
         {FIELDS.map((f) => {

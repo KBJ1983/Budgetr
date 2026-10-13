@@ -147,7 +147,7 @@ const PRICE_FEATURES = [
 const FAQ = [
   {
     q: "Hvad koster det?",
-    a: "De første 30 dage er gratis med alle funktioner. Derefter koster det 29 kr om måneden. Deler du budgettet med andre, koster hver ekstra bruger 9 kr om måneden. Betaler du årligt, sparer du 15 %: 296 kr om året og 92 kr om året for hver ekstra bruger. Priserne er inkl. moms.",
+    a: "De første 30 dage er gratis med alle funktioner, og du skal ikke oplyse betalingskort for at starte. Kortet skal først bruges, når de 30 dage er gået. Derefter koster det 29 kr om måneden. Deler du budgettet med andre, koster hver ekstra bruger 9 kr om måneden. Betaler du årligt, sparer du 15 %: 296 kr om året og 92 kr om året for hver ekstra bruger. Priserne er inkl. moms.",
   },
   {
     q: "Skal jeg give adgang til min netbank?",
@@ -181,6 +181,7 @@ export function Pricing() {
           <Link href="/opret" className={styles.buttonBlock}>
             Prøv gratis i 30 dage
           </Link>
+          <p className={styles.priceCardNote}>Intet betalingskort nu. Det skal først bruges, når de 30 dage er gået.</p>
         </div>
         <div className={styles.faq} data-reveal-group>
           <h2 className={`${styles.h2} ${styles.faqTitle}`}>Spørgsmål og svar</h2>
@@ -211,7 +212,7 @@ export function FinalCta() {
           <h2 id="cta-title" className={styles.ctaTitle}>
             Giv din økonomi et hjem. Det tager 29 minutter.
           </h2>
-          <p className={styles.ctaBody}>Prøv gratis i 30 dage, følg guiden, og se med det samme, hvad du har til rådighed.</p>
+          <p className={styles.ctaBody}>Prøv gratis i 30 dage, følg guiden, og se med det samme, hvad du har til rådighed. Betalingskortet skal først bruges, når de 30 dage er gået.</p>
           <div className={styles.ctaForm}>
             <SignupForm idPrefix="cta" variant="dark" centered />
           </div>
