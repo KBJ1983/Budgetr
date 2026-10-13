@@ -5,6 +5,7 @@ import { ArrowRightIcon } from "@/components/landing/icons";
 import { SECTORS, TALK_FIRST, validateInquiry, type InquiryField } from "@/lib/erhverv";
 import {
   DEFAULT_PACK,
+  MAX_PACK_COUNT,
   PACK_COUNTS,
   PACK_MONTHS,
   packLabel,
@@ -109,7 +110,10 @@ export function PriceRequest() {
 
         <fieldset className={e.choice} disabled={talk}>
           <legend>Antal koder</legend>
-          <p className={e.choiceHint}>Én kode giver én kunde adgang.</p>
+          <p className={e.choiceHint}>
+            Én kode giver én kunde adgang. Skal I bruge flere end {MAX_PACK_COUNT}, så vælg “Vi vil hellere tale om pakken først” og skriv antallet
+            nedenfor.
+          </p>
           <div className={e.pills}>
             {PACK_COUNTS.map((c) => (
               <label key={c} className={e.pill}>

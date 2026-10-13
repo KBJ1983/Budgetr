@@ -47,7 +47,7 @@ describe("validateInquiry", () => {
     expect(m.subject).toBe("Henvendelse fra Eksempel Bank (Bank eller pengeinstitut)");
     expect(m.text).toContain("navn@eksempel.dk");
     expect(m.text).toContain("Telefon: ikke oplyst");
-    expect(m.text).toContain("Pakke: 50 koder × 12 måneder, månedlig betaling (600 kr om måneden, 7.195 kr i alt efter prislisten)");
+    expect(m.text).toContain("Pakke: 50 koder × 12 måneder, månedlig betaling (600 kr om måneden, 7.200 kr i alt efter prislisten)");
     expect(m.text).toContain("ikke oprettet en aftale");
     const y = validateInquiry({ ...form, billing: "aar" });
     expect(y.ok && y.value.billing).toBe("aar");

@@ -9,10 +9,12 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader, type NavLink } from "@/components/landing/SiteHeader";
 import { SwipeList } from "@/components/landing/Swipe";
 import { ArrowRightIcon, DownloadIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon, UploadIcon, WandIcon } from "@/components/landing/icons";
+import { CHEAPEST, PRIVATE_MONTHLY } from "@/lib/erhverv-packs";
 import { PriceRequest } from "./PriceRequest";
 import e from "./erhverv.module.css";
 
 const NAV_LINKS: readonly NavLink[] = [
+  { href: "#kundefordel", label: "Kundefordel" },
   { href: "#forberedt", label: "Forberedte kunder" },
   { href: "#saadan", label: "Sådan virker det" },
   { href: "#brancher", label: "Brancher" },
@@ -20,6 +22,7 @@ const NAV_LINKS: readonly NavLink[] = [
 ];
 
 const FOOTER_LINKS: readonly NavLink[] = [
+  { href: "#kundefordel", label: "Kundefordel" },
   { href: "#forberedt", label: "Forberedte kunder" },
   { href: "#saadan", label: "Sådan virker det" },
   { href: "#brancher", label: "Brancher" },
@@ -27,8 +30,9 @@ const FOOTER_LINKS: readonly NavLink[] = [
 ];
 
 /**
- * The Erhverv page (erhverv.<domain>, /erhverv): banks, estate agents, schools and others help their customers to an
- * easy overview of their money – and to come prepared – by giving them budgetpro through an agreement
+ * The Erhverv page (erhverv.<domain>, /erhverv): banks, estate agents, schools and others give their customers budgetpro
+ * as a customer benefit – an easy overview of their money and a plan for what they dream of – so they also come
+ * prepared, through an agreement
  * (docs/plans/2026-10-13-aftaler-adgang.md). Uses the landing page's styles and header, its photos plus the meeting
  * photo in public/erhverv/, a drawn miniature of the kundeadmin page /aftale (made-up e-mails) and the price
  * calculator, which only sends a price request.
@@ -39,6 +43,8 @@ export function ErhvervLanding({ skoleUrl }: { skoleUrl: string }) {
       <SiteHeader site="erhverv" links={NAV_LINKS} login={{ href: "/aftale", label: "Log ind" }} cta={{ href: "#pris", label: "Beregn pris" }} />
       <main>
         <Hero />
+        <Usp />
+        <Benefit />
         <Prepared />
         <Steps />
         <Sectors skoleUrl={skoleUrl} />
@@ -61,11 +67,12 @@ function Hero() {
         <div className={styles.heroText}>
           <p className={styles.tagline}>budgetpro Erhverv</p>
           <h1 id="hero-title" className={`${styles.h1} ${e.heroTitle}`}>
-            Hjælp dine kunder til <span className={styles.accent}>et nemt overblik</span> over deres økonomi.
+            Giv jeres kunder et budgetværktøj som en <span className={styles.accent}>kundefordel</span>.
           </h1>
           <p className={styles.lead}>
-            Med budgetpro samler jeres kunder løn, faste udgifter, lån og opsparing ét sted. Så kommer de forberedte til
-            mødet, og I kan bruge tiden på rådgivning i stedet for at lede efter tal.
+            Med budgetpro får jeres kunder et nemt overblik over løn, faste udgifter, lån og opsparing, og en plan for det,
+            de drømmer om. Så kommer de forberedte til mødet, og I kan bruge tiden på rådgivning i stedet for at lede efter
+            tal.
           </p>
           <div className={styles.heroActions}>
             <a href="#pris" className={styles.heroButton}>
@@ -89,6 +96,104 @@ function Hero() {
             className={styles.photoCover}
           />
         </div>
+      </div>
+    </section>
+  );
+}
+
+/** The USP band under the hero: the lowest price per customer, taken from the price list so it never drifts. */
+function Usp() {
+  return (
+    <section className={e.uspWrap} aria-labelledby="usp-title">
+      <div className={e.usp} data-reveal>
+        <div className={e.uspText}>
+          <h2 id="usp-title" className={e.uspTitle}>
+            Vil I give jeres kunder en kæmpe fordel for {CHEAPEST.rate} kr om måneden?
+          </h2>
+          <p className={e.uspBody}>
+            Fra {CHEAPEST.rate} kr pr. kunde om måneden med {CHEAPEST.count} koder i {CHEAPEST.months} måneder. Privat koster
+            budgetpro {PRIVATE_MONTHLY} kr om måneden.
+          </p>
+        </div>
+        <div className={e.uspPrice}>
+          <span className={e.uspFrom}>Fra</span>
+          <b className={e.uspAmount}>{CHEAPEST.rate} kr</b>
+          <span className={e.uspUnit}>pr. kunde om måneden</span>
+          <a href="#pris" className={e.uspButton}>
+            Beregn jeres pris <ArrowRightIcon size={16} />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const DREAMS = [
+  {
+    tag: "Drømmen",
+    title: "Huset med haven",
+    body: "Kunden sætter et mål for udbetalingen og ser, hvor meget der skal lægges til side hver måned for at nå det.",
+  },
+  {
+    tag: "Drømmen",
+    title: "Rejsen, de har talt om",
+    body: "Et beløb og en dato gør rejsen til en plan. Feriepenge og bonus kan lægges ind som ekstra indbetalinger.",
+  },
+  {
+    tag: "Drømmen",
+    title: "Ro i maven",
+    body: "En buffer til det uventede og lån, der bliver mindre måned for måned. Kunden kan se, hvornår de er betalt ud.",
+  },
+] as const;
+
+/** Why give budgetpro away: a benefit the customer uses every month, built around their own dreams. */
+function Benefit() {
+  return (
+    <section id="kundefordel" className={`${styles.section} ${styles.stone}`} aria-labelledby="kundefordel-title">
+      <div className={styles.sectionInner}>
+        <div className={styles.split}>
+          <div className={styles.splitText} data-reveal>
+            <div className={styles.splitIntro}>
+              <span className={styles.eyebrow}>En kundefordel</span>
+              <h2 id="kundefordel-title" className={styles.h2}>
+                Overblik i dag. En plan for drømmene i morgen.
+              </h2>
+              <p className={styles.bodyLg}>
+                De fleste kunder har noget, de sparer op til eller drømmer om. Med budgetpro fra jer kan de se, hvad der er
+                til rådighed, og hvad der skal til for at nå det. Det er en fordel, de bruger hver måned, ikke kun den dag,
+                de får den.
+              </p>
+            </div>
+            <CheckList
+              items={[
+                "En fordel, kunden har glæde af hver måned",
+                "Opsparingsmål med beløb og dato for det, kunden drømmer om",
+                "Scenarier viser, hvad en ny bolig eller et nyt lån betyder",
+                "Adgangen kommer fra jer, så overblikket hænger sammen med jer",
+              ]}
+              className={styles.splitList}
+            />
+          </div>
+          <div className={`${styles.splitVisual} ${e.preparedPhoto}`} data-reveal>
+            <Image
+              src="/landing/foto-strand.jpg"
+              alt="En familie på stranden i solnedgang"
+              fill
+              sizes="(max-width: 1019px) 100vw, 560px"
+              className={styles.photoCover}
+              style={{ objectPosition: "center 70%" }}
+            />
+          </div>
+        </div>
+        <ul className={e.journey} data-reveal-group>
+          {DREAMS.map((d) => (
+            <li key={d.title} className={e.journeyStep}>
+              <span className={e.journeyWhen}>{d.tag}</span>
+              <h3 className={e.journeyTitle}>{d.title}</h3>
+              <p className={e.journeyBody}>{d.body}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -281,7 +386,7 @@ function Sectors({ skoleUrl }: { skoleUrl: string }) {
     {
       tag: "Banker",
       title: "Kunder, der kommer forberedte til lånesamtalen.",
-      body: "Rådighedsbeløbet i budgetpro regnes, som banken gør. Giv adgang før mødet eller som en fordel til nye kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
+      body: "Rådighedsbeløbet i budgetpro regnes, som banken gør. Giv adgang før mødet eller som en kundefordel til nye og faste kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
       bullets: ["Fx 12 eller 24 måneder pr. kode", "Løn, lån, opsparing og rådighed ét sted", "Kunden deler selv budgettet som PDF eller Excel"],
       photo: { src: "/landing/foto-flytning.jpg", alt: "Et par, der flytter sammen, med flyttekasser", position: "50% 35%" },
     },
@@ -460,7 +565,11 @@ function Pricing() {
 const FAQ = [
   {
     q: "Hvad koster en aftale?",
-    a: "Det afhænger af antal koder og hvor længe de gælder. Fx koster 50 koder med 12 måneder 600 kr om måneden, eller 7.195 kr betalt årligt. Jo flere koder og jo længere tid, jo lavere pris pr. kunde. Skoler betaler pr. lærer.",
+    a: "Det afhænger af antal koder og hvor længe de gælder. Fx koster 50 koder med 12 måneder 600 kr om måneden, eller 7.200 kr betalt årligt. Jo flere koder og jo længere tid, jo lavere pris pr. kunde. Skal I bruge flere end 200 koder, så skriv til os i formularen. Skoler betaler pr. lærer.",
+  },
+  {
+    q: "Hvorfor give budgetpro som en kundefordel?",
+    a: "Fordi det er en fordel, kunden bruger. Et budget med mål for det, de drømmer om, åbner de igen og igen, og de kommer bedre forberedte til jer. Mailen med koden siger, at adgangen er fra jer.",
   },
   {
     q: "Har vi lavet en aftale, når vi sender en prisforespørgsel?",

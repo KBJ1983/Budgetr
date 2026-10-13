@@ -10,25 +10,44 @@ export const PACK_COUNTS = [10, 25, 50, 100, 200] as const;
 export type PackMonths = (typeof PACK_MONTHS)[number];
 export type PackCount = (typeof PACK_COUNTS)[number];
 
-/** Kroner per code per month for a pack of 50 codes. */
-const RATE: Record<PackMonths, number> = { 3: 17, 6: 14, 12: 12, 24: 10 };
-/** Fewer codes cost a little more per code, more codes a little less. */
-const SIZE: Record<PackCount, number> = { 10: 1.2, 25: 1.1, 50: 1, 100: 0.95, 200: 0.85 };
+/**
+ * Whole kroner per code per month, by pack size and months. Every price is built from these by multiplying only, so
+ * the month price, the year price and the total always add up to the krone – never round anything here. Packs over
+ * 200 codes are not on the list: they ask through the form.
+ */
+const RATE: Record<PackCount, Record<PackMonths, number>> = {
+  10: { 3: 20, 6: 17, 12: 15, 24: 13 },
+  25: { 3: 19, 6: 16, 12: 14, 24: 12 },
+  50: { 3: 17, 6: 14, 12: 12, 24: 10 },
+  100: { 3: 16, 6: 13, 12: 11, 24: 9 },
+  200: { 3: 15, 6: 12, 12: 10, 24: 8 },
+};
+
+/** The largest pack on the list; more codes than this go through the form. */
+export const MAX_PACK_COUNT: PackCount = 200;
 
 export const isPackMonths = (v: unknown): v is PackMonths => PACK_MONTHS.includes(v as PackMonths);
 export const isPackCount = (v: unknown): v is PackCount => PACK_COUNTS.includes(v as PackCount);
 
-/** The pack's price in kroner, once: rounded down to the hundred, minus 5 (50 × 12 months → 7.195 kr). */
-export function packPrice(count: PackCount, months: PackMonths): number {
-  const raw = count * months * RATE[months] * SIZE[count];
-  return Math.max(95, Math.floor(raw / 100) * 100 - 5);
-}
+/** What one code costs per month in the pack, in whole kroner. */
+export const perCodeMonth = (count: PackCount, months: PackMonths) => RATE[count][months];
 
-/** What one code costs per month in the pack, rounded to whole kroner. */
-export const perCodeMonth = (count: PackCount, months: PackMonths) => Math.round(packPrice(count, months) / (count * months));
+/** The pack spread over its months: codes × price per code-month (50 × 12 months → 600 kr a month). */
+export const packMonthly = (count: PackCount, months: PackMonths) => count * perCodeMonth(count, months);
+
+/** The pack's price in kroner, in all: the month price × months (50 × 12 months → 7.200 kr). */
+export const packPrice = (count: PackCount, months: PackMonths) => packMonthly(count, months) * months;
+
+/** What budgetpro costs a private customer a month (keep in step with components/landing/PricePlans.tsx). */
+export const PRIVATE_MONTHLY = 29;
 
 /** The private price for the same: count customers × months at 29 kr – what the pack saves the customers. */
-export const privateValue = (count: number, months: number) => count * months * 29;
+export const privateValue = (count: number, months: number) => count * months * PRIVATE_MONTHLY;
+
+/** The lowest price per code-month on the list and the pack that gives it – the Erhverv page's "fra 8 kr". */
+export const CHEAPEST = PACK_COUNTS.flatMap((count) => PACK_MONTHS.map((months) => ({ count, months, rate: RATE[count][months] }))).reduce(
+  (best, p) => (p.rate < best.rate ? p : best),
+);
 
 /** The form's default: 50 codes, 12 months. */
 export const DEFAULT_PACK = { count: 50 as PackCount, months: 12 as PackMonths };
@@ -40,11 +59,8 @@ export const BILLINGS = ["maaned", "aar"] as const;
 export type Billing = (typeof BILLINGS)[number];
 export const isBilling = (v: unknown): v is Billing => BILLINGS.includes(v as Billing);
 
-/** The pack spread over its months, rounded to whole kroner (50 × 12 months → 600 kr a month). */
-export const packMonthly = (count: PackCount, months: PackMonths) => Math.round(packPrice(count, months) / months);
-
-/** A year of the pack paid at once; a pack shorter than a year is paid in full. */
+/** A year of the pack paid at once (the month price × 12); a pack shorter than a year is paid in full. */
 export const packYearly = (count: PackCount, months: PackMonths) =>
-  months >= 12 ? Math.round((packPrice(count, months) * 12) / months) : packPrice(count, months);
+  months >= 12 ? packMonthly(count, months) * 12 : packPrice(count, months);
 
 export const billingLabel = (b: Billing) => (b === "aar" ? "årlig betaling" : "månedlig betaling");
