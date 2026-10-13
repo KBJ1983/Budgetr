@@ -5,7 +5,7 @@
  * waits (lib/erhverv-inbox.ts). The rules are shared by the form (checks before sending) and the server (checks
  * again). No node: imports, so it runs in the browser too.
  */
-import { isPackCount, isPackMonths, packLabel, packPrice, type PackCount, type PackMonths } from "./erhverv-packs";
+import { billingLabel, isBilling, isPackCount, isPackMonths, packLabel, packMonthly, packPrice, type Billing, type PackCount, type PackMonths } from "./erhverv-packs";
 import { isEmail, normalizeEmail } from "./signup";
 
 export const SECTORS = [
@@ -25,6 +25,8 @@ export interface Inquiry {
   sector: Sector;
   /** The pack they have in mind; null when they would rather talk about it first. */
   pack: { count: PackCount; months: PackMonths } | null;
+  /** How they would like to pay; the price calculator shows a month by default. */
+  billing: Billing;
   message: string;
 }
 
@@ -49,6 +51,7 @@ export function validateInquiry(x: unknown): { ok: true; value: Inquiry } | { ok
   const count = Number(o.count), months = Number(o.months);
   const talk = o.count === TALK_FIRST;
   const pack = !talk && isPackCount(count) && isPackMonths(months) ? { count, months } : null;
+  const billing: Billing = isBilling(o.billing) ? o.billing : "maaned";
   const message = typeof o.message === "string" ? o.message.trim().replace(/\r\n?/g, "\n") : "";
   const errors: Partial<Record<InquiryField, string>> = {};
   if (!company || company.length > 120) errors.company = "Skriv navnet på virksomheden.";
@@ -59,7 +62,7 @@ export function validateInquiry(x: unknown): { ok: true; value: Inquiry } | { ok
   if (!talk && !pack) errors.pack = "Vælg en pakke, eller vælg at I hellere vil tale om det.";
   if (message.length > MAX_MESSAGE) errors.message = `Skriv højst ${MAX_MESSAGE} tegn.`;
   if (Object.keys(errors).length || !sector) return { ok: false, errors };
-  return { ok: true, value: { company, name, email, phone, sector, pack, message } };
+  return { ok: true, value: { company, name, email, phone, sector, pack, billing, message } };
 }
 
 /** The mail to the owner. Replies go straight to the one who asked. */
@@ -73,10 +76,13 @@ export function inquiryMail(i: Inquiry) {
       `Branche: ${sector}`,
       `E-mail: ${i.email}`,
       `Telefon: ${i.phone || "ikke oplyst"}`,
-      i.pack ? `Pakke: ${packLabel(i.pack)} (${packPrice(i.pack.count, i.pack.months).toLocaleString("da-DK")} kr efter prislisten)` : "Pakke: vil tale om det først",
+      i.pack
+        ? `Pakke: ${packLabel(i.pack)}, ${billingLabel(i.billing)} (${packMonthly(i.pack.count, i.pack.months).toLocaleString("da-DK")} kr om måneden, ${packPrice(i.pack.count, i.pack.months).toLocaleString("da-DK")} kr i alt efter prislisten)`
+        : "Pakke: vil tale om det først",
       "",
       i.message ? `Besked:\n${i.message}` : "Ingen besked.",
       "",
+      "Det er en prisforespørgsel. Der er ikke oprettet en aftale.",
       "Henvendelsen venter under Henvendelser på /admin, til du opretter en aftale eller markerer den som klaret.",
       "Svar på denne mail for at skrive direkte til dem.",
     ].join("\n"),

@@ -34,3 +34,17 @@ export const privateValue = (count: number, months: number) => count * months * 
 export const DEFAULT_PACK = { count: 50 as PackCount, months: 12 as PackMonths };
 
 export const packLabel = (p: { count: number; months: number }) => `${p.count} koder × ${p.months} måneder`;
+
+/** How the business would like to pay: month by month while the pack runs, or a year at a time. */
+export const BILLINGS = ["maaned", "aar"] as const;
+export type Billing = (typeof BILLINGS)[number];
+export const isBilling = (v: unknown): v is Billing => BILLINGS.includes(v as Billing);
+
+/** The pack spread over its months, rounded to whole kroner (50 × 12 months → 600 kr a month). */
+export const packMonthly = (count: PackCount, months: PackMonths) => Math.round(packPrice(count, months) / months);
+
+/** A year of the pack paid at once; a pack shorter than a year is paid in full. */
+export const packYearly = (count: PackCount, months: PackMonths) =>
+  months >= 12 ? Math.round((packPrice(count, months) * 12) / months) : packPrice(count, months);
+
+export const billingLabel = (b: Billing) => (b === "aar" ? "årlig betaling" : "månedlig betaling");

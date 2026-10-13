@@ -1,20 +1,129 @@
 /* The Erhverv page's own parts. Colours come from the landing page's palette (.page in landing.module.css). */
 
-/* ================= Hero: drawn miniature of /aftale ================= */
+/* ================= Hero ================= */
 
-.mock {
+.heroTitle {
+  font-size: 64px;
+}
+.heroLink {
+  color: var(--v-dark-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.heroLink:hover {
+  color: #fff;
+}
+.heroPhoto {
   position: relative;
   z-index: 1;
+  min-width: 0;
+  aspect-ratio: 4 / 5;
+  max-height: 640px;
+  justify-self: end;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.heroPhoto img {
+  object-position: 50% 62%;
+}
+
+/* ================= Forberedte kunder ================= */
+
+.preparedPhoto {
+  position: relative;
+  aspect-ratio: 6 / 5;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.journey {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.journeyStep {
+  min-width: 0;
+  padding: 24px 24px 26px;
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.journeyWhen {
+  align-self: flex-start;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--v-pine);
+}
+.journeyTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.journeyBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--v-ink-2);
+}
+
+/* ================= Sådan virker det: steps next to the /aftale miniature ================= */
+
+.how {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 56px;
+  align-items: center;
+}
+.howSteps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.howStep {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.howStep > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.howNum {
+  color: var(--v-pine);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.8em;
+  margin-right: 4px;
+}
+
+/* Drawn miniature of /aftale */
+.mock {
+  position: relative;
   min-width: 0;
   margin: 0;
   background: var(--v-white);
   color: var(--v-ink);
+  border: 1px solid var(--v-rule);
   border-radius: 24px;
   padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--product-shadow);
 }
 .mockBar {
   display: flex;
@@ -145,7 +254,18 @@
   background: var(--v-white);
   border: 1px solid var(--v-rule);
   border-radius: 24px;
-  padding: 28px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.sectorPhoto {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--v-rule-2);
+}
+.sectorText {
+  flex: 1;
+  padding: 24px 28px 28px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -224,29 +344,209 @@
   color: var(--v-ink-2);
 }
 
-/* ================= Kontakt ================= */
+/* ================= Pris: calculator + price request (PriceRequest.tsx) ================= */
 
-.contactCard {
-  gap: 16px;
+.calc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgba(21, 25, 26, 0.2);
 }
-.contactTitle {
-  margin: 0;
-  font-size: 34px;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  font-weight: 700;
-}
-.contactLead {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.55;
-  color: var(--v-ink-2);
-}
-.form {
+.calcChoose,
+.calcAsk {
+  min-width: 0;
+  padding: 36px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-top: 4px;
+  gap: 18px;
+}
+.calcChoose {
+  background: var(--v-card);
+  border-right: 1px solid var(--v-rule);
+}
+.calcHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.calcHead h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--v-dark);
+  color: var(--v-pine-light);
+  font-size: 14px;
+  font-weight: 600;
+}
+.choice {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.choice:disabled {
+  opacity: 0.45;
+}
+.choice legend {
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.choiceHint {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--v-ink-3);
+}
+.pills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+.pill {
+  position: relative;
+  min-width: 0;
+}
+.pill input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.pill span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--v-rule);
+  background: var(--v-white);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill input:checked + span {
+  border-color: var(--v-ink);
+  background: var(--v-ink);
+  color: #fff;
+}
+.pill input:focus-visible + span {
+  outline: 2px solid var(--v-pine);
+  outline-offset: 2px;
+}
+.priceBox {
+  margin-top: 4px;
+  padding: 22px;
+  border-radius: 20px;
+  background: var(--v-dark);
+  color: var(--v-dark-text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.billing {
+  align-self: flex-start;
+  display: inline-flex;
+  padding: 3px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: var(--v-dark-card);
+  border: 1px solid var(--v-dark-rule);
+}
+.billing button {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--v-dark-2);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.billing button[aria-pressed="true"] {
+  background: var(--v-dark-text);
+  color: var(--v-dark);
+  font-weight: 600;
+}
+.priceBig {
+  margin: 0;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 44px;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.priceBig span {
+  font-family: var(--font-geist), system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--v-dark-2);
+}
+.priceSub {
+  margin: 0;
+  font-size: 15px;
+  color: var(--v-dark-text);
+}
+.pricePer {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--v-dark-2);
+}
+.priceTalk {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.talk {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  font-size: 15px;
+  cursor: pointer;
+}
+.talk input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--v-pine);
+}
+.packNote {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--v-ink-3);
+}
+.notice {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--v-pine-bg);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--v-ink-2);
+}
+.notice b {
+  color: var(--v-ink);
 }
 .formRow {
   display: grid;
@@ -283,91 +583,6 @@
   padding: 12px 16px;
   resize: vertical;
   line-height: 1.5;
-}
-/* Pack of codes in the contact form */
-.pack {
-  margin: 0;
-  padding: 16px;
-  border: 1px solid var(--v-rule);
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-}
-.pack legend {
-  padding: 0 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--v-ink-2);
-}
-.packRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 14px;
-}
-.packLabel {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--v-ink-3);
-}
-.months {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-}
-.month {
-  position: relative;
-}
-.month input {
-  position: absolute;
-  opacity: 0;
-  inset: 0;
-  margin: 0;
-  cursor: pointer;
-}
-.month span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  border-radius: 14px;
-  border: 1px solid var(--v-rule);
-  background: var(--v-white);
-  font-weight: 600;
-}
-.month input:checked + span {
-  border-color: var(--v-pine);
-  background: var(--v-pine-bg);
-  color: var(--v-ink);
-}
-.month input:focus-visible + span {
-  outline: 2px solid var(--v-pine);
-  outline-offset: 2px;
-}
-.month input:disabled + span {
-  opacity: 0.45;
-}
-.packPrice {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--v-ink-2);
-}
-.packPrice b {
-  color: var(--v-ink);
-  font-weight: 700;
-}
-.packNote {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--v-ink-3);
-}
-@media (max-width: 560px) {
-  .packRow {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 .fieldError {
   margin: 0;
@@ -409,14 +624,34 @@
   color: var(--v-ink-3);
   text-align: center;
 }
-.sent {
-  margin: 0;
-  padding: 18px 20px;
-  border-radius: 16px;
-  background: var(--v-pine-bg);
-  color: var(--v-ink);
+.sentCard {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 36px;
+  border-radius: 28px;
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.6;
+  color: var(--v-ink-2);
+}
+.sentCard p {
+  margin: 0;
+}
+.sentTitle {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--v-ink);
+}
+
+/* ================= Spørgsmål og svar ================= */
+
+.faqInner {
+  max-width: 760px;
 }
 .demoLink {
   margin-top: 12px;
@@ -434,19 +669,59 @@
   text-underline-offset: 4px;
 }
 
+/* ================= Tablet and phone ================= */
+
+@media (max-width: 1279.98px) {
+  .heroTitle {
+    font-size: 54px;
+  }
+}
+
 @media (max-width: 1019.98px) {
+  .heroPhoto {
+    justify-self: stretch;
+    aspect-ratio: 4 / 3;
+    max-height: none;
+  }
+  .heroPhoto img {
+    object-position: 50% 55%;
+  }
+  .how {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
   .mock {
     max-width: 560px;
   }
+  .journey,
   .sectorGrid {
     grid-template-columns: minmax(0, 1fr);
   }
   .otherGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .calc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .calcChoose {
+    border-right: 0;
+    border-bottom: 1px solid var(--v-rule);
+  }
 }
 
 @media (max-width: 767.98px) {
+  .heroTitle {
+    font-size: 40px;
+  }
+  .heroPhoto {
+    border-radius: 18px;
+  }
+  .preparedPhoto {
+    border-radius: 20px;
+  }
+  .journeyStep {
+    padding: 20px;
+  }
   .mock {
     padding: 16px;
     border-radius: 20px;
@@ -455,23 +730,26 @@
     font-size: 18px;
   }
   .sector {
-    padding: 22px;
     border-radius: 20px;
+  }
+  .sectorText {
+    padding: 20px 22px 24px;
   }
   .otherGrid,
   .formRow {
     grid-template-columns: minmax(0, 1fr);
   }
-  .contactTitle {
-    font-size: 28px;
+  .calc {
+    border-radius: 22px;
   }
-}
-
-.heroLink {
-  color: var(--v-dark-text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.heroLink:hover {
-  color: #fff;
+  .calcChoose,
+  .calcAsk {
+    padding: 22px 18px;
+  }
+  .priceBig {
+    font-size: 36px;
+  }
+  .sentCard {
+    padding: 24px;
+  }
 }

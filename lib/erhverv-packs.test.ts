@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PACK_COUNTS, PACK_MONTHS, isPackCount, isPackMonths, packPrice, perCodeMonth } from "./erhverv-packs";
+import { PACK_COUNTS, PACK_MONTHS, isBilling, isPackCount, isPackMonths, packMonthly, packPrice, packYearly, perCodeMonth } from "./erhverv-packs";
 
 describe("Erhverv packs", () => {
   it("prices 50 codes on the list", () => {
@@ -20,5 +20,16 @@ describe("Erhverv packs", () => {
     expect(isPackCount(51)).toBe(false);
     expect(isPackMonths(12)).toBe(true);
     expect(isPackMonths("12")).toBe(false);
+  });
+
+  it("shows a pack a month and a year at a time", () => {
+    expect(packMonthly(50, 12)).toBe(600);
+    expect(packYearly(50, 12)).toBe(7195);
+    expect(packMonthly(50, 24)).toBe(500);
+    expect(packYearly(50, 24)).toBe(5998);
+    // Shorter than a year: the year is the whole pack.
+    expect(packYearly(50, 3)).toBe(2495);
+    expect(isBilling("aar")).toBe(true);
+    expect(isBilling("uge")).toBe(false);
   });
 });

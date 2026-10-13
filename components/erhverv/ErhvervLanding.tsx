@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "@/components/landing/landing.module.css";
@@ -8,38 +9,43 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader, type NavLink } from "@/components/landing/SiteHeader";
 import { SwipeList } from "@/components/landing/Swipe";
 import { ArrowRightIcon, DownloadIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon, UploadIcon, WandIcon } from "@/components/landing/icons";
-import { ContactForm } from "./ContactForm";
+import { PriceRequest } from "./PriceRequest";
 import e from "./erhverv.module.css";
 
 const NAV_LINKS: readonly NavLink[] = [
+  { href: "#forberedt", label: "Forberedte kunder" },
   { href: "#saadan", label: "Sådan virker det" },
   { href: "#brancher", label: "Brancher" },
-  { href: "#tryghed", label: "Tryghed" },
-  { href: "#kontakt", label: "Kontakt" },
+  { href: "#pris", label: "Pris" },
 ];
 
 const FOOTER_LINKS: readonly NavLink[] = [
+  { href: "#forberedt", label: "Forberedte kunder" },
   { href: "#saadan", label: "Sådan virker det" },
   { href: "#brancher", label: "Brancher" },
-  { href: "#kontakt", label: "Kontakt" },
+  { href: "#pris", label: "Pris" },
 ];
 
 /**
- * The Erhverv page (erhverv.<domain>, /erhverv): banks, estate agents, schools and others give their customers
- * access to budgetpro through an agreement (docs/plans/2026-10-13-aftaler-adgang.md). Uses the landing page's styles
- * and header; the hero shows a drawn miniature of the kundeadmin page /aftale with made-up e-mails.
+ * The Erhverv page (erhverv.<domain>, /erhverv): banks, estate agents, schools and others help their customers to an
+ * easy overview of their money – and to come prepared – by giving them budgetpro through an agreement
+ * (docs/plans/2026-10-13-aftaler-adgang.md). Uses the landing page's styles and header, its photos plus the meeting
+ * photo in public/erhverv/, a drawn miniature of the kundeadmin page /aftale (made-up e-mails) and the price
+ * calculator, which only sends a price request.
  */
 export function ErhvervLanding({ skoleUrl }: { skoleUrl: string }) {
   return (
     <div className={styles.page}>
-      <SiteHeader site="erhverv" links={NAV_LINKS} login={{ href: "/aftale", label: "Log ind" }} cta={{ href: "#kontakt", label: "Hør om en aftale" }} />
+      <SiteHeader site="erhverv" links={NAV_LINKS} login={{ href: "/aftale", label: "Log ind" }} cta={{ href: "#pris", label: "Beregn pris" }} />
       <main>
         <Hero />
+        <Prepared />
         <Steps />
         <Sectors skoleUrl={skoleUrl} />
         <Others />
         <Trust />
-        <Contact />
+        <Pricing />
+        <Faq />
       </main>
       <SiteFooter links={FOOTER_LINKS} />
       <ScrollReveal />
@@ -54,16 +60,16 @@ function Hero() {
       <div className={styles.heroInner}>
         <div className={styles.heroText}>
           <p className={styles.tagline}>budgetpro Erhverv</p>
-          <h1 id="hero-title" className={styles.h1}>
-            Giv dine kunder <span className={styles.accent}>styr på budgettet.</span>
+          <h1 id="hero-title" className={`${styles.h1} ${e.heroTitle}`}>
+            Hjælp dine kunder til <span className={styles.accent}>et nemt overblik</span> over deres økonomi.
           </h1>
           <p className={styles.lead}>
-            Banker, ejendomsmæglere og skoler kan give budgetpro videre til deres kunder, elever eller lærere. I køber et
-            antal pladser og skriver en e-mail. Kunden får sin egen adgang med en personlig kode.
+            Med budgetpro samler jeres kunder løn, faste udgifter, lån og opsparing ét sted. Så kommer de forberedte til
+            mødet, og I kan bruge tiden på rådgivning i stedet for at lede efter tal.
           </p>
           <div className={styles.heroActions}>
-            <a href="#kontakt" className={styles.heroButton}>
-              Hør om en aftale <ArrowRightIcon size={16} />
+            <a href="#pris" className={styles.heroButton}>
+              Beregn jeres pris <ArrowRightIcon size={16} />
             </a>
             <p className={styles.heroNote}>
               Har I allerede en aftale?{" "}
@@ -73,7 +79,142 @@ function Hero() {
             </p>
           </div>
         </div>
-        <AdminMock />
+        <div className={e.heroPhoto}>
+          <Image
+            src="/erhverv/foto-moede.jpg"
+            alt="En rådgiver og to kunder ved et bord med papirer og bærbare computere"
+            fill
+            priority
+            sizes="(max-width: 1019px) 100vw, 560px"
+            className={styles.photoCover}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const JOURNEY = [
+  {
+    when: "Før mødet",
+    title: "Overblik derhjemme",
+    body: "Kunden lægger budgettet i ro og mag, alene eller sammen med dem, de bor med. Guiden tager omkring en halv time.",
+  },
+  {
+    when: "Til mødet",
+    title: "Tallene er klar",
+    body: "Rådighedsbeløbet er regnet, som banken gør. Kunden kan sende budgettet som PDF eller Excel på forhånd.",
+  },
+  {
+    when: "Efter mødet",
+    title: "Budgettet følger med",
+    body: "Et nyt lån, en ny bolig eller en ny løn lægges ind, og kunden ser med det samme, hvad det betyder hver måned.",
+  },
+] as const;
+
+/** The emotional core: customers who know their numbers come prepared, and the meeting changes. */
+function Prepared() {
+  return (
+    <section id="forberedt" className={styles.section} aria-labelledby="forberedt-title">
+      <div className={styles.sectionInner}>
+        <div className={`${styles.split} ${styles.splitReverse}`}>
+          <div className={styles.splitText} data-reveal>
+            <div className={styles.splitIntro}>
+              <span className={styles.eyebrow}>Forberedte kunder</span>
+              <h2 id="forberedt-title" className={styles.h2}>
+                Når kunden kender sine tal, bliver mødet et andet.
+              </h2>
+              <p className={styles.bodyLg}>
+                Mange kommer til et møde om lån eller bolig med en fornemmelse og en bunke papirer. Med budgetpro har de
+                gjort arbejdet derhjemme, og de møder op med ro i maven og overblik over, hvad de har til rådighed.
+              </p>
+            </div>
+            <CheckList
+              items={[
+                "Kunden kender sit rådighedsbeløb, før I mødes",
+                "Lån, faste udgifter og opsparing er samlet ét sted",
+                "Mindre tid på at finde tal, mere tid til de gode råd",
+                "Kunden føler sig klædt på, ikke på prøve",
+              ]}
+              className={styles.splitList}
+            />
+          </div>
+          <div className={`${styles.splitVisual} ${e.preparedPhoto}`} data-reveal>
+            <Image
+              src="/landing/foto-sofa.jpg"
+              alt="Et par i sofaen, der ser på deres budget sammen på den bærbare"
+              fill
+              sizes="(max-width: 1019px) 100vw, 560px"
+              className={styles.photoCover}
+            />
+          </div>
+        </div>
+        <ol className={e.journey} data-reveal-group>
+          {JOURNEY.map((j) => (
+            <li key={j.when} className={e.journeyStep}>
+              <span className={e.journeyWhen}>{j.when}</span>
+              <h3 className={e.journeyTitle}>{j.title}</h3>
+              <p className={e.journeyBody}>{j.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+const STEPS = [
+  {
+    icon: <PeopleIcon size={22} strokeWidth={1.7} />,
+    title: "Vi laver en aftale",
+    body: "I vælger, hvor mange koder I vil have, og hvor mange måneder hver kode gælder. Koderne kan sendes ud i et år.",
+  },
+  {
+    icon: <WandIcon size={22} strokeWidth={1.7} />,
+    title: "I sender adgang med en e-mail",
+    body: "Jeres administratorer logger ind med en kode på mail og skriver kundens e-mail. Det er det hele. Op til fem kolleger kan være administratorer.",
+  },
+  {
+    icon: <UploadIcon size={22} strokeWidth={1.7} />,
+    title: "Kunden kommer i gang",
+    body: "Kunden får en mail fra budgetpro med jeres navn og en personlig kode. Månederne tæller fra den dag, koden bliver brugt.",
+  },
+] as const;
+
+function Steps() {
+  return (
+    <section id="saadan" className={`${styles.section} ${styles.steps}`} aria-labelledby="saadan-title">
+      <div className={styles.sectionInner}>
+        <div className={styles.sectionHead} data-reveal>
+          <div className={styles.sectionHeadTitle}>
+            <span className={styles.eyebrow}>Sådan virker en aftale</span>
+            <h2 id="saadan-title" className={styles.h2}>
+              I skriver en e-mail. Vi klarer resten.
+            </h2>
+          </div>
+          <p className={styles.headBody}>
+            Der er intet at installere og ingen integration med jeres systemer. Kunden opretter sin egen konto, og budgettet
+            er kundens eget.
+          </p>
+        </div>
+        <div className={e.how}>
+          <ol className={e.howSteps} data-reveal-group>
+            {STEPS.map((step, index) => (
+              <li key={step.title} className={e.howStep}>
+                <span className={styles.stepIcon} aria-hidden="true">
+                  {step.icon}
+                </span>
+                <div>
+                  <h3 className={styles.stepTitle}>
+                    <span className={e.howNum}>{String(index + 1).padStart(2, "0")}</span> {step.title}
+                  </h3>
+                  <p className={styles.stepBody}>{step.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <AdminMock />
+        </div>
       </div>
     </section>
   );
@@ -87,7 +228,7 @@ function AdminMock() {
     { email: "kunde.c@eksempel.dk", status: "Sendt, ikke brugt endnu" },
   ];
   return (
-    <figure className={e.mock} aria-label="Eksempel: sådan ser det ud, når I giver adgang">
+    <figure className={e.mock} aria-label="Eksempel: sådan ser det ud, når I giver adgang" data-reveal>
       <div className={e.mockBar}>
         <span>Aftale med budgetpro</span>
         <span className={e.mockOrg}>Eksempel Bank</span>
@@ -126,82 +267,37 @@ function AdminMock() {
   );
 }
 
-const STEPS = [
-  {
-    icon: <PeopleIcon size={22} strokeWidth={1.7} />,
-    title: "Vi laver en aftale",
-    body: "I vælger, hvor mange pladser I vil have, og hvor mange måneder hver plads gælder, fx 100 pladser med 12 måneder. Pladserne kan sendes ud i et år.",
-  },
-  {
-    icon: <WandIcon size={22} strokeWidth={1.7} />,
-    title: "I sender adgang med en e-mail",
-    body: "Jeres administratorer logger ind med en kode på mail og skriver kundens e-mail. Det er det hele. Op til fem kolleger kan være administratorer.",
-  },
-  {
-    icon: <UploadIcon size={22} strokeWidth={1.7} />,
-    title: "Kunden kommer i gang",
-    body: "Kunden får en mail fra budgetpro med jeres navn og en personlig kode. Månederne tæller fra den dag, koden bliver brugt.",
-  },
-] as const;
-
-function Steps() {
-  return (
-    <section id="saadan" className={`${styles.section} ${styles.steps}`} aria-labelledby="saadan-title">
-      <div className={styles.sectionInner}>
-        <div className={styles.sectionHead} data-reveal>
-          <div className={styles.sectionHeadTitle}>
-            <span className={styles.eyebrow}>Sådan virker en aftale</span>
-            <h2 id="saadan-title" className={styles.h2}>
-              I skriver en e-mail. Vi klarer resten.
-            </h2>
-          </div>
-          <p className={styles.headBody}>
-            Der er intet at installere og ingen integration med jeres systemer. Kunden opretter sin egen konto, og budgettet
-            er kundens eget.
-          </p>
-        </div>
-        <SwipeList as="ol" className={styles.stepGrid} label="Trin">
-          {STEPS.map((step, index) => (
-            <li key={step.title} className={styles.step}>
-              <div className={styles.stepTop}>
-                <span className={styles.stepIcon} aria-hidden="true">
-                  {step.icon}
-                </span>
-                <span className={styles.stepNum} aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <h3 className={styles.stepTitle}>{step.title}</h3>
-              <p className={styles.stepBody}>{step.body}</p>
-            </li>
-          ))}
-        </SwipeList>
-      </div>
-    </section>
-  );
-}
-
-type SectorCard = { tag: string; title: string; body: string; bullets: readonly string[]; link?: { href: string; label: string } };
+type SectorCard = {
+  tag: string;
+  title: string;
+  body: string;
+  bullets: readonly string[];
+  photo: { src: string; alt: string; position?: string };
+  link?: { href: string; label: string };
+};
 
 function Sectors({ skoleUrl }: { skoleUrl: string }) {
   const cards: readonly SectorCard[] = [
     {
       tag: "Banker",
-      title: "Kunder, der kommer med et budget.",
-      body: "Rådighedsbeløbet i budgetpro regnes, som banken gør, når kunden søger lån. Giv adgang før lånesamtalen eller som en fordel til nye kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
-      bullets: ["Fx 12 eller 24 måneder pr. plads", "Løn, lån, opsparing og rådighed ét sted", "Kunden deler selv budgettet som PDF eller Excel"],
+      title: "Kunder, der kommer forberedte til lånesamtalen.",
+      body: "Rådighedsbeløbet i budgetpro regnes, som banken gør. Giv adgang før mødet eller som en fordel til nye kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
+      bullets: ["Fx 12 eller 24 måneder pr. kode", "Løn, lån, opsparing og rådighed ét sted", "Kunden deler selv budgettet som PDF eller Excel"],
+      photo: { src: "/landing/foto-flytning.jpg", alt: "Et par, der flytter sammen, med flyttekasser", position: "50% 35%" },
     },
     {
       tag: "Ejendomsmæglere",
       title: "Et budget, der følger med nøglerne.",
       body: "Når køberen flytter ind, starter et nyt budget: ny ydelse, ejerudgifter, forsikringer og måske et lån, der skal betales ud. Giv budgetpro med i velkomsten, så de første måneder bliver rolige.",
-      bullets: ["Fx 3 eller 6 måneder pr. plads", "Scenarier: hvad koster den nye bolig hver måned", "En hilsen, der bliver brugt efter handlen"],
+      bullets: ["Fx 3 eller 6 måneder pr. kode", "Scenarier: hvad koster den nye bolig hver måned", "En hilsen, der bliver brugt efter handlen"],
+      photo: { src: "/landing/foto-noegler.jpg", alt: "En familie, der holder nøglerne til deres nye bolig", position: "50% 45%" },
     },
     {
       tag: "Skoler",
       title: "Privatøkonomi i udskolingen.",
       body: "budgetpro Skole er et færdigt forløb, hvor eleverne lægger et månedsbudget for en fremtidsperson. Skolen betaler pr. lærer, og lærerne opretter selv klasser med koder til eleverne.",
       bullets: ["Til 7.–9. klasse", "Eleverne logger ind med en kode, uden e-mail", "Læreren følger klassen undervejs"],
+      photo: { src: "/skole/klasse.jpg", alt: "Elever og lærer ved bærbare computere i klasselokalet" },
       link: { href: skoleUrl, label: "Gå til budgetpro Skole" },
     },
   ];
@@ -223,15 +319,20 @@ function Sectors({ skoleUrl }: { skoleUrl: string }) {
         <SwipeList className={e.sectorGrid} label="Brancher">
           {cards.map((c) => (
             <li key={c.tag} className={e.sector}>
-              <span className={e.sectorTag}>{c.tag}</span>
-              <h3 className={e.sectorTitle}>{c.title}</h3>
-              <p className={e.sectorBody}>{c.body}</p>
-              <CheckList items={c.bullets} className={e.sectorList} />
-              {c.link ? (
-                <a href={c.link.href} className={e.sectorLink}>
-                  {c.link.label} <ArrowRightIcon size={14} />
-                </a>
-              ) : null}
+              <div className={e.sectorPhoto}>
+                <Image src={c.photo.src} alt={c.photo.alt} fill sizes="(max-width: 1019px) 100vw, 380px" className={styles.photoCover} style={{ objectPosition: c.photo.position }} />
+              </div>
+              <div className={e.sectorText}>
+                <span className={e.sectorTag}>{c.tag}</span>
+                <h3 className={e.sectorTitle}>{c.title}</h3>
+                <p className={e.sectorBody}>{c.body}</p>
+                <CheckList items={c.bullets} className={e.sectorList} />
+                {c.link ? (
+                  <a href={c.link.href} className={e.sectorLink}>
+                    {c.link.label} <ArrowRightIcon size={14} />
+                  </a>
+                ) : null}
+              </div>
             </li>
           ))}
         </SwipeList>
@@ -332,10 +433,38 @@ function Trust() {
   );
 }
 
+function Pricing() {
+  return (
+    <section id="pris" className={styles.section} aria-labelledby="pris-title">
+      <div className={styles.sectionInner}>
+        <div className={styles.sectionHead} data-reveal>
+          <div className={styles.sectionHeadTitle}>
+            <span className={styles.eyebrow}>Pris</span>
+            <h2 id="pris-title" className={styles.h2}>
+              Beregn jeres pris.
+            </h2>
+          </div>
+          <p className={styles.headBody}>
+            Vælg antal koder og hvor længe de gælder. Prisen vises pr. måned, og I kan se den pr. år. Send en forespørgsel,
+            så får I et tilbud. Det binder jer ikke til noget.
+          </p>
+        </div>
+        <div data-reveal>
+          <PriceRequest />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const FAQ = [
   {
     q: "Hvad koster en aftale?",
-    a: "I køber en pakke koder én gang, fx 50 koder med 12 måneder hver for 7.195 kr. Jo flere koder og jo længere tid, jo lavere pris pr. kode. Vælg en pakke i formularen, eller skriv, at I hellere vil tale om det. I kan altid ændre pakken. Skoler betaler pr. lærer.",
+    a: "Det afhænger af antal koder og hvor længe de gælder. Fx koster 50 koder med 12 måneder 600 kr om måneden, eller 7.195 kr betalt årligt. Jo flere koder og jo længere tid, jo lavere pris pr. kunde. Skoler betaler pr. lærer.",
+  },
+  {
+    q: "Har vi lavet en aftale, når vi sender en prisforespørgsel?",
+    a: "Nej. En prisforespørgsel er kun en forespørgsel. Vi skriver til jer med et tilbud, og aftalen bliver først lavet, når I har sagt ja.",
   },
   {
     q: "Kan kunden se, at adgangen kommer fra os?",
@@ -343,7 +472,7 @@ const FAQ = [
   },
   {
     q: "Hvad sker der, når perioden slutter?",
-    a: "Kunden beholder sit budget og kan selv fortsætte med et almindeligt abonnement. Pladsen bliver ikke fri igen, når den har været brugt.",
+    a: "Kunden beholder sit budget og kan selv fortsætte med et almindeligt abonnement. En kode bliver ikke fri igen, når den har været brugt.",
   },
   {
     q: "Hvad hvis vi skriver en forkert e-mail?",
@@ -355,22 +484,14 @@ const FAQ = [
   },
 ] as const;
 
-function Contact() {
+function Faq() {
   return (
-    <section id="kontakt" className={styles.section} aria-labelledby="kontakt-title">
-      <div className={`${styles.sectionInner} ${styles.pricingInner}`}>
-        <div className={`${styles.priceCard} ${e.contactCard}`} data-reveal>
-          <div className={styles.priceHead}>
-            <span className={styles.eyebrow}>Kontakt</span>
-          </div>
-          <h2 id="kontakt-title" className={e.contactTitle}>
-            Hør om en aftale
-          </h2>
-          <p className={e.contactLead}>Skriv lidt om jer, så vender vi tilbage på mail og finder en løsning, der passer.</p>
-          <ContactForm />
-        </div>
+    <section className={`${styles.section} ${styles.stone}`} aria-labelledby="faq-title">
+      <div className={`${styles.sectionInner} ${e.faqInner}`}>
         <div className={styles.faq} data-reveal-group>
-          <h2 className={`${styles.h2} ${styles.faqTitle}`}>Spørgsmål og svar</h2>
+          <h2 id="faq-title" className={`${styles.h2} ${styles.faqTitle}`}>
+            Spørgsmål og svar
+          </h2>
           {FAQ.map((item, i) => (
             <details key={item.q} className={styles.faqItem} open={i === 0} name="faq">
               <summary className={styles.faqQ}>

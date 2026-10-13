@@ -79,6 +79,7 @@ function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => vo
           <>
             Pakke: <b>{packLabel(q.pack)}</b>
             {price ? <> · {kr(price)} efter prislisten</> : null}
+            {q.billing === "aar" ? " · vil betale årligt" : q.billing === "maaned" ? " · vil betale månedligt" : null}
           </>
         ) : (
           "Vil tale om pakken først"

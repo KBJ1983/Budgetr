@@ -19,6 +19,8 @@ export interface InquiryRow {
   message: string;
   /** The pack they asked about; missing when they want to talk about it first. */
   pack?: { count: number; months: number };
+  /** "maaned" or "aar"; missing on henvendelser from before the price calculator. */
+  billing?: string;
   /** Set when the owner has dealt with it. */
   doneAt?: string;
   /** The agreement made from it. */
@@ -43,6 +45,7 @@ function toRow(x: unknown): InquiryRow | null {
     sector: str(o.sector),
     message: str(o.message),
     pack: p && typeof p.count === "number" && typeof p.months === "number" ? { count: p.count, months: p.months } : undefined,
+    billing: str(o.billing) || undefined,
     doneAt: str(o.doneAt) || undefined,
     org: str(o.org) || undefined,
   };
