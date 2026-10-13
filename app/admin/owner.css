@@ -137,3 +137,12 @@
   margin: 4px 0 0;
   font-size: 20px;
 }
+
+/* Kundeadmins in the agreement dialog: one e-mail per line. */
+.ow-textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+}

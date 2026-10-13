@@ -5,6 +5,10 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "rea
 import { Wordmark } from "@/components/Logo";
 import {
   CATEGORIES,
+  MAX_ORG_ADMINS,
+  MAX_PACK_MONTHS,
+  PACK_SEND_MONTHS,
+  addMonths,
   listPrice,
   type Category,
   type CustomerRow,
@@ -14,6 +18,7 @@ import {
   type OrgCategory,
   type OrgRow,
   type Overview,
+  type PackRow,
   type Plan,
   type Status,
 } from "@/lib/owner";
@@ -36,7 +41,22 @@ const ERRORS: Record<string, string> = {
   amount: "Skriv et beløb.",
   start: "Vælg en startdato.",
   end: "Slutdatoen skal ligge efter startdatoen.",
+  admins: `Skriv kundeadmins som e-mails, én pr. linje, højst ${MAX_ORG_ADMINS}.`,
+  count: "Antal pladser skal være et helt tal fra 1 til 10.000.",
+  months: `Varigheden skal være et helt antal måneder fra 1 til ${MAX_PACK_MONTHS}.`,
+  bought: "Vælg købsdatoen.",
+  sendBy: "Sidste dag skal ligge efter købsdatoen.",
+  fewer: "Pakken kan ikke blive mindre end det antal pladser, der allerede er sendt.",
+  inUse: "Der er allerede sendt pladser herfra, så det kan ikke slettes.",
 };
+
+const months = (n: number) => `${n} ${n === 1 ? "måned" : "måneder"}`;
+const seatsText = (o: OrgRow) =>
+  o.packs.length
+    ? `${num(o.seatsBought.used)} brugt · ${num(o.seatsBought.sent)} sendt · ${num(o.seatsBought.count)} i alt`
+    : o.seats === undefined
+      ? "–"
+      : `${num(o.seats)} licenser`;
 
 function StatusTag({ status, trialEnds }: { status: Status; trialEnds?: string }) {
   switch (status) {
@@ -209,6 +229,7 @@ const planFrom = (f: FormData) => ({
 type Editing =
   | { kind: "plan"; customer: CustomerRow }
   | { kind: "org"; org?: OrgRow }
+  | { kind: "pack"; org: OrgRow; pack?: PackRow }
   | { kind: "expense"; expense?: Expense }
   | null;
 
@@ -234,8 +255,9 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
         return false;
       }
       if (!r.ok) throw new Error(String(r.status));
-      setData((await r.json()) as Overview);
-      return true;
+      const next = (await r.json()) as Overview;
+      setData(next);
+      return next;
     } catch {
       setError("Det lykkedes ikke at gemme lige nu. Prøv igen om lidt.");
       return false;
@@ -247,6 +269,11 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
   };
   const save = async (change: object) => {
     if (await send(change)) setEditing(null);
+  };
+  // A pack is edited from its agreement's dialog, so go back there with the fresh numbers.
+  const savePack = async (orgId: string, change: object) => {
+    const next = await send(change);
+    if (next) setEditing({ kind: "org", org: next.orgs.find((o) => o.id === orgId) });
   };
 
   const q = query.trim().toLowerCase();
@@ -455,7 +482,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
                     <th>Kategori</th>
                     <th>Aftale</th>
                     <th>Start</th>
-                    <th className="r">Licenser</th>
+                    <th className="r">Pladser</th>
                     <th className="r">Brugere</th>
                     <th>Status</th>
                   </tr>
@@ -469,7 +496,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
                       <td>{catLabel(o.category)}</td>
                       <td>{planText(o.plan)}</td>
                       <td>{date(o.plan?.start)}</td>
-                      <td className="r">{o.seats === undefined ? "–" : num(o.seats)}</td>
+                      <td className="r">{seatsText(o)}</td>
                       <td className="r">
                         {num(o.logins)} <span className="bx-muted">({num(o.accounts)} konti)</span>
                       </td>
@@ -482,7 +509,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
               </table>
             </div>
           ) : (
-            <div className="bx-empty">Ingen firmaaftaler endnu. Opret en bank, ejendomsmægler eller skole, og knyt deres brugere til aftalen under Kunder.</div>
+            <div className="bx-empty">Ingen firmaaftaler endnu. Opret en bank, ejendomsmægler eller skole med kundeadmins og en pakke pladser.</div>
           )}
         </section>
 
@@ -651,7 +678,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
                 id: editing.org?.id,
                 name: f.get("name"),
                 category: f.get("category"),
-                seats: f.get("seats"),
+                admins: f.get("admins"),
                 note: f.get("note"),
                 plan: String(plan.price ?? "").trim() ? plan : null,
               },
@@ -668,23 +695,123 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
           <Field label="Navn">
             <input className="bx-input" name="name" defaultValue={editing.org?.name ?? ""} autoFocus />
           </Field>
-          <div className="bx-grid-2">
-            <Field label="Kategori">
-              <select className="bx-select" name="category" defaultValue={editing.org?.category ?? "bank"}>
-                {CATEGORIES.filter((c) => c.id !== "privat").map((c) => (
-                  <option key={c.id} value={c.id as OrgCategory}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Licenser (valgfri)">
-              <input className="bx-input" name="seats" inputMode="numeric" defaultValue={editing.org?.seats ?? ""} />
-            </Field>
-          </div>
+          <Field label="Kategori">
+            <select className="bx-select" name="category" defaultValue={editing.org?.category ?? "bank"}>
+              {CATEGORIES.filter((c) => c.id !== "privat").map((c) => (
+                <option key={c.id} value={c.id as OrgCategory}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field
+            label="Kundeadmins"
+            help={`Én e-mail pr. linje, højst ${MAX_ORG_ADMINS}. De giver aftalens pladser til deres brugere ved at skrive en e-mail. Ingen ser koderne.`}
+          >
+            <textarea className="bx-input ow-textarea" name="admins" rows={3} defaultValue={(editing.org?.admins ?? []).join("\n")} />
+          </Field>
+          {editing.org ? (
+            <div className="bx-field">
+              <span>Pladser</span>
+              {editing.org.packs.length ? (
+                <div className="bx-card bx-rows">
+                  {editing.org.packs.map((p) => (
+                    <button key={p.id} type="button" className="bx-row" onClick={() => setEditing({ kind: "pack", org: editing.org!, pack: p })}>
+                      <span className="bx-row-name">
+                        <b>
+                          {num(p.count)} pladser × {months(p.months)}
+                        </b>
+                        <small>
+                          Købt {date(p.bought)} · kan sendes til og med {date(p.sendBy)}
+                          {p.price ? ` · ${kr(p.price)}` : ""}
+                        </small>
+                      </span>
+                      <span className="bx-row-amt">
+                        {num(p.used)} brugt
+                        <small>
+                          {num(p.sent)} sendt · {num(p.count - p.sent)} fri
+                        </small>
+                      </span>
+                      <span aria-hidden="true">›</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <small className="bx-muted">Ingen pladser endnu.</small>
+              )}
+              <div>
+                <button type="button" className="bx-btn" onClick={() => setEditing({ kind: "pack", org: editing.org! })}>
+                  Tilføj pakke
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="bx-muted">Gem aftalen først, så kan du tilføje pakker med pladser.</p>
+          )}
           <PlanFields plan={editing.org?.plan} logins={1} defaultStart={data.today} optional />
           <Field label="Note (valgfri)">
             <input className="bx-input" name="note" defaultValue={editing.org?.note ?? ""} />
+          </Field>
+          {error ? <p className="bx-error" role="alert">{error}</p> : null}
+        </Dialog>
+      ) : null}
+
+      {editing?.kind === "pack" ? (
+        <Dialog
+          title={`${editing.pack ? "Pakke" : "Ny pakke"} · ${editing.org.name}`}
+          onClose={() => {
+            setError("");
+            setEditing({ kind: "org", org: editing.org });
+          }}
+          onSubmit={(f) =>
+            void savePack(editing.org.id, {
+              type: "pack",
+              org: editing.org.id,
+              pack: {
+                id: editing.pack?.id,
+                count: f.get("count"),
+                months: f.get("months"),
+                bought: f.get("bought"),
+                sendBy: f.get("sendBy") || undefined,
+                price: f.get("price"),
+              },
+            })
+          }
+          foot={
+            editing.pack && !editing.pack.sent ? (
+              <button
+                type="button"
+                className="bx-btn bx-btn-danger"
+                onClick={() => void savePack(editing.org.id, { type: "deletePack", org: editing.org.id, id: editing.pack!.id })}
+              >
+                Slet pakke
+              </button>
+            ) : null
+          }
+        >
+          <div className="bx-grid-2">
+            <Field label="Antal pladser" help={editing.pack?.sent ? `${num(editing.pack.sent)} er allerede sendt` : undefined}>
+              <input className="bx-input" name="count" inputMode="numeric" defaultValue={editing.pack?.count ?? ""} autoFocus />
+            </Field>
+            <Field label="Måneder pr. plads" help="Tæller fra den dag, brugeren tager pladsen">
+              <input
+                className="bx-input"
+                name="months"
+                inputMode="numeric"
+                defaultValue={editing.pack?.months ?? (editing.org.category === "maegler" ? 3 : 12)}
+              />
+            </Field>
+          </div>
+          <div className="bx-grid-2">
+            <Field label="Købt">
+              <input className="bx-input" type="date" name="bought" defaultValue={editing.pack?.bought ?? data.today} />
+            </Field>
+            <Field label="Kan sendes til og med" help={`Tom = ${PACK_SEND_MONTHS} måneder efter købet`}>
+              <input className="bx-input" type="date" name="sendBy" defaultValue={editing.pack?.sendBy ?? addMonths(data.today, PACK_SEND_MONTHS)} />
+            </Field>
+          </div>
+          <Field label="Pris (kr, valgfri)" help="Betales én gang, på købsdagen">
+            <input className="bx-input" name="price" inputMode="decimal" defaultValue={editing.pack?.price ?? ""} />
           </Field>
           {error ? <p className="bx-error" role="alert">{error}</p> : null}
         </Dialog>

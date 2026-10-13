@@ -1,7 +1,7 @@
 /**
  * The owner overview's storage and access (the numbers themselves are in lib/owner.ts):
  *
- *   owner/ledger.json      plans, organisations and expenses kept by hand on /admin
+ *   owner/ledger.json      plans, organisations (with kundeadmins and seat packs) and expenses kept by hand on /admin
  *   activity/<id>.json     { <holder id>: ISO time } – when the primary (account id) or a member (m-…) last
  *                          loaded or saved the budget; written at most once per ACTIVITY_GAP_MS per holder
  *   owner/login-tries.json wrong owner passwords in the current window
@@ -12,6 +12,7 @@
  */
 import { createHash, timingSafeEqual } from "node:crypto";
 import { readAccount, type Account } from "./accounts";
+import { loadPackUse } from "./agreements";
 import { openStore } from "./kv";
 import { buildOverview, emptyLedger, type Activity, type Ledger, type Overview } from "./owner";
 import { makeAdminSession, readAdminSession, readSession } from "./session";
@@ -78,7 +79,7 @@ export async function listAccounts(dir?: string): Promise<Account[]> {
 export async function loadOverview(now = new Date(), dir?: string): Promise<Overview> {
   const accounts = await listAccounts(dir);
   const [ledger, activity] = await Promise.all([readLedger(dir), readActivity(accounts.map((a) => a.id), dir)]);
-  return buildOverview(accounts, ledger, activity, now);
+  return buildOverview(accounts, ledger, activity, now, await loadPackUse(ledger.orgs, dir));
 }
 
 // ---- Access ------------------------------------------------------------------------------------------------------

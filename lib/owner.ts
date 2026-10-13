@@ -5,13 +5,15 @@
  * ({ orgs, expenses, accounts: { <accountId>: { org?, plan? } } }; stored by lib/owner-store.ts).
  *
  * A private customer is an account with its own plan; banks, estate agents and schools are organisations
- * (firmaaftaler) with one plan, and accounts can be linked to one. A plan's start is the first charge; it renews
+ * (firmaaftaler) with one plan and/or packs of seats that their kundeadmins hand out (lib/agreements.ts), and
+ * accounts can be linked to one. A plan's start is the first charge; it renews
  * every month or year on the same day until its end (the first day without access – nothing is charged from that
  * day on). Accounts without a plan are on the free trial for TRIAL_DAYS after signing up.
  *
  * No server imports: the owner page's browser code uses the categories, prices and types from here.
  */
 import type { Account } from "./accounts";
+import { isEmail, normalizeEmail } from "./signup";
 
 export const TRIAL_DAYS = 30;
 export const ACTIVE_DAYS = 30;
@@ -42,10 +44,36 @@ export interface Org {
   name: string;
   category: OrgCategory;
   plan?: Plan;
-  /** Licences in the agreement (information only). */
+  /** Licences in the agreement (information only; older agreements – new ones buy packs). */
   seats?: number;
   note?: string;
+  /** Kundeadmins: e-mails that may hand out the agreement's seats (max MAX_ORG_ADMINS). */
+  admins?: string[];
+  /** Seats bought for the organisation's users (lib/agreements.ts hands them out). */
+  packs?: Pack[];
 }
+
+/** X seats × Y months, bought once. A seat's months count from the day its user takes it. */
+export interface Pack {
+  id: string;
+  count: number;
+  months: number;
+  /** YYYY-MM-DD, the day it was bought (and paid, when it has a price). */
+  bought: string;
+  /** YYYY-MM-DD, the last day a seat from the pack can be sent or taken. */
+  sendBy: string;
+  /** Kroner, once. */
+  price?: number;
+}
+
+/** Seats sent (incl. used) and used per pack id – from lib/agreements.ts, so this file stays free of storage. */
+export type PackUse = Record<string, { sent: number; used: number }>;
+
+export const MAX_ORG_ADMINS = 5;
+export const MAX_PACK_SEATS = 10_000;
+export const MAX_PACK_MONTHS = 60;
+/** How long the seats of a new pack can be sent, unless the owner picks another day. */
+export const PACK_SEND_MONTHS = 12;
 
 export interface Expense {
   id: string;
@@ -92,6 +120,11 @@ export const monthAfter = (date: string, n: number): [number, number] => {
   const i = y * 12 + m - 1 + n;
   return [Math.floor(i / 12), i % 12];
 };
+/** The same day `n` months later, clamped to short months (31 Jan + 1 → 28/29 Feb). */
+export const addMonths = (date: string, n: number) => {
+  const [y, m0] = monthAfter(date, n);
+  return ymd(y, m0, Math.min(split(date)[2], daysIn(y, m0)));
+};
 const MONTHS = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
 export const monthName = (y: number, m0: number) => `${MONTHS[m0]} ${y}`;
 
@@ -130,7 +163,15 @@ export interface CustomerRow {
   lastSeen?: string;
 }
 
-export interface OrgRow extends Org {
+export interface PackRow extends Pack {
+  sent: number;
+  used: number;
+}
+
+export interface OrgRow extends Omit<Org, "packs"> {
+  packs: PackRow[];
+  /** All packs together. */
+  seatsBought: { count: number; sent: number; used: number };
   accounts: number;
   logins: number;
   status: Status;
@@ -188,7 +229,7 @@ const planStatus = (p: Plan | undefined, date: string): Status | null =>
 const round = (n: number) => Math.round(n * 100) / 100;
 
 /** Everything on the owner page, from the accounts, the ledger and the activity (no I/O, so it can be tested). */
-export function buildOverview(accounts: Account[], ledger: Ledger, activity: Activity, now = new Date()): Overview {
+export function buildOverview(accounts: Account[], ledger: Ledger, activity: Activity, now = new Date(), use: PackUse = {}): Overview {
   const day = today(now);
   const [ny, nm] = monthAfter(day, 1);
   const orgById = new Map(ledger.orgs.map((o) => [o.id, o]));
@@ -227,11 +268,23 @@ export function buildOverview(accounts: Account[], ledger: Ledger, activity: Act
 
   const orgs: OrgRow[] = ledger.orgs.map((o) => {
     const linked = confirmed.filter((c) => c.org?.id === o.id);
+    const packs = (o.packs ?? [])
+      .map((p) => ({ ...p, sent: use[p.id]?.sent ?? 0, used: use[p.id]?.used ?? 0 }))
+      .sort((a, b) => a.bought.localeCompare(b.bought));
+    // A pack keeps the organisation a customer while its seats can still be sent.
+    const packStatus: Status | null = packs.some((p) => p.bought <= day && day <= p.sendBy) ? "paying" : packs.length ? "ended" : null;
+    const plan = planStatus(o.plan, day);
     return {
       ...o,
+      packs,
+      seatsBought: {
+        count: packs.reduce((s, p) => s + p.count, 0),
+        sent: packs.reduce((s, p) => s + p.sent, 0),
+        used: packs.reduce((s, p) => s + p.used, 0),
+      },
       accounts: linked.length,
       logins: linked.reduce((s, c) => s + c.logins, 0),
-      status: planStatus(o.plan, day) ?? "free",
+      status: plan === "paying" || packStatus === "paying" ? "paying" : plan ?? packStatus ?? "free",
     };
   });
 
@@ -240,11 +293,20 @@ export function buildOverview(accounts: Account[], ledger: Ledger, activity: Act
     ...confirmed.filter((c) => !c.org && c.plan).map((c) => ({ who: c.name, category: "privat" as const, plan: c.plan! })),
     ...ledger.orgs.filter((o) => o.plan).map((o) => ({ who: o.name, category: o.category as Category, plan: o.plan! })),
   ];
-  const revenueIn = (y: number, m0: number) =>
-    payers.flatMap((p) => {
+  // Packs are paid once, on the day they are bought.
+  const packSales = ledger.orgs.flatMap((o) =>
+    (o.packs ?? []).filter((p) => p.price).map((p) => ({ who: o.name, category: o.category as Category, start: p.bought, price: p.price! })),
+  );
+  const revenueIn = (y: number, m0: number) => [
+    ...payers.flatMap((p) => {
       const date = chargeIn(p.plan, y, m0);
       return date ? [{ who: p.who, category: p.category, date, amount: p.plan.price }] : [];
-    });
+    }),
+    ...packSales.flatMap((p) => {
+      const date = chargeIn({ interval: "once", start: p.start }, y, m0);
+      return date ? [{ who: p.who, category: p.category, date, amount: p.price }] : [];
+    }),
+  ];
   const expensesIn = (y: number, m0: number) =>
     ledger.expenses.flatMap((e) => {
       const date = chargeIn(e, y, m0);
@@ -317,12 +379,41 @@ export function buildOverview(accounts: Account[], ledger: Ledger, activity: Act
 
 export const emptyLedger = (): Ledger => ({ orgs: [], expenses: [], accounts: {} });
 
+/** An agreement is active while its plan runs or a pack can still send seats. */
+export const orgActive = (o: Org, day: string) =>
+  planStatus(o.plan, day) === "paying" || (o.packs ?? []).some((p) => p.bought <= day && day <= p.sendBy);
+
+// "Hasle Skole", "hasle skole." and "Hasle-skolen" are the same school to a teacher typing its name.
+const schoolKey = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9æøåäöü]+/g, " ")
+    .replace(/\b(skolen|skole)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+/** Schools with an active agreement whose name matches what a teacher typed (at most 3, so the list can't be read out). */
+export function findSchoolAgreements(orgs: Org[], typed: string, day: string): string[] {
+  const q = schoolKey(typed);
+  if (q.length < 3) return [];
+  return orgs
+    .filter((o) => o.category === "skole" && orgActive(o, day))
+    .filter((o) => {
+      const k = schoolKey(o.name);
+      return k.length >= 3 && (k.includes(q) || q.includes(k));
+    })
+    .map((o) => o.name)
+    .slice(0, 3);
+}
+
 // ---- Changes from the owner page ---------------------------------------------------------------------------------
 
 export type Change =
   | { type: "account"; id: string; org?: string | null; plan?: unknown }
   | { type: "org"; org: unknown }
   | { type: "deleteOrg"; id: string }
+  | { type: "pack"; org: string; pack: unknown }
+  | { type: "deletePack"; org: string; id: string }
   | { type: "expense"; expense: unknown }
   | { type: "deleteExpense"; id: string };
 
@@ -342,8 +433,30 @@ export function parsePlan(v: unknown): Plan | null {
   return { interval: o.interval, price, start: o.start, ...(isDate(o.end) ? { end: o.end } : {}) };
 }
 
-/** Applies one change from the owner page; returns the new ledger, or an error key for the form. */
-export function applyChange(ledger: Ledger, change: unknown, accountIds: string[]): { ok: true; ledger: Ledger } | { ok: false; error: string } {
+/** Kundeadmin e-mails from a list or a text (one per line, or separated by commas); null when one is not an e-mail. */
+export function parseAdmins(v: unknown): string[] | null {
+  const items = Array.isArray(v) ? v : typeof v === "string" ? v.split(/[\s,;]+/) : v == null ? [] : null;
+  if (!items) return null;
+  const out: string[] = [];
+  for (const item of items) {
+    const email = normalizeEmail(item);
+    if (!email) continue;
+    if (!isEmail(email)) return null;
+    if (!out.includes(email)) out.push(email);
+  }
+  return out.length > MAX_ORG_ADMINS ? null : out;
+}
+
+const whole = (v: unknown, min: number, max: number) => {
+  const n = typeof v === "string" ? Number(v.trim()) : v;
+  return typeof n === "number" && Number.isInteger(n) && n >= min && n <= max ? n : null;
+};
+
+/**
+ * Applies one change from the owner page; returns the new ledger, or an error key for the form.
+ * `use` (seats sent per pack) keeps a pack from shrinking below what is sent, and from being deleted once a seat is out.
+ */
+export function applyChange(ledger: Ledger, change: unknown, accountIds: string[], use: PackUse = {}): { ok: true; ledger: Ledger } | { ok: false; error: string } {
   const c = (change ?? {}) as Record<string, unknown>;
   const next: Ledger = structuredClone(ledger);
   switch (c.type) {
@@ -374,18 +487,55 @@ export function applyChange(ledger: Ledger, change: unknown, accountIds: string[
       if (!isOrgCategory(o.category)) return { ok: false, error: "category" };
       const plan = o.plan === null || o.plan === undefined ? undefined : parsePlan(o.plan);
       if (plan === null) return { ok: false, error: "plan" };
-      const seats = o.seats === undefined || o.seats === "" || o.seats === null ? undefined : amount(o.seats);
-      if (seats === null || (seats !== undefined && !Number.isInteger(seats))) return { ok: false, error: "seats" };
       const id = typeof o.id === "string" && o.id ? o.id : newId("o-");
-      if (o.id && !next.orgs.some((x) => x.id === id)) return { ok: false, error: "org" };
+      const before = next.orgs.find((x) => x.id === id);
+      if (o.id && !before) return { ok: false, error: "org" };
+      // Left out of the change = kept (the page no longer edits the old licence count).
+      const seats = !("seats" in o) ? before?.seats : o.seats === undefined || o.seats === "" || o.seats === null ? undefined : amount(o.seats);
+      if (seats === null || (seats !== undefined && !Number.isInteger(seats))) return { ok: false, error: "seats" };
+      const admins = "admins" in o ? parseAdmins(o.admins) : before?.admins ?? [];
+      if (!admins) return { ok: false, error: "admins" };
       const org: Org = { id, name, category: o.category, ...(plan ? { plan } : {}), ...(seats !== undefined ? { seats } : {}) };
       const note = text(o.note, 500);
       if (note) org.note = note;
+      if (admins.length) org.admins = admins;
+      if (before?.packs?.length) org.packs = before.packs;
       next.orgs = next.orgs.some((x) => x.id === id) ? next.orgs.map((x) => (x.id === id ? org : x)) : [...next.orgs, org];
       return { ok: true, ledger: next };
     }
+    case "pack": {
+      const org = next.orgs.find((o) => o.id === c.org);
+      if (!org) return { ok: false, error: "org" };
+      const p = (c.pack ?? {}) as Record<string, unknown>;
+      const count = whole(p.count, 1, MAX_PACK_SEATS);
+      if (count === null) return { ok: false, error: "count" };
+      const months = whole(p.months, 1, MAX_PACK_MONTHS);
+      if (months === null) return { ok: false, error: "months" };
+      if (!isDate(p.bought)) return { ok: false, error: "bought" };
+      const sendBy = p.sendBy === undefined || p.sendBy === "" ? addMonths(p.bought, PACK_SEND_MONTHS) : p.sendBy;
+      if (!isDate(sendBy) || sendBy <= p.bought) return { ok: false, error: "sendBy" };
+      const price = p.price === undefined || p.price === "" || p.price === null ? undefined : amount(p.price);
+      if (price === null) return { ok: false, error: "amount" };
+      const id = typeof p.id === "string" && p.id ? p.id : newId("p-");
+      const packs = org.packs ?? [];
+      if (p.id && !packs.some((x) => x.id === id)) return { ok: false, error: "pack" };
+      if (count < (use[id]?.sent ?? 0)) return { ok: false, error: "fewer" };
+      const pack: Pack = { id, count, months, bought: p.bought, sendBy, ...(price ? { price } : {}) };
+      org.packs = packs.some((x) => x.id === id) ? packs.map((x) => (x.id === id ? pack : x)) : [...packs, pack];
+      return { ok: true, ledger: next };
+    }
+    case "deletePack": {
+      const org = next.orgs.find((o) => o.id === c.org);
+      if (!org?.packs?.some((p) => p.id === c.id)) return { ok: false, error: "pack" };
+      if (use[c.id as string]?.sent) return { ok: false, error: "inUse" };
+      org.packs = org.packs.filter((p) => p.id !== c.id);
+      if (!org.packs.length) delete org.packs;
+      return { ok: true, ledger: next };
+    }
     case "deleteOrg": {
-      if (!next.orgs.some((o) => o.id === c.id)) return { ok: false, error: "org" };
+      const gone = next.orgs.find((o) => o.id === c.id);
+      if (!gone) return { ok: false, error: "org" };
+      if (gone.packs?.some((p) => use[p.id]?.sent)) return { ok: false, error: "inUse" };
       next.orgs = next.orgs.filter((o) => o.id !== c.id);
       for (const [id, e] of Object.entries(next.accounts)) {
         if (e.org !== c.id) continue;

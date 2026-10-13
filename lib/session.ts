@@ -39,6 +39,11 @@ function key(dir: string | undefined) {
 
 const sign = (k: Buffer, body: string) => createHmac("sha256", k).update(body).digest("base64url");
 
+/** HMAC of `body` with the session key – for values that must be made again later but never stored (lib/agreements.ts). */
+export async function keyedHash(body: string, dir?: string): Promise<Buffer> {
+  return createHmac("sha256", await key(dir)).update(body).digest();
+}
+
 /** A session for an account, or for one of its members (memberId) – both open the same budget. */
 export async function makeSession(userId: string, now = new Date(), dir?: string, memberId?: string): Promise<string> {
   const body = `${userId}${memberId ? "." + memberId : ""}.${now.getTime() + SESSION_MAX_AGE_S * 1000}`;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Account } from "./accounts";
-import { applyChange, buildOverview, chargeIn, emptyLedger, listPrice, type Ledger } from "./owner";
+import { applyChange, buildOverview, chargeIn, emptyLedger, findSchoolAgreements, listPrice, type Ledger, type Org } from "./owner";
 
 const now = new Date("2026-10-07T10:00:00Z");
 
@@ -86,6 +86,32 @@ describe("buildOverview", () => {
     expect(o.customers.find((c) => c.id === "u-bbbbbbbbbbbb")).toMatchObject({ status: "trial", trialEnds: "2026-10-20" });
     expect(o.customers.find((c) => c.id === "u-cccccccccccc")).toMatchObject({ category: "bank", status: "paying", lastSeen: "2026-09-20T08:00:00Z" });
   });
+
+  it("counts seat packs: seats sent and used, the sale as one-off revenue, and the agreement as paying while it can send", () => {
+    const withPacks: Ledger = {
+      ...emptyLedger(),
+      orgs: [
+        {
+          id: "o-skole",
+          name: "Skolen",
+          category: "skole",
+          packs: [
+            { id: "p-new", count: 20, months: 12, bought: "2026-11-02", sendBy: "2027-11-02", price: 4000 },
+            { id: "p-old", count: 10, months: 12, bought: "2026-08-01", sendBy: "2027-08-01" },
+          ],
+        },
+        { id: "o-gl", name: "Gammel", category: "maegler", packs: [{ id: "p-gl", count: 5, months: 3, bought: "2025-01-01", sendBy: "2026-01-01" }] },
+      ],
+    };
+    const v = buildOverview([], withPacks, {}, now, { "p-old": { sent: 6, used: 4 } });
+    const skole = v.orgs.find((x) => x.id === "o-skole")!;
+    expect(skole.packs.map((p) => [p.id, p.sent, p.used])).toEqual([["p-old", 6, 4], ["p-new", 0, 0]]);
+    expect(skole.seatsBought).toEqual({ count: 30, sent: 6, used: 4 });
+    expect(skole.status).toBe("paying");
+    expect(v.orgs.find((x) => x.id === "o-gl")!.status).toBe("ended");
+    expect(v.next.renewals.map((l) => [l.who, l.date, l.amount])).toEqual([["Skolen", "2026-11-02", 4000]]);
+    expect(v.categories.find((c) => c.id === "skole")).toMatchObject({ customers: 1, payingCustomers: 1, mrr: 0, nextMonth: 4000 });
+  });
 });
 
 describe("applyChange", () => {
@@ -127,9 +153,68 @@ describe("applyChange", () => {
     expect(c && c.ok && c.ledger.expenses).toEqual([]);
   });
 
+  it("keeps kundeadmins as clean e-mails, max five, and keeps them and the packs when the agreement is edited", () => {
+    const a = applyChange(emptyLedger(), { type: "org", org: { name: "Banken", category: "bank", admins: " Anna@Banken.dk,\nbo@banken.dk anna@banken.dk" } }, ids);
+    if (!a.ok) throw new Error(a.error);
+    const id = a.ledger.orgs[0]!.id;
+    expect(a.ledger.orgs[0]!.admins).toEqual(["anna@banken.dk", "bo@banken.dk"]);
+    const p = applyChange(a.ledger, { type: "pack", org: id, pack: { count: "50", months: "3", bought: "2026-10-13", price: "2500" } }, ids);
+    if (!p.ok) throw new Error(p.error);
+    const b = applyChange(p.ledger, { type: "org", org: { id, name: "Banken A/S", category: "bank" } }, ids);
+    expect(b.ok && b.ledger.orgs[0]).toMatchObject({ name: "Banken A/S", admins: ["anna@banken.dk", "bo@banken.dk"], packs: [{ count: 50 }] });
+    expect(applyChange(a.ledger, { type: "org", org: { id, name: "B", category: "bank", admins: "ikke-en-mail" } }, ids)).toEqual({ ok: false, error: "admins" });
+    const six = Array.from({ length: 6 }, (_, i) => `a${i}@b.dk`);
+    expect(applyChange(a.ledger, { type: "org", org: { id, name: "B", category: "bank", admins: six } }, ids)).toEqual({ ok: false, error: "admins" });
+  });
+
+  it("adds a pack (send-by defaults to a year), and won't shrink or delete what is already sent", () => {
+    const a = applyChange(emptyLedger(), { type: "org", org: { name: "Mægleren", category: "maegler" } }, ids);
+    if (!a.ok) throw new Error(a.error);
+    const org = a.ledger.orgs[0]!.id;
+    const b = applyChange(a.ledger, { type: "pack", org, pack: { count: 10, months: 3, bought: "2026-01-31" } }, ids);
+    if (!b.ok) throw new Error(b.error);
+    const pack = b.ledger.orgs[0]!.packs![0]!;
+    expect(pack).toMatchObject({ count: 10, months: 3, bought: "2026-01-31", sendBy: "2027-01-31" });
+    expect(pack.price).toBeUndefined();
+    const use = { [pack.id]: { sent: 4, used: 1 } };
+    expect(applyChange(b.ledger, { type: "pack", org, pack: { ...pack, count: 3 } }, ids, use)).toEqual({ ok: false, error: "fewer" });
+    expect(applyChange(b.ledger, { type: "pack", org, pack: { ...pack, count: 4 } }, ids, use).ok).toBe(true);
+    expect(applyChange(b.ledger, { type: "deletePack", org, id: pack.id }, ids, use)).toEqual({ ok: false, error: "inUse" });
+    expect(applyChange(b.ledger, { type: "deleteOrg", id: org }, ids, use)).toEqual({ ok: false, error: "inUse" });
+    const c = applyChange(b.ledger, { type: "deletePack", org, id: pack.id }, ids);
+    expect(c.ok && c.ledger.orgs[0]!.packs).toBeUndefined();
+    expect(applyChange(a.ledger, { type: "pack", org, pack: { count: 0, months: 3, bought: "2026-01-31" } }, ids)).toEqual({ ok: false, error: "count" });
+    expect(applyChange(a.ledger, { type: "pack", org, pack: { count: 5, months: 61, bought: "2026-01-31" } }, ids)).toEqual({ ok: false, error: "months" });
+    expect(applyChange(a.ledger, { type: "pack", org, pack: { count: 5, months: 3, bought: "2026-01-31", sendBy: "2026-01-01" } }, ids)).toEqual({ ok: false, error: "sendBy" });
+  });
+
   it("follows the landing page's price list", () => {
     expect(listPrice("monthly", 1)).toBe(29);
     expect(listPrice("monthly", 3)).toBe(47);
     expect(listPrice("yearly", 2)).toBe(388);
+  });
+});
+
+describe("findSchoolAgreements", () => {
+  const pack = { id: "p-1", count: 10, months: 12, bought: "2026-08-01", sendBy: "2027-08-01" };
+  const orgs: Org[] = [
+    { id: "o-1", name: "Hasle Skole", category: "skole", packs: [pack] },
+    { id: "o-2", name: "Lystrup Skole", category: "skole", packs: [{ ...pack, id: "p-2", sendBy: "2026-09-01" }] },
+    { id: "o-3", name: "Hasle Bank", category: "bank", packs: [{ ...pack, id: "p-3" }] },
+    { id: "o-4", name: "Vestre Skole", category: "skole", plan: { interval: "yearly", price: 1000, start: "2026-01-01" } },
+  ];
+  const day = "2026-10-13";
+
+  it("finds an active school however the name is written", () => {
+    expect(findSchoolAgreements(orgs, "hasle skole.", day)).toEqual(["Hasle Skole"]);
+    expect(findSchoolAgreements(orgs, "Hasle-skolen", day)).toEqual(["Hasle Skole"]);
+    expect(findSchoolAgreements(orgs, "Hasle Skole, Aarhus", day)).toEqual(["Hasle Skole"]);
+    expect(findSchoolAgreements(orgs, "Vestre", day)).toEqual(["Vestre Skole"]);
+  });
+
+  it("leaves out ended agreements, other kinds and short words", () => {
+    expect(findSchoolAgreements(orgs, "Lystrup Skole", day)).toEqual([]);
+    expect(findSchoolAgreements(orgs, "Skole", day)).toEqual([]);
+    expect(findSchoolAgreements(orgs, "Ha", day)).toEqual([]);
   });
 });
