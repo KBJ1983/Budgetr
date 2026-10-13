@@ -5,7 +5,20 @@
  * waits (lib/erhverv-inbox.ts). The rules are shared by the form (checks before sending) and the server (checks
  * again). No node: imports, so it runs in the browser too.
  */
-import { billingLabel, isBilling, isPackCount, isPackMonths, packLabel, packMonthly, packPrice, type Billing, type PackCount, type PackMonths } from "./erhverv-packs";
+import {
+  billingLabel,
+  isBilling,
+  isPackCount,
+  isPackMonths,
+  packLabel,
+  packMonthly,
+  packPrice,
+  packYearly,
+  perCodeMonth,
+  type Billing,
+  type PackCount,
+  type PackMonths,
+} from "./erhverv-packs";
 import { isEmail, normalizeEmail } from "./signup";
 
 export const SECTORS = [
@@ -65,25 +78,53 @@ export function validateInquiry(x: unknown): { ok: true; value: Inquiry } | { ok
   return { ok: true, value: { company, name, email, phone, sector, pack, billing, message } };
 }
 
-/** The mail to the owner. Replies go straight to the one who asked. */
-export function inquiryMail(i: Inquiry) {
-  const sector = SECTORS.find((s) => s.id === i.sector)?.label ?? i.sector;
+const kr = (n: number) => `${n.toLocaleString("da-DK")} kr`;
+
+export const sectorLabel = (id: string) => SECTORS.find((s) => s.id === id)?.label ?? "Andet";
+
+/**
+ * Everything they picked in the price calculator, as label/value lines – the same in the owner's mail and on /admin,
+ * and the price shown the way the page showed it (a month, a year, or in all for a pack under 12 months). Takes a
+ * saved henvendelse too, so a pack or billing that is no longer on the list is shown without prices.
+ */
+export function inquiryChoices(i: { sector: string; pack?: { count: number; months: number } | null; billing?: string }): [string, string][] {
+  const lines: [string, string][] = [["Branche", sectorLabel(i.sector)]];
+  const p = i.pack;
+  if (!p) return [...lines, ["Pakke", "Vil tale om pakken først"]];
+  lines.push(["Antal koder", `${p.count.toLocaleString("da-DK")} koder`], ["Varighed pr. kode", `${p.months} måneder`]);
+  const billing = isBilling(i.billing) ? i.billing : undefined;
+  if (billing) lines.push(["Betaling", billingLabel(billing, p.months)]);
+  if (!isPackCount(p.count) || !isPackMonths(p.months)) return lines;
+  const total = packPrice(p.count, p.months);
+  if (billing === "aar") lines.push(["Pris de så", p.months < 12 ? `${kr(total)} samlet` : `${kr(packYearly(p.count, p.months))} om året`]);
+  else lines.push(["Pris de så", `${kr(packMonthly(p.count, p.months))} om måneden`]);
+  lines.push(["I alt efter prislisten", kr(total)], ["Pr. kunde", `${kr(perCodeMonth(p.count, p.months))} om måneden`]);
+  return lines;
+}
+
+/** The mail to the owner, with every choice and what they wrote. Replies go straight to the one who asked. */
+export function inquiryMail(i: Inquiry, adminUrl?: string) {
+  const choices = inquiryChoices(i);
+  const width = Math.max(...choices.map(([k]) => k.length)) + 2;
   return {
-    subject: `Henvendelse fra ${i.company} (${sector})`,
+    subject: `Prisforespørgsel fra ${i.company} (${sectorLabel(i.sector)})${i.pack ? ` · ${packLabel(i.pack)}` : ""}`,
     text: [
-      `${i.name} fra ${i.company} vil høre om en aftale med budgetpro.`,
+      `${i.name} fra ${i.company} har sendt en prisforespørgsel fra prisberegneren.`,
       "",
-      `Branche: ${sector}`,
-      `E-mail: ${i.email}`,
-      `Telefon: ${i.phone || "ikke oplyst"}`,
-      i.pack
-        ? `Pakke: ${packLabel(i.pack)}, ${billingLabel(i.billing)} (${packMonthly(i.pack.count, i.pack.months).toLocaleString("da-DK")} kr om måneden, ${packPrice(i.pack.count, i.pack.months).toLocaleString("da-DK")} kr i alt efter prislisten)`
-        : "Pakke: vil tale om det først",
+      "KONTAKT",
+      `Virksomhed: ${i.company}`,
+      `Navn:       ${i.name}`,
+      `E-mail:     ${i.email}`,
+      `Telefon:    ${i.phone || "ikke oplyst"}`,
       "",
-      i.message ? `Besked:\n${i.message}` : "Ingen besked.",
+      "VALG I PRISBEREGNEREN",
+      ...choices.map(([k, v]) => `${`${k}:`.padEnd(width)}${v}`),
       "",
-      "Det er en prisforespørgsel. Der er ikke oprettet en aftale.",
-      "Henvendelsen venter under Henvendelser på /admin, til du opretter en aftale eller markerer den som klaret.",
+      "DET HAR DE SKREVET",
+      i.message || "Ingen besked.",
+      "",
+      "Det er kun en prisforespørgsel. Der er ikke oprettet en aftale.",
+      `Henvendelsen venter under Henvendelser på ${adminUrl ? `${adminUrl}/admin#henvendelser` : "/admin"}. Tryk "Opret aftale" for at gøre den til en kunde med pakken udfyldt.`,
       "Svar på denne mail for at skrive direkte til dem.",
     ].join("\n"),
   };

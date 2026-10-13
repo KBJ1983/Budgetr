@@ -2,7 +2,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { inquiryMail, validateInquiry } from "./erhverv";
+import { inquiryChoices, inquiryMail, validateInquiry } from "./erhverv";
 import { MAX_PER_DAY, MAX_PER_EMAIL, saveInquiry, takeInquiry } from "./erhverv-store";
 import { openStore } from "./kv";
 
@@ -43,14 +43,34 @@ describe("validateInquiry", () => {
   it("mails the owner who asked and what they wrote", () => {
     const r = validateInquiry(form);
     if (!r.ok) throw new Error("form");
-    const m = inquiryMail(r.value);
-    expect(m.subject).toBe("Henvendelse fra Eksempel Bank (Bank eller pengeinstitut)");
+    const m = inquiryMail(r.value, "https://eksempel.dk");
+    expect(m.subject).toBe("Prisforespørgsel fra Eksempel Bank (Bank eller pengeinstitut) · 50 koder × 12 måneder");
     expect(m.text).toContain("navn@eksempel.dk");
-    expect(m.text).toContain("Telefon: ikke oplyst");
-    expect(m.text).toContain("Pakke: 50 koder × 12 måneder, månedlig betaling (600 kr om måneden, 7.200 kr i alt efter prislisten)");
+    expect(m.text).toContain("Telefon:    ikke oplyst");
+    for (const line of ["Antal koder", "50 koder", "12 måneder", "månedlig betaling", "600 kr om måneden", "7.200 kr", "12 kr om måneden"])
+      expect(m.text).toContain(line);
+    expect(m.text).toContain("Vi vil gerne høre mere.\nTak.");
+    expect(m.text).toContain("https://eksempel.dk/admin#henvendelser");
     expect(m.text).toContain("ikke oprettet en aftale");
     const y = validateInquiry({ ...form, billing: "aar" });
     expect(y.ok && y.value.billing).toBe("aar");
+  });
+
+  it("lists the choices the way the price calculator showed them", () => {
+    const get = (x: Parameters<typeof inquiryChoices>[0]) => Object.fromEntries(inquiryChoices(x));
+    expect(get({ sector: "bank", pack: { count: 50, months: 24 }, billing: "aar" })).toMatchObject({
+      Betaling: "årlig betaling",
+      "Pris de så": "6.000 kr om året",
+      "I alt efter prislisten": "12.000 kr",
+    });
+    expect(get({ sector: "maegler", pack: { count: 10, months: 3 }, billing: "aar" })).toMatchObject({
+      Branche: "Ejendomsmægler",
+      Betaling: "samlet for hele pakken",
+      "Pris de så": "600 kr samlet",
+    });
+    expect(get({ sector: "andet", pack: null })).toEqual({ Branche: "Andet", Pakke: "Vil tale om pakken først" });
+    // An old henvendelse with a pack that's no longer on the list: no prices.
+    expect(get({ sector: "bank", pack: { count: 30, months: 12 } })["Pris de så"]).toBeUndefined();
   });
 });
 

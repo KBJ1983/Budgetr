@@ -416,3 +416,27 @@
   font: inherit;
   font-size: 15px;
 }
+
+/* What a henvendelse picked in the price calculator */
+.ow-inq-choices {
+  margin: 4px 0 0;
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+.ow-inq-choices div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+}
+.ow-inq-choices dt {
+  min-width: 150px;
+  opacity: 0.7;
+}
+.ow-inq-choices dd {
+  margin: 0;
+  font-weight: 600;
+}
+.ow-inq-summary {
+  margin-bottom: 14px;
+}

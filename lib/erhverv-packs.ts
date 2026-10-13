@@ -63,4 +63,5 @@ export const isBilling = (v: unknown): v is Billing => BILLINGS.includes(v as Bi
 export const packYearly = (count: PackCount, months: PackMonths) =>
   months >= 12 ? packMonthly(count, months) * 12 : packPrice(count, months);
 
-export const billingLabel = (b: Billing) => (b === "aar" ? "årlig betaling" : "månedlig betaling");
+/** How they want to pay, as the form put it: "Samlet" instead of "Pr. år" for a pack under 12 months. */
+export const billingLabel = (b: Billing, months = 12) => (b === "aar" ? (months < 12 ? "samlet for hele pakken" : "årlig betaling") : "månedlig betaling");

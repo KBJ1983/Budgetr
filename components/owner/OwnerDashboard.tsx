@@ -22,7 +22,7 @@ import {
   type Plan,
   type Status,
 } from "@/lib/owner";
-import { SECTORS } from "@/lib/erhverv";
+import { inquiryChoices, sectorLabel } from "@/lib/erhverv";
 import type { InquiryRow } from "@/lib/erhverv-inbox";
 import { isPackCount, isPackMonths, packLabel, packPrice } from "@/lib/erhverv-packs";
 import type { OwnerData } from "@/lib/owner-store";
@@ -55,7 +55,6 @@ const ERRORS: Record<string, string> = {
   inquiry: "Henvendelsen findes ikke længere.",
 };
 
-const sectorLabel = (id: string) => SECTORS.find((x) => x.id === id)?.label ?? "Andet";
 /** The agreement category a henvendelse starts as; "andet" starts as a bank and is changed in the dialog. */
 const sectorCategory = (id: string): OrgCategory => (id === "maegler" || id === "skole" ? id : "bank");
 /** The list price of the pack a henvendelse asked about, when it is one of ours. */
@@ -65,7 +64,6 @@ const time = (iso: string) => `${date(iso)} kl. ${new Date(iso).toLocaleTimeStri
 
 /** One henvendelse from the Erhverv form, with what the owner can do about it. */
 function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => void; onDone: (done: boolean) => void }) {
-  const price = askedPrice(q.pack);
   return (
     <div className="bx-card ow-inq">
       <div className="ow-inq-head">
@@ -74,17 +72,16 @@ function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => vo
           {sectorLabel(q.sector)} · {time(q.at)}
         </span>
       </div>
-      <p className="ow-inq-pack">
-        {q.pack ? (
-          <>
-            Pakke: <b>{packLabel(q.pack)}</b>
-            {price ? <> · {kr(price)} efter prislisten</> : null}
-            {q.billing === "aar" ? " · vil betale årligt" : q.billing === "maaned" ? " · vil betale månedligt" : null}
-          </>
-        ) : (
-          "Vil tale om pakken først"
-        )}
-      </p>
+      <dl className="ow-inq-choices">
+        {inquiryChoices(q)
+          .slice(1)
+          .map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+      </dl>
       <p className="ow-inq-who">
         {q.name} · <a href={`mailto:${q.email}`}>{q.email}</a>
         {q.phone ? (
@@ -109,7 +106,7 @@ function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => vo
         ) : (
           <>
             <button type="button" className="bx-btn bx-btn-primary" onClick={onAgree}>
-              Opret aftale
+              Opret som kunde
             </button>
             <a className="bx-btn" href={`mailto:${q.email}?subject=${encodeURIComponent("Din henvendelse til budgetpro")}`}>
               Skriv til {q.name.split(" ")[0]}
@@ -300,6 +297,76 @@ const planFrom = (f: FormData) => ({
   end: f.get("end") || undefined,
 });
 
+const packFrom = (f: FormData) => ({
+  count: f.get("count"),
+  months: f.get("months"),
+  bought: f.get("bought"),
+  sendBy: f.get("sendBy") || undefined,
+  price: f.get("packPrice"),
+});
+
+/** The fields of a seat pack; a new one starts from the pack a henvendelse asked about, at its list price. */
+function PackFields({
+  pack,
+  asked,
+  category,
+  today,
+  focus,
+}: {
+  pack?: PackRow;
+  asked?: { count: number; months: number };
+  category: OrgCategory;
+  today: string;
+  focus?: boolean;
+}) {
+  return (
+    <>
+      <div className="bx-grid-2">
+        <Field label="Antal pladser" help={pack?.sent ? `${num(pack.sent)} er allerede sendt` : undefined}>
+          <input className="bx-input" name="count" inputMode="numeric" defaultValue={pack?.count ?? asked?.count ?? ""} autoFocus={focus} />
+        </Field>
+        <Field label="Måneder pr. plads" help="Tæller fra den dag, brugeren tager pladsen">
+          <input className="bx-input" name="months" inputMode="numeric" defaultValue={pack?.months ?? asked?.months ?? (category === "maegler" ? 3 : 12)} />
+        </Field>
+      </div>
+      <div className="bx-grid-2">
+        <Field label="Købt">
+          <input className="bx-input" type="date" name="bought" defaultValue={pack?.bought ?? today} />
+        </Field>
+        <Field label="Kan sendes til og med" help={`Tom = ${PACK_SEND_MONTHS} måneder efter købet`}>
+          <input className="bx-input" type="date" name="sendBy" defaultValue={pack?.sendBy ?? addMonths(today, PACK_SEND_MONTHS)} />
+        </Field>
+      </div>
+      <Field label="Pris (kr, valgfri)" help="Betales én gang, på købsdagen">
+        <input className="bx-input" name="packPrice" inputMode="decimal" defaultValue={pack?.price ?? askedPrice(asked) ?? ""} />
+      </Field>
+    </>
+  );
+}
+
+/** What the henvendelse said, at the top of the dialog that turns it into a customer. */
+function InquirySummary({ q }: { q: InquiryRow }) {
+  return (
+    <div className="bx-card ow-inq ow-inq-summary">
+      <span className="bx-muted">
+        Fra prisberegneren {time(q.at)} · {q.name} · {q.email}
+        {q.phone ? ` · ${q.phone}` : ""}
+      </span>
+      <dl className="ow-inq-choices">
+        {inquiryChoices(q).map(([k, v]) => (
+          <div key={k}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+      {q.message ? <p className="ow-inq-msg">{q.message}</p> : null}
+    </div>
+  );
+}
+
+const inquiryNote = (q: InquiryRow) => `Fra prisforespørgsel ${date(q.at)}: ${q.name}${q.phone ? `, tlf. ${q.phone}` : ""}`;
+
 type Editing =
   | { kind: "plan"; customer: CustomerRow }
   | { kind: "org"; org?: OrgRow; from?: InquiryRow }
@@ -351,7 +418,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
   };
 
   // An agreement made from a henvendelse opens right away, so the pack they asked about can be added.
-  const saveOrg = async (change: { org: object; inquiry?: string }) => {
+  const saveOrg = async (change: { org: object; inquiry?: string; pack?: object }) => {
     const next = await send({ type: "org", ...change });
     if (!next) return;
     const made = change.inquiry ? next.inquiries.find((x) => x.id === change.inquiry)?.org : undefined;
@@ -849,8 +916,11 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           onClose={close}
           onSubmit={(f) => {
             const plan = planFrom(f);
+            // From a henvendelse the first pack is in the same dialog; left empty, the agreement is made without one.
+            const first = editing.from && String(f.get("count") ?? "").trim() ? packFrom(f) : undefined;
             void saveOrg({
               inquiry: editing.from?.id,
+              ...(first ? { pack: first } : {}),
               org: {
                 id: editing.org?.id,
                 name: f.get("name"),
@@ -869,6 +939,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             ) : null
           }
         >
+          {editing.from ? <InquirySummary q={editing.from} /> : null}
           <Field label="Navn">
             <input className="bx-input" name="name" defaultValue={editing.org?.name ?? editing.from?.company ?? ""} autoFocus />
           </Field>
@@ -922,15 +993,22 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                 </button>
               </div>
             </div>
+          ) : editing.from ? (
+            <div className="bx-field">
+              <span>Første pakke</span>
+              <small className="bx-muted">
+                {editing.from.pack
+                  ? `Udfyldt med det, de valgte i prisberegneren (${packLabel(editing.from.pack)}). Ret det, hvis I er blevet enige om noget andet.`
+                  : "De ville tale om pakken først. Udfyld den, når I er enige, eller lad antal stå tomt og tilføj pakken senere."}
+              </small>
+              <PackFields asked={editing.from.pack} category={sectorCategory(editing.from.sector)} today={data.today} />
+            </div>
           ) : (
-            <p className="bx-muted">
-              Gem aftalen først, så kan du tilføje pakker med pladser.
-              {editing.from?.pack ? ` Henvendelsen spurgte om ${packLabel(editing.from.pack)}; det er udfyldt, når du tilføjer pakken.` : ""}
-            </p>
+            <p className="bx-muted">Gem aftalen først, så kan du tilføje pakker med pladser.</p>
           )}
           <PlanFields plan={editing.org?.plan} logins={1} defaultStart={data.today} optional />
           <Field label="Note (valgfri)">
-            <input className="bx-input" name="note" defaultValue={editing.org?.note ?? ""} />
+            <input className="bx-input" name="note" defaultValue={editing.org?.note ?? (editing.from ? inquiryNote(editing.from) : "")} />
           </Field>
           {error ? <p className="bx-error" role="alert">{error}</p> : null}
         </Dialog>
@@ -949,14 +1027,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             void savePack(editing.org.id, {
               type: "pack",
               org: editing.org.id,
-              pack: {
-                id: editing.pack?.id,
-                count: f.get("count"),
-                months: f.get("months"),
-                bought: f.get("bought"),
-                sendBy: f.get("sendBy") || undefined,
-                price: f.get("price"),
-              },
+              pack: { id: editing.pack?.id, ...packFrom(f) },
             })
           }
           foot={
@@ -971,30 +1042,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             ) : null
           }
         >
-          <div className="bx-grid-2">
-            <Field label="Antal pladser" help={editing.pack?.sent ? `${num(editing.pack.sent)} er allerede sendt` : undefined}>
-              <input className="bx-input" name="count" inputMode="numeric" defaultValue={editing.pack?.count ?? asked?.count ?? ""} autoFocus />
-            </Field>
-            <Field label="Måneder pr. plads" help="Tæller fra den dag, brugeren tager pladsen">
-              <input
-                className="bx-input"
-                name="months"
-                inputMode="numeric"
-                defaultValue={editing.pack?.months ?? asked?.months ?? (editing.org.category === "maegler" ? 3 : 12)}
-              />
-            </Field>
-          </div>
-          <div className="bx-grid-2">
-            <Field label="Købt">
-              <input className="bx-input" type="date" name="bought" defaultValue={editing.pack?.bought ?? data.today} />
-            </Field>
-            <Field label="Kan sendes til og med" help={`Tom = ${PACK_SEND_MONTHS} måneder efter købet`}>
-              <input className="bx-input" type="date" name="sendBy" defaultValue={editing.pack?.sendBy ?? addMonths(data.today, PACK_SEND_MONTHS)} />
-            </Field>
-          </div>
-          <Field label="Pris (kr, valgfri)" help="Betales én gang, på købsdagen">
-            <input className="bx-input" name="price" inputMode="decimal" defaultValue={editing.pack?.price ?? askedPrice(asked) ?? ""} />
-          </Field>
+          <PackFields pack={editing.pack} asked={asked} category={editing.org.category} today={data.today} focus />
           {error ? <p className="bx-error" role="alert">{error}</p> : null}
         </Dialog>
         );

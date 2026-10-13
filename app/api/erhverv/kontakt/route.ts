@@ -1,3 +1,4 @@
+import { siteUrl } from "@/lib/agreement-auth";
 import { sendMail } from "@/lib/auth-mail";
 import { inquiryMail, validateInquiry } from "@/lib/erhverv";
 import { saveInquiry, takeInquiry } from "@/lib/erhverv-store";
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
   if (!(await takeInquiry(r.value.email))) return Response.json({ error: "limit" }, { status: 429 });
 
   await saveInquiry(r.value);
-  const mail = inquiryMail(r.value);
+  const mail = inquiryMail(r.value, siteUrl(new URL(req.url).origin));
   for (const to of ownerEmails()) {
     try {
       await sendMail(to, mail, { replyTo: r.value.email });

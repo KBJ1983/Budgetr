@@ -8,7 +8,7 @@ import { ADMIN_COOKIE, SESSION_COOKIE } from "@/lib/session";
 
 // Owner overview (lib/owner.ts): GET the numbers, POST one change to the ledger (plans, organisations, seat packs, expenses)
 // or to a henvendelse from the Erhverv form ({ type: "inquiry", id, done }; an org change may carry "inquiry" too, which
-// marks that henvendelse as done with the agreement it became).
+// marks that henvendelse as done with the agreement it became, and "pack" for the new agreement's first pack).
 // Anyone but the owner gets a plain 404, so the route doesn't give itself away.
 const noStore = { "Cache-Control": "no-store" };
 const denied = async (req: NextRequest) =>
@@ -35,8 +35,14 @@ export async function POST(req: NextRequest) {
   const ids = (await listAccounts()).map((a) => a.id);
   const ledger = await readLedger();
   // Seats already sent keep a pack (and its organisation) from being shrunk or deleted.
-  const r = applyChange(ledger, body, ids, await loadPackUse(ledger.orgs));
+  let r = applyChange(ledger, body, ids, await loadPackUse(ledger.orgs));
   if (!r.ok) return Response.json({ error: r.error }, { status: 400, headers: noStore });
+  // A new agreement made from a henvendelse may bring its first pack along; both are saved, or neither.
+  const made = change.type === "org" ? r.ledger.orgs.find((o) => !ledger.orgs.some((b) => b.id === o.id)) : undefined;
+  if (made && change.pack && typeof change.pack === "object") {
+    r = applyChange(r.ledger, { type: "pack", org: made.id, pack: change.pack }, ids);
+    if (!r.ok) return Response.json({ error: r.error }, { status: 400, headers: noStore });
+  }
   await writeLedger(r.ledger);
   // New kundeadmins get a mail telling them they can log in on /aftale.
   for (const org of r.ledger.orgs) {
@@ -44,9 +50,6 @@ export async function POST(req: NextRequest) {
     const added = (org.admins ?? []).filter((e) => !before.includes(e));
     if (added.length) await inviteAdmins(req.nextUrl.origin, org, added);
   }
-  if (change.type === "org" && typeof change.inquiry === "string") {
-    const made = r.ledger.orgs.find((o) => !ledger.orgs.some((b) => b.id === o.id));
-    await markInquiry(change.inquiry, true, made?.id);
-  }
+  if (change.type === "org" && typeof change.inquiry === "string") await markInquiry(change.inquiry, true, made?.id);
   return Response.json(await loadOwnerData(), { headers: noStore });
 }
