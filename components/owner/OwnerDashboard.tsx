@@ -65,7 +65,7 @@ function StatusTag({ status, trialEnds }: { status: Status; trialEnds?: string }
     case "trial":
       return <span className="bx-tag is-warn">Prøveperiode til {date(trialEnds)}</span>;
     case "ended":
-      return <span className="bx-tag is-muted">Udløbet</span>;
+      return <span className="bx-tag is-neg">Udløbet</span>;
     case "unconfirmed":
       return <span className="bx-tag is-muted">Ikke bekræftet</span>;
     default:
@@ -86,10 +86,10 @@ function Tile({ label, value, sub, tone }: { label: string; value: string; sub?:
   );
 }
 
-function Lines({ title, lines, empty, note }: { title: string; lines: Line[]; empty: string; note?: string }) {
+function Lines({ title, lines, empty, note, tone }: { title: string; lines: Line[]; empty: string; note?: string; tone?: "neg" | "warn" }) {
   const total = lines.reduce((s, l) => s + l.amount, 0);
   return (
-    <div className="bx-card ow-lines">
+    <div className={`bx-card ow-lines${tone && lines.length ? ` is-${tone}` : ""}`}>
       <div className="ow-lines-head">
         <b>{title}</b>
         {lines.length ? <span>{kr(Math.round(total * 100) / 100)}</span> : null}
@@ -294,6 +294,17 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
     { customers: 0, payingCustomers: 0, logins: 0, active: 0, paying: 0, mrr: 0, nextMonth: 0 },
   );
   const maxMonth = Math.max(1, ...data.months.flatMap((m) => [m.revenue, m.expenses]));
+  const year = data.months.reduce((s, m) => ({ revenue: s.revenue + m.revenue, expenses: s.expenses + m.expenses }), { revenue: 0, expenses: 0 });
+  const yearResult = Math.round((year.revenue - year.expenses) * 100) / 100;
+  const negMonths = data.months.filter((m) => m.revenue < m.expenses).length;
+  // Customers who have not opened their budget for 30 days are shown in yellow.
+  const staleBefore = new Date(Date.parse(data.today) - 30 * 864e5).toISOString().slice(0, 10);
+  const watch = [
+    data.next.ending.length ? `${num(data.next.ending.length)} ${data.next.ending.length === 1 ? "abonnement udløber" : "abonnementer udløber"}` : "",
+    data.next.trialsEnding.length
+      ? `${num(data.next.trialsEnding.length)} ${data.next.trialsEnding.length === 1 ? "prøveperiode slutter" : "prøveperioder slutter"}`
+      : "",
+  ].filter(Boolean);
 
   return (
     <div className="bx ow" data-theme={theme}>
@@ -333,6 +344,20 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
           </div>
         ) : null}
 
+        <div className="ow-hero">
+          <p>
+            budgetpro har <b>{num(data.users.logins)} {data.users.logins === 1 ? "bruger" : "brugere"}</b>, og{" "}
+            <b>{num(data.active.d30)}</b> har brugt budgettet de seneste 30 dage. <b>{num(data.paying.logins)}</b> betaler, og den
+            månedlige omsætning er <b className="pos">{kr(data.mrr)}</b>. I {data.nextMonth} venter <b>{kr(data.next.revenue)}</b> ind og{" "}
+            <b>{kr(data.next.expenses)}</b> ud, så resultatet bliver <b className={result < 0 ? "neg" : "pos"}>{kr(result)}</b>.
+          </p>
+          {watch.length ? (
+            <small className="ow-hbar">
+              Hold øje med {data.nextMonth}: {watch.join(" og ")}.
+            </small>
+          ) : null}
+        </div>
+
         <section className="bx-section">
           <div className="bx-section-head">
             <h2>Brugere</h2>
@@ -370,12 +395,14 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
               lines={data.next.ending}
               empty="Ingen abonnementer udløber."
               note="Beløbet er det, abonnementet gav pr. måned."
+              tone="neg"
             />
             <Lines
               title="Prøveperioder slutter"
               lines={data.next.trialsEnding}
               empty="Ingen prøveperioder slutter."
               note="Mulig omsætning efter prislisten, hvis de vælger månedlig betaling."
+              tone="warn"
             />
           </div>
         </section>
@@ -383,6 +410,10 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
         <section className="bx-section">
           <div className="bx-section-head">
             <h2>Kundekategorier</h2>
+            <span className="bx-muted">
+              Privatpersoner tæller konti. Banker, ejendomsmæglere og skoler tæller firmaaftaler; deres brugere er de konti, der er knyttet til
+              aftalen.
+            </span>
           </div>
           <div className="bx-card bx-scroll-x">
             <table className="bx-table">
@@ -424,16 +455,22 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
               </tbody>
             </table>
           </div>
-          <p className="bx-muted">
-            Privatpersoner tæller konti. Banker, ejendomsmæglere og skoler tæller firmaaftaler; deres brugere er de konti, der er knyttet til aftalen.
-          </p>
         </section>
 
-        <section className="bx-section">
-          <div className="bx-section-head">
+        <details className="bx-section ow-fold">
+          <summary className="bx-section-head">
             <h2>De næste 12 måneder</h2>
-            <span className="bx-muted">Kendte abonnementer og udgifter. Nye kunder og opsigelser er ikke regnet med.</span>
-          </div>
+            <span className="ow-fold-sum">
+              {kr(Math.round(year.revenue * 100) / 100)} ind · {kr(Math.round(year.expenses * 100) / 100)} ud · Resultat{" "}
+              <b className={yearResult < 0 ? "neg" : "pos"}>{kr(yearResult)}</b>
+              {negMonths ? (
+                <span className="bx-tag is-neg">
+                  {num(negMonths)} {negMonths === 1 ? "måned" : "måneder"} med underskud
+                </span>
+              ) : null}
+            </span>
+          </summary>
+          <p className="bx-muted ow-fold-note">Kendte abonnementer og udgifter. Nye kunder og opsigelser er ikke regnet med.</p>
           <div className="bx-card bx-scroll-x">
             <table className="bx-table ow-months">
               <thead>
@@ -453,7 +490,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
                       <td>{m.label}</td>
                       <td className="r">{kr(m.revenue)}</td>
                       <td className="r">{kr(m.expenses)}</td>
-                      <td className={`r${res < 0 ? " ow-neg" : ""}`}>{kr(res)}</td>
+                      <td className={`r ${res < 0 ? "neg" : res > 0 ? "pos" : ""}`}>{kr(res)}</td>
                       <td className="ow-bars" aria-hidden="true">
                         <i className="ow-bar is-rev" style={{ width: `${(m.revenue / maxMonth) * 100}%` }} />
                         <i className="ow-bar is-exp" style={{ width: `${(m.expenses / maxMonth) * 100}%` }} />
@@ -464,7 +501,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
               </tbody>
             </table>
           </div>
-        </section>
+        </details>
 
         <section className="bx-section">
           <div className="bx-section-head">
@@ -516,7 +553,9 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
         <section className="bx-section">
           <div className="bx-section-head">
             <h2>Kunder</h2>
-            <span className="bx-muted">{num(customers.length)} {customers.length === 1 ? "konto" : "konti"}</span>
+            <span className="bx-muted">
+              {num(customers.length)} {customers.length === 1 ? "konto" : "konti"}. Sidst aktiv står med gult, når budgettet ikke er åbnet i 30 dage.
+            </span>
           </div>
           <div className="ow-filters">
             <div className="bx-seg" role="group" aria-label="Kategori">
@@ -573,7 +612,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
                       </td>
                       <td className="r">{num(c.logins)}</td>
                       <td>{date(c.createdAt)}</td>
-                      <td>{date(c.lastSeen)}</td>
+                      <td className={c.lastSeen && c.lastSeen.slice(0, 10) < staleBefore ? "warn" : undefined}>{date(c.lastSeen)}</td>
                       <td>
                         {c.org ? (
                           <span className="bx-muted">Via firmaaftale</span>
