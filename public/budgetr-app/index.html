@@ -110,6 +110,8 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .wzgrid{display:grid;gap:6px;align-items:center}
 .wzgrid input,.wzgrid select{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:7px 10px;font:inherit;font-size:14px;color:var(--ink);min-width:0;width:100%}
 .wzgrid .hd{font-size:12px;color:var(--ink3)}
+.wzgrid .hd2{display:none}
+@media (min-width:900px){.wzexp{grid-template-columns:repeat(2,minmax(0,1fr) 120px 128px)!important;column-gap:10px}.wzexp .hd2{display:block}}
 .wzopt{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;margin-bottom:6px;font-size:14px}
 .wzopt input[type=text]{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:5px 9px;font:inherit;font-size:14px;color:var(--ink);flex:1;min-width:0}
 .wzsum{font-size:14px;line-height:1.6;margin:0;padding-left:18px}
@@ -437,6 +439,7 @@ dialog.setdlg{width:min(920px,96vw);max-height:90vh}
 
 .setsec h3{margin:0;font-size:20px;font-weight:600}
 dialog.setdlg{height:min(640px,90vh)}.setdlg form{height:100%}
+@media (min-width:900px) and (min-height:860px){dialog.setdlg{height:min(800px,90vh)}.setsec{padding:16px 0}}
 .setnav{width:230px}.setbody{grid-template-columns:230px minmax(0,1fr)}
 .personedit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .personedit input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:8px 10px;font-size:15px;min-width:0}
@@ -580,6 +583,7 @@ td.act{width:1%;white-space:nowrap}
 .acctedit .acttodo{grid-column:1/-1}
 .acctedit .actmade{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding-bottom:8px;font-size:13px;color:var(--ink2)}
 .acctedit .actmade input{width:auto}
+@media (min-width:900px){.acctedit .acttodo{grid-column:1/3}.acctedit .actmade{grid-column:3/-1;padding-bottom:0}.acctedit{padding-bottom:4px}}
 .expmenu .mrow .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .navrow{min-height:64px;align-items:stretch!important;gap:8px 12px!important;margin-bottom:0}
 .navrow .tabs{gap:0;align-items:stretch}
@@ -805,6 +809,26 @@ dialog#dlgPdf,dialog#dlgMail{width:min(560px,94vw)}
 #dlgData .dtt b{font-size:15px;font-weight:600}
 #dlgData .dtt span{font-size:13px;line-height:1.4;color:var(--ink2);font-weight:400}
 #dlgData .dtile>svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+/* Form dialogs (post, goal, loan) on a desktop: wider with four columns instead of a tall scroll */
+@media (min-width:900px){
+  dialog.wideform{width:min(1080px,96vw);max-width:none}
+  .wideform form{padding:24px 28px}
+  .wideform .grid2{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 16px}
+  .wideform .grid2>.full,.wideform .grid2>.check{grid-column:span 2!important}
+  .wideform .grid2>.check{align-self:start}
+  .wideform .grid2>.preview{grid-column:1/-1!important}
+  /* History on the left, the checkboxes and the summary line stacked on the right next to it */
+  #dlg .grid2{grid-auto-flow:row dense}
+  #dlg #wHist{grid-row:span 6}
+  #dlg .grid2>.preview{grid-column:span 2!important;align-self:start}
+  .wideform h2{margin-bottom:12px}
+}
+@media (min-width:900px) and (max-height:820px){
+  .wideform form{padding:18px 24px}
+  .wideform .grid2{gap:8px 16px}
+  .wideform .field input,.wideform .field select{padding:6px 10px}
+  .wideform .dlgfoot{margin-top:12px}
+}
 /* Sådan regnes det: section menu on the left, figures built from the household's own numbers */
 dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;border-radius:18px;overflow:hidden}
 .howwrap{display:grid;grid-template-columns:250px minmax(0,1fr);height:100%}
@@ -948,7 +972,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   <div id="app"></div>
 </div>
 
-<dialog id="dlg">
+<dialog id="dlg" class="wideform">
   <form id="frm" method="dialog" novalidate>
     <h2 id="dlgTitle">Ny post</h2>
     <div class="grid2">
@@ -1043,7 +1067,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   </form>
 </dialog>
 
-<dialog id="dlgLoan">
+<dialog id="dlgLoan" class="wideform">
   <form id="frmLoan" method="dialog" novalidate>
     <h2 id="loanTitle">Nyt lån</h2>
     <div class="grid2">
@@ -1176,7 +1200,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
     </div>
   </form>
 </dialog>
-<dialog id="dlgGoal">
+<dialog id="dlgGoal" class="wideform">
   <form id="frmGoal" method="dialog" novalidate>
     <h2 id="goalTitle">Nyt opsparingsmål</h2>
     <div class="grid2">
@@ -3848,7 +3872,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;
     <label class="wzopt"><input type="checkbox" id="wzAP" ${W.acc.personal?'checked':''}> En lønkonto til hver person${P.length?` (${P.map(p=>esc(p.name)).join(', ')})`:''}</label>
     <label class="wzopt"><input type="checkbox" id="wzAS" ${W.acc.savings?'checked':''}> Fælles opsparingskonto <input type="text" id="wzASn" value="${esc(W.acc.savingsName)}"></label>`;
   if(WS===3)b.innerHTML=`<p class="wzp">Skriv de faste udgifter, I kender. Tomme felter springes over. Udgifterne lægges som fælles på ${esc(W.acc.budget?W.acc.budgetName:'den første konto')} og kan fordeles om senere.</p>
-    <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 150px 150px"><span class="hd">Udgift</span><span class="hd">Beløb pr. betaling</span><span class="hd">Hvor ofte</span>
+    <div class="wzgrid wzexp" style="grid-template-columns:minmax(0,1fr) 150px 150px"><span class="hd">Udgift</span><span class="hd">Beløb pr. betaling</span><span class="hd">Hvor ofte</span><span class="hd hd2" aria-hidden="true">Udgift</span><span class="hd hd2" aria-hidden="true">Beløb pr. betaling</span><span class="hd hd2" aria-hidden="true">Hvor ofte</span>
     ${W.exp.map((x,i)=>`<div style="display:contents" data-we="${i}" data-cat="${esc(x.cat)}"><input data-f="desc" value="${esc(x.desc)}" autocomplete="off"><input data-f="amt" inputmode="decimal" value="${esc(x.amount)}" placeholder="0"><select data-f="freq">${[1,3,6,12].map(f=>`<option value="${f}" ${+x.freq===f?'selected':''}>${FREQ[f]}</option>`).join('')}</select></div>`).join('')}</div>
     <button type="button" id="wzAddE" style="margin-top:8px">Tilføj anden udgift</button>`;
   if(WS===4){const two=P.length===2;b.innerHTML=`<p class="wzp">Hvordan skal de fælles udgifter deles?</p>
