@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateTeacher, type TeacherField, type TeacherInput } from "@/lib/skole";
 import { Shell } from "./Shell";
 import s from "./skole.module.css";
@@ -66,23 +66,36 @@ export function TeacherLogin() {
                 void ask();
               }}
             >
-              <h1 className={s.q}>{mode === "login" ? "Log ind som lærer" : "Opret en lærerbruger"}</h1>
-              <p className={s.lead}>
-                {mode === "login"
-                  ? "Skriv din e-mail. Så sender vi dig en kode, du logger ind med."
-                  : "Med en bruger kan du oprette klasser, dele elevkoder og følge elevernes svar. Der er ingen adgangskode – du logger ind med en kode på mail."}
-              </p>
-              <div className={s.seg} role="group" aria-label="Log ind eller opret bruger">
+              <div className={s.modePick} role="group" aria-label="Log ind eller opret bruger">
                 {(["login", "opret"] as const).map((m) => (
-                  <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)} style={{ flex: 1, height: 40 }}>
-                    {m === "login" ? "Log ind" : "Opret bruger"}
+                  <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
+                    <b>{m === "login" ? "Log ind" : "Opret bruger"}</b>
+                    <span>{m === "login" ? "Jeg har en lærerbruger" : "Jeg er ny her"}</span>
                   </button>
                 ))}
               </div>
+              <h1 className={s.q}>{mode === "login" ? "Log ind som lærer" : "Opret en lærerbruger"}</h1>
+              <p className={s.lead}>
+                {mode === "login"
+                  ? "Skriv den e-mail, du oprettede dig med. Så sender vi dig en kode, du logger ind med."
+                  : "Med en bruger kan du oprette klasser, dele elevkoder og følge elevernes svar. Der er ingen adgangskode – du logger ind med en kode på mail."}
+              </p>
+              {mode === "login" && (
+                <p className={s.hint}>
+                  Første gang her?{" "}
+                  <button type="button" className={s.linkBtn} onClick={() => setMode("opret")}>
+                    Opret en lærerbruger
+                  </button>
+                </p>
+              )}
               {mode === "opret" && (
                 <>
+                  <p className={s.agreeNote}>
+                    Har din skole en aftale med budgetpro, bliver din bruger koblet på skolens aftale. Brug din skolemail, så vi kan finde dig.
+                  </p>
                   <Field id="laerer-navn" label="Dit navn" value={values.name} error={errors.name} onChange={(v) => set("name", v)} autoComplete="name" />
                   <Field id="laerer-skole" label="Din skole" value={values.school} error={errors.school} onChange={(v) => set("school", v)} autoComplete="organization" />
+                  <SchoolCheck school={values.school} />
                 </>
               )}
               <Field id="laerer-mail" label="Din e-mail" type="email" value={values.email} error={errors.email} onChange={(v) => set("email", v)} autoComplete="email" placeholder="navn@skole.dk" />
@@ -99,6 +112,39 @@ export function TeacherLogin() {
         </div>
       </div>
     </Shell>
+  );
+}
+
+/** Looks up the typed school a moment after the teacher stops typing, and says whether it has an active agreement. */
+function SchoolCheck({ school }: { school: string }) {
+  const [found, setFound] = useState<{ q: string; schools: string[] } | null>(null);
+  const q = school.trim();
+  const ready = q.length >= 3;
+
+  useEffect(() => {
+    if (!ready) return;
+    const ctl = new AbortController();
+    const t = setTimeout(() => {
+      fetch(`/api/skole/aftale?skole=${encodeURIComponent(q)}`, { signal: ctl.signal })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j: { schools?: string[] } | null) => j && setFound({ q, schools: j.schools ?? [] }))
+        .catch(() => {});
+    }, 400);
+    return () => {
+      clearTimeout(t);
+      ctl.abort();
+    };
+  }, [q, ready]);
+
+  if (!ready || found?.q !== q) return null;
+  return found.schools.length ? (
+    <p className={s.agreeFound} role="status">
+      {found.schools.join(", ")} har en aftale med budgetpro. Når du er oprettet, bliver du koblet på aftalen, så snart skolen har givet adgang til din e-mail.
+    </p>
+  ) : (
+    <p className={s.hint} role="status">
+      Vi kan ikke finde en aftale for den skole. Du kan stadig oprette dig og prøve budgetpro Skole.
+    </p>
   );
 }
 
