@@ -134,7 +134,6 @@
 /* Buttons */
 .btnLight,
 .btnDark,
-.btnOutline,
 .topCta {
   display: inline-flex;
   align-items: center;
@@ -155,12 +154,6 @@
   background: var(--ink);
   padding: 15px 24px;
   align-self: flex-start;
-}
-.page .btnOutline {
-  font: 600 16px var(--font-geist);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  padding: 13px 24px;
 }
 .btnLight:hover,
 .btnDark:hover,

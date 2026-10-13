@@ -251,9 +251,6 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
               <a href={`${base}/laerer`} className={l.btnDark}>
                 Opret en klasse
               </a>
-              <a href="mailto:info@budgetpro.dk" className={l.btnOutline}>
-                Kontakt os
-              </a>
             </div>
           </div>
         </div>
@@ -265,8 +262,6 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           <span className={`${l.pill} ${l.pillSmall}`}>Skole</span>
         </span>
         <span className={l.slogan}>Dit overblik. Dine drømme.</span>
-        <a href="mailto:info@budgetpro.dk">info@budgetpro.dk</a>
-        <span>27 11 47 17</span>
         <a href={mainSite}>budgetpro.dk</a>
       </footer>
     </div>
