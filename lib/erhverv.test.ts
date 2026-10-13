@@ -6,20 +6,36 @@ import { inquiryMail, validateInquiry } from "./erhverv";
 import { MAX_PER_DAY, MAX_PER_EMAIL, saveInquiry, takeInquiry } from "./erhverv-store";
 import { openStore } from "./kv";
 
-const form = { company: " Eksempel  Bank ", name: "Navn Navnesen", email: " Navn@Eksempel.dk ", phone: "", sector: "bank", message: "Vi vil gerne høre mere.\r\nTak." };
+const form = { company: " Eksempel  Bank ", name: "Navn Navnesen", email: " Navn@Eksempel.dk ", phone: "", sector: "bank", count: "50", months: "12", message: "Vi vil gerne høre mere.\r\nTak." };
 
 describe("validateInquiry", () => {
   it("accepts the form and cleans it", () => {
     expect(validateInquiry(form)).toEqual({
       ok: true,
-      value: { company: "Eksempel Bank", name: "Navn Navnesen", email: "navn@eksempel.dk", phone: "", sector: "bank", message: "Vi vil gerne høre mere.\nTak." },
+      value: {
+        company: "Eksempel Bank",
+        name: "Navn Navnesen",
+        email: "navn@eksempel.dk",
+        phone: "",
+        sector: "bank",
+        pack: { count: 50, months: 12 },
+        message: "Vi vil gerne høre mere.\nTak.",
+      },
     });
   });
 
+  it("takes a pack from the list, or none when they would rather talk", () => {
+    const talk = validateInquiry({ ...form, count: "tal" });
+    expect(talk.ok && talk.value.pack).toBe(null);
+    const odd = validateInquiry({ ...form, count: "51" });
+    expect(!odd.ok && odd.errors.pack).toBeTruthy();
+    expect(validateInquiry({ ...form, sector: "skole" }).ok).toBe(false);
+  });
+
   it("names every field that is missing or wrong", () => {
-    const r = validateInquiry({ ...form, company: "", email: "nope", phone: "ring", sector: "politi", message: "x".repeat(2001) });
+    const r = validateInquiry({ ...form, company: "", email: "nope", phone: "ring", sector: "politi", count: "", message: "x".repeat(2001) });
     expect(r.ok).toBe(false);
-    if (!r.ok) expect(Object.keys(r.errors).sort()).toEqual(["company", "email", "message", "phone", "sector"]);
+    if (!r.ok) expect(Object.keys(r.errors).sort()).toEqual(["company", "email", "message", "pack", "phone", "sector"]);
     expect(validateInquiry(null).ok).toBe(false);
   });
 
@@ -30,6 +46,7 @@ describe("validateInquiry", () => {
     expect(m.subject).toBe("Henvendelse fra Eksempel Bank (Bank eller pengeinstitut)");
     expect(m.text).toContain("navn@eksempel.dk");
     expect(m.text).toContain("Telefon: ikke oplyst");
+    expect(m.text).toContain("Pakke: 50 koder × 12 måneder (7.195 kr efter prislisten)");
   });
 });
 

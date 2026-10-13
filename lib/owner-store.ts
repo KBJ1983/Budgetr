@@ -13,6 +13,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { readAccount, type Account } from "./accounts";
 import { loadPackUse } from "./agreements";
+import { listInquiries, type InquiryRow } from "./erhverv-inbox";
 import { openStore } from "./kv";
 import { buildOverview, emptyLedger, type Activity, type Ledger, type Overview } from "./owner";
 import { makeAdminSession, readAdminSession, readSession } from "./session";
@@ -80,6 +81,13 @@ export async function loadOverview(now = new Date(), dir?: string): Promise<Over
   const accounts = await listAccounts(dir);
   const [ledger, activity] = await Promise.all([readLedger(dir), readActivity(accounts.map((a) => a.id), dir)]);
   return buildOverview(accounts, ledger, activity, now, await loadPackUse(ledger.orgs, dir));
+}
+
+/** What /admin shows: the overview plus the henvendelser from the Erhverv form. */
+export type OwnerData = Overview & { inquiries: InquiryRow[] };
+export async function loadOwnerData(now = new Date(), dir?: string): Promise<OwnerData> {
+  const [overview, inquiries] = await Promise.all([loadOverview(now, dir), listInquiries(dir)]);
+  return { ...overview, inquiries };
 }
 
 // ---- Access ------------------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AdminLogin } from "@/components/owner/AdminLogin";
 import { OwnerDashboard } from "@/components/owner/OwnerDashboard";
-import { isOwner, loadOverview } from "@/lib/owner-store";
+import { isOwner, loadOwnerData } from "@/lib/owner-store";
 import { ADMIN_COOKIE, SESSION_COOKIE } from "@/lib/session";
 import "../login/app.css";
 import "./owner.css";
@@ -17,7 +17,7 @@ export default async function AdminPage() {
   if (!owner) return <AdminLogin />;
   return (
     <OwnerDashboard
-      initial={await loadOverview()}
+      initial={await loadOwnerData()}
       dev={process.env.NODE_ENV !== "production" && !process.env.ADMIN_PASSWORD}
       canLogOut={!!jar.get(ADMIN_COOKIE)?.value}
     />

@@ -22,6 +22,10 @@ import {
   type Plan,
   type Status,
 } from "@/lib/owner";
+import { SECTORS } from "@/lib/erhverv";
+import type { InquiryRow } from "@/lib/erhverv-inbox";
+import { isPackCount, isPackMonths, packLabel, packPrice } from "@/lib/erhverv-packs";
+import type { OwnerData } from "@/lib/owner-store";
 
 const kr = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 2 })} kr`;
 const num = (n: number) => n.toLocaleString("da-DK");
@@ -48,7 +52,76 @@ const ERRORS: Record<string, string> = {
   sendBy: "Sidste dag skal ligge efter købsdatoen.",
   fewer: "Pakken kan ikke blive mindre end det antal pladser, der allerede er sendt.",
   inUse: "Der er allerede sendt pladser herfra, så det kan ikke slettes.",
+  inquiry: "Henvendelsen findes ikke længere.",
 };
+
+const sectorLabel = (id: string) => SECTORS.find((x) => x.id === id)?.label ?? "Andet";
+/** The agreement category a henvendelse starts as; "andet" starts as a bank and is changed in the dialog. */
+const sectorCategory = (id: string): OrgCategory => (id === "maegler" || id === "skole" ? id : "bank");
+/** The list price of the pack a henvendelse asked about, when it is one of ours. */
+const askedPrice = (p?: { count: number; months: number }) =>
+  p && isPackCount(p.count) && isPackMonths(p.months) ? packPrice(p.count, p.months) : undefined;
+const time = (iso: string) => `${date(iso)} kl. ${new Date(iso).toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Copenhagen" })}`;
+
+/** One henvendelse from the Erhverv form, with what the owner can do about it. */
+function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => void; onDone: (done: boolean) => void }) {
+  const price = askedPrice(q.pack);
+  return (
+    <div className="bx-card ow-inq">
+      <div className="ow-inq-head">
+        <b>{q.company}</b>
+        <span className="bx-muted">
+          {sectorLabel(q.sector)} · {time(q.at)}
+        </span>
+      </div>
+      <p className="ow-inq-pack">
+        {q.pack ? (
+          <>
+            Pakke: <b>{packLabel(q.pack)}</b>
+            {price ? <> · {kr(price)} efter prislisten</> : null}
+          </>
+        ) : (
+          "Vil tale om pakken først"
+        )}
+      </p>
+      <p className="ow-inq-who">
+        {q.name} · <a href={`mailto:${q.email}`}>{q.email}</a>
+        {q.phone ? (
+          <>
+            {" "}
+            · <a href={`tel:${q.phone.replace(/\s/g, "")}`}>{q.phone}</a>
+          </>
+        ) : null}
+      </p>
+      {q.message ? <p className="ow-inq-msg">{q.message}</p> : null}
+      <div className="ow-inq-act">
+        {q.doneAt ? (
+          <>
+            <span className="bx-muted">
+              Klaret {date(q.doneAt)}
+              {q.org ? " · aftale oprettet" : ""}
+            </span>
+            <button type="button" className="bx-btn-link" onClick={() => onDone(false)}>
+              Åbn igen
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" className="bx-btn bx-btn-primary" onClick={onAgree}>
+              Opret aftale
+            </button>
+            <a className="bx-btn" href={`mailto:${q.email}?subject=${encodeURIComponent("Din henvendelse til budgetpro")}`}>
+              Skriv til {q.name.split(" ")[0]}
+            </a>
+            <button type="button" className="bx-btn" onClick={() => onDone(true)}>
+              Marker som klaret
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const months = (n: number) => `${n} ${n === 1 ? "måned" : "måneder"}`;
 const seatsText = (o: OrgRow) =>
@@ -228,12 +301,12 @@ const planFrom = (f: FormData) => ({
 
 type Editing =
   | { kind: "plan"; customer: CustomerRow }
-  | { kind: "org"; org?: OrgRow }
+  | { kind: "org"; org?: OrgRow; from?: InquiryRow }
   | { kind: "pack"; org: OrgRow; pack?: PackRow }
   | { kind: "expense"; expense?: Expense }
   | null;
 
-export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview; dev: boolean; canLogOut?: boolean }) {
+export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData; dev: boolean; canLogOut?: boolean }) {
   const [data, setData] = useState(initial);
   const [editing, setEditing] = useState<Editing>(null);
   const [error, setError] = useState("");
@@ -255,7 +328,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
         return false;
       }
       if (!r.ok) throw new Error(String(r.status));
-      const next = (await r.json()) as Overview;
+      const next = (await r.json()) as OwnerData;
       setData(next);
       return next;
     } catch {
@@ -275,6 +348,17 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
     const next = await send(change);
     if (next) setEditing({ kind: "org", org: next.orgs.find((o) => o.id === orgId) });
   };
+
+  // An agreement made from a henvendelse opens right away, so the pack they asked about can be added.
+  const saveOrg = async (change: { org: object; inquiry?: string }) => {
+    const next = await send({ type: "org", ...change });
+    if (!next) return;
+    const made = change.inquiry ? next.inquiries.find((x) => x.id === change.inquiry)?.org : undefined;
+    const org = made ? next.orgs.find((o) => o.id === made) : undefined;
+    setEditing(org ? { kind: "org", org } : null);
+  };
+  const waiting = data.inquiries.filter((x) => !x.doneAt);
+  const handled = data.inquiries.filter((x) => x.doneAt);
 
   const q = query.trim().toLowerCase();
   const customers = data.customers.filter(
@@ -351,12 +435,54 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
             månedlige omsætning er <b className="pos">{kr(data.mrr)}</b>. I {data.nextMonth} venter <b>{kr(data.next.revenue)}</b> ind og{" "}
             <b>{kr(data.next.expenses)}</b> ud, så resultatet bliver <b className={result < 0 ? "neg" : "pos"}>{kr(result)}</b>.
           </p>
+          {waiting.length ? (
+            <small className="ow-hbar">
+              <a href="#henvendelser">
+                {num(waiting.length)} {waiting.length === 1 ? "henvendelse venter" : "henvendelser venter"} på svar
+              </a>
+            </small>
+          ) : null}
           {watch.length ? (
             <small className="ow-hbar">
               Hold øje med {data.nextMonth}: {watch.join(" og ")}.
             </small>
           ) : null}
         </div>
+
+        {data.inquiries.length ? (
+          <section className="bx-section" id="henvendelser">
+            <div className="bx-section-head">
+              <h2>Henvendelser</h2>
+              <span className="bx-muted">Fra formularen på Erhverv. De venter her, til du har oprettet en aftale eller markeret dem som klaret.</span>
+            </div>
+            {waiting.length ? (
+              <div className="ow-inqs">
+                {waiting.map((x) => (
+                  <InquiryCard
+                    key={x.id}
+                    q={x}
+                    onAgree={() => setEditing({ kind: "org", from: x })}
+                    onDone={(done) => void send({ type: "inquiry", id: x.id, done })}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="bx-empty">Ingen henvendelser venter.</div>
+            )}
+            {handled.length ? (
+              <details className="ow-fold ow-inq-done">
+                <summary className="bx-section-head">
+                  <h2>Klarede · {num(handled.length)}</h2>
+                </summary>
+                <div className="ow-inqs">
+                  {handled.map((x) => (
+                    <InquiryCard key={x.id} q={x} onDone={(done) => void send({ type: "inquiry", id: x.id, done })} />
+                  ))}
+                </div>
+              </details>
+            ) : null}
+          </section>
+        ) : null}
 
         <section className="bx-section">
           <div className="bx-section-head">
@@ -707,12 +833,12 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
 
       {editing?.kind === "org" ? (
         <Dialog
-          title={editing.org ? editing.org.name : "Ny firmaaftale"}
+          title={editing.org ? editing.org.name : editing.from ? `Ny firmaaftale · ${editing.from.company}` : "Ny firmaaftale"}
           onClose={close}
           onSubmit={(f) => {
             const plan = planFrom(f);
-            void save({
-              type: "org",
+            void saveOrg({
+              inquiry: editing.from?.id,
               org: {
                 id: editing.org?.id,
                 name: f.get("name"),
@@ -732,10 +858,10 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
           }
         >
           <Field label="Navn">
-            <input className="bx-input" name="name" defaultValue={editing.org?.name ?? ""} autoFocus />
+            <input className="bx-input" name="name" defaultValue={editing.org?.name ?? editing.from?.company ?? ""} autoFocus />
           </Field>
           <Field label="Kategori">
-            <select className="bx-select" name="category" defaultValue={editing.org?.category ?? "bank"}>
+            <select className="bx-select" name="category" defaultValue={editing.org?.category ?? (editing.from ? sectorCategory(editing.from.sector) : "bank")}>
               {CATEGORIES.filter((c) => c.id !== "privat").map((c) => (
                 <option key={c.id} value={c.id as OrgCategory}>
                   {c.label}
@@ -747,7 +873,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
             label="Kundeadmins"
             help={`Én e-mail pr. linje, højst ${MAX_ORG_ADMINS}. De giver aftalens pladser til deres brugere ved at skrive en e-mail. Ingen ser koderne. Nye kundeadmins får en mail med et link til /aftale, når du gemmer.`}
           >
-            <textarea className="bx-input ow-textarea" name="admins" rows={3} defaultValue={(editing.org?.admins ?? []).join("\n")} />
+            <textarea className="bx-input ow-textarea" name="admins" rows={3} defaultValue={(editing.org?.admins ?? (editing.from ? [editing.from.email] : [])).join("\n")} />
           </Field>
           {editing.org ? (
             <div className="bx-field">
@@ -785,7 +911,10 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
               </div>
             </div>
           ) : (
-            <p className="bx-muted">Gem aftalen først, så kan du tilføje pakker med pladser.</p>
+            <p className="bx-muted">
+              Gem aftalen først, så kan du tilføje pakker med pladser.
+              {editing.from?.pack ? ` Henvendelsen spurgte om ${packLabel(editing.from.pack)}; det er udfyldt, når du tilføjer pakken.` : ""}
+            </p>
           )}
           <PlanFields plan={editing.org?.plan} logins={1} defaultStart={data.today} optional />
           <Field label="Note (valgfri)">
@@ -795,7 +924,9 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
         </Dialog>
       ) : null}
 
-      {editing?.kind === "pack" ? (
+      {editing?.kind === "pack" ? (() => {
+        const asked = editing.pack ? undefined : data.inquiries.find((x) => x.org === editing.org.id && x.pack)?.pack;
+        return (
         <Dialog
           title={`${editing.pack ? "Pakke" : "Ny pakke"} · ${editing.org.name}`}
           onClose={() => {
@@ -830,14 +961,14 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
         >
           <div className="bx-grid-2">
             <Field label="Antal pladser" help={editing.pack?.sent ? `${num(editing.pack.sent)} er allerede sendt` : undefined}>
-              <input className="bx-input" name="count" inputMode="numeric" defaultValue={editing.pack?.count ?? ""} autoFocus />
+              <input className="bx-input" name="count" inputMode="numeric" defaultValue={editing.pack?.count ?? asked?.count ?? ""} autoFocus />
             </Field>
             <Field label="Måneder pr. plads" help="Tæller fra den dag, brugeren tager pladsen">
               <input
                 className="bx-input"
                 name="months"
                 inputMode="numeric"
-                defaultValue={editing.pack?.months ?? (editing.org.category === "maegler" ? 3 : 12)}
+                defaultValue={editing.pack?.months ?? asked?.months ?? (editing.org.category === "maegler" ? 3 : 12)}
               />
             </Field>
           </div>
@@ -850,11 +981,12 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
             </Field>
           </div>
           <Field label="Pris (kr, valgfri)" help="Betales én gang, på købsdagen">
-            <input className="bx-input" name="price" inputMode="decimal" defaultValue={editing.pack?.price ?? ""} />
+            <input className="bx-input" name="price" inputMode="decimal" defaultValue={editing.pack?.price ?? askedPrice(asked) ?? ""} />
           </Field>
           {error ? <p className="bx-error" role="alert">{error}</p> : null}
         </Dialog>
-      ) : null}
+        );
+      })() : null}
 
       {editing?.kind === "expense" ? (
         <Dialog

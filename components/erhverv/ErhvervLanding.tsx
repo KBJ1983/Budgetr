@@ -335,7 +335,7 @@ function Trust() {
 const FAQ = [
   {
     q: "Hvad koster en aftale?",
-    a: "Prisen afhænger af, hvor mange pladser I køber, og hvor længe hver plads gælder. Skriv til os, så får I et tilbud. Skoler betaler pr. lærer.",
+    a: "I køber en pakke koder én gang, fx 50 koder med 12 måneder hver for 7.195 kr. Jo flere koder og jo længere tid, jo lavere pris pr. kode. Vælg en pakke i formularen, eller skriv, at I hellere vil tale om det. I kan altid ændre pakken. Skoler betaler pr. lærer.",
   },
   {
     q: "Kan kunden se, at adgangen kommer fra os?",

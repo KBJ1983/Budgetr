@@ -35,6 +35,55 @@
   font-size: 14px;
 }
 
+.ow-hbar a {
+  color: inherit;
+}
+.ow-hbar + .ow-hbar {
+  margin-left: 8px;
+}
+
+/* Henvendelser from the Erhverv form */
+.ow-inqs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 12px;
+}
+.ow-inq {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.ow-inq p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ow-inq-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.ow-inq-head b {
+  font-size: 17px;
+}
+.ow-inq-msg {
+  white-space: pre-line;
+  font-size: 14px;
+  opacity: 0.85;
+}
+.ow-inq-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.ow-inq-done {
+  margin-top: 16px;
+}
+
 /* Section heads: a tinted panel with the explanation beside the heading. */
 .ow .bx-section {
   margin-top: 44px;
