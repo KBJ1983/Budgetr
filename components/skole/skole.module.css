@@ -246,6 +246,9 @@
 .trinRow { display: flex; flex-wrap: wrap; gap: 6px; }
 .trinBtn.daysBtn { width: auto; min-width: 64px; padding: 0 12px; font-size: 16px; white-space: nowrap; }
 .expiry { margin: 0; font-weight: 600; font-size: 17px; line-height: 1.5; color: var(--gold-ink-2); background: var(--gold-bg); border-left: 4px solid var(--gold); border-radius: 12px; padding: 12px 16px; }
+.classCard { gap: 10px; }
+.classHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.expirySmall { margin: 0; font-weight: 600; font-size: 15px; color: var(--gold-ink-2); }
 .codeUntil { margin-left: auto; font-size: 12px; color: var(--ink-2); }
 .linkBtn { all: unset; cursor: pointer; font-weight: 600; letter-spacing: 0.04em; color: var(--pine); text-decoration: underline; text-underline-offset: 3px; }
 .linkBtn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
@@ -272,10 +275,10 @@
 .linkBox .input { flex: 1 1 260px; }
 .codesHead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .codesHead .h2 { margin-right: auto; }
-.codes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.codes { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
 .codeCell { background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; display: flex; gap: 10px; align-items: baseline; }
 .codeNo { font-weight: 500; font-size: 13px; color: var(--ink-2); width: 20px; }
-.codeText { font-weight: 600; font-size: 16px; letter-spacing: 0.04em; }
+.codeText { font-weight: 600; font-size: 16px; letter-spacing: 0.04em; white-space: nowrap; }
 .titleRow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 .stat { border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; background: #fff; color: var(--ink); border: 1px solid var(--rule); }
@@ -339,6 +342,8 @@
   .page { background: #fff; min-height: 0; }
   .printOnly { display: block; }
   .codeUntil.printOnly { display: inline; }
+  .classCard { border: 0; padding: 0; background: none; }
+  .classCard:not([data-print]):has(> .noPrint:only-child) { display: none; }
   .codes { grid-template-columns: repeat(3, 1fr); gap: 0; }
   .codeCell { border: 1px dashed #999; border-radius: 0; padding: 18px 14px; break-inside: avoid; }
   .codeText { font-size: 20px; }

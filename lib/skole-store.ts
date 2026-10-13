@@ -1,32 +1,36 @@
 /**
- * budgetpro Skole's classes (the flow and its numbers are in lib/skole.ts), in the store (lib/kv.ts):
+ * budgetpro Skole's classes (the flow and its numbers are in lib/skole.ts; the teachers in lib/skole-teachers.ts),
+ * in the store (lib/kv.ts):
  *
- *   skole/klasser/<id>.json    { id, trin, created, days, tokenHash, emailHash?, codes }
- *   skole/koder/<key>.json     { code, classId, created, expires, flow?, answers?, updated? }   key = code with Æ/Ø/Å spelled out
- *   skole/laerere/<hash>.json  { classes: [id…], lastMailAt? }   the classes made with one teacher e-mail
+ *   skole/klasser/<id>.json          { id, trin, created, days, teacherId, codes }
+ *   skole/koder/<key>.json           { code, classId, created, expires, flow?, answers?, updated? }   key = code with Æ/Ø/Å spelled out
+ *   skole/laerer-klasser/<tid>.json  { classes: [id…] }   the classes of one teacher
  *
- * No names: a pupil is only a code. The teacher can read each pupil's choices and reflection answers, which is why
- * the pupils are told not to write names. The teacher's link holds "<id>.<secret>"; only a hash of the secret is
- * stored. The teacher's e-mail is only kept as a hash too: enough to mail new links to the same address later (that
- * makes a new secret, so old links stop working), but the address itself can't be read back.
- * Codes are reserved with add(), so no two classes share one. A class lives the days the teacher picked: after that
- * reading it deletes it, and making a new class sweeps the expired ones.
+ * Only the teacher who made a class can open it. No names: a pupil is only a code. The teacher can read each pupil's
+ * choices and reflection answers, which is why the pupils are told not to write names. Codes are reserved with add(),
+ * so no two classes share one. A class lives the days the teacher picked: after that, reading it deletes it, and
+ * making a new class sweeps the expired ones.
+ *
+ * Before teachers had logins, a class was opened by a secret link and kept a hash of the teacher's e-mail, with an
+ * index per e-mail hash in skole/laerere/<hash>.json. adoptLegacyClasses() hands those classes to the teacher who
+ * signs up with that e-mail.
  */
-import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, randomInt } from "node:crypto";
 import { openStore } from "./kv";
 import { normalizeEmail } from "./signup";
 import {
   classStats, DEFAULT_DAYS, isCode, LIFETIMES, MAX_PUPILS, pupilDetail, pupilRow, randomCode, TRIN,
-  type Answers, type ClassView, type Flow, type PupilDetail,
+  type Answers, type ClassSummary, type ClassView, type Flow, type PupilDetail,
 } from "./skole";
 
 export interface SchoolClass {
   id: string;
   trin: number;
   created: string;
-  /** Lifetime in days (missing on classes made before the teacher could pick). */
+  /** Lifetime in days (missing on the first classes, which got DEFAULT_DAYS). */
   days?: number;
-  tokenHash: string;
+  teacherId?: string;
+  /** Left on classes made before teacher logins. */
   emailHash?: string;
   codes: string[];
 }
@@ -41,20 +45,20 @@ interface CodeRecord {
   updated?: string;
 }
 
-interface TeacherIndex {
+interface ClassIndex {
   classes: string[];
-  lastMailAt?: string;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-/** No new links to the same e-mail within this gap. */
-export const RELINK_GAP_MS = 2 * 60 * 1000;
 const CLASSES = "skole/klasser";
 const classKey = (id: string) => `${CLASSES}/${id}.json`;
-const teacherKey = (h: string) => `skole/laerere/${h}.json`;
+const teacherClassesKey = (teacherId: string) => `skole/laerer-klasser/${teacherId}.json`;
+const legacyIndexKey = (h: string) => `skole/laerere/${h}.json`;
 export const codeKey = (code: string) => `skole/koder/${code.replace(/Æ/g, "AE").replace(/Ø/g, "OE").replace(/Å/g, "AA")}.json`;
 const hash = (s: string) => createHash("sha256").update(s).digest("hex");
+/** How the e-mail was kept on classes made before teacher logins. */
 export const emailHash = (email: string) => hash(`budgetpro-skole:${normalizeEmail(email)}`);
+export const isClassId = (id: unknown): id is string => typeof id === "string" && /^[0-9a-f]{10}$/.test(id);
 
 /** When the class's codes stop working and everything is deleted. */
 export const classExpires = (cls: Pick<SchoolClass, "created" | "days">) => new Date(Date.parse(cls.created) + (cls.days ?? DEFAULT_DAYS) * DAY_MS);
@@ -70,24 +74,28 @@ function parse<T>(text: string | null): T | null {
   }
 }
 
-const newSecret = () => randomBytes(18).toString("base64url");
+async function readIndex(teacherId: string, dir?: string): Promise<string[]> {
+  return parse<ClassIndex>(await openStore(dir).get(teacherClassesKey(teacherId)))?.classes ?? [];
+}
+
+async function writeIndex(teacherId: string, classes: string[], dir?: string): Promise<void> {
+  await openStore(dir).set(teacherClassesKey(teacherId), JSON.stringify({ classes } satisfies ClassIndex));
+}
 
 export interface NewClass {
   trin: number;
   count: number;
   days: number;
-  /** The teacher's e-mail; only its hash is kept. */
-  email?: string;
+  teacherId: string;
 }
 
-/** Makes a class with `count` new codes. Returns the teacher's link token – the only time it exists in full. */
-export async function createClass(o: NewClass, now = new Date(), dir?: string): Promise<{ token: string; cls: SchoolClass }> {
-  const { trin, count, days } = o;
+/** Makes a class with `count` new codes for the teacher. */
+export async function createClass(o: NewClass, now = new Date(), dir?: string): Promise<SchoolClass> {
+  const { trin, count, days, teacherId } = o;
   if (!TRIN.includes(trin) || !LIFETIMES.includes(days) || !Number.isInteger(count) || count < 1 || count > MAX_PUPILS) throw new Error("Invalid class");
   const store = openStore(dir);
   await sweep(now, dir);
   const id = randomBytes(5).toString("hex");
-  const secret = newSecret();
   const created = now.toISOString();
   const expires = new Date(now.getTime() + days * DAY_MS).toISOString();
   const codes: string[] = [];
@@ -97,25 +105,17 @@ export async function createClass(o: NewClass, now = new Date(), dir?: string): 
     const record: CodeRecord = { code, classId: id, created, expires };
     if (await store.add(codeKey(code), JSON.stringify(record))) codes.push(code);
   }
-  const cls: SchoolClass = { id, trin, created, days, tokenHash: hash(secret), codes };
-  if (o.email) {
-    cls.emailHash = emailHash(o.email);
-    const index = parse<TeacherIndex>(await store.get(teacherKey(cls.emailHash))) ?? { classes: [] };
-    await store.set(teacherKey(cls.emailHash), JSON.stringify({ ...index, classes: [...index.classes, id] }));
-  }
+  const cls: SchoolClass = { id, trin, created, days, teacherId, codes };
   await store.set(classKey(id), JSON.stringify(cls));
-  return { token: `${id}.${secret}`, cls };
+  await writeIndex(teacherId, [...(await readIndex(teacherId, dir)), id], dir);
+  return cls;
 }
 
-/** The class behind a teacher link, or null (unknown, wrong secret or expired). */
-export async function readClass(token: string, now = new Date(), dir?: string): Promise<SchoolClass | null> {
-  const m = /^([0-9a-f]{10})\.([\w-]{24})$/.exec(token);
-  if (!m) return null;
-  const cls = parse<SchoolClass>(await openStore(dir).get(classKey(m[1]!)));
-  if (!cls) return null;
-  const a = Buffer.from(hash(m[2]!));
-  const b = Buffer.from(String(cls.tokenHash ?? ""));
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+/** The teacher's class, or null (unknown, someone else's or expired – an expired one is deleted). */
+export async function readClassFor(teacherId: string, id: string, now = new Date(), dir?: string): Promise<SchoolClass | null> {
+  if (!isClassId(id)) return null;
+  const cls = parse<SchoolClass>(await openStore(dir).get(classKey(id)));
+  if (!cls || cls.teacherId !== teacherId) return null;
   if (past(classExpires(cls), now)) {
     await deleteClass(cls, dir);
     return null;
@@ -128,10 +128,56 @@ export async function deleteClass(cls: SchoolClass, dir?: string): Promise<void>
   const store = openStore(dir);
   await Promise.all(cls.codes.map((c) => store.del(codeKey(c))));
   await store.del(classKey(cls.id));
-  if (cls.emailHash) {
-    const index = parse<TeacherIndex>(await store.get(teacherKey(cls.emailHash)));
-    if (index) await store.set(teacherKey(cls.emailHash), JSON.stringify({ ...index, classes: index.classes.filter((id) => id !== cls.id) }));
+  if (cls.teacherId) await writeIndex(cls.teacherId, (await readIndex(cls.teacherId, dir)).filter((id) => id !== cls.id), dir);
+}
+
+/** The teacher's live classes, newest first, with how far the pupils are. Expired classes are deleted on the way. */
+export async function teacherClasses(teacherId: string, now = new Date(), dir?: string): Promise<ClassSummary[]> {
+  const store = openStore(dir);
+  const out: ClassSummary[] = [];
+  for (const id of await readIndex(teacherId, dir)) {
+    const cls = parse<SchoolClass>(await store.get(classKey(id)));
+    if (!cls || cls.teacherId !== teacherId) continue;
+    if (past(classExpires(cls), now)) {
+      await deleteClass(cls, dir);
+      continue;
+    }
+    const { stats } = await classOverview(cls, dir);
+    out.push({
+      id,
+      trin: cls.trin,
+      created: cls.created,
+      expires: classExpires(cls).toISOString(),
+      days: cls.days ?? DEFAULT_DAYS,
+      codes: cls.codes,
+      started: stats.started,
+      finished: stats.finished,
+    });
   }
+  await writeIndex(teacherId, out.map((c) => c.id), dir);
+  return out.sort((a, b) => b.created.localeCompare(a.created));
+}
+
+/**
+ * Hands the live classes made with this e-mail before teacher logins to the teacher. Returns how many were moved.
+ * Their secret links stop working: only the teacher's login opens them now.
+ */
+export async function adoptLegacyClasses(teacherId: string, email: string, now = new Date(), dir?: string): Promise<number> {
+  const store = openStore(dir);
+  const h = emailHash(email);
+  const legacy = parse<ClassIndex>(await store.get(legacyIndexKey(h)));
+  if (!legacy) return 0;
+  const moved: string[] = [];
+  for (const id of legacy.classes) {
+    const cls = parse<SchoolClass>(await store.get(classKey(id)));
+    if (!cls || cls.emailHash !== h || cls.teacherId || past(classExpires(cls), now)) continue;
+    const next: SchoolClass = { id: cls.id, trin: cls.trin, created: cls.created, days: cls.days ?? DEFAULT_DAYS, teacherId, codes: cls.codes };
+    await store.set(classKey(id), JSON.stringify(next));
+    moved.push(id);
+  }
+  if (moved.length) await writeIndex(teacherId, [...(await readIndex(teacherId, dir)), ...moved], dir);
+  await store.del(legacyIndexKey(h));
+  return moved.length;
 }
 
 async function readCode(code: string, now: Date, dir?: string): Promise<CodeRecord | null> {
@@ -164,7 +210,9 @@ export async function classOverview(cls: SchoolClass, dir?: string): Promise<Cla
     }),
   );
   return {
+    id: cls.id,
     trin: cls.trin,
+    codes: cls.codes,
     created: cls.created,
     expires: classExpires(cls).toISOString(),
     days: cls.days ?? DEFAULT_DAYS,
@@ -179,29 +227,6 @@ export async function classPupil(cls: SchoolClass, code: string, dir?: string): 
   const r = parse<CodeRecord>(await openStore(dir).get(codeKey(code)));
   const mine = r?.classId === cls.id ? r : null;
   return pupilDetail(code, mine?.flow ?? null, mine?.answers ?? {});
-}
-
-/**
- * New links to every live class made with this e-mail ("Har du mistet linket?"). Each class gets a new secret, so
- * the old links stop working. "throttled" when links went to this e-mail less than RELINK_GAP_MS ago.
- */
-export async function newTeacherLinks(email: string, now = new Date(), dir?: string): Promise<{ cls: SchoolClass; token: string }[] | "throttled"> {
-  const store = openStore(dir);
-  const h = emailHash(email);
-  const index = parse<TeacherIndex>(await store.get(teacherKey(h)));
-  if (!index) return [];
-  if (index.lastMailAt && now.getTime() - Date.parse(index.lastMailAt) < RELINK_GAP_MS) return "throttled";
-  const out: { cls: SchoolClass; token: string }[] = [];
-  for (const id of index.classes) {
-    const cls = parse<SchoolClass>(await store.get(classKey(id)));
-    if (!cls || cls.emailHash !== h || past(classExpires(cls), now)) continue;
-    const secret = newSecret();
-    const next = { ...cls, tokenHash: hash(secret) };
-    await store.set(classKey(id), JSON.stringify(next));
-    out.push({ cls: next, token: `${id}.${secret}` });
-  }
-  await store.set(teacherKey(h), JSON.stringify({ classes: out.map((x) => x.cls.id), lastMailAt: now.toISOString() }));
-  return out;
 }
 
 async function sweep(now: Date, dir?: string): Promise<void> {

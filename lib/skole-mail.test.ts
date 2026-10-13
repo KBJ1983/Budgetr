@@ -1,28 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { requestOrigin } from "./skole-host";
-import { classMail, linksMail } from "./skole-mail";
-
-const expires = new Date(2027, 0, 6, 10);
+import { teacherMail } from "./skole-mail";
 
 describe("skole mails", () => {
-  it("sends the class link with the expiry date and the codes", () => {
-    const m = classMail({ trin: 8, link: "https://skole.budgetpro.dk/klasse/abc.def", expires, codes: ["BLÅ-ORM-47", "GUL-RÆV-12"], pupilAddress: "skole.budgetpro.dk", lostUrl: "https://skole.budgetpro.dk/laerer" });
-    expect(m.subject).toBe("Din 8. klasse på budgetpro Skole");
-    expect(m.text).toContain("https://skole.budgetpro.dk/klasse/abc.def");
-    expect(m.text).toContain("Elevkoderne udløber den 6. januar 2027.");
-    expect(m.text).toContain("1. BLÅ-ORM-47\n2. GUL-RÆV-12");
-    expect(m.text).toContain("Eleverne går ind på skole.budgetpro.dk");
+  it("sends the sign-up code and link", () => {
+    const m = teacherMail("signup", "Lærer Eksempel", "123456", "https://skole.budgetpro.dk/laerer/bekraeft?t=x");
+    expect(m.subject).toBe("123 456 er din kode til budgetpro Skole");
+    expect(m.text).toContain("Hej Lærer\n");
+    expect(m.text).toContain("oprettet en bruger");
+    expect(m.text).toContain("\n123 456\n");
+    expect(m.text).toContain("https://skole.budgetpro.dk/laerer/bekraeft?t=x");
     expect(m.text).not.toContain("!");
   });
 
-  it("sends new links to all of a teacher's classes", () => {
-    const one = linksMail([{ trin: 7, link: "L1", expires }]);
-    expect(one.subject).toBe("Nyt link til din klasse på budgetpro Skole");
-    const two = linksMail([{ trin: 7, link: "L1", expires }, { trin: 9, link: "L2", expires }]);
-    expect(two.subject).toBe("Nye links til dine klasser på budgetpro Skole");
-    expect(two.text).toContain("7. klasse – elevkoderne udløber den 6. januar 2027:\nL1");
-    expect(two.text).toContain("9. klasse");
-    expect(two.text).toContain("De links, du har fået før, virker ikke længere.");
+  it("sends the login code", () => {
+    const m = teacherMail("login", "Lærer", "000042", "L");
+    expect(m.subject).toBe("000 042 er din kode til at logge ind på budgetpro Skole");
+    expect(m.text).toContain("bad om at logge ind");
   });
 
   it("finds the visitor's address, also behind Vercel", () => {

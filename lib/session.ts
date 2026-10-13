@@ -101,6 +101,33 @@ export async function readAdminSession(value: string | undefined, now = new Date
   return Number(m[1]) > now.getTime();
 }
 
+// ---- Teacher session on budgetpro Skole: "<teacher id>.<expires ms>.<HMAC>", set by app/api/skole/auth/* ----------
+
+export const TEACHER_COOKIE = "budgetr_skole";
+export const TEACHER_MAX_AGE_S = 30 * 24 * 60 * 60;
+
+export async function makeTeacherSession(teacherId: string, now = new Date(), dir?: string): Promise<string> {
+  const body = `${teacherId}.${now.getTime() + TEACHER_MAX_AGE_S * 1000}`;
+  return `${body}.${sign(await key(dir), body)}`;
+}
+
+/** The teacher id in a valid, unexpired teacher cookie, else null. */
+export async function readTeacherSession(value: string | undefined, now = new Date(), dir?: string): Promise<string | null> {
+  const m = /^(t-[a-z0-9]{10})\.(\d+)\.([\w-]+)$/.exec(value || "");
+  if (!m) return null;
+  const want = Buffer.from(sign(await key(dir), `${m[1]}.${m[2]}`)), got = Buffer.from(m[3]!);
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
+  return Number(m[2]) > now.getTime() ? m[1]! : null;
+}
+
+export const teacherCookieOptions = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+  maxAge: TEACHER_MAX_AGE_S,
+};
+
 export const adminCookieOptions = {
   httpOnly: true,
   sameSite: "strict" as const,

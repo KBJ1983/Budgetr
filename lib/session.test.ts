@@ -3,7 +3,9 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { addMember, redeem, removeMember, signup } from "./accounts";
-import { canAccess, makeSession, readSession, SESSION_MAX_AGE_S, sessionLogin } from "./session";
+import {
+  canAccess, makeSession, makeTeacherSession, readSession, readTeacherSession, SESSION_MAX_AGE_S, sessionLogin, TEACHER_MAX_AGE_S,
+} from "./session";
 
 const t0 = new Date("2026-09-30T10:00:00Z");
 const input = { firstName: "Anna", lastName: "Eksempel", email: "anna@eksempel.dk", phone: "+4512345678" };
@@ -27,6 +29,16 @@ describe("session cookie", () => {
     expect(await readSession(c.replace("u-abcdefghijkl", "u-zzzzzzzzzzzz"), t0, dir)).toBeNull();
     expect(await readSession(undefined, t0, dir)).toBeNull();
     expect(await readSession("kbj.1.x", t0, dir)).toBeNull();
+  });
+
+  it("keeps the teacher session apart from the budget session", async () => {
+    const c = await makeTeacherSession("t-abcdefghij", t0, dir);
+    expect(await readTeacherSession(c, t0, dir)).toBe("t-abcdefghij");
+    expect(await readTeacherSession(c.replace("t-abcdefghij", "t-zzzzzzzzzz"), t0, dir)).toBeNull();
+    expect(await readTeacherSession(c, new Date(t0.getTime() + TEACHER_MAX_AGE_S * 1000 + 1), dir)).toBeNull();
+    expect(await readSession(c, t0, dir)).toBeNull();
+    expect(await readTeacherSession(await makeSession("u-abcdefghijkl", t0, dir), t0, dir)).toBeNull();
+    expect(await readTeacherSession(undefined, t0, dir)).toBeNull();
   });
 });
 

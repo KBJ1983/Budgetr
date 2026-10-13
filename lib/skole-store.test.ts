@@ -5,13 +5,14 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { openStore } from "./kv";
 import { emptyFlow, isCode, type Flow } from "./skole";
 import {
-  classOverview, classPupil, codeKey, createClass, deleteClass, emailHash, lookupCode, newTeacherLinks, readClass, RELINK_GAP_MS, saveProgress,
+  adoptLegacyClasses, classOverview, classPupil, codeKey, createClass, deleteClass, emailHash, lookupCode, readClassFor, saveProgress, teacherClasses,
 } from "./skole-store";
 
 const now = new Date("2026-10-08T08:00:00Z");
 const DAY_MS = 24 * 60 * 60 * 1000;
 const after = (days: number) => new Date(now.getTime() + days * DAY_MS);
-const EMAIL = "Laerer@Eksempel.dk";
+const T1 = "t-aaaaaaaaaa";
+const T2 = "t-bbbbbbbbbb";
 
 describe("skole store", () => {
   let dir: string;
@@ -22,31 +23,39 @@ describe("skole store", () => {
     await rm(dir, { recursive: true, force: true });
   });
 
-  it("makes a class with unique codes and a teacher link that opens it", async () => {
-    const { token, cls } = await createClass({ trin: 8, count: 24, days: 90 }, now, dir);
-    expect(cls.trin).toBe(8);
+  it("makes a class with unique codes that only its teacher can open", async () => {
+    const cls = await createClass({ trin: 8, count: 24, days: 90, teacherId: T1 }, now, dir);
+    expect(cls.id).toMatch(/^[0-9a-f]{10}$/);
     expect(cls.codes).toHaveLength(24);
     expect(new Set(cls.codes).size).toBe(24);
     expect(cls.codes.every(isCode)).toBe(true);
-    expect(token).toMatch(/^[0-9a-f]{10}\.[\w-]{24}$/);
-    expect((await readClass(token, now, dir))?.id).toBe(cls.id);
-
-    const secret = token.split(".")[1]!;
-    const wrong = `${cls.id}.${secret.slice(0, -1)}${secret.endsWith("A") ? "B" : "A"}`;
-    expect(await readClass(wrong, now, dir)).toBeNull();
-    expect(await readClass("nonsense", now, dir)).toBeNull();
-    expect(await openStore(dir).get(`skole/klasser/${cls.id}.json`)).not.toContain(secret);
+    expect((await readClassFor(T1, cls.id, now, dir))?.id).toBe(cls.id);
+    expect(await readClassFor(T2, cls.id, now, dir)).toBeNull();
+    expect(await readClassFor(T1, "nonsense", now, dir)).toBeNull();
   });
 
   it("refuses odd classes", async () => {
-    await expect(createClass({ trin: 6, count: 10, days: 90 }, now, dir)).rejects.toThrow();
-    await expect(createClass({ trin: 8, count: 0, days: 90 }, now, dir)).rejects.toThrow();
-    await expect(createClass({ trin: 8, count: 41, days: 90 }, now, dir)).rejects.toThrow();
-    await expect(createClass({ trin: 8, count: 10, days: 45 }, now, dir)).rejects.toThrow();
+    await expect(createClass({ trin: 6, count: 10, days: 90, teacherId: T1 }, now, dir)).rejects.toThrow();
+    await expect(createClass({ trin: 8, count: 0, days: 90, teacherId: T1 }, now, dir)).rejects.toThrow();
+    await expect(createClass({ trin: 8, count: 41, days: 90, teacherId: T1 }, now, dir)).rejects.toThrow();
+    await expect(createClass({ trin: 8, count: 10, days: 45, teacherId: T1 }, now, dir)).rejects.toThrow();
+  });
+
+  it("lists the teacher's classes, newest first, with how far the pupils are", async () => {
+    const a = await createClass({ trin: 8, count: 2, days: 90, teacherId: T1 }, now, dir);
+    const b = await createClass({ trin: 9, count: 3, days: 30, teacherId: T1 }, after(1), dir);
+    await createClass({ trin: 7, count: 1, days: 90, teacherId: T2 }, now, dir);
+    await saveProgress(b.codes[0]!, { ...emptyFlow(), caseId: "sara" }, {}, after(1), dir);
+    const list = await teacherClasses(T1, after(1), dir);
+    expect(list.map((c) => c.id)).toEqual([b.id, a.id]);
+    expect(list[0]).toMatchObject({ trin: 9, days: 30, codes: b.codes, started: 1, finished: 0, expires: after(31).toISOString() });
+    // After 31 days b has expired: it is deleted and drops off the list.
+    expect((await teacherClasses(T1, after(31), dir)).map((c) => c.id)).toEqual([a.id]);
+    expect(await lookupCode(b.codes[0]!, after(1), dir)).toBeNull();
   });
 
   it("knows a class's codes, saves a pupil's work and shows it to the teacher", async () => {
-    const { cls } = await createClass({ trin: 9, count: 3, days: 60 }, now, dir);
+    const cls = await createClass({ trin: 9, count: 3, days: 60, teacherId: T1 }, now, dir);
     const code = cls.codes[0]!;
     const other = ["BLÅ-ORM-10", "GUL-RÆV-11"].find((c) => !cls.codes.includes(c))!;
     expect(await lookupCode(code, now, dir)).toEqual({ flow: null, answers: {}, expires: after(60).toISOString() });
@@ -59,7 +68,7 @@ describe("skole store", () => {
     expect(await lookupCode(code, now, dir)).toMatchObject({ flow, answers: { 2: "En tredjedel" } });
 
     const view = await classOverview(cls, dir);
-    expect(view).toMatchObject({ trin: 9, days: 60, expires: after(60).toISOString() });
+    expect(view).toMatchObject({ id: cls.id, trin: 9, days: 60, codes: cls.codes, expires: after(60).toISOString() });
     expect(view.rows[0]).toEqual({ code, status: "Færdig", ok: true, caseName: "Sara" });
     expect(view.rows[1]?.status).toBe("Ikke startet");
     expect(view.stats).toMatchObject({ started: 1, finished: 1, finishedOk: 1, topCase: "Sara", topBolig: { label: "Delelejlighed", pct: 100 } });
@@ -71,47 +80,42 @@ describe("skole store", () => {
   });
 
   it("ends a class after the days the teacher picked, and deleting removes its codes", async () => {
-    const a = await createClass({ trin: 8, count: 2, days: 30 }, now, dir);
-    const first = a.cls.codes[0]!;
+    const a = await createClass({ trin: 8, count: 2, days: 30, teacherId: T1 }, now, dir);
+    const first = a.codes[0]!;
     expect(await lookupCode(first, after(29), dir)).not.toBeNull();
     expect(await lookupCode(first, after(30), dir)).toBeNull();
-    expect(await readClass(a.token, after(30), dir)).toBeNull();
+    expect(await readClassFor(T1, a.id, after(30), dir)).toBeNull();
     expect(await openStore(dir).get(codeKey(first))).toBeNull();
 
-    const b = await createClass({ trin: 8, count: 2, days: 90 }, now, dir);
-    await deleteClass(b.cls, dir);
-    expect(await lookupCode(b.cls.codes[0]!, now, dir)).toBeNull();
-    expect(await readClass(b.token, now, dir)).toBeNull();
+    const b = await createClass({ trin: 8, count: 2, days: 90, teacherId: T1 }, now, dir);
+    await deleteClass(b, dir);
+    expect(await lookupCode(b.codes[0]!, now, dir)).toBeNull();
+    expect(await readClassFor(T1, b.id, now, dir)).toBeNull();
+    expect(await teacherClasses(T1, now, dir)).toEqual([]);
   });
 
   it("sweeps old classes when a new one is made", async () => {
-    const old = await createClass({ trin: 8, count: 2, days: 30 }, now, dir);
-    await createClass({ trin: 8, count: 1, days: 90 }, after(31), dir);
-    expect(await openStore(dir).get(`skole/klasser/${old.cls.id}.json`)).toBeNull();
-    expect(await openStore(dir).get(codeKey(old.cls.codes[1]!))).toBeNull();
+    const old = await createClass({ trin: 8, count: 2, days: 30, teacherId: T1 }, now, dir);
+    await createClass({ trin: 8, count: 1, days: 90, teacherId: T2 }, after(31), dir);
+    expect(await openStore(dir).get(`skole/klasser/${old.id}.json`)).toBeNull();
+    expect(await openStore(dir).get(codeKey(old.codes[1]!))).toBeNull();
   });
 
-  it("keeps the teacher's e-mail only as a hash, and mails new links that replace the old ones", async () => {
-    const a = await createClass({ trin: 8, count: 2, days: 90, email: EMAIL }, now, dir);
-    const b = await createClass({ trin: 9, count: 2, days: 30, email: "laerer@eksempel.dk " }, now, dir);
-    await createClass({ trin: 7, count: 1, days: 90, email: "anden@eksempel.dk" }, now, dir);
-    const raw = await openStore(dir).get(`skole/klasser/${a.cls.id}.json`);
-    expect(raw).not.toMatch(/eksempel/i);
-    expect(a.cls.emailHash).toBe(emailHash("laerer@eksempel.dk"));
+  it("hands classes made before teacher logins to the teacher with the same e-mail", async () => {
+    const store = openStore(dir);
+    const h = emailHash("Laerer@Eksempel.dk");
+    const legacy = (id: string, created: string) => ({ id, trin: 8, created, tokenHash: "x", emailHash: h, codes: [] });
+    await store.set("skole/klasser/0000000001.json", JSON.stringify(legacy("0000000001", now.toISOString())));
+    await store.set("skole/klasser/0000000002.json", JSON.stringify(legacy("0000000002", new Date(now.getTime() - 100 * DAY_MS).toISOString())));
+    await store.set(`skole/laerere/${h}.json`, JSON.stringify({ classes: ["0000000001", "0000000002"] }));
 
-    expect(await newTeacherLinks("ukendt@eksempel.dk", now, dir)).toEqual([]);
-    const links = await newTeacherLinks(EMAIL, now, dir);
-    if (links === "throttled") throw new Error("throttled");
-    expect(links.map((l) => l.cls.trin).sort()).toEqual([8, 9]);
-    expect(await readClass(a.token, now, dir)).toBeNull();
-    expect((await readClass(links.find((l) => l.cls.id === a.cls.id)!.token, now, dir))?.id).toBe(a.cls.id);
-
-    expect(await newTeacherLinks(EMAIL, new Date(now.getTime() + 1000), dir)).toBe("throttled");
-    // After b has expired and a is deleted, the next mail has nothing left to send.
-    await deleteClass(a.cls, dir);
-    expect(await newTeacherLinks(EMAIL, after(31), dir)).toEqual([]);
-    expect(await newTeacherLinks(EMAIL, new Date(after(31).getTime() + RELINK_GAP_MS), dir)).toEqual([]);
-    expect(b.cls.days).toBe(30);
+    expect(await adoptLegacyClasses(T1, "anden@eksempel.dk", now, dir)).toBe(0);
+    expect(await adoptLegacyClasses(T1, "laerer@eksempel.dk", now, dir)).toBe(1);
+    const moved = await readClassFor(T1, "0000000001", now, dir);
+    expect(moved).toMatchObject({ teacherId: T1, days: 90 });
+    expect(moved).not.toHaveProperty("emailHash");
+    expect((await teacherClasses(T1, now, dir)).map((c) => c.id)).toEqual(["0000000001"]);
+    expect(await store.get(`skole/laerere/${h}.json`)).toBeNull();
   });
 
   it("spells æøå out in the storage key", () => {

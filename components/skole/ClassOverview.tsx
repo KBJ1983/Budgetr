@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { dayMonthYear, type ClassView, type PupilDetail } from "@/lib/skole";
+import { CodeSheet } from "./CodeSheet";
 import { Shell } from "./Shell";
 import s from "./skole.module.css";
+import { useToast } from "./useToast";
 
 const REFRESH_MS = 15_000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export function ClassOverview({ token, initial }: { token: string; initial: ClassView }) {
+export function ClassOverview({ teacher, initial }: { teacher: string; initial: ClassView }) {
   const [view, setView] = useState(initial);
   const [gone, setGone] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const [pupil, setPupil] = useState<PupilDetail | null>(null);
+  const [toast, showToast] = useToast();
   const detailRef = useRef<HTMLElement>(null);
-  const url = `/api/skole/klasse/${encodeURIComponent(token)}`;
+  const url = `/api/skole/klasse/${initial.id}`;
 
   const loadPupil = useCallback(
     async (code: string) => {
@@ -55,7 +58,7 @@ export function ClassOverview({ token, initial }: { token: string; initial: Clas
     if (r.ok || r.status === 404) setGone(true);
   };
 
-  const right = <span className={s.teacherPill}>Lærer</span>;
+  const right = <span className={s.teacherPill}>{teacher}</span>;
   if (gone) {
     return (
       <Shell right={right}>
@@ -64,7 +67,7 @@ export function ClassOverview({ token, initial }: { token: string; initial: Clas
             <span className={s.cardTitle}>Klassen er slettet</span>
             <span className={s.note}>Koderne virker ikke længere, og elevernes valg og svar er væk.</span>
             <Link className={`${s.btn} ${s.btnPrimary}`} href="/skole/laerer" style={{ alignSelf: "flex-start" }}>
-              Opret en ny klasse
+              Til mine klasser
             </Link>
           </div>
         </div>
@@ -82,18 +85,21 @@ export function ClassOverview({ token, initial }: { token: string; initial: Clas
   const daysLeft = Math.max(0, Math.ceil((expires.getTime() - Date.now()) / DAY_MS));
 
   return (
-    <Shell right={right}>
+    <Shell right={right} toast={toast}>
       <div className={s.wrap}>
-        <div className={s.titleRow}>
+        <Link className={`${s.small} ${s.noPrint}`} href="/skole/laerer">
+          ← Mine klasser
+        </Link>
+        <div className={`${s.titleRow} ${s.noPrint}`}>
           <h1 className={s.q}>Klasseoverblik</h1>
           <span className={s.note}>
             {view.trin}. klasse · {st.started} af {view.rows.length} elever i gang
           </span>
         </div>
-        <p className={s.expiry} suppressHydrationWarning>
+        <p className={`${s.expiry} ${s.noPrint}`} suppressHydrationWarning>
           Elevkoderne udløber den {dayMonthYear(expires)} (om {daysLeft} {daysLeft === 1 ? "dag" : "dage"}). Så slettes klassen, koderne og elevernes svar.
         </p>
-        <div className={s.stats}>
+        <div className={`${s.stats} ${s.noPrint}`}>
           {stats.map((x) => (
             <div key={x.l} className={s.stat}>
               <b>{x.v}</b>
@@ -101,8 +107,8 @@ export function ClassOverview({ token, initial }: { token: string; initial: Clas
             </div>
           ))}
         </div>
-        <span className={s.small}>Klik på en elevkode for at se elevens valg og svar.</span>
-        <div className={s.table} role="table" aria-label="Elever">
+        <span className={`${s.small} ${s.noPrint}`}>Klik på en elevkode for at se elevens valg og svar.</span>
+        <div className={`${s.table} ${s.noPrint}`} role="table" aria-label="Elever">
           <div className={`${s.tr} ${s.th}`} role="row">
             <span role="columnheader">Elevkode</span>
             <span role="columnheader">Trin nået</span>
@@ -126,7 +132,7 @@ export function ClassOverview({ token, initial }: { token: string; initial: Clas
         </div>
 
         {open && (
-          <section ref={detailRef} className={`${s.card} ${s.detail}`} aria-label={`Elev ${open}`}>
+          <section ref={detailRef} className={`${s.card} ${s.detail} ${s.noPrint}`} aria-label={`Elev ${open}`}>
             <div className={s.detailHead}>
               <h2 className={s.h2}>{open}</h2>
               {pupil && <span className={s.note}>{pupil.status}</span>}
@@ -161,10 +167,14 @@ export function ClassOverview({ token, initial }: { token: string; initial: Clas
           </section>
         )}
 
-        <span className={s.small}>Opdateres af sig selv.</span>
-        <div className={s.actions}>
+        <div className={`${s.card} ${s.classCard}`}>
+          <CodeSheet trin={view.trin} codes={view.codes} expires={view.expires} onCopied={showToast} />
+        </div>
+
+        <span className={`${s.small} ${s.noPrint}`}>Opdateres af sig selv.</span>
+        <div className={`${s.actions} ${s.noPrint}`}>
           <Link className={s.btn} href="/skole/laerer">
-            Opret en ny klasse
+            Til mine klasser
           </Link>
           <button type="button" className={`${s.btn} ${s.btnDanger}`} onClick={() => void remove()}>
             Slet klassen

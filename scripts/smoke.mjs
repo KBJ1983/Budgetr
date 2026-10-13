@@ -267,8 +267,9 @@ try {
     check(st?.bank?.children === 2 && ex.length === 3 && ex.filter((e) => e.bank).length === 1, "guide: bank choices are saved");
     await ctx.close();
   }
-  // budgetpro Skole: a teacher makes a class, a pupil goes through the 8 steps, the overview shows it, and deleting
-  // the class ends the codes. Writes one class under data/skole/ and deletes it again; nothing else in data/.
+  // budgetpro Skole: a teacher signs up and logs in with the code, makes a class, a pupil goes through the 8 steps,
+  // the overview shows it, and deleting the class ends the codes. Writes a fictional teacher (a new e-mail each run,
+  // so the resend gap never blocks a rerun) and one class under data/skole/; the class is deleted again.
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
     const open = async () => {
@@ -285,18 +286,33 @@ try {
 
     const t = await open();
     await t.goto(`${BASE}/skole/laerer`);
-    for (let i = 0; i < 21; i++) await t.getByRole("button", { name: "Færre elever" }).click();
+    await t.getByRole("heading", { name: "Log ind som lærer" }).waitFor();
+    await t.getByRole("group", { name: "Log ind eller opret bruger" }).getByRole("button", { name: "Opret bruger" }).click();
+    const submit = t.locator("form").getByRole("button", { name: "Opret bruger", exact: true }).last();
+    await submit.click();
+    await t.getByText("Skriv dit navn.").waitFor();
+    check(true, "signing up asks for name, school and e-mail");
+    await t.getByLabel("Dit navn").fill("Lærer Eksempel");
+    await t.getByLabel("Din skole").fill("Eksempel Skole");
+    await t.getByLabel("Din e-mail").fill(`laerer-${Date.now()}@eksempel.dk`);
+    await submit.click();
+    // No mail provider in development: the page shows the code instead.
+    const mailCode = await t.locator("[data-dev-code]").textContent();
+    await t.getByLabel("Kode fra mailen").fill(mailCode);
+    await t.getByRole("button", { name: "Log ind", exact: true }).click();
+    await t.getByRole("heading", { name: "Mine klasser" }).waitFor();
+    check((await t.getByText("Du har ingen klasser endnu.", { exact: false }).count()) === 1, "a new teacher logs in with the mailed code and has no classes yet");
+
+    // Click until the counter says 3: the first clicks after the page load can come before React is ready.
+    const count = t.locator('[aria-live="polite"]').first();
+    for (let i = 0; i < 60 && (await count.textContent()) !== "3"; i++) await t.getByRole("button", { name: "Færre elever" }).click();
     await t.getByRole("button", { name: "30 dage" }).click();
+    check((await t.getByRole("button", { name: "30 dage" }).getAttribute("aria-pressed")) === "true", "the teacher picks how long the codes live");
     await t.getByRole("button", { name: "Lav elevkoder" }).click();
-    await t.getByText("Skriv en gyldig e-mail, fx navn@skole.dk.").waitFor();
-    check(true, "making a class asks for the teacher's e-mail");
-    await t.getByLabel("Din e-mail").fill("laerer@eksempel.dk");
-    await t.getByRole("button", { name: "Lav elevkoder" }).click();
-    const link = await t.getByLabel("Lærerlink").inputValue();
+    await t.waitForURL(/\/klasse\/[0-9a-f]{10}$/);
+    const link = t.url();
     const codes = await t.locator("[data-code]").allTextContents();
-    check(codes.length === 3 && /\/klasse\/[0-9a-f]{10}\./.test(link), `teacher gets 3 codes and a link (${codes.join(", ")})`);
-    // No mail provider in development: the page says so and shows the link instead.
-    check((await t.getByText(/Vi har sendt linket|Mailen kunne ikke sendes/).count()) === 1, "the teacher is told whether the link was mailed");
+    check(codes.length === 3, `the new class opens with its 3 codes (${codes.join(", ")})`);
     check((await t.getByText(/Elevkoderne udløber den/).count()) === 1, "the codes' expiry date is shown");
 
     const p = await open();
@@ -358,16 +374,32 @@ try {
       check(over <= 0, `no horizontal scroll at 390px on the school's ${where} (${over}px)`);
     }
 
+    // The teacher's front page lists the class with its codes.
+    await t.goto(`${BASE}/skole/laerer`);
+    const card = t.getByRole("region", { name: "8. klasse" });
+    check((await card.getByText(/3 elevkoder · 1 i gang · 1 færdige/).count()) === 1, "the front page lists the class with how far the pupils are");
+    await card.getByRole("button", { name: "Vis elevkoder" }).click();
+    check((await card.locator("[data-code]").count()) === 3, "the front page shows the class's codes");
+    await t.screenshot({ path: `${OUT}/skole-laerer.png`, fullPage: true });
+
+    // Someone who isn't logged in can't open the class.
+    const other = await browser.newContext();
+    const o = await other.newPage();
+    await o.goto(link);
+    await o.getByText("Log ind for at se klassen").waitFor();
+    check(true, "a class can only be opened by its teacher");
+    await other.close();
+
+    await t.goto(link);
     await t.getByRole("button", { name: "Slet klassen" }).click();
     await t.getByText("Klassen er slettet").waitFor();
     await enterCode(p, codes[0]);
     await p.getByText(/Den kode kender vi ikke/).waitFor();
     check(true, "deleting the class ends its codes");
-    await p.goto(`${BASE}/skole/laerer`);
-    await p.getByLabel("E-mail til nye links").fill("laerer@eksempel.dk");
-    await p.getByRole("button", { name: "Send nye links" }).click();
-    await p.getByText("Hvis der er klasser på den e-mail, har vi sendt nye links nu.").waitFor();
-    check(true, "a teacher who lost the link can ask for new ones");
+    await t.goto(`${BASE}/skole/laerer`);
+    await t.getByRole("button", { name: "Log ud" }).click();
+    await t.getByRole("heading", { name: "Log ind som lærer" }).waitFor();
+    check(true, "the teacher can log out");
 
     const sub = BASE.replace("//localhost", "//skole.localhost");
     if (sub !== BASE) {
@@ -375,8 +407,8 @@ try {
       await p.getByRole("heading", { name: "Hvad koster det at være voksen?" }).waitFor();
       check(home?.status() === 200, "skole.localhost shows the school's start page");
       await p.goto(`${sub}/laerer`);
-      await p.getByRole("heading", { name: "Opret klasse" }).waitFor();
-      check(true, "skole.localhost/laerer is the teacher page");
+      await p.getByRole("heading", { name: "Log ind som lærer" }).waitFor();
+      check(true, "skole.localhost/laerer is the teacher login");
       const app = await p.goto(`${sub}/app`);
       check(app?.status() === 404, "the budget app is not reachable on the school subdomain");
     }

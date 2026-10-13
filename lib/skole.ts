@@ -4,6 +4,8 @@
  * (components/skole/) and the server (lib/skole-store.ts) both use it. Design: docs/design/skole-skitse.html.
  */
 
+import { isEmail, normalizeEmail } from "./signup";
+
 // ---- Money -------------------------------------------------------------------------------------------------------
 
 const digits = (n: number) => Math.abs(n).toLocaleString("da-DK");
@@ -511,9 +513,44 @@ export function pupilDetail(code: string, f: Flow | null, answers: Answers): Pup
   };
 }
 
+// ---- Teachers ----------------------------------------------------------------------------------------------------
+
+export interface TeacherInput {
+  name: string;
+  school: string;
+  email: string;
+}
+export type TeacherField = keyof TeacherInput;
+
+/** The teacher sign-up form, checked the same way in the browser and on the server. */
+export function validateTeacher(x: unknown): { ok: true; value: TeacherInput } | { ok: false; errors: Partial<Record<TeacherField, string>> } {
+  const name = text(field(x, "name"), 80);
+  const school = text(field(x, "school"), 100);
+  const email = normalizeEmail(field(x, "email"));
+  const errors: Partial<Record<TeacherField, string>> = {};
+  if (name.length < 2) errors.name = "Skriv dit navn.";
+  if (school.length < 2) errors.school = "Skriv navnet på din skole.";
+  if (!isEmail(email)) errors.email = "Skriv en gyldig e-mail, fx navn@skole.dk.";
+  return Object.keys(errors).length ? { ok: false, errors } : { ok: true, value: { name, school, email } };
+}
+
+/** One class on the teacher's front page. */
+export interface ClassSummary {
+  id: string;
+  trin: number;
+  created: string;
+  expires: string;
+  days: number;
+  codes: string[];
+  started: number;
+  finished: number;
+}
+
 /** What the teacher's overview shows (lib/skole-store.ts builds it). */
 export interface ClassView {
+  id: string;
   trin: number;
+  codes: string[];
   created: string;
   /** When the codes stop working and everything is deleted. */
   expires: string;

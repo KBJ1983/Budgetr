@@ -50,7 +50,7 @@ export function Start({ code, error, busy, onCode, onStart }: { code: string; er
           Start
         </button>
         <Link href="/skole/laerer" className={s.small}>
-          Er du lærer? Opret en klasse.
+          Er du lærer? Log ind eller opret en bruger.
         </Link>
       </form>
     </div>
