@@ -148,6 +148,7 @@
 .sliderHead { display: flex; justify-content: space-between; gap: 12px; font-weight: 600; font-size: 19px; }
 .sliderHead b { font-weight: 700; white-space: nowrap; }
 .sliderSub { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; color: var(--ink-2); }
+.sliderSub span:last-child { white-space: nowrap; }
 .goalBox { background: var(--pine-bg); color: var(--pine); border-radius: 12px; padding: 12px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; }
 .goalBox b { font-size: 19px; }
 .goalBox span { font-weight: 500; font-size: 15px; align-self: center; }
@@ -223,7 +224,7 @@
 .postName { border: 0; background: transparent; font-weight: 500; font-size: 17px; color: var(--ink); padding: 6px 0; outline-color: var(--pine); min-width: 0; width: 100%; }
 .postFreq { font-size: 13px; color: var(--ink-2); }
 .amtBox { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 10px; padding: 0 10px; height: 42px; box-sizing: border-box; background: #fff; }
-.amtBox input { width: 100%; min-width: 0; border: 0; outline: none; font-weight: 600; font-size: 17px; text-align: right; background: transparent; color: var(--ink); }
+.amtBox input { width: 100%; height: 100%; min-width: 0; border: 0; outline: none; font-weight: 600; font-size: 17px; text-align: right; background: transparent; color: var(--ink); }
 .amtBox span { font-size: 14px; color: var(--ink-2); margin-left: 4px; }
 .newAmt { display: flex; gap: 8px; }
 .newAmt .amtBox { flex: 1; height: 46px; }
@@ -309,7 +310,9 @@
   .progress { padding: 14px 16px 10px; }
   .dot { width: 12px; height: 12px; font-size: 0; }
   .dot svg { display: none; }
-  .dotLine { top: 5px; }
+  /* A taller tap area around the small dots, without moving them. */
+  .dotBtn { padding: 14px 0; margin: -14px 0; }
+  .dotLine { top: 19px; }
   .dotLabel { display: none; }
   .stepOf { display: block; }
   .flowGrid { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; }
@@ -325,7 +328,9 @@
   .kpiV { font-size: 24px; }
   .wrap { padding: 16px; }
   .side { position: static; }
-  .postRow { grid-template-columns: minmax(0, 1fr) 110px 40px; }
+  .postRow { grid-template-columns: minmax(0, 1fr) 100px 40px; }
+  .postName { font-size: 16px; text-overflow: ellipsis; }
+  .amtBox { padding: 0 8px; }
   .resultAmt { font-size: 48px; }
   .payRow { padding: 14px 16px; }
   .payAmt { font-size: 22px; }

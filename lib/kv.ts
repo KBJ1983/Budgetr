@@ -10,6 +10,7 @@
  * Passing a dir always means the disk (the tests use a temp dir). Only node: imports and @upstash/redis, so Node
  * can run it directly from scripts/send-reminders.mjs (through lib/profile.ts).
  */
+import { randomBytes } from "node:crypto";
 import { mkdir, readdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Redis } from "@upstash/redis";
@@ -26,6 +27,10 @@ export interface Store {
 
 export const dataDir = () => process.env.BUDGETR_DATA_DIR || path.join(process.cwd(), "data");
 
+/** The disk write still running per file. Two saves of one file at once (on Windows, two renames onto it) fail, so
+ * a save waits for the one before it. */
+const writing = new Map<string, Promise<void>>();
+
 function diskStore(dir: string): Store {
   const file = (key: string) => path.join(dir, ...key.split("/"));
   return {
@@ -39,10 +44,24 @@ function diskStore(dir: string): Store {
     },
     async set(key, value) {
       const f = file(key);
-      await mkdir(path.dirname(f), { recursive: true });
-      const tmp = `${f}.${process.pid}.tmp`;
-      await writeFile(tmp, value, "utf8");
-      await rename(tmp, f);
+      const run = (writing.get(f) ?? Promise.resolve())
+        .catch(() => {})
+        .then(async () => {
+          await mkdir(path.dirname(f), { recursive: true });
+          // A temp file of its own, also when another process (a script) writes the same key.
+          const tmp = `${f}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
+          await writeFile(tmp, value, "utf8");
+          await rename(tmp, f).catch(async (e) => {
+            await unlink(tmp).catch(() => {});
+            throw e;
+          });
+        });
+      writing.set(f, run);
+      try {
+        await run;
+      } finally {
+        if (writing.get(f) === run) writing.delete(f);
+      }
     },
     async add(key, value) {
       const f = file(key);

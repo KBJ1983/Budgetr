@@ -63,4 +63,12 @@ describe.each<[string, () => Store]>([
     expect(await s.list("backups/kbj")).toEqual(["b.json"]);
     expect(await s.get("backups/kbj/a.json")).toBeNull();
   });
+
+  it("takes two saves of the same key at once", async () => {
+    const s = make();
+    const values = Array.from({ length: 20 }, (_, i) => String(i).repeat(20000));
+    await Promise.all(values.map((v) => s.set("demo.json", v)));
+    expect(values).toContain(await s.get("demo.json"));
+    expect(await s.list("")).toEqual(["demo.json"]);
+  });
 });
