@@ -1,6 +1,6 @@
 import styles from "@/components/landing/landing.module.css";
 import { FinalCta, Pricing, Quotes, Trust } from "@/components/landing/Closing";
-import { Availability, HowItWorks, PhotoBanner, Sharing } from "@/components/landing/ContentSections";
+import { Availability, BusinessTeaser, HowItWorks, PhotoBanner, Sharing } from "@/components/landing/ContentSections";
 import { Features } from "@/components/landing/Features";
 import { Hero } from "@/components/landing/Hero";
 import { InPageLinks } from "@/components/landing/InPageLinks";
@@ -12,7 +12,8 @@ import { SiteHeader } from "@/components/landing/SiteHeader";
  * Landing page, layout from docs/design/forside-v2.html ("Forside v2"): header and hero share a dark rounded card,
  * a photo banner and Tryghed follow "Sådan virker det", and the product is shown with real screenshots (`pnpm shots`), not mock-ups.
  * Funktioner is a dark band between the light sections: a sideways tour of the features (opsparing and scenarier with
- * photos, beskeder and påmindelser included) and the full list to unfold. Title, description and lang come from app/layout.tsx.
+ * photos, beskeder and påmindelser included) and the full list to unfold. A short Erhverv teaser sits before the final call
+ * to action. Title, description and lang come from app/layout.tsx.
  */
 export default function HomePage() {
   return (
@@ -28,6 +29,7 @@ export default function HomePage() {
         <Sharing />
         <Quotes />
         <Pricing />
+        <BusinessTeaser />
         <FinalCta />
       </main>
       <SiteFooter />

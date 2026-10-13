@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/Logo";
+import { SiteSwitch } from "@/components/SiteSwitch";
+import type { Site } from "@/lib/site-host";
 import styles from "./landing.module.css";
 import { MobileMenu } from "./MobileMenu";
 
@@ -12,30 +14,42 @@ const NAV_LINKS: readonly NavLink[] = [
   { href: "#pris", label: "Pris" },
 ];
 
-/** Dark header at the top of the rounded hero card. */
-export function SiteHeader() {
+type SiteHeaderProps = {
+  site?: Site;
+  links?: readonly NavLink[];
+  login?: NavLink;
+  cta?: NavLink;
+};
+
+/** Dark header at the top of the rounded hero card, with the Privat · Erhverv · Skole switch above it. */
+export function SiteHeader({
+  site = "privat",
+  links = NAV_LINKS,
+  login = { href: "/login", label: "Log ind" },
+  cta = { href: "/opret", label: "Prøv gratis i 30 dage" },
+}: SiteHeaderProps) {
   return (
     <header className={styles.header}>
+      <SiteSwitch current={site} />
       <div className={styles.headerInner}>
         <a href="#top" className={styles.brand}>
           <Wordmark fontSize={24} dark />
         </a>
         <nav aria-label="Hovedmenu" className={styles.nav}>
-          {NAV_LINKS.map((link) => (
+          {links.map((link) => (
             <a key={link.href} href={link.href}>
               {link.label}
             </a>
           ))}
         </nav>
         <div className={styles.headerActions}>
-          {/* Log ind goes to /login, the signup buttons to /opret. */}
-          <Link href="/login" className={styles.loginLink}>
-            Log ind
+          <Link href={login.href} className={styles.loginLink}>
+            {login.label}
           </Link>
-          <Link href="/opret" className={styles.headerCta}>
-            Prøv gratis i 30 dage
+          <Link href={cta.href} className={styles.headerCta}>
+            {cta.label}
           </Link>
-          <MobileMenu links={NAV_LINKS} />
+          <MobileMenu links={links} />
         </div>
       </div>
     </header>

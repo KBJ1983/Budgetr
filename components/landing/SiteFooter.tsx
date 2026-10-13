@@ -1,24 +1,29 @@
 import { Wordmark } from "@/components/Logo";
 import styles from "./landing.module.css";
+import type { NavLink } from "./SiteHeader";
 
-const LINKS = [
+const LINKS: readonly NavLink[] = [
   { href: "#funktioner", label: "Funktioner" },
   { href: "#tryghed", label: "Tryghed" },
   { href: "#pris", label: "Pris" },
-  // Legal pages do not exist yet.
+  { href: "/erhverv", label: "Erhverv" },
+  { href: "/skole", label: "Skole" },
+];
+// Legal pages do not exist yet.
+const LEGAL: readonly NavLink[] = [
   { href: "#", label: "Vilkår" },
   { href: "#", label: "Privatlivspolitik" },
   { href: "#", label: "Kontakt" },
-] as const;
+];
 const COMPANY = "[Firmanavn · CVR]";
 
-export function SiteFooter() {
+export function SiteFooter({ links = LINKS }: { links?: readonly NavLink[] }) {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerInner}>
         <Wordmark fontSize={28} />
         <nav aria-label="Sidefod" className={styles.footerNav}>
-          {LINKS.map((link) => (
+          {[...links, ...LEGAL].map((link) => (
             <a key={link.label} href={link.href}>
               {link.label}
             </a>

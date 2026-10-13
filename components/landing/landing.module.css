@@ -1471,6 +1471,100 @@
   text-align: left;
 }
 
+/* ================= Erhverv teaser (ContentSections.tsx BusinessTeaser) ================= */
+
+.bizWrap {
+  padding: 0 var(--gutter) 64px;
+}
+.biz {
+  max-width: var(--content);
+  margin: 0 auto;
+  padding: 36px 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 40px;
+  align-items: center;
+  background: var(--v-stone);
+  border-radius: 28px;
+}
+.bizText {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.bizTitle {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.bizBody {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--v-ink-2);
+}
+.bizLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--v-pine);
+  text-decoration: none;
+}
+.bizLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.bizList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.bizList li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 18px;
+  background: var(--v-white);
+  border-radius: 16px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--v-ink-2);
+}
+.bizList b {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--v-ink);
+}
+@media (max-width: 1019.98px) {
+  .biz {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+@media (max-width: 767.98px) {
+  .bizWrap {
+    padding-bottom: 40px;
+  }
+  .biz {
+    padding: 24px 20px;
+    border-radius: 22px;
+  }
+  .bizTitle {
+    font-size: 26px;
+  }
+}
+
 /* ================= Footer ================= */
 
 .footer {

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Wordmark } from "@/components/Logo";
+import { SiteSwitch } from "@/components/SiteSwitch";
 import l from "./skoleLanding.module.css";
 
 /**
@@ -11,6 +12,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
   return (
     <div className={l.page}>
       <div className={l.heroWrap}>
+        <SiteSwitch current="skole" />
         <div className={`${l.dark} ${l.band}`}>
           <header className={l.top}>
             <a href={`${base}/`} className={l.brand} aria-label="budgetpro Skole">

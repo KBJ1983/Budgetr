@@ -4,7 +4,7 @@ import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { ShotFrame } from "./Shots";
 import { SwipeList } from "./Swipe";
-import { PeopleIcon, UploadIcon, WandIcon } from "./icons";
+import { ArrowRightIcon, PeopleIcon, UploadIcon, WandIcon } from "./icons";
 
 const STEPS = [
   {
@@ -164,5 +164,41 @@ export function Sharing() {
       visualFirst
       tone="stone"
     />
+  );
+}
+
+const BUSINESS = [
+  { title: "Banker", body: "Kunder, der kommer til lånesamtalen med et budget." },
+  { title: "Ejendomsmæglere", body: "Et budget, der følger med nøglerne til den nye bolig." },
+  { title: "Skoler", body: "Privatøkonomi i udskolingen med budgetpro Skole." },
+] as const;
+
+/** A short teaser for budgetpro Erhverv (erhverv.<domain>, /erhverv), between Pris and the final call to action. */
+export function BusinessTeaser() {
+  return (
+    <section className={styles.bizWrap} aria-labelledby="erhverv-title">
+      <div className={styles.biz} data-reveal>
+        <div className={styles.bizText}>
+          <span className={styles.eyebrow}>Erhverv</span>
+          <h2 id="erhverv-title" className={styles.bizTitle}>
+            Giv budgetpro videre til jeres kunder.
+          </h2>
+          <p className={styles.bizBody}>
+            Banker, ejendomsmæglere og skoler kan give deres kunder adgang med en e-mail. I ser aldrig kundens tal.
+          </p>
+          <a href="/erhverv" className={styles.bizLink}>
+            Læs om budgetpro Erhverv <ArrowRightIcon size={14} />
+          </a>
+        </div>
+        <ul className={styles.bizList}>
+          {BUSINESS.map((b) => (
+            <li key={b.title}>
+              <b>{b.title}</b>
+              <span>{b.body}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }

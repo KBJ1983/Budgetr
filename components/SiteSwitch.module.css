@@ -1,0 +1,39 @@
+/* Sits on the white strip above the dark top card; lines up with the card's rounded edge. */
+.switch {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 22px 10px;
+}
+.list {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.switch .link {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font: 500 13px/20px var(--font-geist), system-ui, sans-serif;
+  color: #565d59;
+  text-decoration: none;
+}
+.switch .link:hover {
+  color: #15191a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.switch .current {
+  color: #15191a;
+  background: #efeee8;
+}
+.switch .current:hover {
+  text-decoration: none;
+}
+
+@media (max-width: 767.98px) {
+  .switch {
+    padding: 0 12px 8px;
+  }
+}
