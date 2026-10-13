@@ -28,6 +28,90 @@
   object-position: 50% 62%;
 }
 
+/* ================= USP band under the hero ================= */
+
+.uspWrap {
+  padding: var(--gutter) var(--gutter) 0;
+}
+.usp {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 44px 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  background: var(--v-pine);
+  color: #fff;
+  border-radius: 32px;
+}
+.uspText {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.uspTitle {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.uspBody {
+  margin: 0;
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+.uspPrice {
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 28px 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  min-width: 0;
+}
+.uspFrom {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--v-pine-light);
+}
+.uspAmount {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+.uspUnit {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.82);
+}
+.uspButton {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: #fff;
+  color: var(--v-ink);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.uspButton:hover {
+  background: var(--v-pine-bg);
+}
+
 /* ================= Forberedte kunder ================= */
 
 .preparedPhoto {
@@ -709,9 +793,33 @@
   }
 }
 
+@media (max-width: 1019.98px) {
+  .usp {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 36px 32px;
+    gap: 28px;
+  }
+  .uspPrice {
+    justify-self: stretch;
+  }
+}
+
 @media (max-width: 767.98px) {
   .heroTitle {
     font-size: 40px;
+  }
+  .usp {
+    padding: 28px 20px;
+    border-radius: 24px;
+  }
+  .uspTitle {
+    font-size: 28px;
+  }
+  .uspPrice {
+    padding: 22px 20px;
+  }
+  .uspAmount {
+    font-size: 48px;
   }
   .heroPhoto {
     border-radius: 18px;
