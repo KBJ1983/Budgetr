@@ -927,6 +927,16 @@
 .closingCtas .btnDark {
   align-self: auto;
 }
+.closingLogin {
+  font: 400 16px var(--font-geist);
+  color: #3d2b07;
+}
+.page .closingLogin a {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
 /* Footer */
 .footer {
@@ -975,7 +985,7 @@
     border-radius: 24px;
   }
   .top {
-    gap: 12px;
+    gap: 8px;
   }
   .topCta {
     display: none;
@@ -983,7 +993,19 @@
   .page .topLink {
     border: 1px solid #3a3c40;
     border-radius: 999px;
-    padding: 8px 14px;
+    padding: 7px 11px;
+    font-size: 14px;
+  }
+  /* Room for both "Log ind" and "Elevkode" at 390 px: a smaller wordmark (its size is inline) and pill. */
+  .top .brand {
+    gap: 6px;
+  }
+  .top .brand > [role="img"] {
+    font-size: 20px !important;
+  }
+  .top .pill {
+    font-size: 11px;
+    padding: 3px 8px;
   }
   .hero {
     padding-top: 40px;

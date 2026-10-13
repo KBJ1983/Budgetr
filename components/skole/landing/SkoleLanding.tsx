@@ -24,6 +24,9 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
               <a href="#pris">Pris</a>
             </nav>
             <div className={l.topRight}>
+              <a href={`${base}/laerer`} className={l.topLink}>
+                Log ind
+              </a>
               <a href={`${base}/elev`} className={l.topLink}>
                 Elevkode
               </a>
@@ -248,10 +251,13 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
             </h2>
             <p className={l.closingP}>Opret en klasse og del elevkoderne. Det kræver ikke, at eleverne har en bruger.</p>
             <div className={l.closingCtas}>
-              <a href={`${base}/laerer`} className={l.btnDark}>
+              <a href={`${base}/laerer?ny=1`} className={l.btnDark}>
                 Opret en klasse
               </a>
             </div>
+            <p className={l.closingLogin}>
+              Har du allerede en lærerbruger? <a href={`${base}/laerer`}>Log ind</a>
+            </p>
           </div>
         </div>
       </section>
