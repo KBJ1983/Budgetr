@@ -79,7 +79,7 @@ header.topbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justif
 .navrow .tabs{border-bottom:0!important;margin-top:0!important}
 .navrow .tools{padding-bottom:8px}
 .navrow .tabs{overflow-x:auto;scrollbar-width:none;max-width:100%} .navrow .tabs button{white-space:nowrap}
-@media (max-width:640px){.tbr .expmenu{left:0;right:auto;max-width:calc(100vw - 24px)} .tbr .expwrap:last-child .expmenu{left:auto;right:0}}
+@media (max-width:640px){.tbr .expmenu{left:0;right:auto;max-width:calc(100vw - 24px)} .tbr .expwrap:last-child .expmenu{left:auto;right:0} .navrow #scnMenu{left:0;right:auto;min-width:0;width:min(330px,calc(100vw - 24px))}}
 .mh{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);padding:6px 10px 4px}
 .mhr{border:0;border-top:1px solid var(--rule);margin:4px 2px}
 .expmenu.mine{min-width:300px} #setMenu{min-width:320px}
@@ -374,6 +374,7 @@ tr.cat .gcount{margin-left:8px}
 .catrow.hl input{border-color:var(--pine);box-shadow:0 0 0 3px var(--pine-bg)}
 .gcount{margin-left:10px;font-size:12px;font-weight:400;color:var(--ink3)}
 tr.cat td:first-child{padding-left:16px}
+@media (pointer:coarse){.pfold,.addp,.catdots,.catbtn,.info{position:relative}.pfold::after,.addp::after,.catdots::after,.catbtn::after,.info::after{content:"";position:absolute;inset:-8px}}
 .addp{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin-left:10px;padding:0!important;border-radius:6px!important;font:600 15px/1 var(--font)!important;vertical-align:1px;color:var(--ink2);background:var(--card)!important;border:1px solid var(--rule)!important}
 .addp:hover{color:var(--on-pine)!important;background:var(--pine)!important;border-color:var(--pine)!important}
 tr.grp.in .addp:hover{background:var(--pine)!important}
@@ -504,6 +505,7 @@ dialog h2{margin-bottom:16px}
 .psrow button{padding:2px 8px}
 .psav select{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:7px 10px;font:inherit;font-size:14px;color:var(--ink);max-width:100%}
 .psrow.legacy{border-style:dashed}
+@media (max-width:560px){.psrow .nm{white-space:normal;overflow-wrap:anywhere}.psrow .nm small{display:block;margin-left:0}.psrow button{min-height:34px;min-width:34px}.psrow.legacy{grid-template-columns:minmax(0,1fr) auto}.psrow.legacy>span:last-child{grid-column:1/-1;justify-content:flex-end}}
 .psrow.click{cursor:pointer} .psrow.click:hover{border-color:var(--pine)} .psrow.click:hover .nm{color:var(--pine)}
 .psum{font-size:14px;color:var(--ink2);border-top:1px solid var(--rule);margin-top:4px;padding-top:6px}
 .psum b{color:var(--ink);font-variant-numeric:tabular-nums}
