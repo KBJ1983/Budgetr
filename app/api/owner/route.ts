@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { inviteAdmins } from "@/lib/agreement-auth";
 import { loadPackUse } from "@/lib/agreements";
 import { applyChange } from "@/lib/owner";
 import { isOwner, listAccounts, loadOverview, readLedger, writeLedger } from "@/lib/owner-store";
@@ -29,5 +30,11 @@ export async function POST(req: NextRequest) {
   const r = applyChange(ledger, body, ids, await loadPackUse(ledger.orgs));
   if (!r.ok) return Response.json({ error: r.error }, { status: 400, headers: noStore });
   await writeLedger(r.ledger);
+  // New kundeadmins get a mail telling them they can log in on /aftale.
+  for (const org of r.ledger.orgs) {
+    const before = ledger.orgs.find((o) => o.id === org.id)?.admins ?? [];
+    const added = (org.admins ?? []).filter((e) => !before.includes(e));
+    if (added.length) await inviteAdmins(req.nextUrl.origin, org, added);
+  }
   return Response.json(await loadOverview(), { headers: noStore });
 }

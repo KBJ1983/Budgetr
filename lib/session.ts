@@ -125,6 +125,33 @@ export async function readTeacherSession(value: string | undefined, now = new Da
   return Number(m[2]) > now.getTime() ? m[1]! : null;
 }
 
+// ---- Kundeadmin session on /aftale: "<kundeadmin id>.<expires ms>.<HMAC>", set by app/api/aftale/auth/* ------------
+
+export const AGREEMENT_COOKIE = "budgetr_aftale";
+export const AGREEMENT_MAX_AGE_S = 30 * 24 * 60 * 60;
+
+export async function makeAgreementSession(adminId: string, now = new Date(), dir?: string): Promise<string> {
+  const body = `${adminId}.${now.getTime() + AGREEMENT_MAX_AGE_S * 1000}`;
+  return `${body}.${sign(await key(dir), body)}`;
+}
+
+/** The kundeadmin id in a valid, unexpired /aftale cookie, else null. */
+export async function readAgreementSession(value: string | undefined, now = new Date(), dir?: string): Promise<string | null> {
+  const m = /^(k-[0-9a-f]{16})\.(\d+)\.([\w-]+)$/.exec(value || "");
+  if (!m) return null;
+  const want = Buffer.from(sign(await key(dir), `${m[1]}.${m[2]}`)), got = Buffer.from(m[3]!);
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
+  return Number(m[2]) > now.getTime() ? m[1]! : null;
+}
+
+export const agreementCookieOptions = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+  maxAge: AGREEMENT_MAX_AGE_S,
+};
+
 export const teacherCookieOptions = {
   httpOnly: true,
   sameSite: "lax" as const,

@@ -1,0 +1,152 @@
+/* /aftale (components/aftale/): the kundeadmin's page and its login, on top of the bx styles in app/login/app.css. */
+
+.af-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.af-login-card {
+  width: min(400px, 100%);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.af-login-card h1 {
+  margin: 4px 0 0;
+  font-size: 20px;
+}
+.af-login-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+.af-login-card .bx-btn {
+  justify-content: center;
+}
+
+.af {
+  min-height: 100vh;
+}
+.af-title {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+.af-lead {
+  margin: 0 0 16px;
+  max-width: 640px;
+  line-height: 1.5;
+}
+.af-org {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+.af-org-select {
+  height: 36px;
+  width: auto;
+  max-width: 100%;
+}
+
+/* E-mail field with its button next to it (under it on phones). */
+.af-give {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+.af-give .bx-field {
+  flex: 1;
+}
+.af-give .bx-btn {
+  height: 44px;
+}
+.af-colleague {
+  margin-top: 12px;
+}
+.af .bx-note,
+.af .bx-error {
+  margin: 12px 0 0;
+}
+.af-search {
+  height: 36px;
+  width: min(240px, 100%);
+}
+
+.af-grants,
+.af-list {
+  padding: 0;
+}
+.af-grant,
+.af-list-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.af-grant:last-child,
+.af-list-row:last-child {
+  border-bottom: 0;
+}
+.af-grant-who,
+.af-list-row > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.af-grant-who b,
+.af-list-row b {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.af-grant small,
+.af-list-row small {
+  color: var(--tx-3);
+  font-size: 12px;
+}
+.af-grant-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.af-list-num {
+  text-align: right;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.af-list-num small {
+  display: block;
+}
+
+.af-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 760px) {
+  .af-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .af-give {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .af-grant {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .af-grant-actions .bx-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

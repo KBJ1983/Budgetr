@@ -706,7 +706,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: Overview;
           </Field>
           <Field
             label="Kundeadmins"
-            help={`Én e-mail pr. linje, højst ${MAX_ORG_ADMINS}. De giver aftalens pladser til deres brugere ved at skrive en e-mail. Ingen ser koderne.`}
+            help={`Én e-mail pr. linje, højst ${MAX_ORG_ADMINS}. De giver aftalens pladser til deres brugere ved at skrive en e-mail. Ingen ser koderne. Nye kundeadmins får en mail med et link til /aftale, når du gemmer.`}
           >
             <textarea className="bx-input ow-textarea" name="admins" rows={3} defaultValue={(editing.org?.admins ?? []).join("\n")} />
           </Field>
