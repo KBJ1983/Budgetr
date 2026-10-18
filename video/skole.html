@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  Skole film (56 s): budgetpro Skole as a course over four lessons. The teacher makes a class in two minutes, then the
+  Skole film (about 1 min 36 s): budgetpro Skole as a course over four lessons. The teacher makes a class in two minutes, then the
   film follows the four lessons and the features in each (the future persons, pay after tax, choices and the budget
   meter, savings with a date and the "Hvorfor?" box, the what-if scenarios and "Mit budget"), and ends with how the
   teacher follows the class. Skole's own theme "Midnat og solgul" (docs/design/skole-21b.html, data-theme="skole" in
@@ -354,8 +354,9 @@
 <script src="film.js"></script>
 <script>
   const { $, $$, p, out, back, inOut, lerp, kr, put, rise, scene, enter, caption, words, cursor, press, bars } = F;
-  const S1 = [0, 5.4], S2 = [5.0, 11.4], S3 = [11.0, 16.8], L1 = [16.4, 23.0], L2 = [22.6, 29.8], L3 = [29.4, 36.8], L4 = [36.4, 43.8], S5 = [43.4, 50.4];
-  const END = 50.0, DURATION = 56;
+  // Each scene: its caption alone, then its visual alone (F.timeline gives [visual start, end] and .a = caption start)
+  const TL = F.timeline({ intro: 6.6, scenes: [["#c2", 7.6], ["#c3", 5.4], ["#cl1", 7.6], ["#cl2", 6.6], ["#cl3", 8.4], ["#cl4", 7.6], ["#c5", 7.0]] });
+  const [S2, S3, L1, L2, L3, L4, S5] = TL.scenes, END = TL.END, DURATION = TL.DURATION;
 
   const CODES = ["BLÅ-ORM-47", "GUL-RÆV-12", "GRØN-SÆL-31", "RØD-LAKS-05", "HVID-UGLE-63", "SORT-KAT-28", "BRUN-BI-74", "GRÅ-MÅGE-40", "BLÅ-HJORT-22", "GUL-KRAGE-87", "GRØN-FRØ-16", "RØD-RÆV-59"];
   $("#grid").innerHTML = CODES.map((c) => `<span class="code">${c}</span>`).join("");
@@ -369,11 +370,10 @@
   $("#arcs").innerHTML = SEGS.map(([c]) => `<circle cx="150" cy="150" r="${R}" fill="none" stroke="${c}" stroke-width="40" />`).join("");
   const ANSWER = "Ja, hvis hun vælger streaming fra og spiser lidt billigere.";
 
-  const ORB = [
-    [0, { x: 1500, y: 560, d: 560 }], [S2[0], { x: 1740, y: 300, d: 600 }], [S3[0] + 0.4, { x: 1000, y: 880, d: 640 }],
-    [L1[0] + 0.4, { x: 1720, y: 860, d: 560 }], [L2[0] + 0.4, { x: 960, y: 260, d: 600 }], [L3[0] + 0.4, { x: 1760, y: 380, d: 560 }],
-    [L4[0] + 0.4, { x: 1000, y: 900, d: 600 }], [S5[0] + 0.4, { x: 1000, y: 300, d: 640 }],
-  ];
+  const ORB = F.soloOrb({ x: 1500, y: 560, d: 560 }, TL.scenes, [
+    { x: 1500, y: 300, d: 600 }, { x: 600, y: 860, d: 640 }, { x: 1500, y: 860, d: 560 }, { x: 560, y: 260, d: 600 },
+    { x: 1500, y: 380, d: 560 }, { x: 620, y: 900, d: 600 }, { x: 1400, y: 300, d: 640 },
+  ]);
   const PLUS = [2.0, 2.3, 2.6, 2.9];
   /** Multiplies the opacity an earlier call gave el by k (for a card that leaves before its scene ends). */
   const dim = (el, k) => {
@@ -399,12 +399,12 @@
       put(el, { o: out(p(t, 2.3 + i * 0.2, 2.6 + i * 0.2)), y: (1 - k) * 30, s: lerp(0.8, 1, k) });
     });
     F.orb(t, ORB);
-    rise(".dots", t, S2[0] + 0.4, 1e9, 30);
+    rise(".dots", t, S2.a + 0.4, 1e9, 30);
 
     // 2 · Make a class, then the codes take its place
     const u2 = t - S2[0];
-    scene("#s2", t, S2[0] - 0.4, S2[1]);
-    caption("#c2", t, S2[0] + 0.3);
+    scene("#s2", t, S2.a - 0.4, S2[1]);
+    F.title("#c2", t, S2.a + 0.3, S2[0]);
     enter("#create", t, S2[0] + 0.4, S2[1]);
     dim("#create", 1 - out(p(u2, 3.6, 4.0)));
     $("#g8").classList.toggle("on", u2 >= 1.5);
@@ -421,8 +421,8 @@
 
     // 3 · The four lessons
     const u3 = t - S3[0];
-    scene("#s3", t, S3[0], S3[1]);
-    caption("#c3", t, S3[0] + 0.2);
+    scene("#s3", t, S3.a, S3[1]);
+    F.title("#c3", t, S3.a + 0.2, S3[0]);
     $$("#plan .ls").forEach((el, i) => {
       const a = 0.6 + i * 0.25, k = back(p(u3, a, a + 0.7));
       put(el, { o: out(p(u3, a, a + 0.3)), y: (1 - k) * 80, r: (1 - k) * (i % 2 ? 4 : -4), s: lerp(0.9, 1, k) });
@@ -430,8 +430,8 @@
 
     // 4 · Lesson 1: pick Sara, then her pay after tax
     const v1 = t - L1[0];
-    scene("#l1", t, L1[0], L1[1]);
-    caption("#cl1", t, L1[0] + 0.2);
+    scene("#l1", t, L1.a, L1[1]);
+    F.title("#cl1", t, L1.a + 0.2, L1[0]);
     $$("#cases .pc").forEach((el, i) => pop(el, v1, 0.4 + i * 0.15, { y: 60 }));
     $("#pcSara").classList.toggle("on", v1 >= 1.7);
     enter("#pay", t, L1[0] + 2.2, L1[1]);
@@ -443,8 +443,8 @@
 
     // 5 · Lesson 2: home, fixed costs, daily life – the meter follows each choice
     const v2 = t - L2[0];
-    scene("#l2", t, L2[0], L2[1]);
-    caption("#cl2", t, L2[0] + 0.2);
+    scene("#l2", t, L2.a, L2[1]);
+    F.title("#cl2", t, L2.a + 0.2, L2[0]);
     enter("#choose", t, L2[0] + 0.3, L2[1]);
     $("#optDel").classList.toggle("on", v2 >= 1.6);
     const fx = $$("#fx span");
@@ -462,8 +462,8 @@
 
     // 6 · Lesson 3: drag the goal from 24 to 12 months, then "Hvorfor?" and a reflection answer
     const v3 = t - L3[0];
-    scene("#l3", t, L3[0], L3[1]);
-    caption("#cl3", t, L3[0] + 0.2);
+    scene("#l3", t, L3.a, L3[1]);
+    F.title("#cl3", t, L3.a + 0.2, L3[0]);
     enter("#save", t, L3[0] + 0.3, L3[1]);
     const months = Math.round(lerp(24, 12, inOut(p(v3, 1.6, 2.8))));
     const pos = (months - 3) / 21;
@@ -479,8 +479,8 @@
 
     // 7 · Lesson 4: what if, then "Mit budget" and the PDF
     const v4 = t - L4[0];
-    scene("#l4", t, L4[0], L4[1]);
-    caption("#cl4", t, L4[0] + 0.2);
+    scene("#l4", t, L4.a, L4[1]);
+    F.title("#cl4", t, L4.a + 0.2, L4[0]);
     enter("#what", t, L4[0] + 0.3, L4[1]);
     const rent = v4 >= 1.5, job = v4 >= 2.5;
     $("#scRent").classList.toggle("on", rent);
@@ -497,8 +497,8 @@
 
     // 8 · Follow the class
     const u5 = t - S5[0];
-    scene("#s5", t, S5[0], S5[1]);
-    caption("#c5", t, S5[0] + 0.2);
+    scene("#s5", t, S5.a, S5[1]);
+    F.title("#c5", t, S5.a + 0.2, S5[0]);
     enter("#klasse", t, S5[0] + 0.3, S5[1]);
     const fill = out(p(u5, 1.0, 2.6));
     $("#stA").textContent = `${Math.round(63 * fill)} %`;
@@ -514,9 +514,9 @@
     const dk = back(p(t, S5[0] + 3.8, S5[0] + 4.5));
     put("#detail", { o: out(p(t, S5[0] + 3.8, S5[0] + 4.1)), x: (1 - dk) * 100, y: (1 - dk) * 30, r: (1 - dk) * 4 });
 
-    bars(t, [S2, S3, L1, L2, L3, L4, S5].map(([a, b]) => [a + 0.3, b - 0.2]), [5.4, END + 0.3]);
+    bars(t, [S2, S3, L1, L2, L3, L4, S5].map((s) => [s.a + 0.3, s[1] - 0.2]), [S2.a, END + 0.3]);
 
-    F.curtain(t, ["#s1", S2[0] - 0.1], ["#end", END]);
+    F.curtain(t, ["#s1", S2.a - 0.1], ["#end", END]);
 
     // End card
     F.darkBg("#end", t, END + 0.6);
@@ -537,7 +537,7 @@
     ]);
   }
 
-  F.film({ duration: DURATION, frame });
+  F.film({ duration: DURATION, frame, solo: true });
 </script>
 </body>
 </html>

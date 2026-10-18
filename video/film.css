@@ -81,12 +81,24 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 
 /* Captions, left column */
 .cap { position: absolute; left: 140px; top: 290px; width: 640px; }
-.cap .step, .tag { display: inline-flex; align-items: center; gap: 14px; font-size: 20px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--olive); margin-bottom: 30px; }
-.cap .step b { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--midnight); color: var(--lime); font-size: 21px; font-weight: 600; letter-spacing: 0; }
+.cap .step, .vtag .step, .tag { display: inline-flex; align-items: center; gap: 14px; font-size: 20px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--olive); margin-bottom: 30px; }
+.cap .step b, .vtag .step b { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--midnight); color: var(--lime); font-size: 21px; font-weight: 600; letter-spacing: 0; }
 .tag i { width: 14px; height: 14px; border-radius: 50%; background: var(--lime-dark); box-shadow: 0 0 0 6px var(--lime-tone); }
 .cap h2 { font-size: 74px; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 28px; }
 .cap p { font-size: 30px; line-height: 1.42; color: var(--ink-2); }
 .nw { white-space: nowrap; }
+
+/*
+ * Solo layout (film.js soloLayout, <html data-layout="solo">): the caption is shown alone in the middle of the stage,
+ * then the visual alone (.vis, moved to the middle by film.js) under a small copy of the overline (.vtag).
+ */
+[data-layout="solo"] .cap { left: 220px; right: 220px; width: auto; top: 0; bottom: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+[data-layout="solo"] .cap h2 { font-size: 100px; margin-bottom: 40px; }
+[data-layout="solo"] .cap p { max-width: 1200px; font-size: 40px; line-height: 1.4; }
+[data-layout="solo"] .cap .step, [data-layout="solo"] .cap .tag { font-size: 24px; margin-bottom: 40px; }
+.vis { position: absolute; inset: 0; }
+.vtag { position: absolute; left: 0; right: 0; top: 54px; display: flex; justify-content: center; }
+.vtag > * { margin-bottom: 0 !important; }
 
 /* Progress along the bottom */
 #steps { position: absolute; left: 140px; bottom: 84px; display: flex; gap: 12px; }
@@ -193,3 +205,9 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 [data-format="reel"] .end .fcard.a { left: 90px !important; top: 300px !important; }
 [data-format="reel"] .end .fcard.b { left: 760px !important; top: 380px !important; }
 [data-format="reel"] .end .fcard.c { left: 700px !important; top: 1420px !important; }
+
+/* Solo layout in a reel: the caption in the middle of the stage, the tag at the top of the safe area */
+[data-format="reel"][data-layout="solo"] .cap { left: 80px; right: 80px; top: 220px; bottom: 280px; }
+[data-format="reel"][data-layout="solo"] .cap h2 { font-size: 92px; }
+[data-format="reel"][data-layout="solo"] .cap p { font-size: 40px; }
+[data-format="reel"] .vtag { top: 270px; }

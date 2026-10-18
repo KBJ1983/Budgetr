@@ -6,12 +6,16 @@
  *   pnpm video privat --still=12.5 out.png     → one PNG of second 12.5 instead (for checking a frame)
  *   pnpm video skole --reel                    → public/video/budgetpro-skole-reel.mp4, 1080×1920 (9:16) for phones
  *                                                and reels
+ *
+ * Each film gets its own calm background tune from scripts/music.mjs (made by us, so free to use), as long as the film.
  */
 import { spawn } from "node:child_process";
-import { mkdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
+import { writeMusic } from "./music.mjs";
 
 const FPS = 30;
 const FILMS = ["erhverv", "privat", "skole", "kom-i-gang"];
@@ -43,10 +47,15 @@ if (still) {
   process.exit(0);
 }
 
+const tmp = mkdtempSync(join(tmpdir(), "budgetpro-film-"));
+const music = join(tmp, "music.wav");
+writeMusic(music, name, duration);
+
 const ffmpeg = spawn(
   process.env.FFMPEG ?? "ffmpeg",
-  ["-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", String(FPS), "-i", "-",
-   "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out],
+  ["-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", String(FPS), "-i", "-", "-i", music,
+   "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
+   "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", out],
   { stdio: ["pipe", "inherit", "inherit"] },
 );
 const done = new Promise((ok, fail) => ffmpeg.on("close", (code) => (code === 0 ? ok() : fail(new Error(`ffmpeg exited with ${code}`)))));
@@ -61,4 +70,5 @@ for (let i = 0; i < frames; i++) {
 ffmpeg.stdin.end();
 await done;
 await browser.close();
+rmSync(tmp, { recursive: true, force: true });
 console.log(`Wrote ${out}`);

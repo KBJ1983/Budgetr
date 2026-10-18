@@ -256,18 +256,18 @@ try {
     await p3.goto(`${BASE}/app`);
     await p3.locator("#btnWizStart").click();
     const wiz = p3.locator("#dlgWiz"), next = () => wiz.locator("#wzNext").click();
+    check(!(await wiz.locator("#wzSkip").isVisible()), "guide: the start step can't be skipped");
+    check((await wiz.locator("[name=wzStart]").count()) === 3, "guide: starts with empty / statements / existing budgets");
+    await wiz.locator('[name=wzStart][value="budget"]').check();
+    await next(); // Start
+    await wiz.locator("#wzName").fill("Testbudget");
     await next(); // Navn
     await wiz.locator("[data-wp='0'] [data-f=name]").fill("Person 1");
     await wiz.locator("[data-wp='0'] [data-f=sal]").fill("30000");
-    await next(); await next(); // Personer, Konti
-    await wiz.locator("[data-we='0'] [data-f=amt]").fill("9000");
-    await wiz.locator("[data-we='1'] [data-f=amt]").fill("500");
-    await wiz.locator("[data-we='12'] [data-f=amt]").fill("4000");
-    await next(); await next(); await next(); // Faste udgifter, Fordeling, Opsparingsmål
+    await next(); // Personer
+    check(await wiz.locator("#wzSkip").isVisible(), "guide: the accounts step can be skipped");
+    await next(); await next(); await next(); await next(); // Konti, Overskrifter, Fordeling, Opsparingsmål
     check(await wiz.locator("#wzSkip").isVisible(), "guide: the bank step can be skipped");
-    const boxes = wiz.locator("[data-wb]");
-    check((await boxes.count()) === 3 && !(await boxes.nth(2).isChecked()), "guide: bank step lists the expenses, household unticked");
-    await boxes.nth(1).uncheck();
     await wiz.locator("#wzBkC").fill("2");
     let over = await p3.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(over <= 0, `no horizontal scroll at 390px on the guide's bank step (${over}px)`);
@@ -281,12 +281,16 @@ try {
     await p3.screenshot({ path: `${OUT}/guide-remind.png` });
     await next();
     check((await wiz.getByText("Påmindelse hver 3. måned · også på mail").count()) > 0, "guide: summary shows the reminder");
+    check((await wiz.getByText("Start: ud fra eksisterende budgetter, der lægges ind, når budgettet er oprettet").count()) > 0, "guide: summary shows the start choice");
     await p3.screenshot({ path: `${OUT}/guide-summary.png` });
     await next(); // Opret budget
     await p3.waitForTimeout(900);
-    const st = saved?.settings, ex = saved?.entries?.filter((e) => e.type === "udgift") ?? [];
+    const st = saved?.settings;
     check(st?.remind?.every === 3 && st.remind.mail === true && !("email" in st.remind), "guide: reminder settings are saved, without contact details");
-    check(st?.bank?.children === 2 && ex.length === 3 && ex.filter((e) => e.bank).length === 1, "guide: bank choices are saved");
+    check(st?.bank?.children === 2, "guide: bank choices are saved");
+    check(await p3.locator("#dlgDImp").evaluate((d) => d.open) && (await p3.locator("#dimpTitle").textContent()) === "Filer til budgettet",
+      "guide: starting from budgets opens the file import on the new budget");
+    check((await p3.locator("#dimpBody").getByText(/Læg de budgetter ind, du vil bygge videre på/).count()) > 0, "guide: the import speaks of budgets when started from budgets");
     await ctx.close();
   }
   // budgetpro Skole: a teacher signs up and logs in with the code, makes a class, a pupil goes through the 8 steps,

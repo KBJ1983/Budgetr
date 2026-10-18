@@ -4,6 +4,7 @@
  * frame deterministic: scripts/video.mjs calls window.seek(t) frame by frame and pipes screenshots to ffmpeg.
  * Opened directly in a browser (no ?render) the film plays on a loop, scaled to the window.
  * Reusable scenes: F.importScene() (statement import into a draft budget) and F.deck() (feature montage).
+ * Solo layout (F.film({ solo: true }), F.timeline, F.title): a caption alone first, then its visual alone, centred.
  * Motion graphics ("Midnat og lime"; the accent comes from film.css, so a theme such as skole's solgul swaps it): the logo builds itself (F.buildLogo – the two cards drop into the pocket), headlines
  * come in word by word (F.split + F.words), key phrases get a lime underline (F.hl), the dark intro lifts like a curtain
  * with a lime band behind it and the end card drops the same way (F.curtain), floating cards drift on the dark cards
@@ -107,6 +108,70 @@
     }
     $$(":scope > p, :scope > ul", el).forEach((x, i) => rise(x, t, a + 0.6 + i * 0.15, 1e9, 24));
   }
+  /**
+   * Solo layout (F.film({ solo: true })): a scene shows its caption alone, centred, from second a; at b it lifts away
+   * and the visual comes in alone. The scene's overline stays as a small tag at the top while the visual plays.
+   */
+  function title(el, t, a, b) {
+    el = $(el);
+    caption(el, t, a);
+    const k = inOut(p(t, b - 0.6, b));
+    put(el, { o: 1 - k, y: -60 * k });
+    const tag = el.parentElement && $(":scope > .vtag", el.parentElement);
+    if (tag) rise(tag, t, b + 0.1, 1e9, 16);
+  }
+  /**
+   * Timing for the solo layout. scenes = [[captionSelector, visualSeconds], …] after an intro of `intro` seconds. Each
+   * scene gets a caption beat long enough to read (from the number of words), then its visual. Returns one [v, b] per
+   * scene (visual from v to b) with .a = when the scene and its caption begin, plus END (the end card) and DURATION.
+   */
+  function timeline({ intro, scenes, end = 5.8, overlap = 0.4 }) {
+    let t = intro;
+    const out = scenes.map(([cap, len]) => {
+      const n = $$("h2, :scope > p", $(cap)).map((x) => x.textContent.trim().split(/\s+/).length).reduce((s, x) => s + x, 0);
+      const a = t - overlap, v = a + clamp(1.6 + 0.19 * n, 3.4, 5.6);
+      t = v + len;
+      return Object.assign([v, t], { a });
+    });
+    return { scenes: out, END: t - overlap, DURATION: t - overlap + end };
+  }
+  /**
+   * Solo layout: everything in a scene layer except its caption goes into a .vis wrapper (a film can also mark its own
+   * .vis), each wrapper is moved so its visuals sit in the middle of the stage, and the overline is copied into a .vtag.
+   * Uses offsets, so the transforms set by frame() don't matter; runs once the images have loaded.
+   */
+  function soloLayout() {
+    $$(".layer").forEach((layer) => {
+      const cap = $(":scope > .cap", layer);
+      if (!cap || $(":scope > .vis", layer)) return;
+      const vis = document.createElement("div");
+      vis.className = "vis";
+      [...layer.children].filter((c) => c !== cap).forEach((c) => vis.append(c));
+      if (vis.children.length) layer.append(vis);
+      const tag = $(".tag, .step", cap);
+      if (tag) {
+        const v = document.createElement("div");
+        v.className = "vtag";
+        const c = tag.cloneNode(true);
+        c.removeAttribute("style");
+        v.append(c);
+        layer.append(v);
+      }
+    });
+    // Where the visuals go: the middle of the stage, under the tag (and above the progress bars in 16:9)
+    const box = REEL ? { x: W / 2, y: 990 } : { x: W / 2, y: 560 };
+    $$(".vis").forEach((vis) => {
+      let l = 1e9, tp = 1e9, r = -1e9, b = -1e9;
+      [...vis.children].forEach((c) => {
+        if (!c.offsetWidth) return;
+        l = Math.min(l, c.offsetLeft), tp = Math.min(tp, c.offsetTop);
+        r = Math.max(r, c.offsetLeft + c.offsetWidth), b = Math.max(b, c.offsetTop + c.offsetHeight);
+      });
+      if (r < l) return;
+      vis.style.transform = `translate(${Math.round(box.x - (l + r) / 2)}px, ${Math.round(box.y - (tp + b) / 2)}px)`;
+    });
+  }
+
   /** A number counting up from 0 to `to` between a and b. */
   const count = (el, t, a, b, to, fmt = kr) => ($(el).textContent = fmt(to * out(p(t, a, b))));
 
@@ -264,7 +329,7 @@
    * 1920×1080 stage; in a reel they are moved into the lower half, where the visuals are).
    */
   function orb(t, keys) {
-    if (REEL) keys = keys.map(([k, o]) => [k, { x: (o.x / 1920) * 1080, y: 760 + (o.y / 1080) * 1000, d: o.d * 1.1 }]);
+    if (REEL) keys = keys.map(([k, o]) => [k, o.reel || { x: (o.x / 1920) * 1080, y: 760 + (o.y / 1080) * 1000, d: o.d * 1.1 }]);
     let A = keys[0], B = keys[0];
     for (let i = 0; i < keys.length; i++) if (t >= keys[i][0]) (A = keys[i]), (B = keys[i + 1] || keys[i]);
     const k = B === A ? 0 : inOut(p(t, B[0] - Math.min(1.2, B[0] - A[0]), B[0]));
@@ -274,6 +339,18 @@
     const d2 = d * 1.22;
     $("#orb2").style.transform = `translate(${x - 50 + Math.cos(t * 0.6) * 24}px, ${y - 50 + Math.sin(t * 0.5) * 20}px) scale(${d2 / 100})`;
     $("#orb2").style.borderWidth = `${200 / d2}px`;
+  }
+
+  /**
+   * Orb keys for the solo layout: `intro` during the intro, then for each scene a corner while its caption is shown
+   * (so the orb is never behind the text) and spots[i] behind its visual. A key's .reel is used as it is in a reel.
+   */
+  function soloOrb(intro, scenes, spots) {
+    const CORNERS = [
+      { x: 1790, y: 960, d: 440, reel: { x: 990, y: 1790, d: 420 } },
+      { x: 1810, y: 120, d: 400, reel: { x: 90, y: 1780, d: 400 } },
+    ];
+    return [[0, intro], ...scenes.flatMap((s, i) => [[s.a + 0.3, CORNERS[i % 2]], [s[0] + 0.4, spots[i]]])];
   }
 
   const CHECK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -376,8 +453,9 @@
     return { update };
   }
 
-  function film({ duration, frame }) {
+  function film({ duration, frame, solo = false }) {
     stage = $("#stage");
+    if (solo) document.documentElement.dataset.layout = "solo";
     brand();
     stage.insertAdjacentHTML("afterbegin", '<div id="orb2"></div><div id="orb"></div>');
     stage.insertAdjacentHTML("beforeend", '<div class="curtain lime" id="curtainLime" style="z-index:29;opacity:0"></div>');
@@ -391,7 +469,7 @@
     window.ready = Promise.all([
       document.fonts.ready,
       ...[...document.images].map((im) => (im.complete ? 1 : new Promise((r) => (im.onload = im.onerror = r)))),
-    ]);
+    ]).then(() => solo && soloLayout());
     if (location.search.includes("render")) return frame(0);
     const fit = () => {
       const k = Math.min(innerWidth / W, innerHeight / H);
@@ -414,7 +492,7 @@
   }
 
   window.F = {
-    W, H, reel: REEL, $, $$, clamp, inOut, out, back, p, vis, lerp, kr, put, rise, slide, enter, scene, split, words, hl, caption, count, centre,
+    W, H, reel: REEL, $, $$, clamp, inOut, out, back, p, vis, lerp, kr, put, rise, slide, enter, scene, split, words, hl, caption, title, timeline, soloOrb, count, centre,
     cursor, press, bars, buildLogo, darkBg, curtain, orb, importScene, deck, film,
   };
 })();

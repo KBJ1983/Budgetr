@@ -1,7 +1,8 @@
 <!doctype html>
 <!--
-  Kom i gang (90 s): the two ways to a first budget. Way 1 is the guide "Start nyt budget" from an empty budget (name,
-  people, accounts, fixed expenses, split, goals, the bank step skipped, reminders, then the summary). Way 2 is a draft
+  Kom i gang (94 s): the two ways to a first budget. Way 1 is the guide "Start nyt budget" from an empty budget (first
+  the start step: empty, from statements or from existing budgets – the film picks empty – then name, people, accounts, expense headings, split, goals, the bank step skipped, reminders, then the summary; the guide makes
+  no expense posts, they go in afterwards under the headings). Way 2 is a draft
   (Ny kladde) filled from statements (CSV/PDF) and a budget made in Excel (months as columns, the total row skipped),
   then "Sæt som primært budget". Texts, labels and numbers follow the app (public/budgetr-app/index.html: openWiz,
   renderWiz, openDft, renderDImp, budgetRows). "Midnat og lime"; runtime and shared styles in film.js / film.css.
@@ -54,7 +55,18 @@
   #hint span { font-size: 17px; color: var(--ink-3); }
 
   /* 3–6 · The guide */
-  #wiz { left: 840px; top: 150px; width: 980px; height: 760px; }
+  #wiz { left: 840px; top: 120px; width: 980px; height: 830px; }
+  .whint { position: absolute; left: 44px; right: 44px; bottom: 104px; font-size: 16px; color: var(--ink-3); }
+  .wgh { font-size: 17px; font-weight: 700; color: var(--ink); margin: 8px 0 6px; }
+  .wgr { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .wgr .gop { display: flex; align-items: center; gap: 12px; padding: 6px 12px; border: 1px solid var(--rule); border-radius: 10px; }
+  .wgr .gop b { display: block; font-size: 17px; font-weight: 600; line-height: 1.2; }
+  .wgr .gop small { display: block; font-size: 13.5px; color: var(--ink-3); line-height: 1.25; }
+  .wgr .gop .cb { width: 22px; height: 22px; border-radius: 6px; }
+  .wgr .gop .cb.dis { background: var(--rule-2); border-color: var(--rule-2); }
+  .wgr .gop.hit { background: var(--lime-tone); }
+  #wGu { grid-template-columns: repeat(3, 1fr); }
+  .px { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: var(--error); font-size: 18px; border: 1.5px solid var(--rule); }
   .wh { display: flex; align-items: center; gap: 22px; padding: 34px 44px 0; }
   .wh h3 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
   .dots9 { display: flex; align-items: center; gap: 6px; margin-left: auto; }
@@ -69,6 +81,10 @@
   .sum li::before { content: ""; position: absolute; left: 4px; top: 21px; width: 10px; height: 10px; border-radius: 50%; background: var(--lime-dark); }
   #wToast, #pToast, #rToast { position: absolute; white-space: nowrap; z-index: 6; }
   #wToast { left: 1180px; top: 116px; }
+  #wStart .opt { align-items: flex-start; padding: 14px 12px; border-radius: 12px; }
+  #wStart .opt b { display: block; font-size: 20px; font-weight: 600; }
+  #wStart .opt small { display: block; margin: 4px 0 0; white-space: normal; line-height: 1.35; }
+  #wStart .opt.hov { background: var(--lime-tone); }
 
   /* 6 · Result */
   #res { left: 840px; top: 190px; width: 960px; }
@@ -165,7 +181,7 @@
   /* Reel (1080×1920): the visuals under the captions */
   [data-format="reel"] #empty { left: 70px; top: 830px; width: 940px; }
   [data-format="reel"] #hint { left: 170px; top: 1340px; }
-  [data-format="reel"] #wiz { left: 50px; top: 820px; }
+  [data-format="reel"] #wiz { left: 50px; top: 790px; }
   [data-format="reel"] #wToast { left: 300px; top: 740px; }
   [data-format="reel"] #res { left: 60px; top: 860px; }
   [data-format="reel"] #menuBox { left: 80px; top: 830px; }
@@ -193,7 +209,7 @@
       <div class="abs" style="left:116px;top:92px"><span data-logo="dark" id="s1-logo" style="font-size:48px"></span></div>
       <div class="abs over" id="s1-eyebrow" style="left:116px;top:330px">Kom i gang</div>
       <h1 style="top:390px"><span id="s1-l1">Dit første budget.</span><span id="s1-l2"><span class="hl">To måder at starte.</span></span></h1>
-      <p class="abs" id="s1-sub" style="left:116px;top:660px;width:1100px;font-size:34px;line-height:1.4;color:var(--haze)">Byg det fra bunden med guiden – eller læg dine kontoudtog og dit gamle budget ind.</p>
+      <p class="abs" id="s1-sub" style="left:116px;top:660px;width:1100px;font-size:34px;line-height:1.4;color:var(--haze)">Start med guiden – tomt, ud fra dine kontoudtog eller ud fra de budgetter, du har.</p>
     </div>
   </div>
 
@@ -202,11 +218,11 @@
     <div class="cap" id="c2">
       <div class="tag"><i></i>To veje</div>
       <h2>Fra bunden, eller med <span class="hl">dine tal</span></h2>
-      <p>Guiden bygger budgettet trin for trin. Har du kontoudtog eller et budget i Excel, kan du lægge dem ind i en kladde.</p>
+      <p>Guiden bygger budgettet trin for trin – tomt eller ud fra dine tal. Har du allerede et budget, kan du også starte en kladde.</p>
     </div>
     <div class="abs card" id="empty">
       <h3>Intet budget endnu</h3>
-      <p>Guiden tager dig igennem personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser. Alt kan rettes bagefter.</p>
+      <p>I guiden vælger du først, om budgettet skal starte tomt, ud fra kontoudtog eller ud fra de budgetter, du har. Derefter personer, konti, faste udgifter, fordeling, opsparingsmål, bankens faste udgifter og påmindelser. Alt kan rettes bagefter.</p>
       <div class="row"><span class="btn" id="eStart">Start guiden</span><span class="btn ghost">Opret tomt budget</span></div>
     </div>
     <div class="abs card" id="hint">
@@ -215,26 +231,33 @@
     </div>
   </div>
 
-  <!-- 3–5 · Guide captions (the guide itself is one layer, #gw) -->
+  <!-- 3–5 · Guide captions (the guide itself is one layer, #gw); s3a is the start step -->
+  <div class="layer" id="s3a">
+    <div class="cap" id="c3a">
+      <div class="tag"><i></i>Vej 1 · Guiden</div>
+      <h2>Tomt, fra kontoudtog eller fra dit <span class="hl">budget</span></h2>
+      <p>Guiden spørger først, hvordan du vil starte. Vælger du kontoudtog eller budgetter, lægger du filerne ind, lige når budgettet er oprettet.</p>
+    </div>
+  </div>
   <div class="layer" id="s3">
     <div class="cap" id="c3">
       <div class="tag"><i></i>Vej 1 · Guiden</div>
       <h2>Navn, personer og <span class="hl">løn</span></h2>
-      <p>Guiden spørger om det, budgettet bygger på. Lønnen er den, der udbetales efter skat – og kan også komme på senere.</p>
+      <p>Navn og personer skal udfyldes. Lønnen er den, der udbetales efter skat – den kan også komme på senere.</p>
     </div>
   </div>
   <div class="layer" id="s4">
     <div class="cap" id="c4">
       <div class="tag"><i></i>Vej 1 · Guiden</div>
-      <h2>Konti og <span class="hl">faste udgifter</span></h2>
-      <p>Skriv de udgifter, du kender – hver måned, kvartalsvis eller årligt. Tomme felter springes over.</p>
+      <h2>Konti og <span class="hl">overskrifter</span></h2>
+      <p>Et forslag til overskrifter er sat til. Slå til og fra, så det passer til jer – posterne kommer ind bagefter.</p>
     </div>
   </div>
   <div class="layer" id="s5">
     <div class="cap" id="c5">
       <div class="tag"><i></i>Vej 1 · Guiden</div>
       <h2>Fordeling, mål og <span class="hl">påmindelser</span></h2>
-      <p>Vælg, hvordan I deler de fælles udgifter, og hvad I sparer op til. Trin, du ikke har brug for, kan du springe over.</p>
+      <p>Vælg, hvordan I deler de fælles udgifter, og hvad I sparer op til. Alle trin efter personerne kan springes over.</p>
     </div>
   </div>
 
@@ -242,34 +265,44 @@
     <div class="abs card" id="wiz">
       <div class="wh"><h3>Start nyt budget</h3><div class="dots9" id="wDots"></div></div>
 
+      <div class="wp" id="wStart">
+        <p class="lead">Hvordan vil du starte budgettet? Guiden spørger først om navn, personer og konti. Har du valgt filer, lægger du dem ind, når budgettet er oprettet. Selve filerne bliver ikke gemt, kun de poster, du vælger.</p>
+        <div class="opt" id="wsO0"><span class="rd on"></span><span><b>Tomt budget</b><small>Du lægger selv posterne ind under hver overskrift på siden Budgetposter</small></span></div>
+        <div class="opt" id="wsO1"><span class="rd"></span><span><b>Ud fra kontoudskrifter</b><small>Læg kontoudskrifter fra netbanken ind som CSV, Excel eller PDF. budgetpro finder de faste poster og overførslerne mellem jeres konti</small></span></div>
+        <div class="opt" id="wsO2"><span class="rd"></span><span><b>Ud fra eksisterende budgetter</b><small>Læg et eller flere budgetter fra Excel eller CSV ind. Posterne hentes ind, som de står, og kan suppleres med kontoudskrifter</small></span></div>
+      </div>
+
       <div class="wp" data-p="0">
         <p class="lead">Hvad skal budgettet hedde? Navnet står øverst på siden og i eksporten.</p>
         <div class="in" id="wName"></div>
       </div>
 
       <div class="wp" data-p="1">
-        <p class="lead">Hvem er med i budgettet? Skriv den løn, der udbetales efter skat hver måned. Beløbet kan springes over og tilføjes senere.</p>
-        <div class="grid" style="grid-template-columns:1fr 240px">
-          <span class="hd">Navn</span><span class="hd">Udbetalt løn pr. md.</span>
-          <div class="in" id="wP1n"></div><div class="in" id="wP1s"></div>
-          <div class="in" id="wP2n"></div><div class="in" id="wP2s"></div>
+        <p class="lead">Hvem er med i budgettet? Skriv navnet på hver person og den løn, der udbetales efter skat hver måned. Navnet skal udfyldes, lønnen kan du tilføje senere.</p>
+        <div class="grid" style="grid-template-columns:1fr 240px 44px">
+          <span class="hd">Navn</span><span class="hd">Udbetalt løn pr. md.</span><span></span>
+          <div class="in" id="wP1n"></div><div class="in" id="wP1s"></div><span class="px" id="wP1x">✕</span>
+          <div class="in" id="wP2n"></div><div class="in" id="wP2s"></div><span class="px" id="wP2x">✕</span>
         </div>
-        <div style="margin-top:14px"><span class="gbtn">Tilføj person</span></div>
+        <div style="margin-top:14px"><span class="gbtn" id="wAddP">Tilføj person</span></div>
       </div>
 
       <div class="wp" data-p="2">
-        <p class="lead">Hvilke konti bruger I? Navne og kontonumre kan rettes under "Konti og personer".</p>
+        <p class="lead">Hvilke konti bruger I? Navne og kontonumre kan rettes senere under Indstillinger.</p>
         <div class="opt" id="wA1"><span class="cb"></span>Fælles budgetkonto til de faste udgifter<span class="in">Budgetkonto</span></div>
+        <div class="opt" id="wA0" style="padding-left:40px">Saldo på budgetkontoen<span class="in" style="min-width:120px;margin-left:12px"><span class="ph">0</span></span><small style="margin-left:12px">valgfri</small></div>
         <div class="opt" id="wA2"><span class="cb"></span>En lønkonto til hver person (Anna, Jonas)</div>
         <div class="opt" id="wA3"><span class="cb"></span>Fælles opsparingskonto<span class="in">Fælles opsparing</span></div>
       </div>
 
       <div class="wp" data-p="3">
-        <p class="lead">Skriv de faste udgifter, I kender. Tomme felter springes over. Udgifterne lægges som fælles på Budgetkonto og kan fordeles om senere.</p>
-        <div class="grid" id="wExp" style="grid-template-columns:1fr 200px 200px;gap:8px 14px">
-          <span class="hd">Udgift</span><span class="hd">Beløb pr. betaling</span><span class="hd">Hvor ofte</span>
-        </div>
+        <p class="lead" style="margin-bottom:6px">Hvilke overskrifter skal budgettet have? Et forslag er sat til. Slå til og fra, så det passer til jer. Posterne lægger du bagefter ind under hver overskrift på siden Budgetposter.</p>
+        <div class="wgh">Indtægter</div>
+        <div class="wgr" id="wGi"></div>
+        <div class="wgh">Udgifter</div>
+        <div class="wgr" id="wGu"></div>
       </div>
+
 
       <div class="wp" data-p="4">
         <p class="lead">Hvordan skal de fælles udgifter deles?</p>
@@ -290,12 +323,17 @@
       </div>
 
       <div class="wp" data-p="6">
-        <p class="lead">Når banken regner rådighedsbeløbet ud, trækker den de faste udgifter fra indtægterne. Sæt flueben ved de udgifter, din bank tager med. Du kan springe trinnet over og rette det senere.</p>
-        <div id="wBank"></div>
+        <p class="lead">Når banken regner rådighedsbeløbet ud, trækker den de faste udgifter fra indtægterne. Når du opretter dine udgifter, kan du på hver post vælge, om banken tager den med.</p>
+        <p class="lead">Bankens vejledende krav til rådighedsbeløbet. Som tommelfingerregel for 2026 ligger det for et par på 11.000–12.500 kr. pr. måned, og hertil kommer cirka 2.500–3.500 kr. pr. barn.</p>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+          <span class="hd">Voksne i alt, kr./md.</span><span class="hd">Antal børn</span><span class="hd">Pr. barn, kr./md.</span>
+          <div class="in">12.000</div><div class="in">0</div><div class="in">3.000</div>
+        </div>
       </div>
 
+
       <div class="wp" data-p="7">
-        <p class="lead">Vil du have besked, når det er tid til at se budgettet igennem? Påmindelsen kommer, når budgettet ikke er rettet i den valgte periode.</p>
+        <p class="lead">Vil du have besked, når det er tid til at se budgettet igennem? Påmindelsen kommer, når budgettet ikke er rettet i den valgte periode. Du kan også få den på mail eller sms.</p>
         <div class="grid" style="grid-template-columns:340px"><span class="hd">Påmind mig om at opdatere budgettet</span><div class="in sel" id="wEvery">Aldrig</div></div>
         <div id="wRmMore" style="margin-top:8px">
           <div class="opt"><span class="cb"></span>Også på mail</div>
@@ -310,14 +348,16 @@
           <li>Vores budget</li>
           <li>2 personer: Anna, Jonas · løn for Anna, Jonas</li>
           <li>Konti: Budgetkonto, 2 lønkonti, Fælles opsparing</li>
-          <li>6 faste udgifter, i alt 18.411 kr pr. md.</li>
+          <li>Start: tomt budget, posterne lægges ind på siden Budgetposter</li>
+          <li>Overskrifter: Indtægter, Ekstra indtægter, Bolig, Forsyning, Forsikring, Bil, Kommunikation, Abonnementer, Husholdning, Fagforening og a-kasse, Børn, Ferie</li>
           <li>Fordeling: efter indkomst · automatiske overførsler</li>
           <li>1 opsparingsmål: Sommerferie i Italien</li>
-          <li>Bankens faste udgifter: 5 af 6 udgifter, 12.411 kr pr. md. · standardkrav</li>
+          <li>Bankens krav til rådighedsbeløbet: standardkrav</li>
           <li>Påmindelse hver 3. måned · besked ved milepæle</li>
         </ul>
       </div>
 
+      <p class="whint" id="wHint"></p>
       <div class="foot"><span class="gbtn" id="wBack">Tilbage</span>
         <div class="r"><span class="gbtn">Annullér</span><span class="gbtn" id="wSkip">Spring over</span><span class="btn" id="wNext">Næste</span></div></div>
     </div>
@@ -327,8 +367,8 @@
   <div class="layer" id="s6">
     <div class="cap" id="c6">
       <div class="tag"><i></i>Vej 1 · Guiden</div>
-      <h2>Opret – og ret <span class="hl">bagefter</span></h2>
-      <p>Du ser det hele samlet, før budgettet bliver oprettet. Bagefter kan alt rettes under Budgetposter og Indstillinger.</p>
+      <h2>Opret – og læg <span class="hl">posterne</span> ind</h2>
+      <p>Du ser det hele samlet, før budgettet bliver oprettet. Bagefter lægger du udgifterne ind under hver overskrift på siden Budgetposter.</p>
     </div>
     <div class="abs card shot" id="res">
       <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
@@ -476,7 +516,10 @@
   const { $, $$, p, out, back, inOut, lerp, put, rise, slide, scene, enter, words, caption, cursor, press, bars } = F;
   const S1 = [0, 6.0], S2 = [5.6, 12.6], S3 = [12.2, 21.0], S4 = [20.6, 30.2], S5 = [29.8, 39.4], S6 = [39.0, 47.6],
     S7 = [47.2, 54.0], S8 = [53.6, 62.6], S9 = [62.2, 69.4], S10 = [69.0, 77.4], S11 = [77.0, 84.0], END = 83.2;
-  const DURATION = 90;
+  // The guide's start step (empty / statements / budgets) takes D seconds from 12.5; every time after it below is
+  // written as before and played D seconds later (u = t - D in frame()).
+  const D = 4, START = [12.5, 12.5 + D];
+  const DURATION = 90 + D;
   const GW = [12.2, 43.4];
 
   const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -494,21 +537,26 @@
     el.innerHTML = (t < a && !focus ? before : text.slice(0, n)) + caret(t, focus);
   }
 
-  // The guide: step i is shown from STEP[i]; each change is a click on Næste (or Spring over at 36.8)
-  const STEPS = ["Navn", "Personer", "Konti", "Faste udgifter", "Fordeling", "Opsparingsmål", "Bankens udgifter", "Påmindelser", "Opret"];
+  // The guide: after the start step, step i + 1 is shown from STEP[i] (in u); each change is a click on Næste (or Spring over at 36.8)
+  const STEPS = ["Start", "Navn", "Personer", "Konti", "Overskrifter", "Fordeling", "Opsparingsmål", "Bankens krav", "Påmindelser", "Opret"];
   const STEP = [12.5, 15.8, 19.8, 23.0, 29.0, 32.0, 35.6, 36.8, 38.6];
   const CREATE = 41.8;
-  // Fixed expenses typed in step 3 (amount, frequency, typed at); the insurance becomes quarterly. 18.411 kr a month in all.
-  const EXP = [
-    ["Husleje / boliglån", "9.850", 23.5], ["El", "1.000", 24.1], ["Varme", "650", 24.6], ["Internet", "299", 25.1],
-    ["Forsikringer", "1.836", 25.6], ["Mad og husholdning", "6.000", 27.2],
-  ];
-  const BANK = [["Husleje / boliglån", "9.850 kr", true], ["El", "1.000 kr", true], ["Varme", "650 kr", true], ["Internet", "299 kr", true],
-    ["Forsikringer", "612 kr", true], ["Mad og husholdning", "6.000 kr", false]];
-  $("#wExp").insertAdjacentHTML("beforeend", EXP.map(([d], i) =>
-    `<div class="in">${d}</div><div class="in" id="wE${i}"></div><div class="in sel" id="wF${i}">Hver måned</div>`).join(""));
-  $("#wBank").innerHTML = BANK.map(([d, a, on], i) => `<div class="opt"><span class="cb${on ? " on" : ""}">${on ? CHECK : ""}</span>${d}<small>${a} pr. md.</small></div>`).join("");
-  const panes = $$("#wiz .wp");
+  // The hint under each step (wzHint in the app)
+  const HINT = (s) => (s === 0 ? "Du kan altid hente flere filer ind senere under Import og eksport." : s < 3 ? "Skal udfyldes. Du kan rette det senere under Indstillinger." : s === 4
+    ? "Du kan springe trinnet over. Så bruges standardforslaget, og overskrifterne kan rettes senere på siden Poster."
+    : s === 9 ? "Alt kan rettes bagefter." : "Du kan springe trinnet over og rette det senere.");
+  // Step 3: the guide's proposal of headings (WZ_GRP in the app); the film switches Børn and Ferie on
+  const GRP = [["Bolig", "husleje, boliglån, ejendomsskat", 1], ["Forsyning", "el, varme, vand", 1], ["Forsikring", "indbo, ulykke, bil, rejse", 1],
+    ["Bil", "billån, afgift, brændstof, service", 1], ["Kommunikation", "mobil, internet", 1], ["Abonnementer", "streaming, aviser, apps", 1],
+    ["Husholdning", "mad, personlig pleje", 1], ["Fagforening og a-kasse", "fagforening, a-kasse", 1], ["Transport", "rejsekort, tog, bus", 0],
+    ["Børn", "institution, SFO, lommepenge", 0], ["Fritid", "sport, hobby, foreninger", 0], ["Sundhed", "tandlæge, medicin, briller", 0],
+    ["Lån og afdrag", "forbrugslån, studielån", 0], ["Kæledyr", "foder, dyrlæge", 0], ["Ferie", "rejser, sommerhus", 0], ["Gaver og fester", "fødselsdage, jul", 0]];
+  const PICK = { 9: 25.6, 14: 26.6 };
+  const gop = (id, name, hint, cls = "") => `<div class="gop" id="${id}"><span class="cb${cls}"></span><span><b>${name}</b><small>${hint}</small></span></div>`;
+  $("#wGi").innerHTML = gop("gI0", "Indtægter", "løn og andre faste indtægter, altid med", " dis") + gop("gI1", "Ekstra indtægter", "bonus, honorarer, salg, regnes med i beregningen");
+  $("#wGu").innerHTML = GRP.map(([n, h], i) => gop(`gU${i}`, n, h)).join("");
+  $(".cb", $("#gI0")).innerHTML = CHECK;
+  const panes = $$("#wiz .wp:not(#wStart)");
 
   // Excel budget: months as columns; the insurance is paid in January, April, July and October; the total row is skipped
   const MON = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
@@ -537,9 +585,10 @@
     [S5[0] + 0.4, { x: 1760, y: 820, d: 520 }], [S6[0] + 0.4, { x: 960, y: 900, d: 560 }], [S7[0] + 0.4, { x: 1700, y: 300, d: 600 }],
     [S8[0] + 0.4, { x: 900, y: 820, d: 640 }], [S9[0] + 0.4, { x: 1720, y: 860, d: 560 }], [S10[0] + 0.4, { x: 1000, y: 260, d: 600 }],
     [S11[0] + 0.4, { x: 1500, y: 880, d: 700 }],
-  ];
+  ].map(([a, k]) => [a > S3[0] + 0.4 ? a + D : a, k]);
 
   function frame(t) {
+    const u = t - D;
     // 1 · Intro
     F.darkBg("#s1", t, 0);
     F.buildLogo("#s1-logo", t, 0.1);
@@ -558,155 +607,172 @@
     put("#hint", { o: Math.min(out(p(t, S2[0] + 1.5, S2[0] + 1.9)), 1 - inOut(p(t, S2[1] - 0.5, S2[1]))), y: (1 - hk) * 50, r: (1 - hk) * 3 });
     press("#eStart", t, 11.4);
 
+    // The start step: its caption, the options pointed at in turn, "Tomt budget" kept
+    scene("#s3a", t, S3[0], START[1] + 0.1);
+    caption("#c3a", t, S3[0] + 0.2);
+    ["#wsO0", "#wsO1", "#wsO2"].forEach((el, i) => slide(el, t, START[0] + 0.3 + i * 0.18, 1e9, { x: 30, y: 0 }));
+    $("#wsO1").classList.toggle("hov", t >= 13.3 && t < 14.1);
+    $("#wsO2").classList.toggle("hov", t >= 14.1 && t < 14.9);
+    $("#wsO0").classList.toggle("hov", t >= 14.9 && t < 16.3);
+
     // 3–5 · Guide captions
-    scene("#s3", t, S3[0], S3[1]);
-    caption("#c3", t, S3[0] + 0.2);
-    scene("#s4", t, S4[0], S4[1]);
-    caption("#c4", t, S4[0] + 0.2);
-    scene("#s5", t, S5[0], S5[1]);
-    caption("#c5", t, S5[0] + 0.2);
+    scene("#s3", u, S3[0], S3[1]);
+    caption("#c3", u, S3[0] + 0.2);
+    scene("#s4", u, S4[0], S4[1]);
+    caption("#c4", u, S4[0] + 0.2);
+    scene("#s5", u, S5[0], S5[1]);
+    caption("#c5", u, S5[0] + 0.2);
 
     // The guide: one dialog, the panes slide from one step to the next
-    scene("#gw", t, GW[0], GW[1]);
+    scene("#gw", t, GW[0], GW[1] + D);
     const wk = back(p(t, GW[0] + 0.1, GW[0] + 0.8));
     put("#wiz", { o: out(p(t, GW[0] + 0.1, GW[0] + 0.4)), y: (1 - wk) * 40, s: lerp(0.92, 1, wk) });
     let ws = 0;
-    STEP.forEach((a, i) => t >= a && (ws = i));
+    STEP.forEach((a, i) => u >= a && (ws = i + 1));
+    const sOut = inOut(p(t, START[1], START[1] + 0.25));
+    put("#wStart", { o: 1 - sOut, x: -sOut * 50 });
     panes.forEach((el, i) => {
-      const a = STEP[i], b = STEP[i + 1] ?? 1e9, kin = i === 0 ? 1 : out(p(t, a, a + 0.35)), kout = inOut(p(t, b, b + 0.25));
-      put(el, { o: t < a ? 0 : Math.min(kin, 1 - kout), x: (1 - kin) * 50 - kout * 50 });
+      const a = STEP[i], b = STEP[i + 1] ?? 1e9, kin = out(p(u, a, a + 0.35)), kout = inOut(p(u, b, b + 0.25));
+      put(el, { o: u < a ? 0 : Math.min(kin, 1 - kout), x: (1 - kin) * 50 - kout * 50 });
     });
     const dots = STEPS.map((_, i) => `<span class="${i === ws ? "on" : i < ws ? "done" : ""}">${i + 1}</span>`).join("") + `<b>${STEPS[ws]}</b>`;
     if ($("#wDots").dataset.h !== dots) ($("#wDots").innerHTML = dots), ($("#wDots").dataset.h = dots);
     $("#wBack").style.visibility = ws ? "visible" : "hidden";
-    $("#wSkip").style.display = ws === 6 || ws === 7 ? "" : "none";
-    $("#wNext").textContent = ws === 8 ? "Opret budget" : "Næste";
-    const pc = [15.8, 19.8, 23.0, 29.0, 32.0, 35.6, 38.6, CREATE].some((c) => t >= c && t < c + 0.18);
+    $("#wSkip").style.display = ws >= 3 && ws <= 8 ? "" : "none";
+    $("#wHint").textContent = HINT(ws);
+    $("#wNext").textContent = ws === 9 ? "Opret budget" : "Næste";
+    const pc = [12.5, 15.8, 19.8, 23.0, 29.0, 32.0, 35.6, 38.6, CREATE].some((c) => u >= c && u < c + 0.18);
     $("#wNext").style.transform = pc ? "scale(.96)" : "";
-    press("#wSkip", t, 36.8);
+    press("#wSkip", u, 36.8);
 
-    type("#wName", t, "Vores budget", 13.4, 14.3, 13.3, 15.6, "Mit budget");
-    type("#wP1n", t, "Anna", 16.6, 16.9, 16.5, 17.0, '<span class="ph">Person 1</span>');
-    type("#wP1s", t, "32.000", 17.1, 17.5, 17.0, 17.8, '<span class="ph">fx 32.000</span>');
-    type("#wP2n", t, "Jonas", 17.9, 18.3, 17.8, 18.4, '<span class="ph">Person 2</span>');
-    type("#wP2s", t, "28.500", 18.5, 18.9, 18.4, 19.4, '<span class="ph">fx 32.000</span>');
-    ["#wA1", "#wA2", "#wA3"].forEach((el, i) => {
-      slide(el, t, STEP[2] + 0.3 + i * 0.2, 1e9, { x: 30, y: 0 });
-      tick($(".cb", $(el)), t >= STEP[2] + 0.7 + i * 0.3);
+    type("#wName", u, "Vores budget", 13.4, 14.3, 13.3, 15.6, '<span class="ph">fx Budget for Anna og Jonas</span>');
+    type("#wP1n", u, "Anna", 16.4, 16.7, 16.3, 16.8, '<span class="ph">Person 1</span>');
+    type("#wP1s", u, "32.000", 16.9, 17.3, 16.8, 17.4, '<span class="ph">fx 32.000</span>');
+    press("#wAddP", u, 17.7);
+    $("#wP1x").style.opacity = u >= 17.8 ? 1 : 0.35;
+    ["#wP2n", "#wP2s", "#wP2x"].forEach((el) => put(el, { o: out(p(u, 17.8, 18.1)), y: (1 - out(p(u, 17.8, 18.2))) * -10 }));
+    type("#wP2n", u, "Jonas", 18.2, 18.6, 18.1, 18.7, '<span class="ph">Person 2</span>');
+    type("#wP2s", u, "28.500", 18.8, 19.2, 18.7, 19.5, '<span class="ph">fx 32.000</span>');
+    ["#wA1", "#wA0", "#wA2", "#wA3"].forEach((el, i) => slide(el, u, STEP[2] + 0.3 + i * 0.18, 1e9, { x: 30, y: 0 }));
+    ["#wA1", "#wA2", "#wA3"].forEach((el, i) => tick($(".cb", $(el)), u >= STEP[2] + 0.8 + i * 0.3));
+    $$("#wGi .gop, #wGu .gop").forEach((el, i) => put(el, { o: out(p(u, STEP[3] + 0.3 + i * 0.05, STEP[3] + 0.6 + i * 0.05)) }));
+    tick($(".cb", $("#gI1")), u >= STEP[3] + 0.9);
+    GRP.forEach(([, , on], i) => {
+      const at = PICK[i], el = $(`#gU${i}`);
+      tick($(".cb", el), on ? u >= STEP[3] + 0.9 + i * 0.06 : at !== undefined && u >= at);
+      el.classList.toggle("hit", at !== undefined && u >= at && u < at + 0.8);
     });
-    EXP.forEach(([, amt, a], i) => type(`#wE${i}`, t, amt, a, a + 0.35, a - 0.1, a + 0.5, '<span class="ph">0</span>'));
-    $("#wF4").textContent = t >= 26.6 ? "Kvartalsvis" : "Hver måned";
-    $("#wF4").classList.toggle("focus", t >= 26.3 && t < 26.9);
-    $("#wRad1").style.background = t >= 30.2 && t < 31.4 ? "var(--lime-tone)" : "";
-    tick($(".cb", $("#wAuto")), t >= 30.9);
-    type("#wGn", t, "Sommerferie i Italien", 32.6, 33.6, 32.5, 33.7, '<span class="ph">fx Udbetaling til hus</span>');
-    type("#wGa", t, "24.000", 33.8, 34.2, 33.7, 34.3, '<span class="ph">0</span>');
-    type("#wGd", t, "01.07.2027", 34.4, 34.9, 34.3, 35.2, '<span class="ph">dd.mm.åååå</span>');
-    $("#wEvery").textContent = t >= 37.6 ? "Hver 3. måned" : "Aldrig";
-    $("#wEvery").classList.toggle("focus", t >= 37.3 && t < 37.9);
-    put("#wRmMore", { o: out(p(t, 37.6, 37.9)), y: (1 - out(p(t, 37.6, 38.0))) * -10 });
+    $("#wRad1").style.background = u >= 30.2 && u < 31.4 ? "var(--lime-tone)" : "";
+    tick($(".cb", $("#wAuto")), u >= 30.9);
+    type("#wGn", u, "Sommerferie i Italien", 32.6, 33.6, 32.5, 33.7, '<span class="ph">fx Udbetaling til hus</span>');
+    type("#wGa", u, "24.000", 33.8, 34.2, 33.7, 34.3, '<span class="ph">0</span>');
+    type("#wGd", u, "01.07.2027", 34.4, 34.9, 34.3, 35.2, '<span class="ph">dd.mm.åååå</span>');
+    $("#wEvery").textContent = u >= 37.6 ? "Hver 3. måned" : "Aldrig";
+    $("#wEvery").classList.toggle("focus", u >= 37.3 && u < 37.9);
+    put("#wRmMore", { o: out(p(u, 37.6, 37.9)), y: (1 - out(p(u, 37.6, 38.0))) * -10 });
     tick("#wMile", true);
-    $$("#wSum li").forEach((li, i) => rise(li, t, STEP[8] + 0.2 + i * 0.14, 1e9, 14));
+    $$("#wSum li").forEach((li, i) => rise(li, u, STEP[STEP.length - 1] + 0.2 + i * 0.14, 1e9, 14));
 
     // 6 · Created: a toast, then the overview of the new budget
-    scene("#s6", t, S6[0], S6[1]);
-    caption("#c6", t, S6[0] + 0.2);
-    enter("#res", t, 43.0, S6[1]);
-    $("#resImg").style.transform = `translateY(${-120 * inOut(p(t, 44.6, 46.4))}px)`;
-    const tk = back(p(t, CREATE + 0.15, CREATE + 0.6));
-    put("#wToast", { o: Math.min(out(p(t, CREATE + 0.15, CREATE + 0.45)), 1 - inOut(p(t, 46.2, 46.7))), y: (1 - tk) * 24 });
+    scene("#s6", u, S6[0], S6[1]);
+    caption("#c6", u, S6[0] + 0.2);
+    enter("#res", u, 43.0, S6[1]);
+    $("#resImg").style.transform = `translateY(${-120 * inOut(p(u, 44.6, 46.4))}px)`;
+    const tk = back(p(u, CREATE + 0.15, CREATE + 0.6));
+    put("#wToast", { o: Math.min(out(p(u, CREATE + 0.15, CREATE + 0.45)), 1 - inOut(p(u, 46.2, 46.7))), y: (1 - tk) * 24 });
 
     // 7 · The budget menu → Ny kladde → the draft dialog
-    scene("#s7", t, S7[0], S7[1]);
-    caption("#c7", t, S7[0] + 0.2);
-    const mOut = inOut(p(t, 49.9, 50.3));
-    put("#menuBox", { o: Math.min(out(p(t, S7[0] + 0.4, S7[0] + 0.8)), 1 - mOut * 0.75), y: (1 - out(p(t, S7[0] + 0.4, S7[0] + 1.0))) * 30 });
-    put("#menu", { o: out(p(t, S7[0] + 0.9, S7[0] + 1.2)), y: (1 - back(p(t, S7[0] + 0.9, S7[0] + 1.4))) * -14 });
-    $("#mNew").classList.toggle("hov", t >= 49.0 && t < 50.0);
-    const kk = back(p(t, 49.9, 50.5));
-    put("#kdlg", { o: out(p(t, 49.9, 50.2)), y: (1 - kk) * 40, s: lerp(0.92, 1, kk) });
-    press("#kOk", t, 52.6);
+    scene("#s7", u, S7[0], S7[1]);
+    caption("#c7", u, S7[0] + 0.2);
+    const mOut = inOut(p(u, 49.9, 50.3));
+    put("#menuBox", { o: Math.min(out(p(u, S7[0] + 0.4, S7[0] + 0.8)), 1 - mOut * 0.75), y: (1 - out(p(u, S7[0] + 0.4, S7[0] + 1.0))) * 30 });
+    put("#menu", { o: out(p(u, S7[0] + 0.9, S7[0] + 1.2)), y: (1 - back(p(u, S7[0] + 0.9, S7[0] + 1.4))) * -14 });
+    $("#mNew").classList.toggle("hov", u >= 49.0 && u < 50.0);
+    const kk = back(p(u, 49.9, 50.5));
+    put("#kdlg", { o: out(p(u, 49.9, 50.2)), y: (1 - kk) * 40, s: lerp(0.92, 1, kk) });
+    press("#kOk", u, 52.6);
 
     // 8 · Files: the names, then three files dropping in and being read
-    scene("#s8", t, S8[0], S8[1]);
-    caption("#c8", t, S8[0] + 0.2);
-    enter("#fdlg", t, S8[0] + 0.3, S8[1]);
-    type("#fP1", t, "Anna", 54.8, 55.1, 54.7, 55.2, "Person 1");
-    type("#fP2", t, "Jonas", 55.3, 55.6, 55.2, 55.8, "Person 2");
+    scene("#s8", u, S8[0], S8[1]);
+    caption("#c8", u, S8[0] + 0.2);
+    enter("#fdlg", u, S8[0] + 0.3, S8[1]);
+    type("#fP1", u, "Anna", 54.8, 55.1, 54.7, 55.2, "Person 1");
+    type("#fP2", u, "Jonas", 55.3, 55.6, 55.2, 55.8, "Person 2");
     ["#f1", "#f2", "#f3"].forEach((f, i) => {
-      const a = 56.0 + i * 0.4, k = out(p(t, a, a + 0.5)), kb = back(p(t, a, a + 0.6));
+      const a = 56.0 + i * 0.4, k = out(p(u, a, a + 0.5)), kb = back(p(u, a, a + 0.6));
       put(f, { o: k, y: (1 - kb) * -70, s: lerp(0.95, 1, kb), r: (1 - k) * (i % 2 ? 2 : -2) });
-      const st = $(".st", $(f)), done = t >= 57.2 + i * 0.3;
+      const st = $(".st", $(f)), done = u >= 57.2 + i * 0.3;
       st.textContent = done ? st.dataset.st : "Læser filen…";
       st.style.color = done ? "var(--olive)" : "";
-      put($(".dfr", $(f)), { o: out(p(t, 57.3 + i * 0.3, 57.7 + i * 0.3)) });
+      put($(".dfr", $(f)), { o: out(p(u, 57.3 + i * 0.3, 57.7 + i * 0.3)) });
     });
-    put("#fReady", { o: out(p(t, 58.2, 58.5)) });
-    press("#fNext", t, 60.4);
+    put("#fReady", { o: out(p(u, 58.2, 58.5)) });
+    press("#fNext", u, 60.4);
 
     // 9 · Excel: a scan runs down the rows, each row becomes a post; the total is skipped
-    scene("#s9", t, S9[0], S9[1]);
-    caption("#c9", t, S9[0] + 0.2);
-    enter("#sheet", t, S9[0] + 0.3, S9[1]);
+    scene("#s9", u, S9[0], S9[1]);
+    caption("#c9", u, S9[0] + 0.2);
+    enter("#sheet", u, S9[0] + 0.3, S9[1]);
     // One row every 0.55 s from 64.0 (header row first, so row r sits at y = 40 + 40·r); the total row (r = 4) at 66.2
-    const u9 = Math.max(0, (t - 64.0) / 0.55), r9 = Math.min(4, Math.floor(u9) + inOut(F.clamp((u9 % 1 - 0.6) / 0.4)));
-    put("#scan", { o: Math.min(out(p(t, 63.8, 64.1)), 1 - inOut(p(t, 67.2, 67.6))), y: 40 + 40 * r9 });
-    put("#skip", { o: out(p(t, 66.3, 66.6)), y: 207 + (1 - back(p(t, 66.3, 66.8))) * 10 });
-    $$("#xl > span.t").forEach((el) => (el.style.opacity = t >= 66.3 ? 0.4 : 1));
-    put("#found", { o: out(p(t, 63.6, 64.0)), y: (1 - out(p(t, 63.6, 64.2))) * 40 });
-    ["#fr0", "#fr1", "#fr2", "#fr3"].forEach((el, i) => slide(el, t, 64.3 + i * 0.55, 1e9, { x: 40, y: 0 }));
+    const u9 = Math.max(0, (u - 64.0) / 0.55), r9 = Math.min(4, Math.floor(u9) + inOut(F.clamp((u9 % 1 - 0.6) / 0.4)));
+    put("#scan", { o: Math.min(out(p(u, 63.8, 64.1)), 1 - inOut(p(u, 67.2, 67.6))), y: 40 + 40 * r9 });
+    put("#skip", { o: out(p(u, 66.3, 66.6)), y: 207 + (1 - back(p(u, 66.3, 66.8))) * 10 });
+    $$("#xl > span.t").forEach((el) => (el.style.opacity = u >= 66.3 ? 0.4 : 1));
+    put("#found", { o: out(p(u, 63.6, 64.0)), y: (1 - out(p(u, 63.6, 64.2))) * 40 });
+    ["#fr0", "#fr1", "#fr2", "#fr3"].forEach((el, i) => slide(el, u, 64.3 + i * 0.55, 1e9, { x: 40, y: 0 }));
 
     // 10 · Review: the rows come in, the found posts are ticked, then they are added
-    scene("#s10", t, S10[0], S10[1]);
-    caption("#c10", t, S10[0] + 0.2);
-    enter("#rdlg", t, S10[0] + 0.3, S10[1]);
-    $$("#rList .rs").forEach((el, i) => put(el, { o: out(p(t, REV0 + i * 0.35, REV0 + i * 0.35 + 0.4)) }));
+    scene("#s10", u, S10[0], S10[1]);
+    caption("#c10", u, S10[0] + 0.2);
+    enter("#rdlg", u, S10[0] + 0.3, S10[1]);
+    $$("#rList .rs").forEach((el, i) => put(el, { o: out(p(u, REV0 + i * 0.35, REV0 + i * 0.35 + 0.4)) }));
     let n = 0;
     $$("#rList .rr").forEach((el, i) => {
-      const a = REV0 + 0.1 + i * 0.22, k = out(p(t, a, a + 0.4));
+      const a = REV0 + 0.1 + i * 0.22, k = out(p(u, a, a + 0.4));
       put(el, { o: k, x: (1 - k) * 40 });
-      const on = revRows[i][5] && t >= REV0 + 1.6 + i * 0.25;
+      const on = revRows[i][5] && u >= REV0 + 1.6 + i * 0.25;
       tick($(".cb", el), on);
       if (on) n++;
     });
     $("#rCount").textContent = n ? `${n} poster valgt` : "Intet valgt";
-    press("#rAdd", t, ADD);
-    put("#rToast", { o: Math.min(out(p(t, ADD + 0.15, ADD + 0.45)), 1 - inOut(p(t, S10[1] - 0.6, S10[1]))), y: (1 - back(p(t, ADD + 0.15, ADD + 0.6))) * 24 });
+    press("#rAdd", u, ADD);
+    put("#rToast", { o: Math.min(out(p(u, ADD + 0.15, ADD + 0.45)), 1 - inOut(p(u, S10[1] - 0.6, S10[1]))), y: (1 - back(p(u, ADD + 0.15, ADD + 0.6))) * 24 });
 
     // 11 · The draft bar: "Sæt som primært budget"
-    scene("#s11", t, S11[0], S11[1]);
-    caption("#c11", t, S11[0] + 0.2);
-    enter("#prim", t, S11[0] + 0.3, S11[1]);
-    press("#dbUse", t, USE);
-    const gone = inOut(p(t, USE + 0.4, USE + 0.9));
+    scene("#s11", u, S11[0], S11[1]);
+    caption("#c11", u, S11[0] + 0.2);
+    enter("#prim", u, S11[0] + 0.3, S11[1]);
+    press("#dbUse", u, USE);
+    const gone = inOut(p(u, USE + 0.4, USE + 0.9));
     put("#dbar", { o: 1 - gone, y: -gone * 90 });
     $("#primImg").style.transform = `translateY(${106 - 106 * gone}px)`;
-    const pk = back(p(t, USE + 0.2, USE + 0.7));
-    put("#pToast", { o: Math.min(out(p(t, USE + 0.2, USE + 0.5)), 1 - inOut(p(t, S11[1] - 0.6, S11[1]))), y: (1 - pk) * 24 });
+    const pk = back(p(u, USE + 0.2, USE + 0.7));
+    put("#pToast", { o: Math.min(out(p(u, USE + 0.2, USE + 0.5)), 1 - inOut(p(u, S11[1] - 0.6, S11[1]))), y: (1 - pk) * 24 });
 
-    bars(t, [S2, [S3[0], S6[1]], S7, S8, S9, S10, S11].map(([a, b]) => [a + 0.3, b - 0.2]), [S1[1], END + 0.3]);
+    const sh = ([a, b]) => [a + D, b + D];
+    bars(t, [S2, [S3[0], S6[1] + D], ...[S7, S8, S9, S10, S11].map(sh)].map(([a, b]) => [a + 0.3, b - 0.2]), [S1[1], END + D + 0.3]);
 
     // Curtains: the intro lifts away, the end card drops in
-    F.curtain(t, ["#s1", S2[0] - 0.1], ["#end", END]);
+    F.curtain(t, ["#s1", S2[0] - 0.1], ["#end", END + D]);
 
     // End card
-    F.darkBg("#end", t, END + 0.6);
-    F.buildLogo("#endLogo", t, END + 0.7);
-    rise("#endLine", t, END + 1.6, 1e9, 24);
-    rise("#endSub", t, END + 1.9, 1e9, 20);
-    const ek = back(p(t, END + 2.2, END + 2.8));
-    put("#endUrl", { o: out(p(t, END + 2.2, END + 2.5)), s: lerp(0.6, 1, ek) });
+    F.darkBg("#end", u, END + 0.6);
+    F.buildLogo("#endLogo", u, END + 0.7);
+    rise("#endLine", u, END + 1.6, 1e9, 24);
+    rise("#endSub", u, END + 1.9, 1e9, 20);
+    const ek = back(p(u, END + 2.2, END + 2.8));
+    put("#endUrl", { o: out(p(u, END + 2.2, END + 2.5)), s: lerp(0.6, 1, ek) });
 
     cursor(t, [
       {
-        keys: [[11.4, "#eStart"], [13.2, "#wName"], [15.8, "#wNext"], [16.5, "#wP1n"], [19.8, "#wNext"], [23.0, "#wNext"],
-          [26.4, "#wF4"], [29.0, "#wNext"], [30.3, "#wRad1"], [30.9, "#wAuto"], [32.0, "#wNext"], [32.5, "#wGn"], [35.6, "#wNext"],
-          [36.8, "#wSkip"], [37.4, "#wEvery"], [38.6, "#wNext"], [CREATE, "#wNext"]],
-        clicks: [11.4, 13.2, 15.8, 16.5, 19.8, 23.0, 26.4, 29.0, 30.3, 30.9, 32.0, 32.5, 35.6, 36.8, 37.4, 38.6, CREATE],
+        keys: [[11.4, "#eStart"], [13.6, "#wsO1"], [14.4, "#wsO2"], [15.2, "#wsO0"], [START[1], "#wNext"], [17.2, "#wName"], [19.8, "#wNext"], [20.3, "#wP1n"], [21.7, "#wAddP"], [22.1, "#wP2n"], [23.8, "#wNext"], [27, "#wNext"],
+          [29.6, "#gU9"], [30.6, "#gU14"], [33, "#wNext"], [34.3, "#wRad1"], [34.9, "#wAuto"], [36, "#wNext"], [36.5, "#wGn"], [39.6, "#wNext"],
+          [40.8, "#wSkip"], [41.4, "#wEvery"], [42.6, "#wNext"], [CREATE + D, "#wNext"]],
+        clicks: [11.4, 15.2, START[1], 17.2, 19.8, 20.3, 21.7, 22.1, 23.8, 27, 29.6, 30.6, 33, 34.3, 34.9, 36, 36.5, 39.6, 40.8, 41.4, 42.6, CREATE + D],
       },
-      { keys: [[49.6, "#mNew"], [52.6, "#kOk"], [54.7, "#fP1"], [60.4, "#fNext"]], clicks: [49.6, 52.6, 54.7, 60.4] },
-      { keys: [[ADD, "#rAdd"]], clicks: [ADD] },
-      { keys: [[USE, "#dbUse"]], clicks: [USE] },
+      { keys: [[53.6, "#mNew"], [56.6, "#kOk"], [58.7, "#fP1"], [64.4, "#fNext"]], clicks: [53.6, 56.6, 58.7, 64.4] },
+      { keys: [[ADD + D, "#rAdd"]], clicks: [ADD + D] },
+      { keys: [[USE + D, "#dbUse"]], clicks: [USE + D] },
     ]);
   }
 

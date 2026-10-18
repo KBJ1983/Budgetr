@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  Erhverv film (48 s): first a short look at what the customer gets (statement import + features), then how easy it is
+  Erhverv film (about 1 min 28 s): first a short look at what the customer gets (statement import + features), then how easy it is
   for a bank, an estate agent or another business to get started (pick a pack, the agreement page, give access, the
   customers use their codes).
   "Midnat og lime" with motion graphics.
@@ -75,12 +75,15 @@
 
   #imp { left: 900px; top: 160px; }
   #deck { left: 860px; top: 220px; }
-  #c3 .labels { margin-top: 8px; }
+  /* The montage's labels: only the current one, above the card */
+  #deckLabels { left: 860px; top: 138px; width: 940px; height: 50px; }
+  #deckLabels li { position: absolute; left: 0; right: 0; top: 0; justify-content: center; font-size: 34px; font-weight: 600; opacity: 0 !important; }
+  #deckLabels li.on { opacity: 1 !important; }
 
   /* Reel (1080×1920): the visuals under the captions */
   [data-format="reel"] #imp { left: 110px; top: 820px; }
   [data-format="reel"] #deck { left: 70px; top: 900px; }
-  [data-format="reel"] #c3 .labels li { font-size: 30px; }
+  [data-format="reel"] #deckLabels { left: 70px; top: 810px; }
   [data-format="reel"] #price { left: 110px; top: 820px; }
   [data-format="reel"] #win { left: 90px; top: 820px; }
   [data-format="reel"] #notif { left: 110px; top: 900px; width: 860px; }
@@ -126,8 +129,9 @@
     <div class="cap" id="c3">
       <div class="tag">Det får jeres kunder</div>
       <h2>Alt samlet <span class="hl">ét sted</span></h2>
-      <ul id="deckLabels"></ul>
+      <p>Rådighedsbeløb, faste poster, opsparingsmål, lån og fair fordeling.</p>
     </div>
+    <ul class="abs" id="deckLabels"></ul>
     <div class="abs" id="deck"></div>
   </div>
 
@@ -185,6 +189,8 @@
     </div>
   </div>
 
+  <!-- Scenes 5–7 share these; the wrapper is shown only while one of their visuals plays -->
+  <div class="vis" id="afVis">
   <div class="abs card" id="win">
     <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/aftale</div></div>
     <div class="af">
@@ -232,6 +238,7 @@
 
   <div class="abs card joined" id="join1"><span class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E1B2C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>maja@eksempel.dk har brugt koden</b><span>budgetpro i 12 måneder fra i dag</span></div></div>
   <div class="abs card joined" id="join2"><span class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E1B2C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>jonas@eksempel.dk har brugt koden</b><span>budgetpro i 12 måneder fra i dag</span></div></div>
+  </div>
 
   <div id="steps"></div>
 
@@ -255,9 +262,9 @@
 <script>
   const { $, $$, p, out, back, inOut, lerp, kr, put, rise, slide, scene, enter, words, caption, cursor, press, bars } = F;
   // Intro, then what the customer gets (2–3), then getting started in four steps (4–7).
-  const S1 = [0, 6], S2 = [5.6, 12.4], S3 = [12.0, 19.6], S4 = [19.2, 25.8], S5 = [25.4, 31.6], S6 = [31.2, 37.8],
-    S7 = [37.4, 42.6], END = 42.2;
-  const DURATION = 48;
+  // Each scene: its caption alone, then its visual alone (F.timeline gives [visual start, end] and .a = caption start)
+  const TL = F.timeline({ intro: 6.8, scenes: [["#c2", 8.2], ["#c3", 12.0], ["#c4", 7.4], ["#c5", 6.4], ["#c6", 7.2], ["#c7", 5.6]] });
+  const [S2, S3, S4, S5, S6, S7] = TL.scenes, END = TL.END, DURATION = TL.DURATION;
   const EMAIL = "maja@eksempel.dk";
 
   const imp = F.importScene($("#imp"));
@@ -268,14 +275,13 @@
     { label: "Opsparingsmål med en dato", img: "../public/landing/maal-light.jpg" },
     { label: "Lån med beregnet slutdato", img: "../public/landing/laan-light.jpg" },
     { label: "Fair fordeling, når man er flere", img: "../public/landing/hvem-light.jpg" },
-  ], 1.45);
+  ], 2.2);
   const DECK0 = S3[0] + 0.3;
 
-  const ORB = [
-    [0, { x: 1500, y: 560, d: 560 }], [S2[0], { x: 1700, y: 300, d: 560 }], [S3[0] + 0.4, { x: 1400, y: 700, d: 860 }],
-    [S4[0] + 0.4, { x: 1720, y: 280, d: 600 }], [S5[0] + 0.4, { x: 1000, y: 860, d: 560 }], [S6[0] + 0.4, { x: 1760, y: 820, d: 520 }],
-    [S7[0] + 0.4, { x: 1200, y: 900, d: 640 }],
-  ];
+  const ORB = F.soloOrb({ x: 1500, y: 560, d: 560 }, TL.scenes, [
+    { x: 1500, y: 300, d: 560 }, { x: 1300, y: 760, d: 860 }, { x: 1440, y: 280, d: 600 },
+    { x: 560, y: 860, d: 560 }, { x: 1500, y: 820, d: 520 }, { x: 700, y: 900, d: 640 },
+  ]);
 
   function frame(t) {
     // 1 · Intro
@@ -290,24 +296,25 @@
       put(el, { o: out(p(t, 2.6 + i * 0.2, 2.9 + i * 0.2)), y: (1 - k) * 30, s: lerp(0.8, 1, k) });
     });
     F.orb(t, ORB);
-    rise(".dots", t, S2[0] + 0.4, 1e9, 30);
+    rise(".dots", t, S2.a + 0.4, 1e9, 30);
 
     // 2 · Statement import
-    scene("#s2", t, S2[0] - 0.4, S2[1]);
-    caption("#c2", t, S2[0] + 0.3);
+    scene("#s2", t, S2.a - 0.4, S2[1]);
+    F.title("#c2", t, S2.a + 0.3, S2[0]);
     enter("#imp", t, S2[0] + 0.4, S2[1]);
     imp.update(t - IMP0);
 
     // 3 · Feature montage
-    scene("#s3", t, S3[0], S3[1]);
-    caption("#c3", t, S3[0] + 0.2);
+    scene("#s3", t, S3.a, S3[1]);
+    F.title("#c3", t, S3.a + 0.2, S3[0]);
     enter("#deck", t, S3[0] + 0.2, S3[1], { x: 0, ry: 0 });
     deck.update(t - DECK0);
+    put("#deckLabels", { o: F.vis(t, DECK0, S3[1]) });
 
     // 4 · Pick a pack: the price counts up in a midnight box, then the request is sent
     const u4 = t - S4[0];
-    scene("#s4", t, S4[0], S4[1]);
-    caption("#c4", t, S4[0] + 0.2);
+    scene("#s4", t, S4.a, S4[1]);
+    F.title("#c4", t, S4.a + 0.2, S4[0]);
     enter("#price", t, S4[0] + 0.3, S4[1]);
     $("#c50").classList.toggle("on", u4 >= 1.9);
     $("#m12").classList.toggle("on", u4 >= 2.8);
@@ -324,8 +331,8 @@
 
     // 5 · Mail to the kundeadmin, then the agreement page
     const u5 = t - S5[0];
-    scene("#s5", t, S5[0], S5[1]);
-    caption("#c5", t, S5[0] + 0.2);
+    scene("#s5", t, S5.a, S5[1]);
+    F.title("#c5", t, S5.a + 0.2, S5[0]);
     const nk = back(p(u5, 0.6, 1.3)), nOut = inOut(p(u5, 2.8, 3.4));
     put("#notif", { o: Math.min(out(p(u5, 0.6, 1.0)), 1 - nOut), y: (1 - nk) * -80 + nOut * -40, s: 1 - nOut * 0.06 });
     const wk = out(p(u5, 3.1, 4.05));
@@ -339,8 +346,8 @@
     });
 
     // 6 · Give access
-    scene("#s6", t, S6[0], S6[1]);
-    caption("#c6", t, S6[0] + 0.2);
+    scene("#s6", t, S6.a, S6[1]);
+    F.title("#c6", t, S6.a + 0.2, S6[0]);
     const u6 = t - S6[0];
     const typed = Math.round(EMAIL.length * p(u6, 1.4, 2.7));
     const focus = u6 >= 1.1 && u6 < 3.4;
@@ -363,18 +370,20 @@
     press("#sendCode", t, S6[0] + 3.3);
 
     // 7 · The customers use their codes: "I brug" counts up while a card pops in for each customer
-    scene("#s7", t, S7[0], S7[1]);
-    caption("#c7", t, S7[0] + 0.2);
+    scene("#s7", t, S7.a, S7[1]);
+    F.title("#c7", t, S7.a + 0.2, S7[0]);
     ["#join1", "#join2"].forEach((el, i) => {
       const a = 1.4 + i, k = back(p(u7, a, a + 0.6));
       put(el, { o: Math.min(out(p(u7, a, a + 0.3)), 1 - inOut(p(t, S7[1] - 0.5, S7[1]))), x: (1 - k) * 120, s: lerp(0.9, 1, k) });
     });
     $$("#win .tile")[1].classList.toggle("hi", used > 0);
+    // The agreement page and its cards rest while the captions of scenes 6 and 7 are shown
+    $("#afVis").style.opacity = Math.max(F.vis(t, S5[0], S5[1]), F.vis(t, S6[0], S6[1]), F.vis(t, S7[0], S7[1] + 1));
 
     // One bar per getting-started step (1–4)
-    bars(t, [[S4[0] + 0.3, S4[1]], [S5[0] + 0.3, S5[1]], [S6[0] + 0.3, S6[1]], [S7[0] + 0.3, S7[1] - 0.4]], [S4[0] + 0.3, END + 0.3]);
+    bars(t, [[S4.a + 0.3, S4[1]], [S5.a + 0.3, S5[1]], [S6.a + 0.3, S6[1]], [S7.a + 0.3, S7[1] - 0.4]], [S4.a + 0.3, END + 0.3]);
 
-    F.curtain(t, ["#s1", S2[0] - 0.1], ["#end", END]);
+    F.curtain(t, ["#s1", S2.a - 0.1], ["#end", END]);
 
     // End card, held for the last six seconds
     F.darkBg("#end", t, END + 0.6);
@@ -391,7 +400,7 @@
     ]);
   }
 
-  F.film({ duration: DURATION, frame });
+  F.film({ duration: DURATION, frame, solo: true });
 </script>
 </body>
 </html>

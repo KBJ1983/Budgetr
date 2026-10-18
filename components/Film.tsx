@@ -6,7 +6,8 @@ export type FilmName = "privat" | "erhverv" | "skole";
  * A short explainer film (front page, Erhverv, Skole). The MP4s and their posters live in public/video/ and are made
  * from video/<name>.html with `pnpm video <name>` (16:9) and `pnpm video <name> --reel` (9:16, budgetpro-<name>-reel);
  * the poster is a frame from the intro. Phones get the upright reel, wider screens the 16:9 film – CSS shows one of
- * the two, and as neither preloads, only the one that is played is fetched. Text only, no sound, so it is muted.
+ * the two, and as neither preloads, only the one that is played is fetched. Text and a calm background tune
+ * (scripts/music.mjs), so the sound is on once the visitor presses play.
  */
 export function Film({ name, label }: { name: FilmName; label: string }) {
   return (
@@ -17,7 +18,6 @@ export function Film({ name, label }: { name: FilmName; label: string }) {
         poster={`/video/budgetpro-${name}.jpg`}
         aria-label={label}
         controls
-        muted
         playsInline
         preload="none"
       />
@@ -27,7 +27,6 @@ export function Film({ name, label }: { name: FilmName; label: string }) {
         poster={`/video/budgetpro-${name}-reel.jpg`}
         aria-label={label}
         controls
-        muted
         playsInline
         preload="none"
       />
