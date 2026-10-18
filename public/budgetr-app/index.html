@@ -428,6 +428,11 @@ td.desc{white-space:normal;min-width:200px}
 .plan select,.plan input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:6px 10px}
 .plan input{width:120px}
 .empty{padding:40px 0;text-align:left}
+/* A new budget without expenses: tells where the numbers come from (startInfo) */
+.startinfo{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;padding:16px 18px;margin:0 0 18px;border-radius:12px;background:var(--pine-bg)}
+.startinfo b{font-size:15px}
+.startinfo p{margin:4px 0 0;max-width:62ch;color:var(--ink2);font-size:14px}
+.startinfo .btns{display:flex;gap:8px;flex-wrap:wrap}
 .empty p{max-width:52ch;color:var(--ink2)}
 /* Indstillinger: section menu on the left (on top on a phone), all sections in one scrolling column */
 dialog.setdlg{width:min(920px,96vw);max-height:90vh}
@@ -1608,7 +1613,7 @@ function render(){
   const unplaced=act().filter(e=>e.type==='udgift'&&!e.account);
   const checks=cur().filter(e=>e.check).length;
   const sc=curSc();
-  let h=scBarHtml(true);
+  let h=scBarHtml(true)+startInfo(false);
   if(sc){h+=`<div class="scedit">${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
     <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}</div>`}
   h+=`<div class="hero"><p>Husstanden har <b>${disp(t.inc)}</b> i indtægter og <b>${disp(t.exp)}</b> i faste udgifter${ib(catInfo('Alle faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal)))}. Tilbage ${per()}: <b class="${t.left>=0?'left':'neg'}">${disp(t.left)}</b>.${t.sav?` Efter opsparing på ${disp(t.sav)}${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''} er der <b class="${t.afterSav>=0?'left':'neg'}">${disp(t.afterSav)}</b> tilbage.`:''}</p>
@@ -1714,7 +1719,7 @@ function render(){
   h+=`</div></section>`;
 
   // poster (own tab). hTop is the overview so far; the posts page starts with the scenario bar only.
-  const hTop=h; h=scBarHtml(true);
+  const hTop=h; h=scBarHtml(true)+startInfo(true);
   h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
   <div class="filters">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
@@ -2612,6 +2617,11 @@ function bindAcctDrag(){
       h.onpointerup=h.onpointercancel=e=>{h.onpointermove=h.onpointerup=h.onpointercancel=null;clear();src.classList.remove('dragging');h.style.cursor='';
         if(e.type==='pointerup'&&tgt&&moveAcct(id,tgt,after))commit()}}});
 }
+/** While the budget has no expenses yet (a new, empty budget): where the numbers come from. On Overblik it also links to Budgetposter. */
+function startInfo(onPosts){
+  if(curSc()||(S.entries||[]).some(e=>e.type==='udgift'))return '';
+  return `<div class="startinfo" role="note"><div><b>Udfyld dine budgetposter for at få tal i dit budget</b><p>Læg løn og faste udgifter ind, fx husleje, el, forsikringer og abonnementer. Så viser overblikket, hvad der er tilbage hver måned.</p></div>
+  <div class="btns">${onPosts?'':'<button type="button" data-goto="poster">Gå til Budgetposter</button>'}<button type="button" class="primary" data-newpost>Ny budgetpost</button></div></div>`}
 function bindMain(){
   document.querySelectorAll('details.acctd').forEach(d=>d.addEventListener('toggle',()=>{FOLD[d.dataset.acc]=!d.open;saveFold();const all=[...document.querySelectorAll('details.acctd')];const b=$('btnFoldAll');if(b)b.innerHTML=foldLbl(all.every(x=>!x.open))}));
   const bf=$('btnFoldAll');if(bf)bf.onclick=()=>{const all=[...document.querySelectorAll('details.acctd')],open=!all.every(x=>!x.open)?false:true;all.forEach(x=>{x.open=open;FOLD[x.dataset.acc]=!open});saveFold();bf.innerHTML=foldLbl(!open)};
@@ -2623,6 +2633,7 @@ function bindMain(){
   bindScopes();bindPsav();
   {const a=$('scSaldo'),d=$('scSaldoD');if(a&&d){const sv=()=>{setSaldo(a.dataset.acc,parseAmt(a.value)||0,d.value||(curSc()&&curSc().from&&parseDateX('01.'+curSc().from))||DAY(),true);commit()};a.onchange=sv;d.onchange=sv}}
   document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{const t=document.querySelector(`[data-page="${b.dataset.goto}"]`);if(t)t.click()});
+  document.querySelectorAll('[data-newpost]').forEach(b=>b.onclick=()=>openEntry(null));
   if($('btnNewSc'))$('btnNewSc').onclick=newScenario;
   if($('scName')){const sc=curSc();
     $('scName').onchange=e=>{sc.name=e.target.value.trim()||sc.name;commit()};
