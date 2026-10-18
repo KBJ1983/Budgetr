@@ -3,7 +3,8 @@
  * A film page calls F.film({ duration, frame }) where frame(t) sets every element for second t. That makes every
  * frame deterministic: scripts/video.mjs calls window.seek(t) frame by frame and pipes screenshots to ffmpeg.
  * Opened directly in a browser (no ?render) the film plays on a loop, scaled to the window.
- * Reusable scenes: F.importScene() (statement import into a draft budget) and F.deck() (feature montage).
+ * Reusable scenes: F.startScene() (the guide's start step), F.importScene() (statement import into a draft budget)
+ * and F.deck() (feature montage).
  * Solo layout (F.film({ solo: true }), F.timeline, F.title): a caption alone first, then its visual alone, centred.
  * Motion graphics ("Midnat og lime"; the accent comes from film.css, so a theme such as skole's solgul swaps it): the logo builds itself (F.buildLogo – the two cards drop into the pocket), headlines
  * come in word by word (F.split + F.words), key phrases get a lime underline (F.hl), the dark intro lifts like a curtain
@@ -424,6 +425,42 @@
   }
 
   /**
+   * The first step of the guide "Start nyt budget" (renderWiz(), WS_START in the app, same texts): empty, from
+   * statements or from existing budgets. The cursor (drawn by the film) points at each choice, picks "Ud fra
+   * kontoudskrifter" and presses Næste. update(u) takes seconds since the scene began; T says when: hover 1.2/2.0/2.8,
+   * pick 3.6, next 4.6.
+   */
+  function startScene(el) {
+    const OPTS = [
+      ["Tomt budget", "Du lægger selv posterne ind under hver overskrift på siden Budgetposter"],
+      ["Ud fra kontoudskrifter", "Læg kontoudskrifter fra netbanken ind som CSV, Excel eller PDF. budgetpro finder de faste poster og overførslerne mellem jeres konti"],
+      ["Ud fra eksisterende budgetter", "Læg et eller flere budgetter fra Excel eller CSV ind. Posterne hentes ind, som de står, og kan suppleres med kontoudskrifter"],
+    ];
+    el.classList.add("card", "gs");
+    el.innerHTML = `
+      <div class="gs-head"><h3>Start nyt budget</h3><div class="gs-dots">${Array.from({ length: 10 }, (_, i) => `<span${i ? "" : ' class="on"'}>${i + 1}</span>`).join("")}<b>Start</b></div></div>
+      <div class="gs-body">
+        <p class="gs-lead">Hvordan vil du starte budgettet? Guiden spørger først om navn, personer og konti. Har du valgt filer, lægger du dem ind, når budgettet er oprettet.</p>
+        ${OPTS.map(([b, s]) => `<div class="gs-opt"><span class="gs-rd"></span><span><b>${b}</b><small>${s}</small></span></div>`).join("")}
+      </div>
+      <div class="gs-foot"><span class="btn ghost">Annullér</span><span class="btn gs-next">Næste</span></div>`;
+    const opts = $$(".gs-opt", el);
+    const T = { hover: [1.2, 2.0, 2.8], pick: 3.6, next: 4.6 };
+    function update(u) {
+      opts.forEach((o, i) => {
+        const k = out(p(u, 0.3 + i * 0.18, 0.9 + i * 0.18));
+        put(o, { o: k, x: (1 - k) * 30 });
+        const picked = u >= T.pick ? i === 1 : i === 0;
+        o.classList.toggle("on", picked);
+        // Highlighted while the cursor rests on it (it arrives 0.35 s before its key and leaves at the key)
+        o.classList.toggle("hov", u >= T.hover[i] - 0.35 && u < T.hover[i] + 0.1);
+      });
+      press($(".gs-next", el), u, T.next);
+    }
+    return { update, T, opts, next: $(".gs-next", el) };
+  }
+
+  /**
    * Feature montage: screenshot cards that replace each other every `per` seconds, with a list of labels where the
    * current one is marked. items = [{ label, img, url, pos }]. update(u) takes seconds since the montage began.
    */
@@ -493,6 +530,6 @@
 
   window.F = {
     W, H, reel: REEL, $, $$, clamp, inOut, out, back, p, vis, lerp, kr, put, rise, slide, enter, scene, split, words, hl, caption, title, timeline, soloOrb, count, centre,
-    cursor, press, bars, buildLogo, darkBg, curtain, orb, importScene, deck, film,
+    cursor, press, bars, buildLogo, darkBg, curtain, orb, importScene, startScene, deck, film,
   };
 })();

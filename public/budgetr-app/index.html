@@ -1116,9 +1116,9 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 <dialog id="dlgFilm" class="filmdlg" aria-labelledby="filmTitle">
   <form method="dialog">
     <h2 id="filmTitle">Kom i gang med budgetpro</h2>
-    <p class="muted filmtxt">En film på halvandet minut: byg budgettet fra bunden med guiden, eller læg kontoudtog og et budget fra Excel ind i en kladde.</p>
-    <video id="filmVid" controls muted playsinline preload="none" aria-label="Film: sådan kommer du i gang med budgetpro"></video>
-    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="filmClose">Luk</button><button type="button" class="primary" id="filmWiz" hidden>Start guiden</button></div></div>
+    <p class="muted filmtxt">Få en kort præsentation af, hvordan du kommer godt i gang. Filmen varer halvandet minut. Tryk på afspil, når du er klar, eller spring den over og gå i gang med det samme. Du finder den altid under Kom i gang i menuen.</p>
+    <video id="filmVid" controls playsinline preload="none" aria-label="Film: sådan kommer du i gang med budgetpro"></video>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="filmClose">Spring over</button><button type="button" class="primary" id="filmWiz" hidden>Start guiden</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgDft">
@@ -2429,10 +2429,11 @@ $('btnHelpClose').onclick=()=>$('dlgHelp').close();
 /* ---------- Kom i gang: the how-to film ---------- */
 // budgetr:quiet (smoke tests, screenshots) keeps it closed, like the login notes.
 function filmSeen(){try{return sessionStorage.getItem('budgetr:quiet')==='1'||localStorage.getItem('hb-film')==='1'}catch(e){return true}}
+// The visitor starts the film (it has sound); the dialog only explains it and offers to skip it.
 function openFilm(){const v=$('filmVid'),n='/video/budgetpro-kom-i-gang'+(matchMedia('(max-width:767px)').matches?'-reel':'');
   if(v.dataset.src!==n){v.dataset.src=n;v.poster=n+'.jpg';v.src=n+'.mp4'}
-  $('filmWiz').hidden=!!S;try{localStorage.setItem('hb-film','1')}catch(e){}
-  $('dlgFilm').showModal();const p=v.play();if(p&&p.catch)p.catch(()=>{})}
+  $('filmWiz').hidden=!!S;$('filmClose').textContent=S?'Luk':'Spring over';try{localStorage.setItem('hb-film','1')}catch(e){}
+  $('dlgFilm').showModal();$('filmClose').focus()}
 $('dlgFilm').addEventListener('close',()=>{try{$('filmVid').pause()}catch(e){}});
 $('filmClose').onclick=()=>$('dlgFilm').close();
 $('filmWiz').onclick=()=>{$('dlgFilm').close();openWiz()};

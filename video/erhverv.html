@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  Erhverv film (about 1 min 28 s): first a short look at what the customer gets (statement import + features), then how easy it is
+  Erhverv film (about 1 min 40 s): first a short look at what the customer gets (the guide's start step, statement import + features), then how easy it is
   for a bank, an estate agent or another business to get started (pick a pack, the agreement page, give access, the
   customers use their codes).
   "Midnat og lime" with motion graphics.
@@ -73,6 +73,7 @@
   .joined b { display: block; font-size: 21px; font-weight: 600; margin-bottom: 4px; }
   .joined span { font-size: 17px; color: var(--ink-3); }
 
+  #gs { left: 900px; top: 200px; }
   #imp { left: 900px; top: 160px; }
   #deck { left: 860px; top: 220px; }
   /* The montage's labels: only the current one, above the card */
@@ -81,6 +82,7 @@
   #deckLabels li.on { opacity: 1 !important; }
 
   /* Reel (1080×1920): the visuals under the captions */
+  [data-format="reel"] #gs { left: 90px; top: 800px; }
   [data-format="reel"] #imp { left: 110px; top: 820px; }
   [data-format="reel"] #deck { left: 70px; top: 900px; }
   [data-format="reel"] #deckLabels { left: 70px; top: 810px; }
@@ -112,6 +114,16 @@
         <span class="dchip s1-chip">Banker</span><span class="dchip s1-chip">Ejendomsmæglere</span><span class="dchip s1-chip">Andre virksomheder</span>
       </div>
     </div>
+  </div>
+
+  <!-- 1b · What the customer gets: the guide's first step -->
+  <div class="layer" id="sg">
+    <div class="cap" id="cg">
+      <div class="tag">Det får jeres kunder</div>
+      <h2>Kunden vælger, hvordan budgettet <span class="hl">starter</span></h2>
+      <p>Med et tomt budget, ud fra kontoudskrifter fra netbanken eller ud fra de budgetter, kunden allerede har i Excel.</p>
+    </div>
+    <div class="abs" id="gs"></div>
   </div>
 
   <!-- 2 · What the customer gets: statements in, budget out -->
@@ -263,10 +275,11 @@
   const { $, $$, p, out, back, inOut, lerp, kr, put, rise, slide, scene, enter, words, caption, cursor, press, bars } = F;
   // Intro, then what the customer gets (2–3), then getting started in four steps (4–7).
   // Each scene: its caption alone, then its visual alone (F.timeline gives [visual start, end] and .a = caption start)
-  const TL = F.timeline({ intro: 6.8, scenes: [["#c2", 8.2], ["#c3", 12.0], ["#c4", 7.4], ["#c5", 6.4], ["#c6", 7.2], ["#c7", 5.6]] });
-  const [S2, S3, S4, S5, S6, S7] = TL.scenes, END = TL.END, DURATION = TL.DURATION;
+  const TL = F.timeline({ intro: 6.8, scenes: [["#cg", 6.4], ["#c2", 8.2], ["#c3", 12.0], ["#c4", 7.4], ["#c5", 6.4], ["#c6", 7.2], ["#c7", 5.6]] });
+  const [SG, S2, S3, S4, S5, S6, S7] = TL.scenes, END = TL.END, DURATION = TL.DURATION;
   const EMAIL = "maja@eksempel.dk";
 
+  const gs = F.startScene($("#gs"));
   const imp = F.importScene($("#imp"));
   const IMP0 = S2[0] + 0.5; // the import's own clock starts here
   const deck = F.deck($("#deck"), $("#deckLabels"), [
@@ -279,7 +292,7 @@
   const DECK0 = S3[0] + 0.3;
 
   const ORB = F.soloOrb({ x: 1500, y: 560, d: 560 }, TL.scenes, [
-    { x: 1500, y: 300, d: 560 }, { x: 1300, y: 760, d: 860 }, { x: 1440, y: 280, d: 600 },
+    { x: 520, y: 820, d: 600 }, { x: 1500, y: 300, d: 560 }, { x: 1300, y: 760, d: 860 }, { x: 1440, y: 280, d: 600 },
     { x: 560, y: 860, d: 560 }, { x: 1500, y: 820, d: 520 }, { x: 700, y: 900, d: 640 },
   ]);
 
@@ -296,11 +309,17 @@
       put(el, { o: out(p(t, 2.6 + i * 0.2, 2.9 + i * 0.2)), y: (1 - k) * 30, s: lerp(0.8, 1, k) });
     });
     F.orb(t, ORB);
-    rise(".dots", t, S2.a + 0.4, 1e9, 30);
+    rise(".dots", t, SG.a + 0.4, 1e9, 30);
+
+    // 1b · The guide's start step
+    scene("#sg", t, SG.a - 0.4, SG[1]);
+    F.title("#cg", t, SG.a + 0.3, SG[0]);
+    enter("#gs", t, SG[0] + 0.1, SG[1]);
+    gs.update(t - SG[0]);
 
     // 2 · Statement import
-    scene("#s2", t, S2.a - 0.4, S2[1]);
-    F.title("#c2", t, S2.a + 0.3, S2[0]);
+    scene("#s2", t, S2.a, S2[1]);
+    F.title("#c2", t, S2.a + 0.2, S2[0]);
     enter("#imp", t, S2[0] + 0.4, S2[1]);
     imp.update(t - IMP0);
 
@@ -383,7 +402,7 @@
     // One bar per getting-started step (1–4)
     bars(t, [[S4.a + 0.3, S4[1]], [S5.a + 0.3, S5[1]], [S6.a + 0.3, S6[1]], [S7.a + 0.3, S7[1] - 0.4]], [S4.a + 0.3, END + 0.3]);
 
-    F.curtain(t, ["#s1", S2.a - 0.1], ["#end", END]);
+    F.curtain(t, ["#s1", SG.a - 0.1], ["#end", END]);
 
     // End card, held for the last six seconds
     F.darkBg("#end", t, END + 0.6);
@@ -394,6 +413,8 @@
     put("#endUrl", { o: out(p(t, END + 2.2, END + 2.5)), s: lerp(0.6, 1, ek) });
 
     cursor(t, [
+      { keys: [...gs.T.hover.map((h, i) => [SG[0] + h, gs.opts[i]]), [SG[0] + gs.T.pick, gs.opts[1]], [SG[0] + gs.T.next, gs.next]],
+        clicks: [SG[0] + gs.T.pick, SG[0] + gs.T.next] },
       { keys: [[IMP0 + imp.T.next, imp.next], [IMP0 + imp.T.add, imp.add]], clicks: [IMP0 + imp.T.next, IMP0 + imp.T.add] },
       { keys: [[S4[0] + 1.8, "#c50"], [S4[0] + 2.8, "#m12"], [S4[0] + 4.6, "#sendReq"]], clicks: [S4[0] + 1.8, S4[0] + 2.8, S4[0] + 4.7] },
       { keys: [[S6[0] + 1.1, "#email"], [S6[0] + 3.0, "#sendCode"]], clicks: [S6[0] + 1.1, S6[0] + 3.3] },
