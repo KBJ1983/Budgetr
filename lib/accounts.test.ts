@@ -4,6 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   addMember,
+  deleteAccount,
   findByEmail,
   listLogins,
   MAX_LOGINS,
@@ -19,6 +20,8 @@ import {
   validateSignup,
   VERIFY_TTL_MS,
 } from "./accounts";
+import { BACKUP_EVERY_MS, readBudget, writeBudget } from "./budget-file";
+import { readActivity, touchActivity } from "./owner-store";
 import { readProfile } from "./profile";
 import { isAccountId } from "./users";
 
@@ -213,5 +216,29 @@ describe("sharing a budget", () => {
     expect(await redeem(r.link.token, t0, dir)).toBeNull();
     expect(await requestLogin("bo@eksempel.dk", t0, dir)).toBeNull();
     expect((await readAccount(id, dir))?.members).toBeUndefined();
+  });
+});
+
+describe("deleteAccount", () => {
+  it("removes the account, its members' logins, the budget, backups, profile and activity", async () => {
+    const l = (await signup(input, t0, dir))!;
+    await redeem(l.token, t0, dir);
+    const id = l.account.id;
+    expect(await readProfile(id, dir)).not.toEqual({});
+    expect((await addMember(id, { firstName: "Bo", email: "bo@eksempel.dk" }, t0, dir)).ok).toBe(true);
+    await writeBudget(id, JSON.stringify({ entries: [] }), dir, t0);
+    await writeBudget(id, JSON.stringify({ entries: [1] }), dir, later(BACKUP_EVERY_MS + 1));
+    await touchActivity(id, id, t0, dir);
+    expect((await readdir(path.join(dir, "backups", id))).length).toBe(1);
+
+    expect(await deleteAccount(id, dir)).toBe(true);
+    expect(await readAccount(id, dir)).toBeNull();
+    expect(await readBudget(id, dir)).toBeNull();
+    expect(await readdir(path.join(dir, "backups", id))).toEqual([]);
+    expect(await readProfile(id, dir)).toEqual({});
+    expect(await readActivity([id], dir)).toEqual({});
+    expect(await requestLogin(input.email, later(2 * RESEND_GAP_MS), dir)).toBeNull();
+    expect(await requestLogin("bo@eksempel.dk", later(2 * RESEND_GAP_MS), dir)).toBeNull();
+    expect(await deleteAccount(id, dir)).toBe(false);
   });
 });

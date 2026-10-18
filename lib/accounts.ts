@@ -272,6 +272,27 @@ export async function removeMember(accountId: string, memberId: string, dir?: st
   return true;
 }
 
+/**
+ * Deletes an account and everything kept about it: the account (with its members, so their logins end too), the
+ * budget and its backups, the profile for reminders, the activity notes and the send counter. The owner's ledger
+ * (lib/owner-store.ts) only holds the id with the plan, which bookkeeping must keep. False when there was no account.
+ */
+export async function deleteAccount(id: string, dir?: string): Promise<boolean> {
+  if (!(await readAccount(id, dir))) return false;
+  const store = openStore(dir);
+  const backups = await store.list(`backups/${id}`);
+  await Promise.all([
+    store.del(`${id}.json`),
+    ...backups.map((n) => store.del(`backups/${id}/${n}`)),
+    store.del(`profiles/${id}.json`),
+    store.del(`activity/${id}.json`),
+    store.del(`sends/${id}.json`),
+  ]);
+  // The account last, so a failure above leaves it in place and the user can try again.
+  await store.del(`accounts/${id}.json`);
+  return true;
+}
+
 /** Who can log in to the budget, for the app's Deling page (no tokens). */
 export function listLogins(a: Account) {
   return {
