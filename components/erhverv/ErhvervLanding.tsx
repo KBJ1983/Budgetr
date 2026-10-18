@@ -10,7 +10,7 @@ import { ScrollReveal } from "@/components/landing/ScrollReveal";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader, type NavLink } from "@/components/landing/SiteHeader";
 import { SwipeList } from "@/components/landing/Swipe";
-import { ArrowRightIcon, DownloadIcon, LockIcon, PlusIcon, ShieldIcon, UploadIcon } from "@/components/landing/icons";
+import { ArrowRightIcon, DownloadIcon, GlobeIcon, LockIcon, PlusIcon, ShieldIcon } from "@/components/landing/icons";
 import { PriceRequest } from "./PriceRequest";
 import e from "./erhverv.module.css";
 
@@ -243,9 +243,9 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string }[] =
     body: "Koden står kun i mailen til kunden. Hverken jeres administratorer eller budgetpro kan se den.",
   },
   {
-    icon: <UploadIcon size={20} strokeWidth={1.8} />,
-    title: "Ingen adgang til netbanken",
-    body: "Kunden uploader selv en kontoudskrift eller skriver tallene ind. Intet hentes automatisk.",
+    icon: <GlobeIcon size={20} strokeWidth={1.8} />,
+    title: "Data bliver i EU",
+    body: "Budgetter og brugere opbevares på servere i EU. Intet hentes fra netbanken, kunden lægger selv tallene ind.",
   },
   {
     icon: <DownloadIcon size={20} strokeWidth={1.8} />,

@@ -102,7 +102,7 @@ export default function PrivacyPage() {
           <strong>Vercel</strong> – hosting af hjemmesiden og appen
         </li>
         <li>
-          <strong>Upstash</strong> – databasen, hvor budgetter og konti gemmes
+          <strong>Upstash</strong> – databasen, hvor budgetter og konti gemmes, på servere i EU
         </li>
         <li>
           <strong>Resend</strong> – afsendelse af mails med login-koder, invitationer, påmindelser og filer

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Logo } from "@/components/Logo";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
-import { DownloadIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon, UploadIcon } from "./icons";
+import { DownloadIcon, GlobeIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon } from "./icons";
 import { PricePlans } from "./PricePlans";
 import { SignupForm } from "./SignupForm";
 import { SwipeList } from "./Swipe";
@@ -25,9 +25,9 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string }[] =
     body: "Brug det alene, eller invitér dem, du deler økonomi med. I ser de samme tal.",
   },
   {
-    icon: <UploadIcon size={20} strokeWidth={1.8} />,
-    title: "Kun det, du selv lægger ind",
-    body: "Budgettet består af de tal, du skriver eller uploader. Intet hentes fra din bank.",
+    icon: <GlobeIcon size={20} strokeWidth={1.8} />,
+    title: "Dine data bliver i EU",
+    body: "Dit budget og din bruger opbevares på servere i EU og er beskyttet af de europæiske regler for persondata.",
   },
 ];
 
