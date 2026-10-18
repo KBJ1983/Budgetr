@@ -25,6 +25,6 @@ export async function deliverTeacherMail(req: Request, m: TeacherMail | null): P
   if (!m) return { ok: true };
   const { origin, host } = requestOrigin(req.headers, req.url);
   const link = `${origin}${skoleBase(host)}/laerer/bekraeft?t=${encodeURIComponent(m.token)}`;
-  const sent = await sendAuthMail(m.teacher.email, teacherMail(m.purpose, m.teacher.name, m.code, link), link);
+  const sent = await sendAuthMail(m.teacher.email, teacherMail(m.purpose, m.teacher.name, m.code, link), link, { theme: "skole" });
   return !sent && DEV ? { ok: true, devLink: link, devCode: m.code } : { ok: true };
 }

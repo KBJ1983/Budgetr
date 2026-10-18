@@ -1,41 +1,49 @@
 /*
- * Landing page styles, layout from docs/design/forside-v2.html ("Forside v2").
- * Header and hero share one dark rounded card on a white frame; sections below alternate paper, white, stone and dark.
- * Content is at most 1136px wide (1200px incl. 32px gutters). Breakpoints: 1020px (two columns → one), 768px (mobile).
- * The app is shown with real screenshots (public/landing/, `pnpm shots`), in the light or the dark theme.
+ * Landing page styles, layout from docs/design/forside-v2.html ("Forside v2"), colours from the "Midnat og lime" brand
+ * (docs/design/MIDNAT.md, hero after docs/design/midnat-forside.html).
+ * Header and hero share one light rounded card (#F3F5F7) on a white frame; sections below alternate paper, white, stone
+ * and midnight. Content is at most 1136px wide (1200px incl. 32px gutters). Breakpoints: 1020px (two columns → one),
+ * 768px (mobile). The app is shown with real screenshots (public/landing/, `pnpm shots`), in the light or the dark theme.
  */
 
 .page {
-  /* Palette of the v2 design. Dark values match the app's dark theme. */
-  --v-paper: #f5f4f0;
+  /* Midnat og lime palette (60 % light, 30 % midnight, 10 % lime). Dark values match the app's dark theme. */
+  --v-paper: #f3f5f7;
   --v-white: #ffffff;
-  --v-stone: #efeee8;
-  --v-card: #fbfbf9;
-  --v-ink: #15191a;
-  --v-ink-2: #3f4642;
-  --v-ink-3: #565d59;
-  --v-rule: #e3e1da;
-  --v-rule-2: #ebeae4;
-  --v-dark: #151617;
-  --v-dark-card: #1c1d1f;
-  --v-dark-rule: #2a2c2f;
-  --v-dark-text: #ececec;
-  --v-dark-2: #b4b6ba;
-  --v-dark-3: #8d9095;
-  --v-pine: #2c6a4d;
-  --v-pine-hover: #21523b;
-  --v-pine-light: #7ed4a8;
-  --v-pine-bg: #e3ece5;
+  --v-stone: #edf0f3;
+  --v-card: #f8f9fb;
+  --v-ink: #0e1b2c;
+  --v-ink-2: #3e4a5a;
+  --v-ink-3: #5a6472;
+  --v-rule: #dfe4ea;
+  --v-rule-2: #e7ebef;
+  --v-dark: #0e1b2c;
+  --v-dark-2nd: #1a2b42;
+  --v-dark-card: #15243a;
+  --v-dark-rule: #1f3350;
+  --v-dark-text: #f3f5f7;
+  --v-dark-2: #b6c0cc;
+  --v-dark-3: #8a97a8;
+  /* Accent text and links on light. */
+  --v-olive: #3f6a0e;
+  --v-olive-hover: #2f500a;
+  /* Lime: accents on dark, badges and the primary button on dark; never text on light. */
+  --v-lime: #d4f26b;
+  --v-lime-hover: #e2f79a;
+  --v-lime-dark: #9bc43a;
+  --v-lime-tone: #eef6d2;
+  /* Big decorative circles on midnight bands. */
+  --v-circle: #16294a;
 
   --content: 1136px;
   --gutter: 32px;
   --section-y: 120px;
   /* Side padding inside the 1400px card so its content lines up with the 1136px column below. */
   --card-pad: max(var(--gutter), calc((min(100%, 1400px) - var(--content)) / 2));
-  --error: #b03a22;
-  --error-on-dark: #ffd4c8;
-  --product-shadow: 0 30px 60px -24px rgba(21, 25, 26, 0.35);
-  --float-shadow: 0 18px 36px -10px rgba(21, 25, 26, 0.22);
+  --error: #a8382a;
+  --error-on-dark: #f08a78;
+  --product-shadow: 0 30px 60px -24px rgba(14, 27, 44, 0.35);
+  --float-shadow: 0 18px 36px -10px rgba(14, 27, 44, 0.22);
 
   min-height: 100vh;
   display: flex;
@@ -46,7 +54,7 @@
   overflow-x: clip;
 }
 
-/* ================= Header (top of the dark card) ================= */
+/* ================= Header (top of the light card) ================= */
 
 .header {
   position: relative;
@@ -62,20 +70,20 @@
   display: flex;
   align-items: center;
   gap: 32px;
-  background: var(--v-dark);
-  color: var(--v-dark-text);
+  background: var(--v-paper);
+  color: var(--v-ink);
   border-radius: 32px 32px 0 0;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  color: var(--v-dark-text);
+  color: var(--v-ink);
   text-decoration: none;
   border-radius: 8px;
 }
 .brand:hover {
-  color: var(--v-dark-text);
+  color: var(--v-ink);
 }
 
 .nav {
@@ -86,13 +94,13 @@
   white-space: nowrap;
 }
 .nav a {
-  color: var(--v-dark-2);
+  color: var(--v-ink-2);
   text-decoration: none;
   padding: 8px 0;
   border-radius: 4px;
 }
 .nav a:hover {
-  color: var(--v-dark-text);
+  color: var(--v-ink);
 }
 
 .headerActions {
@@ -104,30 +112,30 @@
 .loginLink {
   font-size: 15px;
   font-weight: 500;
-  color: var(--v-dark-text);
+  color: var(--v-ink);
   text-decoration: none;
   padding: 9px 14px;
   border-radius: 999px;
   white-space: nowrap;
 }
 .loginLink:hover {
-  color: var(--v-dark-text);
+  color: var(--v-ink);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 .headerCta {
   font-size: 15px;
   font-weight: 600;
-  color: var(--v-dark);
-  background: var(--v-dark-text);
+  color: #fff;
+  background: var(--v-ink);
   border-radius: 999px;
   padding: 10px 18px;
   text-decoration: none;
   white-space: nowrap;
 }
 .headerCta:hover {
-  color: var(--v-dark);
-  background: #fff;
+  color: #fff;
+  background: var(--v-dark-2nd);
 }
 
 .menuButton {
@@ -136,9 +144,9 @@
   height: 44px;
   padding: 0;
   border-radius: 999px;
-  border: 1px solid var(--v-dark-rule);
-  background: var(--v-dark-card);
-  color: var(--v-dark-text);
+  border: 1px solid var(--v-rule);
+  background: var(--v-white);
+  color: var(--v-ink);
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -148,10 +156,10 @@
   top: 100%;
   left: 14px;
   right: 14px;
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
   border-radius: 0 0 20px 20px;
-  box-shadow: 0 24px 40px -20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 24px 40px -20px rgba(14, 27, 44, 0.35);
   padding: 4px 20px 12px;
 }
 .menuPanel[hidden] {
@@ -167,9 +175,9 @@
   align-items: center;
   min-height: 52px;
   font-size: 17px;
-  color: var(--v-dark-text);
+  color: var(--v-ink);
   text-decoration: none;
-  border-bottom: 1px solid var(--v-dark-rule);
+  border-bottom: 1px solid var(--v-rule);
 }
 .menuList li:last-child a {
   border-bottom: 0;
@@ -202,10 +210,10 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--v-pine);
+  color: var(--v-olive);
 }
 .eyebrowDark {
-  color: var(--v-pine-light);
+  color: var(--v-lime);
 }
 
 .h2 {
@@ -241,7 +249,7 @@
   text-wrap: pretty;
 }
 .headBodyDark {
-  color: #dfe3df;
+  color: #dfe4ea;
 }
 
 .bodyLg {
@@ -273,8 +281,8 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--v-pine-bg);
-  color: var(--v-pine);
+  background: var(--v-lime-tone);
+  color: var(--v-olive);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,7 +341,7 @@
   border-radius: 999px;
   border: 0;
   background: var(--v-ink);
-  color: var(--v-paper);
+  color: #fff;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -344,7 +352,7 @@
   white-space: nowrap;
 }
 .submit:hover {
-  background: var(--v-pine);
+  background: var(--v-dark-2nd);
 }
 .error {
   grid-area: error;
@@ -368,11 +376,11 @@
   box-shadow: 0 0 0 2px var(--error-on-dark);
 }
 .signupDark .submit {
-  background: var(--v-pine-light);
-  color: #0e1a13;
+  background: var(--v-lime);
+  color: var(--v-ink);
 }
 .signupDark .submit:hover {
-  background: #97e0b9;
+  background: var(--v-lime-hover);
 }
 .signupDark .error {
   color: var(--error-on-dark);
@@ -381,7 +389,7 @@
   outline-color: #fff;
 }
 
-/* ================= Hero (bottom of the dark card) ================= */
+/* ================= Hero (bottom of the light card) ================= */
 
 .hero {
   background: var(--v-white);
@@ -396,8 +404,8 @@
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 64px;
   align-items: center;
-  background: var(--v-dark);
-  color: var(--v-dark-text);
+  background: var(--v-paper);
+  color: var(--v-ink);
   border-radius: 0 0 32px 32px;
   overflow: hidden;
 }
@@ -423,16 +431,22 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--v-pine-light);
+  color: var(--v-olive);
 }
+/* Lime highlight under the accent part of the title (midnat-forside.html). */
 .accent {
-  color: var(--v-pine-light);
+  color: var(--v-ink);
+  /* A band from 82 % to 94 % of the line; its width is animated in the Motion block. */
+  background: linear-gradient(var(--v-lime), var(--v-lime)) no-repeat 0 92% / 100% 0.12em;
+  padding: 0 0.06em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 .lead {
   margin: 0;
   font-size: 19px;
   line-height: 1.6;
-  color: var(--v-dark-2);
+  color: var(--v-ink-2);
   max-width: 520px;
   text-wrap: pretty;
 }
@@ -447,7 +461,7 @@
   max-width: 260px;
   font-size: 13.5px;
   line-height: 1.45;
-  color: var(--v-dark-2);
+  color: var(--v-ink-3);
   text-wrap: balance;
 }
 .heroButton {
@@ -456,16 +470,16 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 600;
-  color: var(--v-dark);
-  background: var(--v-dark-text);
+  color: #fff;
+  background: var(--v-ink);
   border-radius: 999px;
   padding: 16px 26px;
   text-decoration: none;
   white-space: nowrap;
 }
 .heroButton:hover {
-  color: var(--v-dark);
-  background: #fff;
+  color: #fff;
+  background: var(--v-dark-2nd);
 }
 
 .heroVisual {
@@ -477,7 +491,7 @@
   position: absolute;
   inset: -40px -80px -20px;
   pointer-events: none;
-  background-image: radial-gradient(#34373b 1.2px, transparent 1.3px);
+  background-image: radial-gradient(#d6dce3 1.2px, transparent 1.3px);
   background-size: 22px 22px;
   -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
   mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
@@ -540,7 +554,7 @@
 }
 :global(html[data-shots="dark"]) .showcase {
   --chrome: var(--v-dark);
-  --chrome-rule: #26282b;
+  --chrome-rule: var(--v-dark-rule);
   --chrome-ink: var(--v-dark-3);
   --note-bg: var(--v-dark-text);
   --note-ink: var(--v-dark);
@@ -548,7 +562,7 @@
 @media (prefers-color-scheme: dark) {
   :global(html:not([data-shots="light"])) .showcase {
     --chrome: var(--v-dark);
-    --chrome-rule: #26282b;
+    --chrome-rule: var(--v-dark-rule);
     --chrome-ink: var(--v-dark-3);
     --note-bg: var(--v-dark-text);
     --note-ink: var(--v-dark);
@@ -566,8 +580,8 @@
   display: flex;
   gap: 2px;
   padding: 3px;
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
   border-radius: 999px;
 }
 .showTab,
@@ -577,7 +591,7 @@
   border: 0;
   background: transparent;
   font: 500 13px var(--font);
-  color: var(--v-dark-2);
+  color: var(--v-ink-3);
   padding: 6px 13px;
   border-radius: 999px;
   cursor: pointer;
@@ -587,12 +601,12 @@
 }
 .showTab:hover,
 .showTheme button:hover {
-  color: var(--v-dark-text);
+  color: var(--v-ink);
 }
 .showTab[aria-selected="true"],
 .showTheme button[aria-pressed="true"] {
-  color: var(--v-dark);
-  background: var(--v-dark-text);
+  color: #fff;
+  background: var(--v-ink);
 }
 .showWindow {
   position: relative;
@@ -600,10 +614,8 @@
   overflow: hidden;
   background: var(--chrome);
   border: 1px solid var(--chrome-rule);
-  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5);
-  transform: perspective(1600px) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg));
+  box-shadow: 0 40px 80px -20px rgba(14, 27, 44, 0.35);
   transition:
-    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1),
     background-color 0.3s,
     border-color 0.3s;
 }
@@ -654,7 +666,7 @@
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  color: var(--v-dark-2);
+  color: var(--v-ink-2);
   font: 500 14px/1.45 var(--font);
 }
 .showDot {
@@ -663,7 +675,7 @@
   height: 8px;
   margin-top: 5px;
   border-radius: 50%;
-  background: var(--v-pine-light);
+  background: var(--v-lime-dark);
 }
 
 /* Phone for small screens */
@@ -672,9 +684,9 @@
   margin: 0 auto;
   padding: 9px;
   border-radius: 44px;
-  background: #0b0c0d;
+  background: #101c2b;
   border: 1px solid var(--v-dark-rule);
-  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 40px 80px -30px rgba(14, 27, 44, 0.5);
 }
 /* The screen is a sideways swipe strip of pages (Shots.tsx HeroPhone); it shows the top of each page only. */
 .phoneScreen {
@@ -707,8 +719,8 @@
   max-width: 100%;
 }
 .phoneTabs .showTab[aria-current="true"] {
-  color: var(--v-dark);
-  background: var(--v-dark-text);
+  color: #fff;
+  background: var(--v-ink);
 }
 .phoneTour .showNote {
   margin: -4px 0 0;
@@ -769,7 +781,7 @@
   height: 48px;
   border-radius: 14px;
   background: var(--v-dark);
-  color: var(--v-pine-light);
+  color: var(--v-lime);
   align-items: center;
   justify-content: center;
 }
@@ -778,7 +790,7 @@
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
-  color: var(--v-pine);
+  color: var(--v-olive);
 }
 .stepTitle {
   margin: 0;
@@ -807,7 +819,7 @@
   margin: 0 auto;
   border-radius: 36px;
   overflow: hidden;
-  background: #2c2f33;
+  background: #1a2b42;
 }
 .bannerImage {
   object-fit: cover;
@@ -816,7 +828,7 @@
 .bannerShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(21, 22, 23, 0.78) 0%, rgba(21, 22, 23, 0.35) 55%, rgba(21, 22, 23, 0) 100%);
+  background: linear-gradient(90deg, rgba(14, 27, 44, 0.78) 0%, rgba(14, 27, 44, 0.35) 55%, rgba(14, 27, 44, 0) 100%);
 }
 .bannerText {
   position: relative;
@@ -841,7 +853,7 @@
   margin: 0;
   font-size: 17px;
   line-height: 1.6;
-  color: #e3e5e7;
+  color: #e3e8ee;
   text-wrap: pretty;
 }
 
@@ -866,7 +878,7 @@
   width: 640px;
   height: 640px;
   border-radius: 50%;
-  background: var(--v-pine);
+  background: var(--v-circle);
 }
 .trustBandGrid {
   list-style: none;
@@ -891,8 +903,8 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(126, 212, 168, 0.12);
-  color: var(--v-pine-light);
+  background: rgba(212, 242, 107, 0.12);
+  color: var(--v-lime);
   align-items: center;
   justify-content: center;
   margin-bottom: 6px;
@@ -908,7 +920,7 @@
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
-  color: #a3a6ab;
+  color: #a3aebd;
   text-wrap: pretty;
 }
 
@@ -955,21 +967,21 @@
 }
 .devLid {
   width: 100%;
-  background: #1a1c1d;
+  background: #101c2b;
   border-radius: 16px 16px 0 0;
   padding: 10px 10px 14px;
-  box-shadow: 0 40px 80px -30px rgba(21, 25, 26, 0.45);
+  box-shadow: 0 40px 80px -30px rgba(14, 27, 44, 0.45);
 }
 .devScreen {
   width: 100%;
   border-radius: 4px;
   overflow: hidden;
-  background: #f4f5f1;
+  background: #f3f5f7;
 }
 .devBase {
   width: 112%;
   height: 13px;
-  background: linear-gradient(180deg, #d9d8d3, #b9b8b2);
+  background: linear-gradient(180deg, #dde2e8, #b8c0ca);
   border-radius: 0 0 14px 14px;
   position: relative;
 }
@@ -980,7 +992,7 @@
   transform: translateX(-50%);
   width: 16%;
   height: 5px;
-  background: #a9a8a2;
+  background: #a7b0ba;
   border-radius: 0 0 6px 6px;
 }
 .devPhone {
@@ -989,16 +1001,16 @@
   bottom: 0;
   width: 26%;
   min-width: 96px;
-  background: #1a1c1d;
+  background: #101c2b;
   border-radius: 26px;
   padding: 6px;
-  box-shadow: 0 30px 60px -20px rgba(21, 25, 26, 0.55);
+  box-shadow: 0 30px 60px -20px rgba(14, 27, 44, 0.55);
 }
 .devPhoneScreen {
   aspect-ratio: 390 / 844;
   border-radius: 20px;
   overflow: hidden;
-  background: #f4f5f1;
+  background: #f3f5f7;
 }
 
 /* Deler du økonomi: photo with the screenshot overlapping its lower edge. */
@@ -1011,7 +1023,7 @@
   height: 300px;
   border-radius: 24px;
   overflow: hidden;
-  background: #dcdad3;
+  background: #dfe4ea;
 }
 .sharePhoto .photoCover {
   object-position: center 24%;
@@ -1036,7 +1048,7 @@
   height: 760px;
   margin-left: -60px;
   border-radius: 50%;
-  background: var(--v-pine);
+  background: var(--v-circle);
 }
 .quotesHead {
   display: flex;
@@ -1061,7 +1073,7 @@
   line-height: 0.6;
   height: 44px;
   padding-top: 14px;
-  color: var(--v-pine-light);
+  color: var(--v-lime);
 }
 .quoteGrid {
   list-style: none;
@@ -1084,7 +1096,7 @@
   color: var(--v-ink);
   border-radius: 24px;
   padding: 30px;
-  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 60px -24px rgba(4, 10, 18, 0.55);
 }
 .quoteText {
   margin: 0;
@@ -1158,7 +1170,7 @@
     opacity 0.15s;
 }
 .tourArrow:hover:not(:disabled) {
-  background: #26282b;
+  background: var(--v-dark-2nd);
 }
 .tourArrow:disabled {
   opacity: 0.35;
@@ -1198,7 +1210,7 @@
   position: relative;
   height: 210px;
   overflow: hidden;
-  background: #26282b;
+  background: var(--v-dark-2nd);
   border-bottom: 1px solid var(--v-dark-rule);
 }
 .tourVisual .tourShot {
@@ -1210,7 +1222,7 @@
 .tourVisualIcon {
   display: grid;
   place-items: center;
-  background: #1f2a24;
+  background: #1a2b42;
 }
 .tourIcon {
   display: grid;
@@ -1218,8 +1230,8 @@
   width: 84px;
   height: 84px;
   border-radius: 24px;
-  background: rgba(126, 212, 168, 0.12);
-  color: var(--v-pine-light);
+  background: rgba(212, 242, 107, 0.12);
+  color: var(--v-lime);
 }
 .tourText {
   padding: 22px 24px 26px;
@@ -1283,7 +1295,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--v-pine-light);
+  color: var(--v-lime);
 }
 .allList {
   gap: 10px;
@@ -1291,7 +1303,7 @@
 .allList li {
   font-size: 15px;
   line-height: 1.45;
-  color: #d3d6d9;
+  color: #d3dae2;
 }
 
 /* ================= Pris og spørgsmål ================= */
@@ -1311,7 +1323,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  box-shadow: 0 30px 60px -30px rgba(21, 25, 26, 0.2);
+  box-shadow: 0 30px 60px -30px rgba(14, 27, 44, 0.2);
 }
 .priceHead {
   display: flex;
@@ -1321,8 +1333,8 @@
 .priceTag {
   font-size: 13px;
   font-weight: 500;
-  color: var(--v-pine);
-  background: var(--v-pine-bg);
+  color: var(--v-olive);
+  background: var(--v-lime-tone);
   border-radius: 999px;
   padding: 5px 12px;
 }
@@ -1330,7 +1342,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
-  background: #f0efea;
+  background: #edf0f3;
   border-radius: 999px;
   padding: 4px;
 }
@@ -1353,13 +1365,13 @@
 .planButton[aria-pressed="true"] {
   background: var(--v-white);
   color: var(--v-ink);
-  box-shadow: 0 1px 3px rgba(21, 25, 26, 0.15);
+  box-shadow: 0 1px 3px rgba(14, 27, 44, 0.15);
 }
 .planTag {
   font-size: 11.5px;
   font-weight: 600;
-  color: #fff;
-  background: var(--v-pine);
+  color: var(--v-ink);
+  background: var(--v-lime);
   border-radius: 999px;
   padding: 2px 8px;
 }
@@ -1398,7 +1410,7 @@
   justify-content: center;
   font-size: 16px;
   font-weight: 600;
-  color: var(--v-paper);
+  color: #fff;
   background: var(--v-ink);
   border-radius: 999px;
   padding: 16px;
@@ -1406,7 +1418,7 @@
 }
 .buttonBlock:hover {
   color: #fff;
-  background: var(--v-pine);
+  background: var(--v-dark-2nd);
 }
 /* Pulled up under the button: the card's gap is too wide for a line that belongs to it. */
 .priceCardNote {
@@ -1468,7 +1480,7 @@
   transition: transform 0.2s;
 }
 .faqItem[open] .faqPlus {
-  background: var(--v-pine-bg);
+  background: var(--v-lime-tone);
   transform: rotate(45deg);
 }
 .faqA {
@@ -1502,7 +1514,49 @@
   width: 620px;
   height: 620px;
   border-radius: 50%;
-  background: var(--v-pine);
+  background: var(--v-circle);
+}
+/* Floating cards on the final call to action (the logo's cards), animated in the Motion block. */
+.ctaCards span {
+  position: absolute;
+  border-radius: 20px;
+  pointer-events: none;
+}
+.ctaCards span:nth-child(1) {
+  right: 7%;
+  top: 64px;
+  width: 150px;
+  height: 100px;
+  background: var(--v-lime);
+  rotate: 9deg;
+}
+.ctaCards span:nth-child(2) {
+  right: 13%;
+  bottom: 56px;
+  width: 190px;
+  height: 126px;
+  background: var(--v-dark-2nd);
+  border: 1.5px solid var(--v-dark-rule);
+  rotate: -8deg;
+}
+.ctaCards span:nth-child(3) {
+  left: 8%;
+  bottom: 80px;
+  width: 120px;
+  height: 80px;
+  border: 2px solid rgba(212, 242, 107, 0.55);
+  rotate: -5deg;
+}
+@media (max-width: 1019.98px) {
+  .ctaCards span:nth-child(1) {
+    top: 24px;
+    width: 96px;
+    height: 64px;
+  }
+  .ctaCards span:nth-child(2),
+  .ctaCards span:nth-child(3) {
+    display: none;
+  }
 }
 .ctaInner {
   position: relative;
@@ -1579,7 +1633,7 @@
   align-self: flex-start;
   font-size: 15px;
   font-weight: 600;
-  color: var(--v-pine);
+  color: var(--v-olive);
   text-decoration: none;
 }
 .bizLink:hover {
@@ -1870,7 +1924,7 @@
     border-radius: 24px;
   }
   .bannerShade {
-    background: linear-gradient(180deg, rgba(21, 22, 23, 0) 25%, rgba(21, 22, 23, 0.8) 100%);
+    background: linear-gradient(180deg, rgba(14, 27, 44, 0) 25%, rgba(14, 27, 44, 0.8) 100%);
   }
   .bannerText {
     padding: 24px;
@@ -2115,26 +2169,134 @@
     width: 7px;
     height: 7px;
     border-radius: 999px;
-    background: #c9cfcb;
+    background: #c9d2dc;
     transition:
       width 0.25s,
       background-color 0.25s;
   }
   .swipeDots button[aria-current="true"]::before {
     width: 20px;
-    background: var(--v-pine);
+    background: var(--v-olive);
   }
   .swipeDark .swipeDots button::before {
-    background: #45484c;
+    background: #2a3d57;
   }
   .swipeDark .swipeDots button[aria-current="true"]::before {
-    background: var(--v-pine-light);
+    background: var(--v-lime);
   }
 }
 
 /* ================= Motion ================= */
-/* Calm and short: things settle into place, nothing bounces. All of it is off with reduced motion.
-   Scroll reveal: components/landing/ScrollReveal.tsx marks elements below the fold as pending. */
+/* Lively but calm, in the same language as the films (video/): headlines wipe up out of a mask, the lime underline is
+   drawn, screenshots tilt up into place, the logo's cards drift, circles on the midnight bands breathe, and the photo
+   banner moves a little slower than the page. All of it is off with reduced motion.
+   Scroll reveal: components/landing/ScrollReveal.tsx marks elements below the fold as pending; data-reveal="tilt" gives
+   the 3D entrance used for screenshots, the film and the price card. */
+
+@keyframes wipeUp {
+  from {
+    clip-path: inset(0 -6% 100% -6%);
+    transform: translateY(0.35em);
+  }
+  to {
+    clip-path: inset(-20% -6% -30% -6%);
+    transform: none;
+  }
+}
+@keyframes drawLine {
+  from {
+    background-size: 0% 0.12em;
+  }
+  to {
+    background-size: 100% 0.12em;
+  }
+}
+@keyframes cardFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(6px, -14px) rotate(2.5deg);
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-18px, 12px) scale(1.06);
+  }
+}
+@keyframes bannerPan {
+  from {
+    transform: translateY(-5%) scale(1.12);
+  }
+  to {
+    transform: translateY(5%) scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .heroText > .h1 {
+    animation: wipeUp 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s both;
+  }
+  .accent {
+    animation: drawLine 0.8s cubic-bezier(0.65, 0, 0.35, 1) 0.75s both;
+  }
+  .ctaCards span {
+    animation: cardFloat 8s ease-in-out infinite;
+  }
+  .ctaCards span:nth-child(2) {
+    animation-duration: 10s;
+    animation-delay: -3s;
+  }
+  .ctaCards span:nth-child(3) {
+    animation-duration: 7s;
+    animation-delay: -5s;
+  }
+  .trustCircle,
+  .quotesCircle,
+  .ctaCircle {
+    animation: breathe 16s ease-in-out infinite;
+  }
+  .quotesCircle {
+    animation-delay: -5s;
+  }
+  .ctaCircle {
+    animation-delay: -9s;
+  }
+  /* Headlines below the fold wipe up out of a mask when their block comes into view. */
+  .page :global([data-reveal-state]) :is(.h2, .ctaTitle, .bannerTitle) {
+    transition:
+      clip-path 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 80ms),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 80ms);
+    clip-path: inset(-20% -6% -30% -6%);
+  }
+  /* Only headlines inside an observed block: a clip on the observed element itself would hide it from the
+     IntersectionObserver, so it would never be shown (the final call to action's title just fades up). */
+  .page :global([data-reveal-state="pending"]) :is(.h2, .ctaTitle, .bannerTitle) {
+    clip-path: inset(0 -6% 100% -6%);
+    transform: translateY(0.35em);
+  }
+  /* Step icons pop in after their card. */
+  .page :global([data-reveal-state]) .stepIcon {
+    transition:
+      transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--reveal-delay, 0ms) + 260ms),
+      opacity 0.3s ease-out calc(var(--reveal-delay, 0ms) + 260ms);
+  }
+  .page :global([data-reveal-state="pending"]) .stepIcon {
+    opacity: 0;
+    transform: scale(0.4) rotate(-14deg);
+  }
+  @supports (animation-timeline: view()) {
+    .bannerImage {
+      animation: bannerPan linear both;
+      animation-timeline: view();
+    }
+  }
+}
 
 @keyframes riseIn {
   from {
@@ -2215,5 +2377,37 @@
   .page :global([data-reveal-state="pending"]) {
     opacity: 0;
     transform: translateY(24px);
+  }
+  /* Cards in a staggered group also settle from a hair smaller. */
+  .page :global([data-reveal-group] > [data-reveal-state="pending"]) {
+    transform: translateY(28px) scale(0.97);
+  }
+  /* Screenshots, the film and the price card tilt up into place. */
+  .page :global([data-reveal="tilt"][data-reveal-state]) {
+    transform-origin: 50% 100%;
+    transition:
+      opacity 0.8s ease-out var(--reveal-delay, 0ms),
+      transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+  }
+  .page :global([data-reveal="tilt"][data-reveal-state="pending"]) {
+    transform: perspective(1400px) translateY(56px) rotateX(12deg) scale(0.95);
+  }
+}
+
+/* While the logo intro (LogoIntro) plays, the header logo waits for the flying one, and the hero's entrance waits for
+   the dark screen to lift (it runs while the logo flies). If the intro never finishes, the logo shows after 6.3 s. */
+.page:has(:global(#bp-intro[data-state="play"])) .brand {
+  visibility: hidden;
+  animation: introBrandBack 0s linear 6.3s forwards;
+}
+.page:has(:global(#bp-intro:is([data-state="shrink"], [data-state="land"]))) .brand {
+  visibility: hidden;
+}
+.page:has(:global(#bp-intro[data-state="play"])) :is(.heroText > *, .accent, .heroVisual, .heroMobile) {
+  animation-play-state: paused;
+}
+@keyframes introBrandBack {
+  to {
+    visibility: visible;
   }
 }

@@ -9,7 +9,7 @@ export type FilmName = "privat" | "erhverv" | "skole";
  */
 export function Film({ name, label }: { name: FilmName; label: string }) {
   return (
-    <figure className={s.frame} data-reveal>
+    <figure className={s.frame} data-reveal="tilt">
       <video
         className={s.video}
         src={`/video/budgetpro-${name}.mp4`}

@@ -33,6 +33,7 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/send/[user]
     const sent = await sendMail(r.value.to, fileMail(sender, senderEmail, r.value), {
       replyTo: l ? senderEmail : undefined,
       attachments: [{ filename: r.value.filename, content: r.value.content }],
+      origin: req.nextUrl.origin,
     });
     if (!sent && !DEV) return Response.json({ error: "mail" }, { status: 502 });
     return Response.json({ ok: true, ...(sent ? {} : { dev: true }) });

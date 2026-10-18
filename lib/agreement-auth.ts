@@ -39,7 +39,7 @@ export async function inviteAdmins(origin: string, org: Org, emails: string[], b
   for (const to of emails) {
     try {
       // The login page opens with the e-mail filled in, so one press sends the code.
-      all = (await sendMail(to, adminInviteMail(org.name, `${siteUrl(origin)}/aftale?email=${encodeURIComponent(to)}`, by))) && all;
+      all = (await sendMail(to, adminInviteMail(org.name, `${siteUrl(origin)}/aftale?email=${encodeURIComponent(to)}`, by), { origin })) && all;
     } catch (e) {
       console.error("[budgetr] kundeadmin mail failed", e);
       all = false;
@@ -53,7 +53,7 @@ export async function mailGrant(origin: string, org: Org, grant: Grant, code: st
   const shown = formatCode(code);
   const link = `${siteUrl(origin)}/aftale/brug?kode=${shown}`;
   const mail = grantMail({ orgName: org.name, category: org.category, months: grant.months, sendBy: grant.sendBy, code: shown, link });
-  return sendAuthMail(grant.email, mail, link);
+  return sendAuthMail(grant.email, mail, link, org.category === "skole" ? { theme: "skole" } : {});
 }
 
 /** Asks a school's kundeadmins for a seat for a teacher. True when at least one mail went out. */
@@ -63,7 +63,7 @@ export async function mailSeatRequest(origin: string, org: Org, teacher: { name:
   let any = false;
   for (const to of org.admins ?? []) {
     try {
-      any = (await sendMail(to, mail, { replyTo: teacher.email })) || any;
+      any = (await sendMail(to, mail, { replyTo: teacher.email, origin, theme: "skole" })) || any;
     } catch (e) {
       console.error("[budgetr] seat request mail failed", e);
     }

@@ -1,6 +1,7 @@
 /**
  * budgetpro Skole's mail to teachers: the login (or sign-up) mail with a 6-digit code and a link. Plain text, sent
- * through Resend by lib/auth-mail.ts's sendMail. No server imports, so it is easy to test.
+ * through Resend by lib/auth-mail.ts's sendMail with the Skole HTML part (lib/mail-html.ts, theme "skole"). No server
+ * imports, so it is easy to test.
  */
 
 /** "123456" → "123 456", easier to read and type. */

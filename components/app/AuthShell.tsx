@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useId, useRef, useState, type ReactNode } from "react";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 import { DownloadIcon, LockIcon, PeopleIcon, ShieldIcon } from "@/components/landing/icons";
 import { startAccountSession } from "@/lib/store";
 
@@ -74,7 +74,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <div className="bx-auth-circle" aria-hidden="true" />
         <header className="bx-auth-top">
           <Link href="/" className="bx-auth-brand" aria-label="budgetpro – til forsiden">
-            <Wordmark fontSize={23} dark />
+            <Logo fontSize={21} dark bg="#0E1B2C" />
           </Link>
           <Link href="/" className="bx-auth-back">
             Til forsiden

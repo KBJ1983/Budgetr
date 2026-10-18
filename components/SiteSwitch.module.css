@@ -1,4 +1,4 @@
-/* Sits on the white strip above the dark top card; lines up with the card's rounded edge. */
+/* Sits on the white strip above the top card; lines up with the card's rounded edge. Default colours are Skov (Skole). */
 .switch {
   max-width: 1400px;
   margin: 0 auto;
@@ -30,6 +30,18 @@
 }
 .switch .current:hover {
   text-decoration: none;
+}
+
+/* Midnat og lime (Privat and Erhverv). */
+.midnat .link {
+  color: #5a6472;
+}
+.midnat .link:hover,
+.midnat .current {
+  color: #0e1b2c;
+}
+.midnat .current {
+  background: #edf0f3;
 }
 
 @media (max-width: 767.98px) {

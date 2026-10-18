@@ -6,12 +6,12 @@
   font-size: 64px;
 }
 .heroLink {
-  color: var(--v-dark-text);
+  color: var(--v-ink);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .heroLink:hover {
-  color: #fff;
+  color: var(--v-olive);
 }
 .heroPhoto {
   position: relative;
@@ -54,7 +54,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--v-pine);
+  color: var(--v-olive);
 }
 .beatTitle {
   margin: 0;
@@ -104,8 +104,8 @@
   align-self: flex-start;
   font-size: 13px;
   font-weight: 600;
-  color: var(--v-pine);
-  background: var(--v-pine-bg);
+  color: var(--v-olive);
+  background: var(--v-lime-tone);
   border-radius: 999px;
   padding: 5px 12px;
 }
@@ -198,8 +198,8 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--v-pine-bg);
-  color: var(--v-pine);
+  background: var(--v-lime-tone);
+  color: var(--v-olive);
   font-size: 13px;
   font-weight: 600;
 }
@@ -255,13 +255,13 @@
   white-space: nowrap;
 }
 .pill input:checked + span {
-  border-color: var(--v-pine);
-  background: var(--v-pine-bg);
-  color: var(--v-pine);
+  border-color: var(--v-olive);
+  background: var(--v-lime-tone);
+  color: var(--v-olive);
   font-weight: 600;
 }
 .pill input:focus-visible + span {
-  outline: 2px solid var(--v-pine);
+  outline: 2px solid var(--v-olive);
   outline-offset: 2px;
 }
 .priceBox {
@@ -340,7 +340,7 @@
 .talk input {
   width: 18px;
   height: 18px;
-  accent-color: var(--v-pine);
+  accent-color: var(--v-olive);
 }
 .packNote {
   margin: 0;
@@ -413,7 +413,7 @@
   height: 52px;
   border: 0;
   border-radius: 999px;
-  background: var(--v-pine);
+  background: var(--v-ink);
   color: #fff;
   font: inherit;
   font-size: 16px;
@@ -421,7 +421,7 @@
   cursor: pointer;
 }
 .submit:hover {
-  background: var(--v-pine-hover);
+  background: var(--v-dark-2nd);
 }
 .submit:disabled {
   opacity: 0.7;
@@ -502,7 +502,7 @@
   display: none;
 }
 .faqQ:hover {
-  color: var(--v-pine);
+  color: var(--v-olive);
 }
 .faqIcon {
   flex-shrink: 0;
@@ -517,8 +517,8 @@
 }
 .faqItem[open] .faqIcon {
   transform: rotate(45deg);
-  border-color: var(--v-pine);
-  color: var(--v-pine);
+  border-color: var(--v-olive);
+  color: var(--v-olive);
 }
 .faqA {
   margin: 0;
@@ -536,7 +536,7 @@
   align-self: flex-start;
   font-size: 15px;
   font-weight: 600;
-  color: var(--v-pine);
+  color: var(--v-olive);
   text-decoration: none;
 }
 .demoLink:hover {

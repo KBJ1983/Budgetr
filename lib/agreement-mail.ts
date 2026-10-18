@@ -1,6 +1,7 @@
 /**
  * Mails around agreements (aftaler): the kundeadmin's login code, the note that someone was made kundeadmin, and the
- * seat itself – the only place a seat's code is ever shown. Plain text, sent through lib/auth-mail.ts's sendMail.
+ * seat itself – the only place a seat's code is ever shown. Plain text, sent through lib/auth-mail.ts's sendMail (which adds
+ * the HTML version, lib/mail-html.ts).
  * No server imports, so it is easy to test.
  */
 import type { OrgCategory } from "./owner";

@@ -1,33 +1,36 @@
-/* budgetr app. Dark theme = the product cut-outs from HANDOFF §3; light theme uses the site palette. */
+/* Account pages (login, /admin, /aftale), "Midnat og lime" (docs/design/MIDNAT.md).
+   Dark theme = midnight surfaces with lime accents; light theme = the site palette (paper, white cards, olive accent,
+   midnight buttons). */
 .bx {
-  --bg: #121513;
-  --bar: #0e1311;
-  --card: #1a1e1b;
-  --card-2: #212a27;
-  --tx: #e9ece9;
-  --tx-2: #9aa39d;
-  --tx-3: #8e9a94;
-  --rule: #262c28;
-  --field: #0e1311;
-  --pos: #7ed4a8;
-  --pos-bg: #1c2e24;
-  --pos-rule: #2b4a3e;
+  --bg: #0e1b2c;
+  --bar: #0a1522;
+  --card: #1a2b42;
+  --card-2: #15243a;
+  --tx: #f3f5f7;
+  --tx-2: #b6c0cc;
+  --tx-3: #8a97a8;
+  --rule: #2a3d57;
+  --field: #15243a;
+  --pos: #d4f26b;
+  --pos-bg: #263620;
+  --pos-rule: #4a6326;
   --neg: #f08a78;
-  --neg-bg: #3a221e;
-  --neg-rule: #5a3228;
-  --warn: #e4b758;
-  --warn-bg: #352a14;
-  --warn-rule: #5a4718;
-  --blue: #86b8ee;
+  --neg-bg: #3a2630;
+  --neg-rule: #5e3541;
+  --warn: #e3b56a;
+  --warn-bg: #2e2b25;
+  --warn-rule: #4a3f2a;
+  --blue: #7aa2d6;
   --slate: #a7b4c8;
-  --slate-bg: #212831;
-  --slate-rule: #36404d;
-  --accent: #7ed4a8;
-  --accent-tx: #121513;
-  --hi-bg: #e9ece9;
-  --hi-tx: #121513;
-  --hi-tx-2: #3a4642;
-  --overlay: rgba(5, 8, 7, 0.7);
+  --slate-bg: #1f2d42;
+  --slate-rule: #34465f;
+  --accent: #d4f26b;
+  --accent-tx: #0e1b2c;
+  --accent-hover: #e1f78f;
+  --hi-bg: #f3f5f7;
+  --hi-tx: #0e1b2c;
+  --hi-tx-2: #3e4a5a;
+  --overlay: rgba(5, 11, 20, 0.72);
 
   min-height: 100vh;
   background: var(--bg);
@@ -38,34 +41,35 @@
 }
 
 .bx[data-theme="light"] {
-  --bg: #f4f6f2;
+  --bg: #f3f5f7;
   --bar: #ffffff;
   --card: #ffffff;
-  --card-2: #f7f8f5;
-  --tx: #17211b;
-  --tx-2: #46534e;
-  --tx-3: #5f6b66;
-  --rule: #dfe5dc;
+  --card-2: #f7f9fa;
+  --tx: #0e1b2c;
+  --tx-2: #3e4a5a;
+  --tx-3: #5a6472;
+  --rule: #dfe4ea;
   --field: #ffffff;
-  --pos: #2c6a4d;
-  --pos-bg: #e3eee6;
-  --pos-rule: #c3dcd1;
-  --neg: #a8432b;
-  --neg-bg: #f8e6e0;
-  --neg-rule: #ecc7bc;
+  --pos: #3f6a0e;
+  --pos-bg: #eef6d2;
+  --pos-rule: #d3e6a2;
+  --neg: #a8382a;
+  --neg-bg: #f8e7e3;
+  --neg-rule: #ebc6be;
   --warn: #7a5a10;
-  --warn-bg: #f6edd6;
+  --warn-bg: #f6eedb;
   --warn-rule: #e6d3a3;
   --blue: #2f6fb3;
   --slate: #4f5d73;
   --slate-bg: #e8ecf2;
   --slate-rule: #cfd6e1;
-  --accent: #2c6a4d;
+  --accent: #0e1b2c;
   --accent-tx: #ffffff;
-  --hi-bg: #17211b;
-  --hi-tx: #f4f6f2;
-  --hi-tx-2: #c9d1cd;
-  --overlay: rgba(22, 32, 29, 0.45);
+  --accent-hover: #1a2b42;
+  --hi-bg: #0e1b2c;
+  --hi-tx: #f3f5f7;
+  --hi-tx-2: #b6c0cc;
+  --overlay: rgba(14, 27, 44, 0.45);
   color-scheme: light;
 }
 
@@ -190,14 +194,18 @@
   border-color: var(--tx-3);
   color: var(--tx);
 }
+/* Primary actions are pills (midnight on light, lime on dark), per the Midnat manual. */
 .bx-btn-primary {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-tx) !important;
-  font-weight: 700;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0 16px;
 }
 .bx-btn-primary:hover {
-  filter: brightness(1.06);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
   color: var(--accent-tx);
 }
 .bx-btn-danger {
@@ -208,7 +216,7 @@
   min-height: 48px;
   padding: 0 20px;
   font-size: 15px;
-  border-radius: 12px;
+  border-radius: 999px;
 }
 .bx-btn-link {
   appearance: none;
@@ -357,7 +365,7 @@
 .bx-chip.is-scenario[aria-pressed="true"] {
   background: var(--slate);
   border-color: var(--slate);
-  color: #121513;
+  color: #0e1b2c;
 }
 .bx-pill {
   display: inline-flex;
@@ -898,21 +906,22 @@
 }
 
 /* ---------- auth pages (/login, /opret, /login/bekraeft, components/app/AuthShell.tsx) ----------
-   The landing page's dark rounded card on a white frame (values from the .page block in
-   components/landing/landing.module.css), always dark: form on the right, Tryghed on the left (below on phones). */
+   A midnight rounded card on a white frame ("Midnat og lime", docs/design/MIDNAT.md), always dark: form on the right,
+   Tryghed on the left (below on phones). Lime is the accent and the primary button. */
 .bx-auth {
-  --bg: #151617;
-  --card: #1c1d1f;
-  --card-2: #232427;
-  --tx: #ececec;
-  --tx-2: #b4b6ba;
-  --tx-3: #8d9095;
-  --rule: #2a2c2f;
-  --field: #151617;
-  --accent: #ececec;
-  --accent-tx: #151617;
-  --pos: #7ed4a8;
-  --neg: #ffb4a3;
+  --bg: #0e1b2c;
+  --card: #1a2b42;
+  --card-2: #15243a;
+  --tx: #f3f5f7;
+  --tx-2: #b6c0cc;
+  --tx-3: #8a97a8;
+  --rule: #2a3d57;
+  --field: #15243a;
+  --accent: #d4f26b;
+  --accent-tx: #0e1b2c;
+  --accent-hover: #e1f78f;
+  --pos: #d4f26b;
+  --neg: #f08a78;
   color-scheme: dark;
   background: #ffffff;
   padding: 14px;
@@ -938,8 +947,7 @@
   width: 640px;
   height: 640px;
   border-radius: 50%;
-  background: #2c6a4d;
-  opacity: 0.55;
+  background: #16294a;
   pointer-events: none;
 }
 .bx-auth-top {
@@ -1017,7 +1025,7 @@
   padding: 0 14px;
 }
 .bx-auth .bx-input:focus {
-  outline: 2px solid #7ed4a8;
+  outline: 2px solid #d4f26b;
   outline-offset: 1px;
   border-color: var(--rule);
 }
@@ -1033,15 +1041,11 @@
   font-size: 16px;
   font-weight: 600;
 }
-.bx-auth .bx-btn-primary:hover {
-  filter: none;
-  background: #ffffff;
-  border-color: #ffffff;
-}
 .bx-auth .bx-auth-secondary {
   margin-top: 16px;
   min-height: 44px;
   font-size: 14px;
+  border-radius: 999px;
 }
 .bx-auth .bx-note.is-info {
   font-size: 13px;
@@ -1062,14 +1066,14 @@
   gap: 8px;
   font-size: 13px;
   font-weight: 500;
-  color: #cfe9da;
+  color: var(--tx);
   background: var(--card);
   border: 1px solid var(--rule);
   border-radius: 999px;
   padding: 6px 14px 6px 10px;
 }
 .bx-auth-eyebrow svg {
-  color: #7ed4a8;
+  color: #d4f26b;
 }
 .bx-auth-trust h2 {
   margin: 0;
@@ -1122,8 +1126,9 @@
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: rgba(126, 212, 168, 0.12);
-  color: #7ed4a8;
+  background: var(--card);
+  border: 1px solid #1f3350;
+  color: #d4f26b;
   align-items: center;
   justify-content: center;
 }
@@ -1219,8 +1224,8 @@
     --tx-2: #333;
     --tx-3: #555;
     --rule: #ccc;
-    --pos: #2c6a4d;
-    --neg: #a8432b;
+    --pos: #3f6a0e;
+    --neg: #a8382a;
     background: #fff;
     color: #000;
   }

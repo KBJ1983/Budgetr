@@ -4,6 +4,7 @@
  * Without them – e.g. in local development – nothing is sent and the link is written to the server log instead.
  */
 import { displayName, type Link, type Purpose } from "./accounts";
+import { mailHtml } from "./mail-html";
 
 const DEV = process.env.NODE_ENV !== "production";
 
@@ -96,19 +97,33 @@ export function authMail(purpose: Exclude<Purpose, "invite">, firstName: string,
   };
 }
 
-/** Sends the mail. Returns false when no mail provider is set up (the link is then only in the server log). */
-export async function sendAuthMail(to: string, mail: { subject: string; text: string }, link: string): Promise<boolean> {
+/**
+ * Sends the mail. Returns false when no mail provider is set up (the link is then only in the server log). The link's
+ * origin is the site address for the HTML part; `plain` sends text only, `theme` "skole" gives budgetpro Skole's look.
+ */
+export async function sendAuthMail(to: string, mail: { subject: string; text: string }, link: string, opts: { plain?: boolean; theme?: "skole" } = {}): Promise<boolean> {
+  let origin: string | undefined;
+  try {
+    origin = new URL(link).origin;
+  } catch {}
   // A login link is a key to the account: only print it in development.
-  return sendMail(to, mail, {}, DEV ? ` Link: ${link}` : "");
+  return sendMail(to, mail, { origin, plain: opts.plain, theme: opts.theme }, DEV ? ` Link: ${link}` : "");
 }
 
-/** Extra Resend fields: who a reply goes to, and files (content = base64). */
+/**
+ * Extra Resend fields: who a reply goes to, and files (content = base64). `origin` is where the request came from
+ * (APP_URL wins): the HTML part loads the logo from there and only links to it become buttons. `plain` = no HTML part.
+ */
 export interface MailExtra {
   replyTo?: string;
   attachments?: { filename: string; content: string }[];
+  origin?: string;
+  plain?: boolean;
+  /** budgetpro Skole's look for the HTML part (lib/mail-html.ts). */
+  theme?: "skole";
 }
 
-/** Sends a mail through Resend. False when no mail provider is set up (logNote is then added to the warning). */
+/** Sends a mail through Resend: the text as it is, and the same text as branded HTML (lib/mail-html.ts). False when no mail provider is set up (logNote is then added to the warning). */
 export async function sendMail(to: string, mail: { subject: string; text: string }, extra: MailExtra = {}, logNote = ""): Promise<boolean> {
   // Trimmed (and stray quotes dropped): a pasted key often brings a space, line break or quotes along.
   const clean = (s?: string) => s?.trim().replace(/^["']|["']$/g, "").trim();
@@ -126,6 +141,7 @@ export async function sendMail(to: string, mail: { subject: string; text: string
       to: [to],
       subject: mail.subject,
       text: mail.text,
+      ...(extra.plain ? {} : { html: mailHtml(mail, { siteUrl: clean(process.env.APP_URL) || extra.origin, theme: extra.theme }) }),
       ...(extra.replyTo ? { reply_to: extra.replyTo } : {}),
       ...(extra.attachments?.length ? { attachments: extra.attachments } : {}),
     }),

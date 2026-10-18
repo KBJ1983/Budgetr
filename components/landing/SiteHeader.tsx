@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Wordmark } from "@/components/Logo";
+import { BRAND, Logo } from "@/components/Logo";
 import { SiteSwitch } from "@/components/SiteSwitch";
 import type { Site } from "@/lib/site-host";
 import styles from "./landing.module.css";
@@ -21,7 +21,7 @@ type SiteHeaderProps = {
   cta?: NavLink;
 };
 
-/** Dark header at the top of the rounded hero card, with the Privat · Erhverv · Skole switch above it. */
+/** Light header at the top of the rounded hero card (#F3F5F7), with the Privat · Erhverv · Skole switch above it. */
 export function SiteHeader({
   site = "privat",
   links = NAV_LINKS,
@@ -30,10 +30,10 @@ export function SiteHeader({
 }: SiteHeaderProps) {
   return (
     <header className={styles.header}>
-      <SiteSwitch current={site} />
+      <SiteSwitch current={site} tone="midnat" />
       <div className={styles.headerInner}>
-        <a href="#top" className={styles.brand}>
-          <Wordmark fontSize={24} dark />
+        <a href="#top" className={styles.brand} data-intro-target="">
+          <Logo fontSize={24} bg={BRAND.paper} />
         </a>
         <nav aria-label="Hovedmenu" className={styles.nav}>
           {links.map((link) => (

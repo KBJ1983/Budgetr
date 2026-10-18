@@ -1,11 +1,12 @@
 import Image from "next/image";
 import { Film } from "@/components/Film";
-import { Wordmark } from "@/components/Logo";
+import { BRAND, SkoleLogo } from "@/components/Logo";
 import { SiteSwitch } from "@/components/SiteSwitch";
 import l from "./skoleLanding.module.css";
 
 /**
- * budgetpro Skole's front page (skole.<domain>/, design "Skole forside", Oct 2026). A server component: `base` is the
+ * budgetpro Skole's front page (skole.<domain>/; layout from design "Skole forside", Oct 2026, brand "Midnat og solgul"
+ * from docs/design/skole-21b.html). A server component: `base` is the
  * school pages' prefix as the visitor sees it ("" on the subdomain, "/skole" on the main site), `mainSite` the main
  * site's address. The laptop and phone show real screenshots (`pnpm shots:skole`); the hero card is a drawn miniature.
  * Under the hero sits a short explainer film (components/Film, made from video/skole.html).
@@ -18,8 +19,13 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
         <div className={`${l.dark} ${l.band}`}>
           <header className={l.top}>
             <a href={`${base}/`} className={l.brand} aria-label="budgetpro Skole">
-              <Wordmark fontSize={24} dark />
-              <span className={l.pill}>Skole</span>
+              {/* Two sizes so "Log ind" and "Elevkode" fit next to the logo at 390 px (its sizes are inline). */}
+              <span className={l.logoLg}>
+                <SkoleLogo fontSize={22} dark bg={BRAND.midnight} />
+              </span>
+              <span className={l.logoSm}>
+                <SkoleLogo fontSize={18} dark bg={BRAND.midnight} />
+              </span>
             </a>
             <nav className={l.nav} aria-label="Sider">
               <a href="#forloeb">Forløbet</a>
@@ -44,14 +50,14 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
             <div className={l.heroText}>
               <div className={l.eyebrowPill}>Privatøkonomi i 7.–9. klasse</div>
               <h1 className={l.h1}>
-                Hvad koster det at være voksen? <span className={l.mint}>Eleverne regner det selv ud.</span>
+                Hvad koster det at være voksen? <span className={l.sun}>Eleverne regner det selv ud.</span>
               </h1>
               <p className={l.heroLead}>
                 Et færdigt tema om privatøkonomi, hvor hver elev lægger et månedsbudget for en fremtidsperson: løn og skat, bolig, faste udgifter,
                 opsparing, og hvad der sker, når livet ændrer sig.
               </p>
               <div className={l.heroCtas}>
-                <a href="#start" className={l.btnLight}>
+                <a href="#start" className={l.btnSun}>
                   Prøv gratis med én klasse <Arrow />
                 </a>
                 <a href="#forloeb" className={l.underline}>
@@ -62,7 +68,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
                 {CHECKS.map((c) => (
                   <li key={c}>
                     <span className={l.checkDot}>
-                      <Check size={10} color="#0e1a13" />
+                      <Check size={10} color={BRAND.midnight} />
                     </span>
                     {c}
                   </li>
@@ -89,31 +95,30 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
         </div>
       </section>
 
-      <section className={l.white} aria-labelledby="klasse-h">
-        <div className={`${l.inner} ${l.split} ${l.photoSplit}`}>
-          <div className={l.photo}>
-            <Image
-              src="/skole/klasse.jpg"
-              alt="Elever og lærer ved bærbare computere i klasselokalet"
-              fill
-              sizes="(max-width: 960px) 100vw, 580px"
-              style={{ objectFit: "cover", objectPosition: "center 40%" }}
-            />
-            <div className={l.chip}>
-              <span className={l.chipNo}>?</span>
-              <span className={l.chipQ}>”Hvorfor er skatten så høj?”</span>
-            </div>
-          </div>
-          <div className={l.col}>
-            <span className={l.kicker}>I klasselokalet</span>
-            <h2 id="klasse-h" className={`${l.h2} ${l.h2s}`}>
-              Når tallene er deres egne, begynder snakken.
+      <section className={l.sand} aria-labelledby="udstyr-h">
+        <div className={`${l.inner} ${l.devicesSec}`}>
+          <div className={`${l.col} ${l.center}`}>
+            <span className={l.kicker}>Chromebook, iPad og mobil</span>
+            <h2 id="udstyr-h" className={`${l.h2} ${l.h2s}`}>
+              Virker på det udstyr, eleverne allerede har.
             </h2>
-            <p className={l.body}>
-              Eleverne træffer valgene selv og ser med det samme, hvad de betyder. Derfor opstår spørgsmålene af sig selv: Hvorfor er der så lidt
-              tilbage? Hvad hvis man flytter sammen? Kan man nå kørekortet til sommer?
-            </p>
-            <p className={l.body}>Arbejd alene, i par eller i grupper, og brug refleksionsspørgsmålene til opsamling i klassen.</p>
+          </div>
+          <div className={l.devices}>
+            <div className={l.laptop}>
+              <div className={l.laptopLid}>
+                <div className={l.laptopScreen}>
+                  <Image src="/skole/mit-budget.jpg" alt="Mit budget i budgetpro Skole på en bærbar" fill sizes="(max-width: 960px) 90vw, 860px" style={{ objectFit: "cover", objectPosition: "top" }} />
+                </div>
+              </div>
+              <div className={l.laptopBase}>
+                <span />
+              </div>
+            </div>
+            <div className={l.phone}>
+              <div className={l.phoneScreen}>
+                <Image src="/skole/trin3-mobil.jpg" alt="Trin 3, Bolig, på en mobil" fill sizes="(max-width: 960px) 30vw, 230px" style={{ objectFit: "cover", objectPosition: "top" }} />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -165,8 +170,8 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           <div className={l.features}>
             {FEATURES.map((f, i) => (
               <div key={f.t} className={l.feature}>
-                <span className={l.featureIcon} style={{ background: i % 2 ? "#FBF0D9" : "#e3ece5" }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={i % 2 ? "#8A5F0F" : "#2c6a4d"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <span className={l.featureIcon} style={{ background: i % 2 ? BRAND.sunTone : "#E6EAF0" }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={i % 2 ? BRAND.sunInk : BRAND.midnight} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d={f.icon} />
                   </svg>
                 </span>
@@ -178,30 +183,31 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
         </div>
       </section>
 
-      <section className={l.sand} aria-labelledby="udstyr-h">
-        <div className={`${l.inner} ${l.devicesSec}`}>
-          <div className={`${l.col} ${l.center}`}>
-            <span className={l.kicker}>Chromebook, iPad og mobil</span>
-            <h2 id="udstyr-h" className={`${l.h2} ${l.h2s}`}>
-              Virker på det udstyr, eleverne allerede har.
-            </h2>
+      <section className={l.sand} aria-labelledby="klasse-h">
+        <div className={`${l.inner} ${l.split} ${l.photoSplit} ${l.photoSplitEnd}`}>
+          <div className={l.photo}>
+            <Image
+              src="/skole/klasse.jpg"
+              alt="Elever og lærer ved bærbare computere i klasselokalet"
+              fill
+              sizes="(max-width: 960px) 100vw, 580px"
+              style={{ objectFit: "cover", objectPosition: "center 40%" }}
+            />
+            <div className={l.chip}>
+              <span className={l.chipNo}>?</span>
+              <span className={l.chipQ}>”Hvorfor er skatten så høj?”</span>
+            </div>
           </div>
-          <div className={l.devices}>
-            <div className={l.laptop}>
-              <div className={l.laptopLid}>
-                <div className={l.laptopScreen}>
-                  <Image src="/skole/mit-budget.jpg" alt="Mit budget i budgetpro Skole på en bærbar" fill sizes="(max-width: 960px) 90vw, 860px" style={{ objectFit: "cover", objectPosition: "top" }} />
-                </div>
-              </div>
-              <div className={l.laptopBase}>
-                <span />
-              </div>
-            </div>
-            <div className={l.phone}>
-              <div className={l.phoneScreen}>
-                <Image src="/skole/trin3-mobil.jpg" alt="Trin 3, Bolig, på en mobil" fill sizes="(max-width: 960px) 30vw, 230px" style={{ objectFit: "cover", objectPosition: "top" }} />
-              </div>
-            </div>
+          <div className={l.col}>
+            <span className={l.kicker}>I klasselokalet</span>
+            <h2 id="klasse-h" className={`${l.h2} ${l.h2s}`}>
+              Når tallene er deres egne, begynder snakken.
+            </h2>
+            <p className={l.body}>
+              Eleverne træffer valgene selv og ser med det samme, hvad de betyder. Derfor opstår spørgsmålene af sig selv: Hvorfor er der så lidt
+              tilbage? Hvad hvis man flytter sammen? Kan man nå kørekortet til sommer?
+            </p>
+            <p className={l.body}>Arbejd alene, i par eller i grupper, og brug refleksionsspørgsmålene til opsamling i klassen.</p>
           </div>
         </div>
       </section>
@@ -210,7 +216,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
         <div className={`${l.dark} ${l.band}`}>
           <div className={`${l.inner} ${l.split} ${l.teacher}`}>
             <div className={l.col} style={{ gap: 24 }}>
-              <span className={`${l.kicker} ${l.mint}`}>For læreren</span>
+              <span className={`${l.kicker} ${l.sun}`}>For læreren</span>
               <h2 id="laerer-h" className={`${l.h2} ${l.h2s}`}>
                 Klassen er i gang på to minutter.
               </h2>
@@ -249,7 +255,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
               {PRICE_LIST.map((p) => (
                 <li key={p}>
                   <span className={l.priceCheck}>
-                    <Check size={11} color="#2c6a4d" />
+                    <Check size={11} color={BRAND.sunInk} />
                   </span>
                   {p}
                 </li>
@@ -283,8 +289,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
 
       <footer className={`${l.inner} ${l.footer}`}>
         <span className={l.brand}>
-          <Wordmark fontSize={20} />
-          <span className={`${l.pill} ${l.pillSmall}`}>Skole</span>
+          <SkoleLogo fontSize={20} bg={BRAND.warm} />
         </span>
         <span className={l.slogan}>Dit overblik. Dine drømme.</span>
         <a href={mainSite}>budgetpro.dk</a>
@@ -300,10 +305,7 @@ function HeroMock() {
       <div className={l.dots} />
       <div className={l.mock}>
         <div className={l.mockTop}>
-          <span className={l.brand}>
-            <Wordmark fontSize={14} />
-            <span className={l.mockPill}>Skole</span>
-          </span>
+          <SkoleLogo fontSize={13} bg="#FFFFFF" />
           <span className={l.mockCode}>BLÅ-ORM-47</span>
         </div>
         <div className={l.mockSteps}>
@@ -326,6 +328,7 @@ function HeroMock() {
               <div key={label} className={`${l.mockOpt} ${on ? l.mockOptOn : ""}`}>
                 <span>{label}</span>
                 <b>{amt}</b>
+                {on && <span className={l.mockTick} />}
               </div>
             ))}
             <div className={l.mockWhy}>
@@ -335,10 +338,10 @@ function HeroMock() {
           <div className={l.mockMeter}>
             <div className={l.donut}>
               <svg viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#ECEDE8" strokeWidth="26" />
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#1F5C4A" strokeWidth="26" strokeDasharray="159 503" transform="rotate(-90 100 100)" />
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#2E7A62" strokeWidth="26" strokeDasharray="54 503" strokeDashoffset="-159" transform="rotate(-90 100 100)" />
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#E4B758" strokeWidth="26" strokeDasharray="142 503" strokeDashoffset="-213" transform="rotate(-90 100 100)" />
+                <circle cx="100" cy="100" r="80" fill="none" stroke={BRAND.midnight2} strokeWidth="26" />
+                <circle cx="100" cy="100" r="80" fill="none" stroke="#F7F7F2" strokeWidth="26" strokeDasharray="159 503" transform="rotate(-90 100 100)" />
+                <circle cx="100" cy="100" r="80" fill="none" stroke={BRAND.haze} strokeWidth="26" strokeDasharray="54 503" strokeDashoffset="-159" transform="rotate(-90 100 100)" />
+                <circle cx="100" cy="100" r="80" fill="none" stroke={BRAND.sun} strokeWidth="26" strokeDasharray="142 503" strokeDashoffset="-213" transform="rotate(-90 100 100)" />
               </svg>
               <div className={l.donutText}>
                 <span>Tilbage</span>
@@ -394,7 +397,7 @@ function ClassMock() {
           <div key={code} className={l.tRow}>
             <span className={l.tCode}>{code}</span>
             <span>{step}</span>
-            <span className={l.tOk} style={{ color: ok == null ? "#46534E" : ok ? "#1F5C4A" : "#A8412C" }}>
+            <span className={l.tOk} style={{ color: ok == null ? "#5A6577" : ok ? BRAND.midnight : "#B4412C" }}>
               {ok == null ? "–" : ok ? "✓" : "✗"}
             </span>
           </div>
@@ -430,16 +433,16 @@ const MOCK_BOLIG: [string, string, boolean][] = [
 ];
 
 const MOCK_LEGEND: [string, string, string][] = [
-  ["Bolig", "4.800 kr.", "#1F5C4A"],
-  ["Faste", "1.627 kr.", "#2E7A62"],
-  ["Hverdag", "4.300 kr.", "#E4B758"],
+  ["Bolig", "4.800 kr.", "#F7F7F2"],
+  ["Faste", "1.627 kr.", BRAND.haze],
+  ["Hverdag", "4.300 kr.", BRAND.sun],
 ];
 
-/** Lesson card colours, as CSS variables read by .lesson. */
+/** Lesson card colours ("Midnat og solgul"), as CSS variables read by .lesson. */
 const TONES = {
-  light: { "--bg": "#f5f4f0", "--fg": "#15191a", "--kc": "#2c6a4d", "--bc": "#3f4642", "--tb": "#d6d4cc" },
-  yellow: { "--bg": "#FBF0D9", "--fg": "#15191a", "--kc": "#8A5F0F", "--bc": "#3d2b07", "--tb": "#e8d4a6" },
-  dark: { "--bg": "#151617", "--fg": "#ececec", "--kc": "#7ed4a8", "--bc": "#b4b6ba", "--tb": "#3a3c40" },
+  light: { "--bg": BRAND.warm, "--fg": BRAND.midnight, "--kc": BRAND.sunInk, "--bc": "#4A5363", "--tb": "#E2DFD8" },
+  yellow: { "--bg": BRAND.sunTone, "--fg": BRAND.midnight, "--kc": BRAND.sunInk, "--bc": "#4A3A12", "--tb": "#EBD68C" },
+  dark: { "--bg": BRAND.midnight, "--fg": "#F7F7F2", "--kc": BRAND.sun, "--bc": BRAND.haze, "--tb": "#2E405A" },
 } as Record<string, React.CSSProperties>;
 
 const LESSONS = [
@@ -465,9 +468,9 @@ const T_STEPS = [
 ];
 
 const STATS = [
-  { v: "60 %", l: "valgte delelejlighed", bg: "#1F5C4A", fg: "#FFFFFF" },
-  { v: "6 af 8", l: "fik budgettet til at gå op", bg: "#FFFFFF", fg: "#16201D" },
-  { v: "Sara", l: "mest valgte case", bg: "#FBF0D9", fg: "#5E410A" },
+  { v: "60 %", l: "valgte delelejlighed", bg: BRAND.midnight, fg: "#F7F7F2" },
+  { v: "6 af 8", l: "fik budgettet til at gå op", bg: "#FFFFFF", fg: BRAND.midnight },
+  { v: "Sara", l: "mest valgte case", bg: BRAND.sun, fg: BRAND.midnight },
 ];
 
 const ROWS: [string, string, boolean | null][] = [

@@ -1,10 +1,16 @@
 /* Owner overview (/admin). Builds on the app's .bx styles in app/login/app.css,
-   with the budget app's look: a lead sentence, section heads on a tinted panel, mono amounts. */
+   with the budget app's look: a lead sentence, section heads on a tinted panel, mono amounts.
+   "Midnat og lime": the band is a midnight row on dark and stone grey on light; the month bars are lime + haze on dark
+   and lime-dark + midnight on light. */
 .ow {
-  --band: #1c211e;
+  --band: #15243a;
+  --bar-rev: #d4f26b;
+  --bar-exp: #7aa2d6;
 }
 .ow[data-theme="light"] {
-  --band: #e4e9e1;
+  --band: #e7ebef;
+  --bar-rev: #9bc43a;
+  --bar-exp: #0e1b2c;
 }
 .ow .bx-main > .bx-note {
   margin-top: 8px;
@@ -338,10 +344,10 @@
   margin-top: 3px;
 }
 .ow-bar.is-rev {
-  background: var(--pos);
+  background: var(--bar-rev);
 }
 .ow-bar.is-exp {
-  background: var(--tx-3);
+  background: var(--bar-exp);
 }
 
 .ow-filters {

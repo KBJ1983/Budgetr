@@ -10,6 +10,7 @@
 // It reads data/<user>.json and keeps data/reminders.json ({ userId: { lastSent, todoSent } }); it never changes a budget.
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { mailHtml } from "../lib/mail-html.ts";
 import { readProfile } from "../lib/profile.ts";
 import { channels, dueReminder, dueTodos, parseDay, reminderText, todoDaysOf, todoReminderText } from "../lib/reminders.ts";
 import { openTodos } from "../lib/todos.ts";
@@ -31,7 +32,8 @@ async function sendMail(to, subject, text) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: env.REMINDER_MAIL_FROM, to: [to], subject, text }),
+    // The same branded HTML as the site's mails (lib/mail-html.ts); the logo and the button go by the link's site.
+    body: JSON.stringify({ from: env.REMINDER_MAIL_FROM, to: [to], subject, text, html: mailHtml({ subject, text }, { siteUrl: URL_ }) }),
   });
   if (!r.ok) throw new Error(`mail ${r.status} ${await r.text()}`);
 }

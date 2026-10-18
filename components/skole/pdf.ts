@@ -38,11 +38,11 @@ export async function summaryPdf(code: string, flow: Flow, refl: Record<number, 
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.setTextColor(22, 32, 29);
+  doc.setTextColor(14, 27, 44);
   doc.text(plain(`${c.gen} budget`), left, 22);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.setTextColor(70, 83, 78);
+  doc.setTextColor(90, 101, 119);
   doc.text(plain(`Elevkode ${code} · ${dayMonthYear(now)} · budgetpro Skole`), left, 29);
 
   doc.autoTable({
@@ -50,13 +50,13 @@ export async function summaryPdf(code: string, flow: Flow, refl: Record<number, 
     head: [["Pr. måned", "Beløb"]],
     body: [["Indtægt", kr(t.income)], ...segments(t).map((x) => [x.label, kr(x.amt)]), ["Tilbage", kr(t.left)]].map((r) => r.map(plain)),
     theme: "grid",
-    headStyles: { fillColor: [31, 92, 74] },
+    headStyles: { fillColor: [14, 27, 44], textColor: [247, 247, 242] },
     columnStyles: { 1: { halign: "right" } },
     margin: { left, right: left },
   });
 
   let y = doc.lastAutoTable.finalY + 9;
-  doc.setTextColor(22, 32, 29);
+  doc.setTextColor(14, 27, 44);
   doc.setFontSize(11);
   doc.text(plain(`${c.dream} klar i ${monthYear(addMonths(now, flow.months))}`), left, y);
   y += 11;
@@ -76,12 +76,12 @@ export async function summaryPdf(code: string, flow: Flow, refl: Record<number, 
       }
       doc.setFont("helvetica", "italic");
       doc.setFontSize(10);
-      doc.setTextColor(70, 83, 78);
+      doc.setTextColor(90, 101, 119);
       doc.text(q, left, y);
       y += q.length * 5;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
-      doc.setTextColor(22, 32, 29);
+      doc.setTextColor(14, 27, 44);
       doc.text(a, left, y);
       y += a.length * 5 + 5;
     });

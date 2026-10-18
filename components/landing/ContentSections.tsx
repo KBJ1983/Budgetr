@@ -135,7 +135,7 @@ function SplitSection({ id, eyebrow, title, body, bullets, visual, visualFirst =
           </div>
           <CheckList items={bullets} className={styles.splitList} />
         </div>
-        <div className={styles.splitVisual} data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties}>
+        <div className={styles.splitVisual} data-reveal="tilt" style={{ "--reveal-delay": "140ms" } as CSSProperties}>
           {visual}
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./landing.module.css";
 import { scrollToSlide, useSlideIndex } from "./Swipe";
 
@@ -20,8 +20,6 @@ const SLIDES = [
   { id: "laan", tab: "Lån", alt: "Overblik over lån: samlet restgæld, ydelser og renter", note: "Restgæld, renter og hvornår hvert lån er betalt ud og giver luft." },
   { id: "maal", tab: "Opsparing", alt: "Opsparingsmål: månedligt beløb og hvor langt I er nået", note: "Opsparingsmål, der selv regner det månedlige beløb ud." },
 ] as const;
-
-const SLIDE_MS = 6000;
 
 function useShotTheme(): [Theme, (t: Theme) => void] {
   const [theme, setTheme] = useState<Theme>("light");
@@ -60,41 +58,16 @@ export function ShotFrame({ name, alt, width, height }: { name: string; alt: str
   );
 }
 
-/** Hero: a short tour through the app. Tabs switch the page; it moves on by itself unless the visitor holds the pointer over it. */
+/**
+ * Hero: four pages of the app. It stands still – tabs switch the page, nothing moves by itself (the logo intro,
+ * LogoIntro, is the only motion at the top of the page).
+ */
 export function HeroShowcase() {
   const [i, setI] = useState(0);
   const [theme, pick] = useShotTheme();
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [hover, setHover] = useState(false);
-  const frame = useRef<HTMLDivElement>(null);
-  const reduce = useRef(false);
-  useEffect(() => {
-    reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-  // Next page every SLIDE_MS; paused under the pointer, and no auto-advance with reduced motion.
-  useEffect(() => {
-    if (hover || reduce.current) return;
-    const t = window.setTimeout(() => setI((k) => (k + 1) % SLIDES.length), SLIDE_MS);
-    return () => window.clearTimeout(t);
-  }, [i, hover]);
-
-  // A little depth under the pointer; flat again when it leaves. Off with reduced motion and on touch.
-  const onMove = (ev: PointerEvent<HTMLDivElement>) => {
-    if (reduce.current || ev.pointerType !== "mouse" || !frame.current) return;
-    const r = frame.current.getBoundingClientRect();
-    setTilt({ x: ((ev.clientY - r.top) / r.height - 0.5) * -4, y: ((ev.clientX - r.left) / r.width - 0.5) * 5 });
-  };
 
   return (
-    <div
-      className={styles.showcase}
-      onPointerMove={onMove}
-      onPointerEnter={(ev) => ev.pointerType === "mouse" && setHover(true)}
-      onPointerLeave={() => {
-        setTilt({ x: 0, y: 0 });
-        setHover(false);
-      }}
-    >
+    <div className={styles.showcase}>
       <div className={styles.showBar}>
         <div className={styles.showTabs} role="tablist" aria-label="Se appen">
           {SLIDES.map((s, k) => (
@@ -119,11 +92,7 @@ export function HeroShowcase() {
           ))}
         </div>
       </div>
-      <div
-        ref={frame}
-        className={styles.showWindow}
-        style={{ "--tx": `${tilt.x}deg`, "--ty": `${tilt.y}deg` } as CSSProperties}
-      >
+      <div className={styles.showWindow}>
         <div className={styles.showChrome} aria-hidden="true">
           <span />
           <span />

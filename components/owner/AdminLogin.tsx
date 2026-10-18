@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, type FormEvent } from "react";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 
 const ERRORS: Record<string, string> = {
   wrong: "E-mail eller kodeord passer ikke.",
@@ -43,7 +43,7 @@ export function AdminLogin() {
   return (
     <div className="bx ow-login">
       <main className="bx-card ow-login-card">
-        <Wordmark fontSize={23} dark />
+        <Logo fontSize={20} dark bg="#1A2B42" />
         <h1>Log ind</h1>
         <form className="bx-auth-form" onSubmit={submit} noValidate>
           <label className="bx-field" htmlFor={emailId}>

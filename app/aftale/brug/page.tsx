@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 import { findGrant, formatCode, normalizeCode } from "@/lib/agreements";
 import { today } from "@/lib/owner";
 import { readLedger } from "@/lib/owner-store";
@@ -75,7 +75,7 @@ export default async function UseSeatPage({ searchParams }: { searchParams: Prom
   return (
     <div className="bx af-login">
       <main className="bx-card af-login-card">
-        <Wordmark fontSize={23} dark />
+        <Logo fontSize={20} dark bg="#1A2B42" />
         <h1>{org && grant && !grant.usedBy ? `Din adgang fra ${org.name}` : "Din adgang til budgetpro"}</h1>
         {body}
       </main>

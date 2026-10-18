@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 import type { AgreementView, GrantRow } from "@/lib/agreement-admins";
 
 const num = (n: number) => n.toLocaleString("da-DK");
@@ -120,7 +120,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
     <div className="bx af" data-theme={theme}>
       <header className="bx-top">
         <div className="bx-wrap bx-top-row">
-          <Wordmark fontSize={21} dark={theme === "dark"} />
+          <Logo fontSize={19} dark={theme === "dark"} bg={theme === "dark" ? "#0A1522" : "#FFFFFF"} />
           <div className="bx-top-right">
             <button
               type="button"

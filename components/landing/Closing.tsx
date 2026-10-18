@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { DownloadIcon, LockIcon, PeopleIcon, PlusIcon, ShieldIcon, UploadIcon } from "./icons";
@@ -75,7 +75,7 @@ const QUOTES = [
     name: "Anna",
     meta: "Deler budget med Jonas",
     initials: "A",
-    color: "#2c6a4d",
+    color: "#3f6a0e",
   },
   {
     text: "Jeg kunne se med det samme, at billånet udløber til marts. Det gjorde det meget nemmere at planlægge sommerferien.",
@@ -89,7 +89,7 @@ const QUOTES = [
     name: "Sara og Ali",
     meta: "To børn, fælles budgetkonto",
     initials: "SA",
-    color: "#15191a",
+    color: "#0e1b2c",
   },
 ] as const;
 
@@ -100,7 +100,7 @@ export function Quotes() {
       <div className={styles.sectionInner}>
         <div className={styles.quotesHead} data-reveal>
           <span className={styles.quotesFrom}>
-            Fra hverdagen med <Wordmark fontSize={22} dark />
+            Fra hverdagen med <Logo fontSize={20} dark />
           </span>
           <div className={styles.quotesTitleRow}>
             <span className={styles.quoteMark} aria-hidden="true">
@@ -171,7 +171,7 @@ export function Pricing() {
   return (
     <section id="pris" className={`${styles.section} ${styles.pricing}`} aria-label="Pris og spørgsmål">
       <div className={`${styles.sectionInner} ${styles.pricingInner}`}>
-        <div className={styles.priceCard} data-reveal>
+        <div className={styles.priceCard} data-reveal="tilt">
           <div className={styles.priceHead}>
             <span className={styles.eyebrow}>Pris</span>
             <span className={styles.priceTag}>Alle funktioner</span>
@@ -207,8 +207,13 @@ export function FinalCta() {
     <section className={styles.ctaWrap} aria-labelledby="cta-title">
       <div className={styles.cta}>
         <div className={styles.ctaCircle} aria-hidden="true" />
+        <div className={styles.ctaCards} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <div className={styles.ctaInner} data-reveal-group>
-          <Wordmark fontSize={40} dark />
+          <Logo fontSize={36} dark />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Giv din økonomi et hjem. Det tager 29 minutter.
           </h2>

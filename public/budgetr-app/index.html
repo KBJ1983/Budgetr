@@ -38,26 +38,27 @@
 <title>budgetpro · Budget</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@500;700&family=Bricolage+Grotesque:opsz,wght@12..96,200&family=Instrument+Sans:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@500;700&family=Hanken+Grotesk:wght@200;700&display=swap" rel="stylesheet">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* budgetpro palette (design "sider v2"): neutral grey-green surfaces, pine accent, neutral primary buttons */
-  --paper:#ECEEE9; --card:#FFFFFF; --ink:#141A16; --ink2:#535C56; --ink3:#68716B; --rule:#CDD4C9; --rule2:#B3BCB0; --band:#DDE2DA;
-  --pine:#2C6A4D; --pine-bg:#E3EEE6; --pine-ink:#235A40; --brick:#A8382A; --brick-bg:#F8E7E2; --ochre:#7A4F0C; --ochre-bg:#F7ECD6; --ochre-rule:#EAD7AE; --warnline:#C98A1E;
-  --hero-sub:#C9D2CC; --on-pine:#FFFFFF; --btn:#17211B; --btn-ink:#FFFFFF; --barud:#B5BDB7;
-  --mk1:#4F7D67; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F4F6F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* budgetpro palette ("Midnat og lime", Oct 2026, docs/design/MIDNAT.md): light grey surfaces, midnight ink and buttons,
+     olive accent (--pine keeps its old name), lime for bars and badges. Keep in step with the landing palette. */
+  --paper:#F3F5F7; --card:#FFFFFF; --ink:#0E1B2C; --ink2:#3E4A5A; --ink3:#5A6472; --rule:#DFE4EA; --rule2:#C9D2DC; --band:#E7EBEF;
+  --pine:#3F6A0E; --pine-bg:#EEF6D2; --pine-ink:#345A0B; --brick:#A8382A; --brick-bg:#F8E7E2; --ochre:#7A4F0C; --ochre-bg:#F7ECD6; --ochre-rule:#EAD7AE; --warnline:#C98A1E;
+  --hero-sub:#B6C0CC; --on-pine:#FFFFFF; --btn:#0E1B2C; --btn-ink:#FFFFFF; --barud:#B6C0CC; --lime:#D4F26B; --lime-bar:#9BC43A;
+  --mk1:#6A8F2A; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F3F5F7' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
-  --bar:#C9D2CD; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4E5D73; --plum-bg:#E9ECF1;
+  --bar:#C9D2DC; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4A5A70; --plum-bg:#E9ECF1;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#131415; --card:#1B1C1E; --ink:#ECECEC; --ink2:#9D9FA4; --ink3:#7E8085; --rule:#2D2F33; --rule2:#45474C; --band:#1F2023;
-  --pine:#7ED4A8; --pine-bg:#1D2320; --pine-ink:#8FD3AE; --brick:#F08A78; --brick-bg:#34211F; --hero-sub:#4A4C51; --on-pine:#0E1A13; --ochre:#E3B56A; --ochre-bg:#27231B; --ochre-rule:#3D3421; --warnline:#E3B56A; --btn:#ECECEC; --btn-ink:#131415; --barud:#5F6268; --bar:#3A3C41; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1B2230; --plum:#A7B0C0; --plum-bg:#222428; --mk1:#8FB8A4; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23131415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
+  --paper:#0E1B2C; --card:#1A2B42; --ink:#F3F5F7; --ink2:#B6C0CC; --ink3:#8A97A8; --rule:#2A3D57; --rule2:#3A4F6D; --band:#15243A;
+  --pine:#D4F26B; --pine-bg:#2B3F3A; --pine-ink:#DCF58A; --brick:#F08A78; --brick-bg:#3A2630; --hero-sub:#5A6472; --on-pine:#0E1B2C; --ochre:#E3B56A; --ochre-bg:#2A2A2A; --ochre-rule:#4A4130; --warnline:#E3B56A; --btn:#D4F26B; --btn-ink:#0E1B2C; --barud:#4E6280; --bar:#3A4F6D; --lime:#D4F26B; --lime-bar:#D4F26B; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#B7CC72; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%230E1B2C' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#131415; --card:#1B1C1E; --ink:#ECECEC; --ink2:#9D9FA4; --ink3:#7E8085; --rule:#2D2F33; --rule2:#45474C; --band:#1F2023;
-  --pine:#7ED4A8; --pine-bg:#1D2320; --pine-ink:#8FD3AE; --brick:#F08A78; --brick-bg:#34211F; --hero-sub:#4A4C51; --on-pine:#0E1A13; --ochre:#E3B56A; --ochre-bg:#27231B; --ochre-rule:#3D3421; --warnline:#E3B56A; --btn:#ECECEC; --btn-ink:#131415; --barud:#5F6268; --bar:#3A3C41; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1B2230; --plum:#A7B0C0; --plum-bg:#222428; --mk1:#8FB8A4; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23131415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
+  --paper:#0E1B2C; --card:#1A2B42; --ink:#F3F5F7; --ink2:#B6C0CC; --ink3:#8A97A8; --rule:#2A3D57; --rule2:#3A4F6D; --band:#15243A;
+  --pine:#D4F26B; --pine-bg:#2B3F3A; --pine-ink:#DCF58A; --brick:#F08A78; --brick-bg:#3A2630; --hero-sub:#5A6472; --on-pine:#0E1B2C; --ochre:#E3B56A; --ochre-bg:#2A2A2A; --ochre-rule:#4A4130; --warnline:#E3B56A; --btn:#D4F26B; --btn-ink:#0E1B2C; --barud:#4E6280; --bar:#3A4F6D; --lime:#D4F26B; --lime-bar:#D4F26B; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#B7CC72; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%230E1B2C' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--font)}
@@ -205,7 +206,7 @@ details.acctd .acct>div:first-child>h3,details.acctd .acct>div:first-child>.num{
 .barrow .v{text-align:right;color:var(--ink);font-weight:500}
 .track{height:14px;background:transparent;border-radius:3px;position:relative}
 .fill{height:100%;border-radius:3px;background:var(--bar)}
-.fill.in{background:var(--pine)} .fill.out{background:var(--ink3)}
+.fill.in{background:var(--lime-bar)} .fill.out{background:var(--ink3)}
 .verdict{font-size:14px;padding:8px 12px;border-radius:8px;margin-top:6px}
 .verdict.ok{background:var(--pine-bg);color:var(--pine)} .verdict.bad{background:var(--brick-bg);color:var(--brick)} .verdict.warn{background:var(--ochre-bg);color:var(--ochre)}
 .scbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px 0 0}
@@ -272,7 +273,7 @@ tr.excl td:not(.chk){opacity:.45}
 tr.excl td.restcol{background:transparent!important}
 td.chk{width:28px}
 .loanbar{height:8px;background:var(--rule);border-radius:4px;overflow:hidden;min-width:90px}
-.loanbar div{height:100%;background:var(--pine)}
+.loanbar div{height:100%;background:var(--lime-bar)}
 tr.paused td{color:var(--ink3)}
 .sortbar{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink2);margin-bottom:10px;flex-wrap:wrap}
 .sortbar select{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:6px 10px}
@@ -457,7 +458,7 @@ dialog.setdlg{height:min(640px,90vh)}.setdlg form{height:100%}
 .setstat{font-size:13px;color:var(--ink2);margin:-8px 0 14px}
 .setstat button{background:none;border:0;padding:0 0 0 4px;color:var(--pine);text-decoration:underline;font:inherit;cursor:pointer}
 dialog{border:1px solid var(--rule);border-radius:12px;padding:0;background:var(--card);color:var(--ink);width:min(560px,94vw)}
-dialog::backdrop{background:rgba(10,20,16,.45)}
+dialog::backdrop{background:rgba(14,27,44,.45)}
 dialog form{padding:20px 22px}
 dialog h2{margin-bottom:16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -547,14 +548,17 @@ td.act{width:1%;white-space:nowrap}
   .acctedit{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-/* ---------- budgetpro "Skov" layout: app bar, tab row, hero and KPI cards ---------- */
+/* ---------- budgetpro layout: app bar, tab row, hero and KPI cards ---------- */
 .appbar{background:var(--card);border-bottom:1px solid var(--rule);position:relative;z-index:30}
 .appbar-in{max-width:1520px;margin:0 auto;padding:0 clamp(12px,2vw,28px);height:72px;display:flex;align-items:center;gap:14px}
-/* Wordmark (logo 11a3): "budget" Bricolage Grotesque 200 + "pro" Instrument Sans 600 + green dot */
-.logo{display:inline-flex;align-items:baseline;font-size:22px;line-height:1;letter-spacing:-.02em;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
-.logo .lb{font:200 1em/1 "Bricolage Grotesque",var(--font)}
-.logo .lp{font:600 1em/1 "Instrument Sans",var(--font)}
-.logo .ld{display:inline-block;width:.33em;height:.33em;margin-left:.09em;border-radius:50%;background:var(--pine)}
+/* Logo ("Midnat og lime", see components/Logo.tsx): the symbol (a pocket with two cards; back card + pocket in the
+   name's colour, front card lime, outlines and slot in the surface colour behind it) + "budget" Hanken Grotesk 700
+   and "pro" Hanken Grotesk 200. Symbol height 1.05 × font size, gap .24 × font size. */
+.logo{display:inline-flex;align-items:baseline;gap:.24em;font-size:22px;line-height:1;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
+.logo svg{display:block;flex:0 0 auto;width:1.05em;height:1.05em;align-self:flex-end;margin-bottom:-.02em}
+.logo .lk-ink{fill:var(--ink)} .logo .lk-front{fill:var(--lime)} .logo .lk-cut{stroke:var(--card);stroke-width:3} .logo .lk-slot{fill:var(--card)}
+.logo .lb{font:700 1em/1 "Hanken Grotesk",var(--font);letter-spacing:-.045em}
+.logo .lp{font:200 1em/1 "Hanken Grotesk",var(--font);letter-spacing:-.035em;margin-left:.03em}
 .abr{margin-left:auto;display:flex;align-items:center;gap:14px}
 .appbar .status{display:flex;align-items:center;gap:6px;font:400 13px var(--font);color:var(--ink2);white-space:nowrap}
 .appbar .status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--pine);flex:0 0 auto}
@@ -639,7 +643,7 @@ button.primary{color:var(--on-pine)!important}
 .hero b{font-weight:600}
 .hero small{font-size:14px;color:var(--ink2);margin-top:12px}
 h2{font-size:17px;font-weight:600;letter-spacing:0}
-/* Page sections: the heading is the divider – a firm pine line with the heading on a tinted band under it. */
+/* Page sections: the heading is the divider – a firm accent line with the heading on a tinted band under it. */
 #app>section,#app>.tflow{padding:36px 0 28px;border-bottom:0}
 #app>section>.sechead{margin-bottom:18px;padding:14px 16px;background:var(--band);border-top:3px solid var(--pine);border-radius:0 0 8px 8px;align-items:center}
 #app>section>.sechead h2,#app>section>h2{font-size:21px;font-weight:600;letter-spacing:-.01em}
@@ -939,7 +943,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 <body>
 <header class="appbar">
   <div class="appbar-in">
-    <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><span class="lb" aria-hidden="true">budget</span><span class="lp" aria-hidden="true">pro</span><span class="ld" aria-hidden="true"></span></a>
+    <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><svg viewBox="0 -2 64 64" aria-hidden="true"><g transform="rotate(-8 22 14)"><rect class="lk-ink lk-cut" x="6" y="0" width="32" height="22" rx="4.5"/></g><g transform="rotate(6 42 14)"><rect class="lk-front lk-cut" x="25" y="2" width="32" height="22" rx="4.5"/></g><rect class="lk-ink lk-cut" x="2" y="20" width="60" height="40" rx="13"/><rect class="lk-slot" x="40" y="35" width="15" height="8" rx="4"/></svg><span aria-hidden="true"><span class="lb">budget</span><span class="lp">pro</span></span></a>
     <div class="abr">
       <span class="status" id="status">Gemmes automatisk i sikker database</span>
       <div class="expwrap"><button type="button" class="tdbtn" id="btnTodo" aria-haspopup="true" aria-expanded="false" aria-controls="todoMenu" aria-label="Opgaver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span class="tdn" id="todoN" hidden></span></button>
@@ -2523,14 +2527,14 @@ function planSvg(id){
   const ticks=4;for(let i=0;i<=ticks;i++){const v=mn+rg*i/ticks;g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--ink3)">${nf.format(Math.round(v/1000))}k</text>`}
   g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink3)"/>`;
   M.forEach((x,i)=>{const cx=pl+cw*i+cw/2;
-    g+=`<rect x="${cx-bw-1}" y="${y(x.i)}" width="${bw}" height="${Math.max(0,y(0)-y(x.i))}" rx="2" fill="var(--pine)"><title>${LB[i]}: ind ${kr(x.i)}</title></rect>`;
+    g+=`<rect x="${cx-bw-1}" y="${y(x.i)}" width="${bw}" height="${Math.max(0,y(0)-y(x.i))}" rx="2" fill="var(--lime-bar)"><title>${LB[i]}: ind ${kr(x.i)}</title></rect>`;
     g+=`<rect x="${cx+1}" y="${y(0)}" width="${bw}" height="${Math.max(0,y(-x.o)-y(0))}" rx="2" fill="var(--barud)"><title>${LB[i]}: ud ${kr(x.o)}</title></rect>`;
     g+=`<text x="${cx}" y="${H-14}" text-anchor="middle" font-size="12" fill="var(--ink2)">${LB[i]}</text>`;});
   const pts=sal.map((v,i)=>`${pl+cw*i+cw/2},${y(v)}`).join(' ');
   g+=`<polyline points="${pts}" fill="none" stroke="var(--warnline)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
   sal.forEach((v,i)=>g+=`<circle cx="${pl+cw*i+cw/2}" cy="${y(v)}" r="4" fill="${v<0?'var(--brick)':'var(--warnline)'}" stroke="var(--paper)" stroke-width="2"><title>Saldo ultimo ${LB[i]}: ${kr(v)}</title></circle>`);
   const low=Math.min(...sal), lowM=idxLbl(IX[sal.indexOf(low)]).toLowerCase();
-  const legend=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:6px"><span><span style="display:inline-block;width:10px;height:10px;background:var(--pine);border-radius:2px;margin-right:5px"></span>Ind</span><span><span style="display:inline-block;width:10px;height:10px;background:var(--barud);border-radius:2px;margin-right:5px"></span>Ud</span><span><span style="display:inline-block;width:14px;height:3px;background:var(--warnline);vertical-align:3px;margin-right:5px"></span>Saldo</span></div>`;
+  const legend=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:6px"><span><span style="display:inline-block;width:10px;height:10px;background:var(--lime-bar);border-radius:2px;margin-right:5px"></span>Ind</span><span><span style="display:inline-block;width:10px;height:10px;background:var(--barud);border-radius:2px;margin-right:5px"></span>Ud</span><span><span style="display:inline-block;width:14px;height:3px;background:var(--warnline);vertical-align:3px;margin-right:5px"></span>Saldo</span></div>`;
   const msg=low<0?`<div class="verdict bad">Laveste saldo er ${kr(low)} i ${lowM}. Kontoen skal have ${kr(-low+sd.amount)} pr. ${esc(fmtDate(sd.date))} for aldrig at gå i minus.</div>`:`<div class="verdict ok">Laveste saldo er ${kr(low)} i ${lowM}. Saldo ultimo ${idxLbl(IX[11]).toLowerCase()}: ${kr(sal[11])}.</div>`;
   return legend+`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Ind, ud og saldo pr. måned for ${esc(a.name)}">${g}</svg>`+msg;
 }
@@ -2799,8 +2803,8 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
    same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
 // An amount and its unit are joined by a no-break space, so a line never breaks between '1.234' and 'kr' (or '%').
 function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ').replace(/(\d) (kr\b|%)/g,'$1\u00a0$2')}
-const PC={paper:[244,246,242],card:[255,255,255],ink:[23,33,27],ink2:[95,107,99],ink3:[131,141,134],rule:[223,229,220],pine:[44,106,77],pineBg:[227,238,230],brick:[168,56,42],brickBg:[248,231,226],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
-const PGC=[[79,125,103],[154,125,69],[82,104,138],[143,91,106],PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
+const PC={paper:[243,245,247],card:[255,255,255],ink:[14,27,44],ink2:[62,74,90],ink3:[90,100,114],rule:[223,228,234],pine:[63,106,14],pineBg:[238,246,210],lime:[212,242,107],limeDark:[155,196,58],haze:[182,192,204],brick:[168,56,42],brickBg:[248,231,226],ochre:[154,107,18],ochreBg:[251,240,217],focus:[47,111,179]};
+const PGC=[[106,143,42],[154,125,69],[82,104,138],[143,91,106],PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
 const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
 /* Month-by-month plan for the goals chart (same rules as goalChart on the page). */
 function goalPlan(L){
@@ -2813,19 +2817,30 @@ function goalPlan(L){
   const tot=[],xtot=[];for(let i=a;i<b;i++){tot.push(C.reduce((s,x)=>s+val(x,i),0));xtot.push(C.reduce((s,x)=>s+xv(x,i),0))}
   return {C,a,b,N,val,xv,xd,tot,xtot};
 }
-/* The budgetpro wordmark (logo 11a3: "budget" Bricolage Grotesque 200 + "pro" Instrument Sans 600 + green dot), drawn
-   with the app's own brand fonts on a canvas, so the PDF shows the real logo. base = the baseline as a share of the height. */
+/* The budgetpro logo ("Midnat og lime", see components/Logo.tsx), drawn on a canvas so the PDF shows the real logo:
+   the symbol (pocket with two cards, midnight + lime front card; the outlines and the slot are cut out, so it sits on any
+   surface) + "budget" Hanken Grotesk 700 and "pro" Hanken Grotesk 200 in midnight. base = the baseline as a share of the
+   height; ref = the height of the name alone, so logo(x, yb, h) keeps the name the same size as the old wordmark. */
 async function pdfLogo(){
-  try{await Promise.all(['200 100px "Bricolage Grotesque"','600 100px "Instrument Sans"'].map(f=>document.fonts.load(f)))}catch(e){}
+  try{await Promise.all(['700 100px "Hanken Grotesk"','200 100px "Hanken Grotesk"'].map(f=>document.fonts.load(f)))}catch(e){}
   try{const px=160,pad=8,c=document.createElement('canvas');let x=c.getContext('2d');
-    const fb=`200 ${px}px "Bricolage Grotesque", Geist, sans-serif`, fp=`600 ${px}px "Instrument Sans", Geist, sans-serif`, ls=(-0.02*px)+'px';
-    const meas=(f,t)=>{x.font=f;x.letterSpacing=ls;return x.measureText(t)}, mb=meas(fb,'budget'), mp=meas(fp,'pro'), d=0.33*px, gap=0.09*px;
+    const fb=`700 ${px}px "Hanken Grotesk", Geist, sans-serif`, fp=`200 ${px}px "Hanken Grotesk", Geist, sans-serif`;
+    const meas=(f,t,ls)=>{x.font=f;x.letterSpacing=(ls*px)+'px';return x.measureText(t)}, mb=meas(fb,'budget',-0.045), mp=meas(fp,'pro',-0.035);
+    const sh=1.05*px, k=sh/64, gap=0.24*px, sub=0.08*px, pl=0.03*px;
     const asc=Math.max(mb.actualBoundingBoxAscent,mp.actualBoundingBoxAscent), desc=Math.max(mb.actualBoundingBoxDescent,mp.actualBoundingBoxDescent);
-    c.width=Math.ceil(pad*2+mb.width+mp.width+gap+d);c.height=Math.ceil(pad*2+asc+desc);x=c.getContext('2d');
-    const by=pad+asc;x.fillStyle='#17211B';x.font=fb;x.letterSpacing=ls;x.fillText('budget',pad,by);
-    x.font=fp;x.letterSpacing=ls;x.fillText('pro',pad+mb.width,by);
-    x.fillStyle='#2C6A4D';x.beginPath();x.arc(pad+mb.width+mp.width+gap+d/2,by-d/2,d/2,0,Math.PI*2);x.fill();
-    return {data:c.toDataURL('image/png'),w:c.width,h:c.height,base:by/c.height}}catch(e){return null}}
+    const top=Math.max(asc,sh-sub), bot=Math.max(desc,sub);
+    c.width=Math.ceil(pad*2+sh+gap+mb.width+pl+mp.width);c.height=Math.ceil(pad*2+top+bot);x=c.getContext('2d');
+    const by=pad+top, sy=by+sub-sh, INK='#0E1B2C', LIME='#D4F26B';
+    // Symbol in viewBox units (0 -2 64 64): each shape is filled, then its outline (and finally the slot) is cut out.
+    x.save();x.translate(pad,sy);x.scale(k,k);x.translate(0,2);x.lineWidth=3;
+    const rr=(X,Y,w,h,r)=>{x.beginPath();if(x.roundRect)x.roundRect(X,Y,w,h,r);else x.rect(X,Y,w,h)};
+    const shape=(rot,cx,cy,X,Y,w,h,r,col)=>{x.save();if(rot){x.translate(cx,cy);x.rotate(rot*Math.PI/180);x.translate(-cx,-cy)}
+      rr(X,Y,w,h,r);x.globalCompositeOperation='source-over';x.fillStyle=col;x.fill();x.globalCompositeOperation='destination-out';x.stroke();x.restore()};
+    shape(-8,22,14,6,0,32,22,4.5,INK);shape(6,42,14,25,2,32,22,4.5,LIME);shape(0,0,0,2,20,60,40,13,INK);
+    x.globalCompositeOperation='destination-out';rr(40,35,15,8,4);x.fill();x.restore();
+    const tx=pad+sh+gap;x.fillStyle=INK;x.font=fb;x.letterSpacing=(-0.045*px)+'px';x.fillText('budget',tx,by);
+    x.font=fp;x.letterSpacing=(-0.035*px)+'px';x.fillText('pro',tx+mb.width+pl,by);
+    return {data:c.toDataURL('image/png'),w:c.width,h:c.height,base:by/c.height,ref:(pad*2+asc+desc)/c.height}}catch(e){return null}}
 /* opt.keys: the budgets to include ('base' or scenario ids). opt.compare puts a comparison of them first,
    opt.full adds the whole report for each. opt.logo: from pdfLogo(). Without opt: the whole report for the budget
    or scenario shown now. The first page is a cover with the key figures and the contents. */
@@ -2842,8 +2857,8 @@ function buildPdf(opt){
   // jsPDF has no width for the no-break space and measures it too wide, which would push right-aligned amounts out of line.
   [false,true].forEach(b=>{font(8,b);const U=((doc.internal.getFont().metadata||{}).Unicode||{}).widths;if(U&&U[32]!=null)U[160]=U[32]});
   let y=TOP, chapter='', pages=0, fresh=false;const toc=[];
-  /* The logo with its baseline on yb, h mm high; returns the width. Without the brand fonts: the name in bold. */
-  function logo(x,yb,h){if(LOGO){const w=h*LOGO.w/LOGO.h;doc.addImage(LOGO.data,'PNG',x,yb-h*LOGO.base,w,h,'budgetpro-logo');return w}
+  /* The logo with the name's baseline on yb, the name h mm high (as the old wordmark); returns the width. Without the brand fonts: the name in bold. */
+  function logo(x,yb,h){if(LOGO){h=h/(LOGO.ref||1);const w=h*LOGO.w/LOGO.h;doc.addImage(LOGO.data,'PNG',x,yb-h*LOGO.base,w,h,'budgetpro-logo');return w}
     font(h*2.5,true);color(PC.ink);doc.text('budgetpro',x,yb);return doc.getTextWidth('budgetpro')}
   function decor(){fill(PC.paper);doc.rect(0,0,W,H,'F');const lw0=logo(M,12,4.4);
     font(8.5,false);color(PC.ink2);const t1=title?'  ·  '+T(title):'';doc.text(t1,M+lw0,12);color(PC.ink3);doc.text('  ·  '+T(chapter),M+lw0+doc.getTextWidth(t1),12);
@@ -2867,7 +2882,7 @@ function buildPdf(opt){
   const VK={ok:[PC.pineBg,PC.pine],bad:[PC.brickBg,PC.brick],warn:[PC.ochreBg,PC.ochre]};
   function verdict(t,kind){font(8.5,false);const L=doc.splitTextToSize(T(t),CW-8),h=L.length*lh(8.5)+4.4;need(h+2);const [bg,fg]=VK[kind];fill(bg);doc.roundedRect(M,y,CW,h,1.6,1.6,'F');color(fg);doc.text(L,M+4,y+2.2+base(8.5));y+=h+3}
   /* KPI cards; kind: '' | 'hero' (dark) | 'good' | 'bad'. bar = share 0–1 drawn at the bottom. */
-  const KC={hero:[PC.ink,PC.paper,[190,198,194]],good:[PC.pineBg,PC.pine,PC.pine],bad:[PC.brickBg,PC.brick,PC.brick],'':[PC.card,PC.ink,PC.ink3]};
+  const KC={hero:[PC.ink,PC.paper,PC.haze],good:[PC.pineBg,PC.pine,PC.pine],bad:[PC.brickBg,PC.brick,PC.brick],'':[PC.card,PC.ink,PC.ink3]};
   function kpis(L,cols){cols=cols||3;const g=3;
     for(let i=0;i<L.length;i+=cols){const R=L.slice(i,i+cols),w=(CW-g*(R.length-1))/R.length;font(7.5,false);const subs=R.map(k=>doc.splitTextToSize(T(k.small||''),w-8));
       const h=16+Math.max(1,...subs.map(s=>s.length))*lh(7.5)+(R.some(k=>k.bar!=null)?4:0);need(h+g);
@@ -2875,8 +2890,8 @@ function buildPdf(opt){
         font(7.5,false);color(k.kind==='hero'?sub:k.kind?fg:PC.ink2);doc.text(doc.splitTextToSize(T(k.label),w-8)[0],x+4,y+5.6);
         font(13.5,true);color(fg);doc.text(T(k.value),x+4,y+12.2);
         font(7.5,false);color(sub);doc.text(subs[j],x+4,y+16.6);
-        if(k.bar!=null){const by=y+h-4.6;fill(k.kind==='hero'?[62,72,69]:PC.rule);doc.roundedRect(x+4,by,w-8,1.8,0.9,0.9,'F');
-          if(k.bar>0){fill(k.kind==='hero'?PC.pineBg:PC.pine);doc.roundedRect(x+4,by,Math.max(1.8,(w-8)*Math.min(1,k.bar)),1.8,0.9,0.9,'F')}}});
+        if(k.bar!=null){const by=y+h-4.6;fill(k.kind==='hero'?[42,61,87]:PC.rule);doc.roundedRect(x+4,by,w-8,1.8,0.9,0.9,'F');
+          if(k.bar>0){fill(k.kind==='hero'?PC.lime:PC.limeDark);doc.roundedRect(x+4,by,Math.max(1.8,(w-8)*Math.min(1,k.bar)),1.8,0.9,0.9,'F')}}});
       y+=h+g}}
   /* Table in the page's style: white, thin rules, grey header text. Rows: array, or {cells, cat|tot|style}. */
   function table(head,body,o){o=o||{};const R=o.right||[];need(16);
@@ -2907,7 +2922,7 @@ function buildPdf(opt){
       else if(b.t==='big'){if(draw){font(16,true);color(b.color||PC.ink);doc.text(T(b.text),ix,cy+3)}cy+=7;if(b.note){font(7.5,false);const L=doc.splitTextToSize(T(b.note),iw);if(draw){color(PC.ink3);doc.text(L,ix,cy)}cy+=L.length*lh(7.5)+2}}
       else if(b.t==='amt'){if(draw){font(16,true);color(PC.pine);const t=T(b.text);doc.text(t,ix,cy+3);const tw=doc.getTextWidth(t);font(8,false);color(PC.ink2);doc.text(T(b.small),ix+tw+2,cy+3)}cy+=8}
       else if(b.t==='verdict'){font(8,false);const L=doc.splitTextToSize(T(b.text),iw-6),h=L.length*lh(8)+3.6;if(draw){const [bg,fg]=VK[b.kind];fill(bg);doc.roundedRect(ix,cy-2.2,iw,h,1.4,1.4,'F');color(fg);doc.text(L,ix+3,cy+1.4)}cy+=h+1.2}
-      else if(b.t==='progress'){if(draw){fill(PC.rule);doc.roundedRect(ix,cy-2,iw,2,1,1,'F');if(b.pct>0){fill(b.color||PC.pine);doc.roundedRect(ix,cy-2,Math.max(2,iw*Math.min(1,b.pct)),2,1,1,'F')}}
+      else if(b.t==='progress'){if(draw){fill(PC.rule);doc.roundedRect(ix,cy-2,iw,2,1,1,'F');if(b.pct>0){fill(b.color||PC.limeDark);doc.roundedRect(ix,cy-2,Math.max(2,iw*Math.min(1,b.pct)),2,1,1,'F')}}
         cy+=3.6;if(b.note){font(7.5,false);const L=doc.splitTextToSize(T(b.note),iw);if(draw){color(PC.ink3);doc.text(L,ix,cy)}cy+=L.length*lh(7.5)+1.6}}
       else if(b.t==='note'){font(7.5,false);const L=doc.splitTextToSize(T(b.text),iw);if(draw){color(b.color||PC.ink3);doc.text(L,ix,cy)}cy+=L.length*lh(7.5)+1.6}});
     return cy-y0}
@@ -2978,7 +2993,7 @@ function buildPdf(opt){
     let v;if(id==='')v=[`${kr(c.exp)} i udgifter indgår i totalen, men ingen konto dækker dem. Vælg konto på posterne.`,'warn'];
     else if(a.type==='faelles'){const gap=c.need-c.tin;v=[`Udgifterne er ${kr(c.out)}. Der bør overføres ${kr(c.need)}, og der overføres ${kr(c.tin)}. ${gap>0.5?'Der mangler '+kr(gap)+'.':Math.abs(gap)<0.5?'Dækket.':'Overskud '+kr(-gap)+'.'} Fordelt: ${S.persons.map(p=>p.name+' '+kr(recFor(p.id,id))).join(', ')}.`,gap>0.5?'bad':'ok']}
     else v=c.left<0?[`Kontoen går ${kr(-c.left)} i minus pr. måned.`,'bad']:[`Tilbage på kontoen: ${kr(c.left)} pr. måned.`,'ok'];
-    return [{t:'title',text:a.name,sub:[a.number,a.type==='faelles'?'Fælles konto':a.owner?'Tilhører '+perName(a.owner):''].filter(Boolean).join(' · ')},{t:'kv',rows:kv},{t:'bars',max:maxv,rows:[['Ind',c.in,PC.pine],['Ud',c.out,PC.ink3]]},{t:'verdict',text:v[0],kind:v[1]}]}),2);
+    return [{t:'title',text:a.name,sub:[a.number,a.type==='faelles'?'Fælles konto':a.owner?'Tilhører '+perName(a.owner):''].filter(Boolean).join(' · ')},{t:'kv',rows:kv},{t:'bars',max:maxv,rows:[['Ind',c.in,PC.limeDark],['Ud',c.out,PC.ink3]]},{t:'verdict',text:v[0],kind:v[1]}]}),2);
   h2('Hvem betaler hvad','Fælles udgifter fordeles '+({indkomst:'efter fast indkomst',lige:'ligeligt',manuel:'manuelt'}[sp.split]||'ligeligt')+': '+S.persons.map(p=>p.name+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')+'.',60);
   cards(S.persons.map(p=>{const c=personCalc(p.id);
     const kv=[['Faste indtægter',K(c.own)],['Ekstra indtjening',K(c.extra)],['Andel af fælles indtægter',K(c.shInc)],['Egne faste udgifter',K(c.ownExp)],[`Andel af fælles udgifter (${Math.round(c.sh*100)} %)`,K(c.shExp)]];
@@ -3022,7 +3037,7 @@ function buildPdf(opt){
         c.link?(c.budget!==null?kr(c.budget):'Inaktiv')+(c.budget!==null&&Math.abs(c.budget-c.A)>=1&&!l.paused?' ('+(c.budget>c.A?'+':'')+kr(c.budget-c.A)+')':'')+'\n'+c.link.desc:'Ikke tilknyttet']}))
         .concat([{tot:true,cells:[{content:'I alt, '+selTxt,colSpan:2},kr(tO),kr(tP),'',kr(tA),pct(wr),kr(tI),'','']}]),
       {right:[2,3,5,6,7,9],fs:7,cs:{4:{cellWidth:18}},draw:d=>{if(d.section!=='body'||d.column.index!==4||d.row.index>=paid.length)return;const p=paid[d.row.index],bx=d.cell.x+2,bw=d.cell.width-4,by=d.cell.y+2.2;
-        fill(PC.rule);doc.roundedRect(bx,by,bw,1.6,0.8,0.8,'F');if(p>0){fill(PC.pine);doc.roundedRect(bx,by,Math.max(1.6,bw*p),1.6,0.8,0.8,'F')}font(6.5,false);color(PC.ink3);doc.text(Math.round(p*100)+' %',bx,by+4.6)}});
+        fill(PC.rule);doc.roundedRect(bx,by,bw,1.6,0.8,0.8,'F');if(p>0){fill(PC.limeDark);doc.roundedRect(bx,by,Math.max(1.6,bw*p),1.6,0.8,0.8,'F')}font(6.5,false);color(PC.ink3);doc.text(Math.round(p*100)+' %',bx,by+4.6)}});
     const PJ=loanProjData();
     if(PJ&&PJ.months>0){
       h2('Fremskrevet restgæld','Restgælden pr. '+PJ.toTxt+', regnet ud fra restgæld, rente og ydelse fra '+PJ.startTxt+' ('+PJ.months+' betalinger).',40);
@@ -3086,7 +3101,7 @@ function buildPdf(opt){
   }
 
   /* ===== Forside ===== */
-  /* A light green band with the logo, what the report is and for whom, then the key figures. The contents are
+  /* A light lime band with the logo, what the report is and for whom, then the key figures. The contents are
      filled in at the end (tocAt), when the page numbers are known. */
   let tocAt=0;
   function cover(){pages++;fill(PC.paper);doc.rect(0,0,W,H,'F');
@@ -3098,7 +3113,7 @@ function buildPdf(opt){
     const who=S.persons.map(p=>p.name).filter(Boolean);
     font(32,true);const TL=doc.splitTextToSize(T(title||'Budget'),CW-10);font(13,false);const SL=doc.splitTextToSize(T(sub),CW-10);
     const bandH=82+TL.length*lh(32)+SL.length*lh(13);
-    fill(PC.pineBg);doc.rect(0,0,W,bandH,'F');fill(PC.pine);doc.rect(0,bandH-1.2,W,1.2,'F');
+    fill(PC.pineBg);doc.rect(0,0,W,bandH,'F');fill(PC.limeDark);doc.rect(0,bandH-1.2,W,1.2,'F');
     logo(M,26,10);
     let cy=50;font(8.5,true);color(PC.pine);doc.setCharSpace(0.6);doc.text(kicker,M,cy);doc.setCharSpace(0);cy+=10;
     font(32,true);color(PC.ink);TL.forEach(l=>{doc.text(l,M,cy+base(32));cy+=lh(32)});cy+=2;
@@ -3173,13 +3188,13 @@ async function runPdf(opt){
 /* ---------- Excel ---------- */
 /* One sheet per tab (Budget, Overblik over lån, Faste overførsler, Opsparingsmål) laid out like the page, plus all
    entries as a filterable list. Styled with xlsx-js-style (SheetJS with cell styles); amounts stay numbers with a kr format. */
-const XC={pine:'2C6A4D',pineBg:'E3EEE6',ink:'17211B',ink2:'5F6B63',ink3:'838D86',rule:'DFE5DC',paper:'F4F6F2',brick:'A8382A',brickBg:'F8E7E2',ochre:'9A6B12',ochreBg:'FBF0D9',white:'FFFFFF'};
+const XC={pine:'3F6A0E',pineBg:'EEF6D2',limeDark:'9BC43A',ink:'0E1B2C',ink2:'3E4A5A',ink3:'5A6472',rule:'DFE4EA',paper:'F3F5F7',haze:'B6C0CC',brick:'A8382A',brickBg:'F8E7E2',ochre:'9A6B12',ochreBg:'FBF0D9',white:'FFFFFF'};
 const XKR='#,##0 "kr";-#,##0 "kr";0 "kr"';
 const xm=(...L)=>{const r={};L.forEach(o=>{if(o)Object.keys(o).forEach(k=>{r[k]=o[k]&&typeof o[k]==='object'&&k!=='fill'?Object.assign({},r[k],o[k]):o[k]})});return r};
 const xbd=c=>({style:'thin',color:{rgb:c||XC.rule}});
 const XS={base:{font:{name:'Calibri',sz:11,color:{rgb:XC.ink}},alignment:{vertical:'center'}},
-  title:{font:{sz:18,bold:true}},sub:{font:{sz:10,color:{rgb:XC.ink3}}},h2:{font:{sz:13,bold:true,color:{rgb:XC.pine}},border:{bottom:xbd(XC.pine)}},hint:{font:{sz:9,color:{rgb:XC.ink3}}},
-  h3:{font:{sz:11,bold:true}},head:{font:{bold:true,color:{rgb:XC.white}},fill:{fgColor:{rgb:XC.pine}},alignment:{vertical:'center',wrapText:true}},
+  title:{font:{sz:18,bold:true}},sub:{font:{sz:10,color:{rgb:XC.ink3}}},h2:{font:{sz:13,bold:true,color:{rgb:XC.ink}},border:{bottom:xbd(XC.limeDark)}},hint:{font:{sz:9,color:{rgb:XC.ink3}}},
+  h3:{font:{sz:11,bold:true}},head:{font:{bold:true,color:{rgb:XC.white}},fill:{fgColor:{rgb:XC.ink}},alignment:{vertical:'center',wrapText:true}},
   cell:{border:{bottom:xbd()},alignment:{vertical:'top',wrapText:true}},cat:{font:{bold:true},fill:{fgColor:{rgb:XC.paper}},border:{top:xbd(),bottom:xbd()}},tot:{font:{bold:true},border:{top:xbd(XC.ink),bottom:xbd(XC.ink)}},
   kl:{font:{sz:9,color:{rgb:XC.ink2}},border:{top:xbd(),left:xbd(),right:xbd()},alignment:{wrapText:true,vertical:"top"}},kv:{font:{sz:13,bold:true},border:{left:xbd(),right:xbd()},alignment:{horizontal:'left'}},ks:{font:{sz:9,color:{rgb:XC.ink3}},border:{bottom:xbd(),left:xbd(),right:xbd()},alignment:{wrapText:true,vertical:'top'}}};
 const XK={'':{},hero:{fill:{fgColor:{rgb:XC.ink}},font:{color:{rgb:XC.paper}}},good:{fill:{fgColor:{rgb:XC.pineBg}},font:{color:{rgb:XC.pine}}},bad:{fill:{fgColor:{rgb:XC.brickBg}},font:{color:{rgb:XC.brick}}}};
@@ -3204,9 +3219,9 @@ function xlsxSheet(widths){
           return xm(XS[kind],rs,typeof v==='number'?{numFmt:(o.pct2||[]).includes(ci)?'0.00%':(o.pct||[]).includes(ci)?'0.0%':(o.plain||[]).includes(ci)?'0':(o.signed||[]).includes(ci)?'+#,##0 "kr";-#,##0 "kr";0 "kr"':XKR,alignment:{horizontal:'right'}}:null,ext(cells[ci]))}))});
       if(o.filter)filter.e=R.length-1;put([],[])},
     kpis(L){for(let i=0;i<L.length;i+=n){const P=L.slice(i,i+n);
-      put(P.map(k=>k.label),P.map(k=>xm(XS.kl,XK[k.kind||''],k.kind==='hero'?{font:{color:{rgb:'C8CFCB'}}}:null)),26);
+      put(P.map(k=>k.label),P.map(k=>xm(XS.kl,XK[k.kind||''],k.kind==='hero'?{font:{color:{rgb:XC.haze}}}:null)),26);
       put(P.map(k=>k.value),P.map(k=>xm(XS.kv,XK[k.kind||''],typeof k.value==='number'?{numFmt:k.fmt||XKR}:null)),26);
-      put(P.map(k=>k.small||''),P.map(k=>xm(XS.ks,XK[k.kind||''],k.kind==='hero'?{font:{color:{rgb:'C8CFCB'}}}:k.kind?{font:{color:XK[k.kind].font.color}}:null)),32)}put([],[])},
+      put(P.map(k=>k.small||''),P.map(k=>xm(XS.ks,XK[k.kind||''],k.kind==='hero'?{font:{color:{rgb:XC.haze}}}:k.kind?{font:{color:XK[k.kind].font.color}}:null)),32)}put([],[])},
     add(wb,name){const X=window.XLSX, ws=X.utils.aoa_to_sheet(R.map(r=>r.length?r:['']));
       ST.forEach((row,ri)=>row.forEach((st,ci)=>{if(!st)return;const a=X.utils.encode_cell({r:ri,c:ci});if(!ws[a])ws[a]={t:'s',v:''};ws[a].s=xm(XS.base,st);if(st.numFmt)ws[a].z=st.numFmt}));
       ws['!cols']=widths.map(w=>({wch:w}));ws['!rows']=HT.map(h=>h?{hpt:h}:{});if(MG.length)ws['!merges']=MG;

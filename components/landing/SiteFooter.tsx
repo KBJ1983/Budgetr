@@ -1,4 +1,4 @@
-import { Wordmark } from "@/components/Logo";
+import { BRAND, Logo } from "@/components/Logo";
 import styles from "./landing.module.css";
 import type { NavLink } from "./SiteHeader";
 
@@ -21,7 +21,7 @@ export function SiteFooter({ links = LINKS }: { links?: readonly NavLink[] }) {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerInner}>
-        <Wordmark fontSize={28} />
+        <Logo fontSize={24} bg={BRAND.paper} />
         <nav aria-label="Sidefod" className={styles.footerNav}>
           {[...links, ...LEGAL].map((link) => (
             <a key={link.label} href={link.href}>

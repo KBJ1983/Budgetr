@@ -1,42 +1,50 @@
-/* Design tokens from docs/design/HANDOFF.md §3, recoloured to the budgetpro palette (design "sider v2"; same values as the app's :root). Landing page is always light; the app has a light and a dark theme. */
+/* Design tokens from docs/design/HANDOFF.md §3, recoloured to "Midnat og lime" (docs/design/MIDNAT.md; same values as the app's :root). Landing page is always light; the app has a light and a dark theme. */
 :root {
-  /* Site (light) */
-  --paper: #eceee9;
+  /* Site (light), "Midnat og lime" (docs/design/MIDNAT.md). The names stay from the earlier design: --pine is the accent
+     (olive on light, lime on dark), --btn the primary button. */
+  --paper: #f3f5f7;
   --card: #ffffff;
-  --stone: #e3e7e0;
-  --ink: #141a16;
-  --ink-2: #46534e;
-  --ink-3: #5f6b66;
-  --rule: #cdd4c9;
-  --field-border: #b8c1b5;
-  --pine: #2c6a4d;
-  --pine-hover: #21523b;
-  --pine-bg: #e3eee6;
-  --pine-light: #7ed4a8;
+  --stone: #e7ebef;
+  --ink: #0e1b2c;
+  --ink-2: #3e4a5a;
+  --ink-3: #5a6472;
+  --rule: #dfe4ea;
+  --field-border: #9aa6b5;
+  --pine: #3f6a0e;
+  --pine-hover: #2f500a;
+  --pine-bg: #eef6d2;
+  --pine-light: #d4f26b;
+  --midnight: #0e1b2c;
+  --midnight-2: #1a2b42;
+  --lime: #d4f26b;
+  --lime-dark: #9bc43a;
+  --btn: #0e1b2c;
+  --btn-hover: #1a2b42;
+  --btn-ink: #ffffff;
   --focus: #2f6fb3;
 
-  /* Product (dark app theme, design "sider v2", used for cut-outs on the landing page) */
-  --d-bg: #131415;
-  --d-bar: #0f1011;
-  --d-card: #1b1c1e;
-  --d-text: #ececec;
-  --d-text-2: #9d9fa4;
-  --d-text-3: #8d8f94;
-  --d-rule: #2d2f33;
-  --d-pos: #7ed4a8;
-  --d-pos-bg: #1d2320;
-  --d-pos-rule: #2b4a3e;
+  /* Product (dark app theme, used for cut-outs) */
+  --d-bg: #0e1b2c;
+  --d-bar: #0a1522;
+  --d-card: #1a2b42;
+  --d-text: #f3f5f7;
+  --d-text-2: #b6c0cc;
+  --d-text-3: #8a97a8;
+  --d-rule: #2a3d57;
+  --d-pos: #d4f26b;
+  --d-pos-bg: #26382f;
+  --d-pos-rule: #44602c;
   --d-neg: #f08a78;
-  --d-neg-bg: #34211f;
+  --d-neg-bg: #3a2630;
   --d-warn: #e3b56a;
-  --d-warn-bg: #27231b;
-  --d-warn-rule: #3d3421;
+  --d-warn-bg: #2e2b25;
+  --d-warn-rule: #4a3f2a;
   --d-blue: #7aa2d6;
   --d-slate: #a7b4c8;
-  --d-slate-bg: #212831;
-  --d-slate-rule: #36404d;
+  --d-slate-bg: #1f2d42;
+  --d-slate-rule: #34465f;
 
-  --shadow-product: 0 40px 80px -30px rgba(18, 24, 22, 0.45), 0 12px 24px -12px rgba(18, 24, 22, 0.35);
+  --shadow-product: 0 40px 80px -30px rgba(14, 27, 44, 0.45), 0 12px 24px -12px rgba(14, 27, 44, 0.35);
   --font: var(--font-geist), "Geist", ui-sans-serif, "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 }

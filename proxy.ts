@@ -47,6 +47,8 @@ export function proxy(request: NextRequest) {
 function siteGate(request: NextRequest): NextResponse | null {
   const password = process.env.SITE_PASSWORD?.trim();
   if (!password) return null;
+  // The logo in mails (public/mail/): mail clients can't send a password.
+  if (/^\/mail\/[\w.-]+\.png$/.test(request.nextUrl.pathname)) return null;
 
   const header = request.headers.get("authorization") ?? "";
   if (header.startsWith("Basic ")) {

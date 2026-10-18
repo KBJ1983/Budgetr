@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 
 /** /aftale/bekraeft: the mailed login link is only used on a button press, so mail scanners can't spend it. */
 export function AgreementRedeem({ token }: { token?: string }) {
@@ -24,7 +24,7 @@ export function AgreementRedeem({ token }: { token?: string }) {
   return (
     <div className="bx af-login">
       <main className="bx-card af-login-card">
-        <Wordmark fontSize={23} dark />
+        <Logo fontSize={20} dark bg="#1A2B42" />
         <h1>Log ind på aftalen</h1>
         {state === "expired" ? (
           <>

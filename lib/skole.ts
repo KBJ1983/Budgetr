@@ -51,9 +51,9 @@ export interface Case {
 }
 
 export const CASES: Case[] = [
-  { id: "sara", name: "Sara", gen: "Saras", age: 20, job: "Tømrerlærling", gross: 23000, tax: 7800, net: 15200, dream: "Kørekort", dreamAmt: 18000, look: { bg: "#FBF0D9", skin: "#E8B48A", hair: "#8A5F0F", shirt: "#1F5C4A" } },
-  { id: "jonas", name: "Jonas", gen: "Jonas’", age: 22, job: "Social- og sundhedsassistent", gross: 30400, tax: 10600, net: 19800, dream: "Rejse til Japan", dreamAmt: 25000, look: { bg: "#E3EEE9", skin: "#C98B62", hair: "#16201D", shirt: "#86B8EE" } },
-  { id: "mira", name: "Mira", gen: "Miras", age: 21, job: "Studerende på SU + fritidsjob", gross: 12000, tax: 2100, net: 9900, dream: "Ny computer", dreamAmt: 8000, look: { bg: "#E6EEF8", skin: "#F1C6A0", hair: "#A8412C", shirt: "#E4B758" } },
+  { id: "sara", name: "Sara", gen: "Saras", age: 20, job: "Tømrerlærling", gross: 23000, tax: 7800, net: 15200, dream: "Kørekort", dreamAmt: 18000, look: { bg: "#FCF1C8", skin: "#E8B48A", hair: "#7A5300", shirt: "#0E1B2C" } },
+  { id: "jonas", name: "Jonas", gen: "Jonas’", age: 22, job: "Social- og sundhedsassistent", gross: 30400, tax: 10600, net: 19800, dream: "Rejse til Japan", dreamAmt: 25000, look: { bg: "#E8EBEF", skin: "#C98B62", hair: "#0E1B2C", shirt: "#F6CF4A" } },
+  { id: "mira", name: "Mira", gen: "Miras", age: 21, job: "Studerende på SU + fritidsjob", gross: 12000, tax: 2100, net: 9900, dream: "Ny computer", dreamAmt: 8000, look: { bg: "#EFEDE6", skin: "#F1C6A0", hair: "#B4412C", shirt: "#5E7FA8" } },
 ];
 
 /** The chosen case, or Sara when none is chosen yet. */
@@ -225,13 +225,13 @@ export function totals(f: Flow): Totals {
   return { income, bolig, faste, fasteBase, hverdag, opsparing, spend, left: income - spend, leftBase: c.net - boligBase - fasteBase - hverdag - opsparing };
 }
 
-/** The four parts of the donut, in the sketch's colours. */
+/** The four parts of the donut ("Midnat og solgul"; on the midnight meter Bolig turns white, see onDark in Meter.tsx). */
 export function segments(t: Totals): { label: string; amt: number; color: string }[] {
   return [
-    { label: "Bolig", amt: t.bolig, color: "#1F5C4A" },
-    { label: "Faste udgifter", amt: t.faste, color: "#2E7A62" },
-    { label: "Hverdag", amt: t.hverdag, color: "#E4B758" },
-    { label: "Opsparing", amt: t.opsparing, color: "#86B8EE" },
+    { label: "Bolig", amt: t.bolig, color: "#0E1B2C" },
+    { label: "Faste udgifter", amt: t.faste, color: "#5E7FA8" },
+    { label: "Hverdag", amt: t.hverdag, color: "#F6CF4A" },
+    { label: "Opsparing", amt: t.opsparing, color: "#D49A1A" },
   ];
 }
 
@@ -252,11 +252,11 @@ export function isOk(f: Flow): boolean | null {
 // ---- Mit budget --------------------------------------------------------------------------------------------------
 
 export const CATS: { key: Cat; label: string; color: string }[] = [
-  { key: "ind", label: "Indtægt", color: "#16201D" },
-  { key: "bolig", label: "Bolig", color: "#1F5C4A" },
-  { key: "faste", label: "Faste udgifter", color: "#2E7A62" },
-  { key: "hverdag", label: "Hverdag", color: "#E4B758" },
-  { key: "ops", label: "Opsparing", color: "#86B8EE" },
+  { key: "ind", label: "Indtægt", color: "#9AA3AF" },
+  { key: "bolig", label: "Bolig", color: "#0E1B2C" },
+  { key: "faste", label: "Faste udgifter", color: "#5E7FA8" },
+  { key: "hverdag", label: "Hverdag", color: "#F6CF4A" },
+  { key: "ops", label: "Opsparing", color: "#D49A1A" },
 ];
 
 export const FREQS: Record<Freq, { div: number; long: string; short: string }> = {

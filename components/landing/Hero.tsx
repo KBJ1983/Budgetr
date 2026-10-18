@@ -2,12 +2,17 @@ import Link from "next/link";
 import styles from "./landing.module.css";
 import { HeroPhone, HeroShowcase } from "./Shots";
 import { ArrowRightIcon } from "./icons";
+import { LogoIntro } from "./LogoIntro";
 
-/** Dark hero inside the rounded top card (design "Forside v2"); the header sits in the same card, above it. */
+/**
+ * Light hero inside the rounded top card (layout "Forside v2", light treatment from docs/design/midnat-forside.html);
+ * the header sits in the same card, above it. The accent part of the title gets the lime highlight underline.
+ */
 export function Hero() {
   return (
     <section id="top" className={styles.hero} aria-labelledby="hero-title">
       <div className={styles.heroInner}>
+        <LogoIntro />
         <div className={styles.heroText}>
           <p className={styles.tagline}>Dit overblik. Dine drømme.</p>
           <h1 id="hero-title" className={styles.h1}>
@@ -27,7 +32,7 @@ export function Hero() {
         </div>
         <div className={styles.heroVisual}>
           <div className={styles.heroDots} aria-hidden="true" />
-          {/* No floating cards over the window (the design's pill and goal card are left out on purpose). */}
+          {/* Nothing moves in the hero (the logo intro is the only motion); no floating cards or pills around the window. */}
           <HeroShowcase />
         </div>
         <div className={styles.heroMobile}>

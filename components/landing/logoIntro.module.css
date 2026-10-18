@@ -1,0 +1,337 @@
+/*
+ * Logo intro on the front page (LogoIntro.tsx). It plays on a lime panel inside the hero card – the header, the
+ * Privat · Erhverv · Skole switch and the white frame stay in view, so it is clear which site this is.
+ * Timeline from the moment the inline script sets data-state="play" (about 3.5 s in all):
+ * 0.15–2.3 s the logo punches in and out in hard zoom steps (from tiny to filling the panel and back) on a shaking stage;
+ * 0.2–1.6 s thin bars and sliced ghost copies flicker, the three pieces of the symbol snap in (pocket, back card, front
+ * card) with a jolt and a white glow; 1.4–1.95 s the name steps in (with one more punch); 2.5 s IntroRunner sets "land":
+ * the panel contracts to a lime badge behind the logo ("shrink", 0.46 s), then badge and logo whip up into the logo's
+ * place in the header with a short trail ("land", 0.64 s); the badge fades and the logo takes the header's colours.
+ * The flicker stays on the logo and on thin bars – the panel itself never flashes.
+ */
+
+.intro {
+  /* Logo on lime (designmanual: on lime the front card is white). */
+  --ink: #0e1b2c;
+  --front: #ffffff;
+  --cut: #d4f26b;
+  --fs: clamp(34px, 9vw, 120px);
+
+  position: absolute;
+  inset: 6px 14px 14px;
+  /* Above the header (z-index 10), so the logo flies over it; the panel itself never covers the header. */
+  z-index: 20;
+  display: none;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #d4f26b;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .intro {
+    inset: 4px 8px 8px;
+    border-radius: 20px;
+  }
+}
+.intro[data-state="play"],
+.intro[data-state="shrink"],
+.intro[data-state="land"] {
+  display: block;
+}
+/* Safety net: if the runner never starts, the panel fades away by itself. */
+.intro[data-state="play"] {
+  animation: bail 0.35s ease-in 6s forwards;
+}
+/* Landing: the header's colours (midnight logo, lime front card, cut-outs in the card's grey). */
+.intro[data-state="shrink"] {
+  pointer-events: none;
+}
+.intro[data-state="land"] {
+  --front: #d4f26b;
+  --cut: #f3f5f7;
+  pointer-events: none;
+}
+/* The header colours come in late in the flight, once the lime badge behind the logo starts to fade. */
+.intro[data-state="land"] :is(.front, .cut, .slot) {
+  transition-duration: 0.3s;
+  transition-delay: 0.32s;
+}
+
+/* ---------- Backdrop: a soft white halo, scanlines and glitch bars ---------- */
+
+.halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 90vmin;
+  height: 90vmin;
+  margin: -45vmin 0 0 -45vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.14) 36%, transparent 62%);
+  opacity: 0;
+  animation: haloIn 1.8s steps(1, end) 0.2s forwards;
+}
+.scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(14, 27, 44, 0.05) 0 1px, transparent 1px 4px);
+  animation: fadeOut 0.5s ease-out 1.9s forwards;
+}
+.intro:is([data-state="shrink"], [data-state="land"]) :is(.halo, .scan, .bars) {
+  opacity: 0;
+  transition: opacity 0.25s;
+  animation: none;
+}
+
+.bars i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #0e1b2c;
+  opacity: 0;
+  animation: bar 0.8s steps(1, end) forwards;
+}
+.bars i:nth-child(even) {
+  background: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+}
+.bars i:nth-child(1) { top: 30%; height: 2px; animation-delay: 0.2s; }
+.bars i:nth-child(2) { top: 46%; height: 6px; left: 16%; right: 36%; animation-delay: 0.4s; }
+.bars i:nth-child(3) { top: 58%; height: 2px; left: 42%; animation-delay: 0.6s; }
+.bars i:nth-child(4) { top: 38%; height: 4px; right: 54%; animation-delay: 0.8s; }
+.bars i:nth-child(5) { top: 65%; height: 3px; left: 8%; right: 58%; animation-delay: 1s; }
+.bars i:nth-child(6) { top: 52%; height: 2px; animation-delay: 1.25s; }
+
+/* ---------- The logo ---------- */
+
+/* Centred in the part of the panel that is on screen (on phones the hero is taller than the screen). */
+.stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: min(100%, calc(100svh - 130px));
+  display: grid;
+  place-items: center;
+}
+/* Hard zoom punches; it ends on transform: none, so the flying logo (position: fixed) is not caught in a transformed box. */
+.zoom {
+  display: inline-block;
+  animation: punch 2.15s steps(1, end) 0.15s both;
+}
+.stage {
+  animation: shake 2.1s steps(1, end) 0.2s both;
+}
+.intro:is([data-state="shrink"], [data-state="land"]) :is(.stage, .zoom) {
+  animation: none;
+  transform: none;
+}
+.lockup {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.24em;
+  font-size: var(--fs);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.markWrap {
+  position: relative;
+  align-self: flex-end;
+  width: 1.05em;
+  height: 1.05em;
+  margin-bottom: -0.02em;
+  animation: glow 2s steps(1, end) 0.3s both;
+}
+.intro[data-state="land"] .markWrap {
+  animation: none;
+  filter: none;
+}
+.mark,
+.ghostA,
+.ghostB {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ghostA,
+.ghostB {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.ghostA {
+  color: #0e1b2c;
+  animation: sliceA 1.3s steps(1, end) 0.2s forwards;
+}
+.ghostB {
+  color: #ffffff;
+  animation: sliceB 1.3s steps(1, end) 0.35s forwards;
+}
+.ghostA *,
+.ghostB * {
+  fill: currentColor;
+  stroke: none;
+}
+.intro:is([data-state="shrink"], [data-state="land"]) :is(.ghostA, .ghostB) {
+  display: none;
+}
+
+.ink {
+  fill: var(--ink);
+}
+.front {
+  fill: var(--front);
+  transition: fill 0.6s;
+}
+.cut {
+  stroke: var(--cut);
+  stroke-width: 3;
+  transition: stroke 0.6s;
+}
+.slot {
+  fill: var(--cut);
+  transition: fill 0.6s;
+}
+
+/* Each piece snaps in with a jolt (offsets in the symbol's own units). */
+.p1,
+.p2,
+.p3 {
+  opacity: 0;
+  animation: snap 0.7s steps(1, end) both;
+}
+.p3 { --jx: -7px; --jy: 3px; animation-delay: 0.3s; }
+.p1 { --jx: 6px; --jy: -5px; animation-delay: 0.65s; }
+.p2 { --jx: -5px; --jy: -6px; animation-delay: 1s; }
+
+.name {
+  display: inline-flex;
+  align-items: baseline;
+  clip-path: inset(-20% 100% -20% 0);
+  animation: nameIn 0.55s steps(7, end) 1.4s forwards;
+}
+.intro[data-state="land"] .name {
+  clip-path: none;
+  animation: none;
+}
+.budget {
+  font: 700 1em/1 var(--font-logo), sans-serif;
+  letter-spacing: -0.045em;
+}
+.pro {
+  font: 200 1em/1 var(--font-logo), sans-serif;
+  letter-spacing: -0.035em;
+  margin-left: 0.03em;
+  animation: proFlicker 0.6s steps(1, end) 1.6s both;
+}
+.intro[data-state="land"] .pro {
+  animation: none;
+}
+
+/* ---------- Keyframes (stepped, so it moves in hard jumps) ---------- */
+
+@keyframes snap {
+  0% { opacity: 0; transform: translate(var(--jx), var(--jy)); }
+  12% { opacity: 1; transform: translate(calc(var(--jx) * -0.7), calc(var(--jy) * 0.4)); }
+  26% { opacity: 0.55; transform: translate(calc(var(--jx) * 0.5), 0); }
+  38% { opacity: 1; transform: translate(calc(var(--jx) * -0.25), calc(var(--jy) * -0.3)); }
+  60% { transform: translate(calc(var(--jx) * 0.1), 0); }
+  80%, 100% { opacity: 1; transform: none; }
+}
+@keyframes punch {
+  0% { transform: scale(0.3); }
+  4% { transform: scale(2.8); }
+  8% { transform: scale(0.7); }
+  12% { transform: scale(1.6); }
+  16% { transform: scale(0.9); }
+  20% { transform: scale(1.15); }
+  24% { transform: scale(1); }
+  36% { transform: scale(2.2) rotate(-3deg); }
+  39% { transform: scale(0.85); }
+  42% { transform: scale(1.25); }
+  45% { transform: scale(1); }
+  58% { transform: scale(3.4) rotate(2deg); }
+  60% { transform: scale(0.6); }
+  63% { transform: scale(1.12); }
+  66% { transform: scale(1); }
+  80% { transform: scale(1.45); }
+  83% { transform: scale(0.94); }
+  86% { transform: scale(1.04); }
+  89%, 100% { transform: none; }
+}
+@keyframes shake {
+  0% { transform: translate(-1.5%, 1%); }
+  5% { transform: translate(1.2%, -1.4%); }
+  10% { transform: translate(-0.6%, 0.4%); }
+  15% { transform: none; }
+  36% { transform: translate(1.4%, 0.8%); }
+  40% { transform: translate(-1%, -0.6%); }
+  44% { transform: none; }
+  58% { transform: translate(-1.8%, -1%); }
+  62% { transform: translate(1%, 1.2%); }
+  66% { transform: none; }
+  80% { transform: translate(0.8%, -0.6%); }
+  84%, 100% { transform: none; }
+}
+@keyframes sliceA {
+  0% { opacity: 0.7; clip-path: inset(8% 0 70% 0); transform: translate(9%, 0); }
+  14% { clip-path: inset(46% 0 30% 0); transform: translate(-7%, 0); }
+  28% { opacity: 0.5; clip-path: inset(70% 0 6% 0); transform: translate(5%, 0); }
+  42% { opacity: 0.7; clip-path: inset(22% 0 56% 0); transform: translate(-10%, 0); }
+  58% { clip-path: inset(58% 0 24% 0); transform: translate(4%, 0); }
+  72% { opacity: 0.35; clip-path: inset(34% 0 50% 0); transform: translate(-3%, 0); }
+  86%, 100% { opacity: 0; }
+}
+@keyframes sliceB {
+  0% { opacity: 0.9; clip-path: inset(62% 0 18% 0); transform: translate(-8%, 0); }
+  16% { clip-path: inset(14% 0 66% 0); transform: translate(6%, 0); }
+  32% { clip-path: inset(40% 0 42% 0); transform: translate(-4%, 0); }
+  50% { opacity: 0.6; clip-path: inset(76% 0 4% 0); transform: translate(8%, 0); }
+  68% { clip-path: inset(4% 0 80% 0); transform: translate(-6%, 0); }
+  84%, 100% { opacity: 0; }
+}
+@keyframes glow {
+  0% { filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0)); }
+  14% { filter: drop-shadow(0 0 26px rgba(255, 255, 255, 0.95)); }
+  26% { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)); }
+  38% { filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)); }
+  52% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)); }
+  64% { filter: drop-shadow(0 0 28px rgba(255, 255, 255, 0.9)); }
+  100% { filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.7)); }
+}
+@keyframes bar {
+  0% { opacity: 0.85; transform: translateX(-6%); }
+  14% { opacity: 0; }
+  28% { opacity: 0.6; transform: translateX(9%); }
+  42% { opacity: 0; }
+  56% { opacity: 0.45; transform: translateX(-3%); }
+  70%, 100% { opacity: 0; }
+}
+@keyframes nameIn {
+  to { clip-path: inset(-20% -2% -20% 0); }
+}
+@keyframes proFlicker {
+  0% { opacity: 0.3; }
+  20% { opacity: 1; }
+  36% { opacity: 0.45; }
+  52%, 100% { opacity: 1; }
+}
+@keyframes haloIn {
+  0% { opacity: 0.6; }
+  20% { opacity: 0.25; }
+  36% { opacity: 1; }
+  60% { opacity: 0.7; }
+  80%, 100% { opacity: 1; }
+}
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+@keyframes bail {
+  to { opacity: 0; visibility: hidden; }
+}

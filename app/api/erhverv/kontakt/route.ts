@@ -21,10 +21,11 @@ export async function POST(req: Request) {
   if (!(await takeInquiry(r.value.email))) return Response.json({ error: "limit" }, { status: 429 });
 
   await saveInquiry(r.value);
-  const mail = inquiryMail(r.value, siteUrl(new URL(req.url).origin));
+  const origin = new URL(req.url).origin;
+  const mail = inquiryMail(r.value, siteUrl(origin));
   for (const to of ownerEmails()) {
     try {
-      await sendMail(to, mail, { replyTo: r.value.email });
+      await sendMail(to, mail, { replyTo: r.value.email, origin });
     } catch (e) {
       // Saved already, so the owner still finds it; the sender gets the usual answer.
       console.error("[budgetr] inquiry mail failed", e);

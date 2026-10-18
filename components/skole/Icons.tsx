@@ -32,7 +32,7 @@ export function Check({ size = 14, color = "#FFFFFF" }: { size?: number; color?:
 export function Star() {
   return (
     <svg viewBox="0 0 24 24" width={24} height={24} aria-hidden="true" style={{ flexShrink: 0 }}>
-      <path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" fill="#E4B758" stroke="#8A5F0F" strokeWidth={1.4} strokeLinejoin="round" />
+      <path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" fill="#F6CF4A" stroke="#7A5300" strokeWidth={1.4} strokeLinejoin="round" />
     </svg>
   );
 }

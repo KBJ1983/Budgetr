@@ -58,7 +58,7 @@ function CasePick({ flow, update }: { flow: Flow; update: Update }) {
           <button key={x.id} type="button" className={`${s.choice} ${s.caseCard}`} aria-pressed={on} onClick={() => update({ caseId: x.id })}>
             {on && (
               <span className={s.badge}>
-                <Check size={16} />
+                <Check size={16} color="#0E1B2C" />
               </span>
             )}
             <Avatar c={x} size={84} />
@@ -110,7 +110,7 @@ function Bolig({ flow, update }: { flow: Flow; update: Update }) {
         return (
           <button key={b.amt} type="button" role="radio" aria-checked={on} className={`${s.choice} ${s.boligOpt}`} onClick={() => update({ bolig: b.amt })}>
             <span className={s.iconBox}>
-              <Icon name="house" size={24} color="#1F5C4A" width={2} />
+              <Icon name="house" size={24} color="#0E1B2C" width={2} />
             </span>
             <span className={s.optText}>
               <span className={s.optTitle}>{b.label}</span>
@@ -145,7 +145,7 @@ function Faste({ flow, update, t }: { flow: Flow; update: Update; t: Totals }) {
               <span className={`${s.tick} ${s.tickSquare}`}>
                 <Check />
               </span>
-              <Icon name={f.icon} color="#46534E" />
+              <Icon name={f.icon} color="#5A6577" />
               <span className={s.fasteLabel}>{f.label}</span>
               <span className={s.fasteAmt}>{kr(f.amt)}</span>
             </button>
@@ -208,7 +208,7 @@ function Hverdag({ flow, update }: { flow: Flow; update: Update }) {
       {HVERDAG.map((g) => (
         <div key={g.key} className={s.stack} role="radiogroup" aria-label={g.title}>
           <div className={s.groupHead}>
-            <Icon name={g.icon} color="#1F5C4A" />
+            <Icon name={g.icon} color="#0E1B2C" />
             <span>{g.title}</span>
           </div>
           <div className={s.threeCols}>
@@ -220,7 +220,7 @@ function Hverdag({ flow, update }: { flow: Flow; update: Update }) {
                   <span className={s.levelAmt}>{kr(v)}</span>
                   {on && (
                     <span className={s.badge}>
-                      <Check size={13} />
+                      <Check size={13} color="#0E1B2C" />
                     </span>
                   )}
                 </button>

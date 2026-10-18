@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, type FormEvent } from "react";
-import { Wordmark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 
 const TRY_AGAIN = "Det lykkedes ikke lige nu. Prøv igen om lidt.";
 
@@ -65,7 +65,7 @@ export function AgreementLogin({ email: initialEmail = "" }: { email?: string })
   return (
     <div className="bx af-login">
       <main className="bx-card af-login-card">
-        <Wordmark fontSize={23} dark />
+        <Logo fontSize={20} dark bg="#1A2B42" />
         <h1>Aftale med budgetpro</h1>
         {step === "email" ? (
           <form className="bx-auth-form" onSubmit={askCode} noValidate>
