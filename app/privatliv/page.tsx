@@ -218,9 +218,9 @@ export default function PrivacyPage() {
             </tr>
             <tr>
               <td>
-                <code>hb-theme</code>, <code>hb-view</code> m.fl.
+                <code>hb-theme</code>, <code>hb-view</code>, <code>hb-film</code> m.fl.
               </td>
-              <td>Lokal lagring i browseren: dine valg af tema og visning i appen</td>
+              <td>Lokal lagring i browseren: dine valg af tema og visning i appen, og om du har set filmen om at komme i gang</td>
               <td>Til du rydder browserens data</td>
             </tr>
             <tr>

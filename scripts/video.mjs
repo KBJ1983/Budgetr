@@ -1,5 +1,5 @@
 /**
- * Renders a film from video/ (erhverv, privat, skole) to an MP4, frame by frame: the page exposes window.seek(t), so
+ * Renders a film from video/ (erhverv, privat, skole, kom-i-gang) to an MP4, frame by frame: the page exposes window.seek(t), so
  * every frame is exact no matter how fast the machine is. Needs ffmpeg on PATH (or FFMPEG=<path>) and Chrome.
  *
  *   pnpm video erhverv                         → public/video/budgetpro-erhverv.mp4
@@ -14,7 +14,7 @@ import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
 const FPS = 30;
-const FILMS = ["erhverv", "privat", "skole"];
+const FILMS = ["erhverv", "privat", "skole", "kom-i-gang"];
 const args = process.argv.slice(2);
 const name = args.find((a) => FILMS.includes(a));
 if (!name) {

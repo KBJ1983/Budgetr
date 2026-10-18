@@ -218,6 +218,28 @@ try {
     check(saved?.settings?.todoSeen && saved.settings.touched === old, "the task note is saved as seen without counting as a change");
     await ctx.close();
   }
+  // The "Kom i gang" film opens once by itself on a first visit without a budget, then only from the profile menu.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p5 = await ctx.newPage();
+    p5.on("pageerror", (e) => errors.push(e.message));
+    await p5.route("**/api/budget/**", (r) => (r.request().method() === "GET" ? r.fulfill({ status: 404, body: "" }) : r.fulfill({ status: 204 })));
+    await p5.route("**/private/**", (r) => r.fulfill({ status: 404, body: "" }));
+    await p5.addInitScript(() => { localStorage.setItem("budgetr:session", "test3"); localStorage.removeItem("budgetr-app:test3"); });
+    await p5.goto(`${BASE}/app`);
+    await p5.evaluate(() => localStorage.removeItem("hb-film"));
+    await p5.reload();
+    await p5.locator("#dlgFilm[open]").waitFor({ timeout: 5000 });
+    check((await p5.locator("#filmVid").getAttribute("src"))?.endsWith("budgetpro-kom-i-gang-reel.mp4"), "the film opens on a first visit, as the reel on a phone");
+    await p5.locator("#filmClose").click();
+    await p5.reload();
+    await p5.waitForTimeout(1200);
+    check(!(await p5.locator("#dlgFilm").evaluate((d) => d.open)), "the film does not open again");
+    await p5.locator("#btnUserMenu").click();
+    await p5.locator('[data-um="film"]').click();
+    check(await p5.locator("#dlgFilm").evaluate((d) => d.open), "the profile menu opens the film");
+    await ctx.close();
+  }
   // The new-budget guide on a phone, with the optional bank and reminder steps (served by a route, nothing in data/).
   {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
