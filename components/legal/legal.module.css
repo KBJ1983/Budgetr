@@ -1,0 +1,157 @@
+/* Legal pages (/privatliv): one readable column on the landing palette (.page in landing.module.css). */
+
+.top {
+  padding: 24px var(--gutter) 0;
+}
+.topInner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.topInner a {
+  display: inline-flex;
+  text-decoration: none;
+}
+.back {
+  font-size: 14px;
+  color: var(--v-ink-3);
+  padding: 8px 0;
+}
+.back:hover {
+  color: var(--v-ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.doc {
+  flex: 1;
+  width: calc(100% - 2 * var(--gutter));
+  max-width: 760px;
+  margin: 32px auto 0;
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
+  border-radius: 24px;
+  padding: 48px 56px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--v-ink-2);
+  overflow-wrap: anywhere;
+}
+.doc h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--v-ink);
+}
+.doc h2 {
+  margin: 36px 0 8px;
+  font-size: 21px;
+  line-height: 1.3;
+  color: var(--v-ink);
+  scroll-margin-top: 24px;
+}
+.doc h3 {
+  margin: 20px 0 4px;
+  font-size: 16px;
+  color: var(--v-ink);
+}
+.doc p,
+.doc ul {
+  margin: 0 0 12px;
+}
+.doc ul {
+  padding-left: 22px;
+}
+.doc li {
+  margin-bottom: 6px;
+}
+.doc a {
+  color: var(--v-olive);
+  text-underline-offset: 3px;
+}
+.doc a:hover {
+  color: var(--v-olive-hover);
+}
+.doc b,
+.doc strong {
+  color: var(--v-ink);
+}
+.doc code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--v-ink);
+}
+
+.updated {
+  margin-top: 8px !important;
+  font-size: 14px;
+  color: var(--v-ink-3);
+}
+.draft {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--v-lime-tone);
+  color: var(--v-ink);
+  font-size: 14px;
+}
+.lead {
+  margin: 24px 0 8px !important;
+  font-size: 18px;
+  color: var(--v-ink);
+}
+
+.tableWrap {
+  margin: 8px 0 16px;
+}
+.tableWrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.tableWrap th,
+.tableWrap td {
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--v-rule-2);
+}
+.tableWrap th {
+  color: var(--v-ink);
+  font-weight: 600;
+  border-bottom-color: var(--v-rule);
+}
+
+@media (max-width: 767.98px) {
+  .top {
+    padding: 20px 16px 0;
+  }
+  .doc {
+    width: calc(100% - 32px);
+    margin-top: 20px;
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+  /* Rows stack on a phone, so the page never scrolls sideways at 390 px. */
+  .tableWrap thead {
+    display: none;
+  }
+  .tableWrap tr {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--v-rule-2);
+  }
+  .tableWrap td {
+    display: block;
+    padding: 2px 0;
+    border: 0;
+  }
+  .tableWrap td:first-child {
+    color: var(--v-ink);
+    font-weight: 600;
+  }
+}

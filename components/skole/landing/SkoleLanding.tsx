@@ -292,6 +292,8 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           <SkoleLogo fontSize={20} bg={BRAND.warm} />
         </span>
         <span className={l.slogan}>Dit overblik. Dine drømme.</span>
+        <a href={`${base}/privatliv`}>Privatlivspolitik</a>
+        <a href={`${base}/vilkaar`}>Vilkår</a>
         <a href={mainSite}>budgetpro.dk</a>
       </footer>
     </div>

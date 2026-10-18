@@ -125,7 +125,9 @@ export function CreateAccountForm({ email }: { email?: string }) {
         </button>
       </form>
       <p className="bx-help" style={{ marginTop: 20 }}>
-        Vi bruger kun din e-mail og dit mobilnummer til login og til de påmindelser, du selv slår til.
+        Vi bruger kun din e-mail og dit mobilnummer til login og til de påmindelser, du selv slår til. Når du opretter en
+        konto, accepterer du vores <Link href="/vilkaar">vilkår</Link>. Læs også vores{" "}
+        <Link href="/privatliv">privatlivspolitik</Link>.
       </p>
       <p className="bx-help" style={{ marginTop: 8 }}>
         Har du allerede en konto? <Link href="/login">Log ind</Link>.

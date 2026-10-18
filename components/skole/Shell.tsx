@@ -15,7 +15,9 @@ export function Shell({ right, toast, children }: { right?: React.ReactNode; toa
       <main className={s.main}>{children}</main>
       <footer className={s.footer}>
         <span>Eksempeltal</span>
-        <span>Ingen navne gemmes</span>
+        <span>
+          Ingen navne gemmes · <Link href="/skole/privatliv">Privatlivspolitik</Link>
+        </span>
       </footer>
       {toast && (
         <div className={s.toast} role="status">

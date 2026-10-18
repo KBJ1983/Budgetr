@@ -1,4 +1,5 @@
 import { BRAND, Logo } from "@/components/Logo";
+import { COMPANY } from "@/lib/company";
 import styles from "./landing.module.css";
 import type { NavLink } from "./SiteHeader";
 
@@ -9,13 +10,12 @@ const LINKS: readonly NavLink[] = [
   { href: "/erhverv", label: "Erhverv" },
   { href: "/skole", label: "Skole" },
 ];
-// Legal pages do not exist yet.
 const LEGAL: readonly NavLink[] = [
-  { href: "#", label: "Vilkår" },
-  { href: "#", label: "Privatlivspolitik" },
-  { href: "#", label: "Kontakt" },
+  { href: "/vilkaar", label: "Vilkår" },
+  { href: "/privatliv", label: "Privatlivspolitik" },
+  { href: "/privatliv#cookies", label: "Cookies" },
+  { href: `mailto:${COMPANY.email}`, label: "Kontakt" },
 ];
-const COMPANY = "[Firmanavn · CVR]";
 
 export function SiteFooter({ links = LINKS }: { links?: readonly NavLink[] }) {
   return (
@@ -29,7 +29,9 @@ export function SiteFooter({ links = LINKS }: { links?: readonly NavLink[] }) {
             </a>
           ))}
         </nav>
-        <span className={styles.footerCompany}>© 2026 budgetpro · {COMPANY}</span>
+        <span className={styles.footerCompany}>
+          © 2026 budgetpro · {COMPANY.name} · CVR {COMPANY.cvr}
+        </span>
       </div>
     </footer>
   );
