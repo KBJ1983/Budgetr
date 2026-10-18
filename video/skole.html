@@ -1,9 +1,12 @@
 <!doctype html>
 <!--
-  Skole film (36 s): what budgetpro Skole gives the class and how little the teacher has to do – make a class, share
-  the codes, the pupils work, follow the class. Skole's own theme "Midnat og solgul" (docs/design/skole-21b.html,
-  data-theme="skole" in film.css: solgul replaces lime) with motion graphics; the logo carries the "Skole" sticker. Runtime and shared styles:
-  film.js / film.css. Render: `pnpm video skole`. Codes, numbers and answers are made up; screenshots from
+  Skole film (56 s): budgetpro Skole as a course over four lessons. The teacher makes a class in two minutes, then the
+  film follows the four lessons and the features in each (the future persons, pay after tax, choices and the budget
+  meter, savings with a date and the "Hvorfor?" box, the what-if scenarios and "Mit budget"), and ends with how the
+  teacher follows the class. Skole's own theme "Midnat og solgul" (docs/design/skole-21b.html, data-theme="skole" in
+  film.css: solgul replaces lime) with motion graphics; the logo carries the "Skole" sticker. Runtime and shared styles:
+  film.js / film.css. Render: `pnpm video skole`. Lessons and numbers follow LESSONS in
+  components/skole/landing/SkoleLanding.tsx and lib/skole.ts (Sara); codes and answers are made up; screenshots from
   public/skole/ (`pnpm shots:skole`).
 -->
 <html lang="da" data-theme="skole">
@@ -16,27 +19,105 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&display=block" rel="stylesheet" />
 <link rel="stylesheet" href="film.css" />
 <style>
-  #create { left: 900px; top: 190px; width: 860px; padding: 48px 52px; }
-  #create h3, #codes h3, #klasse h3 { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 30px; }
+  .card h3 { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 30px; }
+  .mono { font-family: "Geist Mono", monospace; font-weight: 500; }
   .row { display: flex; gap: 12px; margin-bottom: 30px; align-items: center; }
+  .small { font-size: 18px; line-height: 1.45; color: var(--ink-3); }
+
+  /* Make a class → the codes */
+  #create, #codes { left: 900px; top: 190px; width: 860px; padding: 48px 52px; }
   .stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--rule-2); border-radius: 999px; overflow: hidden; height: 56px; }
   .stepper span { display: grid; place-items: center; width: 60px; height: 100%; font-size: 26px; background: var(--card); }
   .stepper b { width: 84px; text-align: center; font: 500 26px/1 "Geist Mono", monospace; display: inline-block; }
-  .small { font-size: 18px; line-height: 1.45; color: var(--ink-3); margin-bottom: 28px; }
-  #codes { left: 900px; top: 170px; width: 860px; padding: 44px 48px; }
-  .codes-head { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
-  .codes-head h3 { margin: 0 auto 0 0 !important; }
-  .codes-head .btn { height: 48px; font-size: 19px; padding: 0 22px; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 26px; }
   .code { height: 64px; border-radius: 14px; background: var(--stone); display: grid; place-items: center; font: 500 22px/1 "Geist Mono", monospace; letter-spacing: .04em; }
-  .slip { position: absolute; width: 340px; padding: 26px 28px; background: var(--white); border-radius: 12px; border: 1px dashed var(--rule-2); box-shadow: var(--shadow); }
-  .slip small { display: block; font-size: 16px; color: var(--ink-3); margin: 14px 0 6px; }
-  .slip > b { display: block; font: 500 30px/1 "Geist Mono", monospace; letter-spacing: .05em; }
-  .slip .note { display: block; font-size: 15px; color: var(--ink-3); margin-top: 14px; }
-  #laptop { left: 820px; top: 200px; width: 960px; }
-  #laptop .view { height: 540px; }
-  #phone { left: 1540px; top: 300px; }
+
+  /* The four lessons */
+  #plan { left: 880px; top: 170px; width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .ls { position: relative; height: 340px; border-radius: 28px; padding: 32px 34px; border: 1px solid var(--rule); background: var(--white); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .ls.y { background: var(--lime); border-color: transparent; }
+  .ls.d { background: var(--midnight); border-color: transparent; color: var(--dark-text); }
+  .ls-h { display: flex; justify-content: space-between; font-size: 17px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin-bottom: 22px; }
+  .ls h4 { font-size: 34px; line-height: 1.1; font-weight: 700; letter-spacing: -0.03em; margin-bottom: auto; }
+  .ls .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ls .tags span { font-size: 17px; padding: 8px 14px; border-radius: 999px; background: rgba(14, 27, 44, .07); }
+  .ls.d .tags span { background: rgba(255, 255, 255, .1); }
+
+  /* Lesson 1: the future persons and the pay */
+  #cases { left: 880px; top: 150px; width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .pc { border-radius: 24px; padding: 26px 24px; background: var(--white); border: 2px solid var(--rule); box-shadow: var(--shadow); }
+  .pc.on { border-color: var(--midnight); }
+  .av { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; font-size: 32px; font-weight: 700; margin-bottom: 18px; }
+  .pc b { display: block; font-size: 28px; letter-spacing: -0.02em; }
+  .pc .job { font-size: 18px; color: var(--ink-3); margin: 4px 0 16px; min-height: 48px; line-height: 1.35; }
+  .pc .dream { font-size: 17px; padding: 8px 14px; border-radius: 999px; background: var(--stone); display: inline-block; }
+  #pay { left: 880px; top: 560px; width: 900px; padding: 36px 44px; }
+  #pay h3 { margin-bottom: 22px; }
+  .pay { display: grid; grid-template-columns: 290px 1fr 170px; align-items: center; gap: 20px; padding: 12px 0; font-size: 22px; }
+  .pay .b { height: 22px; border-radius: 11px; transform-origin: 0 50%; }
+  .pay .a { text-align: right; font: 500 24px/1 "Geist Mono", monospace; }
+  .pay.net { border-top: 1px solid var(--rule); margin-top: 6px; padding-top: 18px; font-weight: 600; }
+
+  /* Lesson 2: choices and the budget meter */
+  #choose { left: 860px; top: 150px; width: 940px; padding: 40px 44px; display: grid; grid-template-columns: 1fr 300px; gap: 36px; }
+  .opt { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 15px 20px; border: 1.5px solid var(--rule); border-radius: 16px; margin-bottom: 10px; font-size: 21px; }
+  .opt small { display: block; font-size: 16px; color: var(--ink-3); margin-top: 3px; }
+  .opt .mono { font-size: 20px; }
+  .opt.on { border-color: var(--midnight); background: var(--lime-tone); }
+  .fx { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+  .fx span { font-size: 17px; padding: 10px 14px; border-radius: 999px; border: 1.5px solid var(--rule-2); color: var(--ink-3); }
+  .fx span.on { background: var(--midnight); border-color: var(--midnight); color: #fff; }
+  .lv { display: flex; gap: 10px; }
+  .lv .chip { height: 50px; font-size: 19px; }
+  .meter { align-self: center; text-align: center; }
+  .meter svg { width: 300px; height: 300px; transform: rotate(-90deg); }
+  .meter .mid { position: relative; margin-top: -300px; height: 300px; display: grid; place-content: center; }
+  .meter .mid small { font-size: 17px; color: var(--ink-3); }
+  .meter .mid b { font: 500 40px/1.2 "Geist Mono", monospace; letter-spacing: -0.02em; }
+  .key { margin-top: 24px; display: grid; gap: 8px; text-align: left; font-size: 17px; }
+  .key span { display: flex; align-items: center; gap: 10px; }
+  .key i { width: 14px; height: 14px; border-radius: 4px; }
+
+  /* Lesson 3: savings with a date + "Hvorfor?" */
+  #save { left: 880px; top: 150px; width: 860px; padding: 40px 46px; }
+  .goal { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
+  .goal .ic { width: 64px; height: 64px; border-radius: 18px; background: var(--lime); display: grid; place-items: center; font-size: 30px; }
+  .goal b { font-size: 30px; letter-spacing: -0.02em; display: block; }
+  .goal span { font-size: 19px; color: var(--ink-3); }
+  .slider { position: relative; height: 10px; border-radius: 5px; background: var(--stone); margin: 18px 12px 18px; }
+  .slider .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--lime-dark); }
+  #knob { position: absolute; top: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: var(--white); border: 3px solid var(--midnight); }
+  .ticks { display: flex; justify-content: space-between; font-size: 16px; color: var(--ink-3); margin: 0 4px 26px; }
+  .sv { display: grid; grid-template-columns: 1fr auto; padding: 14px 0; border-top: 1px solid var(--rule); font-size: 22px; }
+  .sv .mono { font-size: 22px; }
+  #ok { margin-top: 22px; display: inline-flex; align-items: center; gap: 12px; padding: 14px 24px; border-radius: 999px; background: var(--lime-tone); color: var(--olive); font-size: 21px; font-weight: 600; }
+  #ok::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--lime-dark); }
+  #why { left: 1240px; top: 590px; width: 600px; padding: 30px 34px; }
+  #why .wt { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  #why .wt i { width: 34px; height: 34px; border-radius: 50%; background: var(--midnight); color: var(--lime); display: grid; place-items: center; font-style: normal; font-size: 19px; }
+  #why p { font-size: 18px; line-height: 1.45; color: var(--ink-2); }
+  #why small { display: block; font-size: 16px; font-weight: 600; color: var(--olive); margin: 18px 0 8px; }
+  #answer { min-height: 58px; border: 1.5px solid var(--rule-2); border-radius: 14px; padding: 14px 16px; font-size: 19px; line-height: 1.4; }
+  #answer::after { content: ""; display: inline-block; width: 2px; height: 22px; background: var(--ink); vertical-align: -4px; margin-left: 2px; }
+
+  /* Lesson 4: what if, then "Mit budget" */
+  #what { left: 880px; top: 150px; width: 820px; padding: 40px 44px; }
+  .sc { display: grid; grid-template-columns: 54px 1fr auto; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 21px; }
+  .tg { width: 54px; height: 32px; border-radius: 16px; background: var(--rule-2); position: relative; }
+  .tg::after { content: ""; position: absolute; left: 4px; top: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: none; }
+  .sc.on .tg { background: var(--midnight); }
+  .sc.on .tg::after { left: 26px; }
+  .sc .mono { font-size: 20px; color: var(--ink-3); }
+  .res { display: flex; justify-content: space-between; align-items: baseline; margin-top: 24px; font-size: 22px; font-weight: 600; }
+  #resAmt { font: 500 40px/1 "Geist Mono", monospace; }
+  #resAmt.neg { color: var(--error); }
+  #laptop { left: 1010px; top: 420px; width: 860px; }
+  #laptop .view { height: 500px; }
+  #pdf { left: 1370px; top: 360px; }
+
+  /* Follow the class */
   #klasse { left: 880px; top: 150px; width: 880px; padding: 40px 44px; }
+  #klasse h3 { margin-bottom: 30px; }
   #klasse .sub { font-size: 18px; color: var(--ink-3); margin: -18px 0 24px; }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
   .stat { border-radius: 16px; padding: 18px 20px; border: 1px solid var(--rule); }
@@ -76,7 +157,7 @@
       <div class="abs over" id="s1-eyebrow" style="left:116px;top:330px">Privatøkonomi i 7.–9. klasse</div>
       <h1 style="top:390px;width:1720px"><span id="s1-l1">Hvad koster det at være voksen?</span><span id="s1-l2"><span class="hl">Eleverne regner det selv ud.</span></span></h1>
       <div class="abs" style="left:116px;top:700px;display:flex;gap:16px">
-        <span class="dchip s1-chip">Ingen elevnavne gemmes</span><span class="dchip s1-chip">Virker på Chromebook og mobil</span><span class="dchip s1-chip">Klar på 2 minutter</span>
+        <span class="dchip s1-chip">Et forløb på fire lektioner</span><span class="dchip s1-chip">Ingen elevnavne gemmes</span><span class="dchip s1-chip">Chromebook, iPad og mobil</span>
       </div>
     </div>
   </div>
@@ -84,9 +165,9 @@
   <!-- 2 · Make a class -->
   <div class="layer" id="s2">
     <div class="cap" id="c2">
-      <div class="step"><b>1</b>Opret en klasse</div>
+      <div class="tag"><i></i>Før første lektion</div>
       <h2>Klassen er klar på <span class="hl">to minutter</span></h2>
-      <p>Vælg klassetrin, antal elever, og hvor længe koderne skal virke.</p>
+      <p>Vælg klassetrin og antal elever. Hver elev får en kode, så ingen skal oprette en bruger.</p>
     </div>
     <div class="abs card" id="create">
       <h3>Opret klasse</h3>
@@ -95,47 +176,130 @@
       <div class="legend">Antal elever</div>
       <div class="row"><span class="stepper"><span>−</span><b id="n">20</b><span id="plus">+</span></span></div>
       <div class="legend">Koderne virker i</div>
-      <div class="row"><span class="chip">30 dage</span><span class="chip" id="d60">60 dage</span><span class="chip">90 dage</span></div>
-      <p class="small">budgetpro gemmer ingen navne – skriv selv, hvem der har hvilken kode.</p>
+      <div class="row"><span class="chip">30 dage</span><span class="chip on">60 dage</span><span class="chip">90 dage</span></div>
       <span class="btn" id="make">Opret klasse</span>
     </div>
+    <div class="abs card" id="codes">
+      <h3>24 elevkoder · 8. klasse</h3>
+      <div class="grid" id="grid"></div>
+      <p class="small">Eleven skriver sin kode på skole.budgetpro.dk/elev. budgetpro gemmer ingen navne.</p>
+    </div>
   </div>
 
-  <!-- 3 · Share the codes -->
+  <!-- 3 · The course -->
   <div class="layer" id="s3">
     <div class="cap" id="c3">
-      <div class="step"><b>2</b>Del elevkoderne</div>
-      <h2>Eleverne skal ikke have en <span class="hl">bruger</span></h2>
-      <p>Print koderne, eller kopiér listen. Eleven skriver sin kode, og så er de i gang.</p>
+      <div class="tag"><i></i>Et færdigt forløb</div>
+      <h2>Privatøkonomi på <span class="hl">fire lektioner</span></h2>
+      <p>Eleverne arbejder i eget tempo, og I samler op i klassen efter hver lektion.</p>
     </div>
-    <div class="abs card" id="codes">
-      <div class="codes-head"><h3>24 elevkoder · 8. klasse</h3><span class="btn ghost">Kopiér</span><span class="btn ghost" id="print">Print</span></div>
-      <div class="grid" id="grid"></div>
+    <div class="abs" id="plan">
+      <div class="ls"><div class="ls-h"><span>Lektion 1</span><span>Trin 1–2</span></div><h4>Mød din fremtidsperson</h4><div class="tags"><span>Løn og skat</span><span>AM-bidrag</span></div></div>
+      <div class="ls y"><div class="ls-h"><span>Lektion 2</span><span>Trin 3–5</span></div><h4>Bolig, faste udgifter og hverdag</h4><div class="tags"><span>Rådighedsbeløb</span><span>Behov og ønsker</span></div></div>
+      <div class="ls"><div class="ls-h"><span>Lektion 3</span><span>Trin 6–7</span></div><h4>Opsparing og drømme</h4><div class="tags"><span>Buffer</span><span>Mål med dato</span></div></div>
+      <div class="ls d"><div class="ls-h"><span>Lektion 4</span><span>Trin 8 + Mit budget</span></div><h4>Hvad nu hvis …?</h4><div class="tags"><span>Scenarier</span><span>Nøgletal</span></div></div>
     </div>
-    <div class="slip" id="slip1" style="left:1290px;top:590px"><span data-logo="light" data-sticker="Skole" style="font-size:22px"></span><small>Din elevkode</small><b>BLÅ-ORM-47</b><span class="note">Skriv koden på skole.budgetpro.dk/elev</span></div>
-    <div class="slip" id="slip2" style="left:1350px;top:640px"><span data-logo="light" data-sticker="Skole" style="font-size:22px"></span><small>Din elevkode</small><b>GUL-RÆV-12</b><span class="note">Skriv koden på skole.budgetpro.dk/elev</span></div>
   </div>
 
-  <!-- 4 · The pupils work -->
-  <div class="layer" id="s4">
-    <div class="cap" id="c4">
-      <div class="step"><b>3</b>Eleverne går i gang</div>
-      <h2>Et månedsbudget i <span class="hl">8 trin</span></h2>
-      <p>For en fremtidsperson: løn og skat, bolig, faste udgifter, hverdag, opsparing – og hvad nu hvis huslejen stiger?</p>
+  <!-- 4 · Lesson 1 -->
+  <div class="layer" id="l1">
+    <div class="cap" id="cl1">
+      <div class="step"><b>1</b>Lektion 1 · Trin 1–2</div>
+      <h2>Mød din <span class="hl">fremtidsperson</span></h2>
+      <p>Eleven vælger en case og ser, hvordan løn før skat bliver til det, der lander på kontoen.</p>
+    </div>
+    <div class="abs" id="cases">
+      <div class="pc" id="pcSara"><span class="av" style="background:#FCF1C8">S</span><b>Sara, 20</b><div class="job">Tømrerlærling</div><span class="dream">Drøm: Kørekort</span></div>
+      <div class="pc"><span class="av" style="background:#E8EBEF">J</span><b>Jonas, 22</b><div class="job">Social- og sundheds­assistent</div><span class="dream">Drøm: Rejse til Japan</span></div>
+      <div class="pc"><span class="av" style="background:#EFEDE6">M</span><b>Mira, 21</b><div class="job">Studerende på SU + fritidsjob</div><span class="dream">Drøm: Ny computer</span></div>
+    </div>
+    <div class="abs card" id="pay">
+      <h3>Hvor mange penge får Sara udbetalt?</h3>
+      <div class="pay"><span>Løn før skat</span><span class="b" style="background:var(--rule-2)"></span><span class="a" data-to="23000">0 kr.</span></div>
+      <div class="pay"><span>Skat og AM-bidrag</span><span class="b" style="background:var(--lime)"></span><span class="a" data-to="-7800">0 kr.</span></div>
+      <div class="pay net"><span>Udbetalt</span><span class="b" style="background:var(--midnight)"></span><span class="a" data-to="15200">0 kr.</span></div>
+    </div>
+  </div>
+
+  <!-- 5 · Lesson 2 -->
+  <div class="layer" id="l2">
+    <div class="cap" id="cl2">
+      <div class="step"><b>2</b>Lektion 2 · Trin 3–5</div>
+      <h2>Valg med <span class="hl">konsekvenser</span></h2>
+      <p>Bolig, faste udgifter og hverdag. Budgetmåleren viser med det samme, hvad der er tilbage.</p>
+    </div>
+    <div class="abs card" id="choose">
+      <div>
+        <div class="legend">Bolig</div>
+        <div class="opt"><span>Værelse<small>Lejer et værelse hos en anden</small></span><span class="mono">3.500 kr.</span></div>
+        <div class="opt" id="optDel"><span>Delelejlighed<small>Deler en lejlighed med en ven</small></span><span class="mono">4.800 kr.</span></div>
+        <div class="opt" style="margin-bottom:26px"><span>1-værelses<small>Egen lille lejlighed</small></span><span class="mono">6.900 kr.</span></div>
+        <div class="legend">Faste udgifter</div>
+        <div class="fx" id="fx"><span>Forsikring</span><span>Mobil</span><span>Internet</span><span>Transport</span><span>Fagforening og a-kasse</span><span>Streaming</span></div>
+        <div class="legend">Mad og hverdag</div>
+        <div class="lv"><span class="chip">Stramt</span><span class="chip" id="lvN">Normalt</span><span class="chip">Rummeligt</span></div>
+      </div>
+      <div class="meter">
+        <svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="118" fill="none" stroke="var(--stone)" stroke-width="40" /><g id="arcs"></g></svg>
+        <div class="mid"><small>Tilbage</small><b id="left">15.200</b><small>kr. om måneden</small></div>
+        <div class="key"><span><i style="background:#0E1B2C"></i>Bolig</span><span><i style="background:#5E7FA8"></i>Faste udgifter</span><span><i style="background:#F6CF4A"></i>Hverdag</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 · Lesson 3 -->
+  <div class="layer" id="l3">
+    <div class="cap" id="cl3">
+      <div class="step"><b>3</b>Lektion 3 · Trin 6–7</div>
+      <h2>Opsparing og <span class="hl">drømme</span></h2>
+      <p>En buffer og et mål med en dato. Går budgettet ikke op, går eleven tilbage og prioriterer.</p>
+    </div>
+    <div class="abs card" id="save">
+      <div class="goal"><span class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0E1B2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></svg></span><div><b>Kørekort · 18.000 kr.</b><span id="when">Klar om 24 måneder</span></div></div>
+      <div class="legend">Hvor hurtigt?</div>
+      <div class="slider"><div class="fill" id="fill"></div><div id="knob"></div></div>
+      <div class="ticks"><span>3 mdr.</span><span>12 mdr.</span><span>24 mdr.</span></div>
+      <div class="sv"><span>Opsparing til kørekort</span><span class="mono" id="svAmt">750 kr.</span></div>
+      <div class="sv"><span>Buffer til uforudsete udgifter</span><span class="mono">500 kr.</span></div>
+      <div class="sv"><span>Tilbage efter opsparing</span><span class="mono" id="svLeft">3.223 kr.</span></div>
+      <span id="ok">Budgettet går op</span>
+    </div>
+    <div class="abs card" id="why">
+      <div class="wt"><i>?</i>Hvorfor?</div>
+      <p>Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.</p>
+      <small>Kan det gå hurtigere?</small>
+      <div id="answer"></div>
+    </div>
+  </div>
+
+  <!-- 7 · Lesson 4 -->
+  <div class="layer" id="l4">
+    <div class="cap" id="cl4">
+      <div class="step"><b>4</b>Lektion 4 · Trin 8 + Mit budget</div>
+      <h2>Hvad nu <span class="hl">hvis …?</span></h2>
+      <p>Huslejen stiger, jobbet forsvinder. Til sidst bygger eleven sit eget budget med nøgletal og gemmer det hele som PDF.</p>
+    </div>
+    <div class="abs card" id="what">
+      <h3>Hvad sker der, hvis …?</h3>
+      <div class="sc" id="scRent"><span class="tg"></span><span>Huslejen stiger 10 %</span><span class="mono">−480 kr.</span></div>
+      <div class="sc" id="scJob"><span class="tg"></span><span>Sara mister jobbet</span><span class="mono">−3.700 kr.</span></div>
+      <div class="sc"><span class="tg"></span><span>Flytter sammen</span><span class="mono">+2.400 kr.</span></div>
+      <div class="sc"><span class="tg"></span><span>Køber brugt bil på lån</span><span class="mono">−2.100 kr.</span></div>
+      <div class="res"><span id="resTxt">Tilbage hver måned</span><span id="resAmt">2.473 kr.</span></div>
     </div>
     <div class="abs card shot" id="laptop">
       <div class="bar"><i></i><i></i><i></i><div class="url">skole.budgetpro.dk</div></div>
       <div class="view"><img src="../public/skole/mit-budget.jpg" alt="" /></div>
     </div>
-    <div class="abs phone" id="phone"><div class="scr"><img id="phoneImg" src="../public/skole/trin3-mobil.jpg" alt="" /></div></div>
+    <div class="abs toast" id="pdf">Opsummering gemt som PDF</div>
   </div>
 
-  <!-- 5 · Follow the class -->
+  <!-- 8 · Follow the class -->
   <div class="layer" id="s5">
     <div class="cap" id="c5">
-      <div class="step"><b>4</b>Følg klassen</div>
-      <h2>Se, hvor langt eleverne <span class="hl">er</span></h2>
-      <p>Og læs deres svar på refleksionsspørgsmålene. Brug tallene i opsamlingen.</p>
+      <div class="tag"><i></i>Undervejs i forløbet</div>
+      <h2>Følg klassen, og <span class="hl">saml op</span></h2>
+      <p>Se, hvor langt eleverne er, og læs deres svar på refleksions­spørgsmålene.</p>
     </div>
     <div class="abs card" id="klasse">
       <h3>8. klasse · 24 elever</h3>
@@ -165,7 +329,7 @@
       <div class="fcard c" data-r="9" data-d="0.8" style="left:1560px;top:700px;width:260px;height:170px"></div>
       <div class="fcard b" data-r="-5" data-d="1.2" style="left:1500px;top:150px;width:200px;height:132px"></div>
       <div><span data-logo="dark" data-sticker="Skole" id="endLogo" style="font-size:130px"></span></div>
-      <p id="endLine" style="margin-top:56px;font-size:48px;font-weight:600;letter-spacing:-0.03em">Privatøkonomi, eleverne selv regner ud</p>
+      <p id="endLine" style="margin-top:56px;font-size:48px;font-weight:600;letter-spacing:-0.03em">Privatøkonomi på fire lektioner</p>
       <p id="endSub" style="margin-top:18px;font-size:30px;color:var(--haze)">Prøv gratis med én klasse.</p>
       <span class="endbtn" id="endUrl" style="margin-top:48px">skole.budgetpro.dk</span>
     </div>
@@ -174,20 +338,39 @@
 
 <script src="film.js"></script>
 <script>
-  const { $, $$, p, out, back, inOut, lerp, put, rise, slide, scene, enter, words, caption, cursor, press, bars } = F;
-  const S1 = [0, 5.4], S2 = [5.0, 11.6], S3 = [11.2, 17.2], S4 = [16.8, 23.2], S5 = [22.8, 30.0], END = 29.6;
-  const DURATION = 36;
+  const { $, $$, p, out, back, inOut, lerp, kr, put, rise, scene, enter, caption, words, cursor, press, bars } = F;
+  const S1 = [0, 5.4], S2 = [5.0, 11.4], S3 = [11.0, 16.8], L1 = [16.4, 23.0], L2 = [22.6, 29.8], L3 = [29.4, 36.8], L4 = [36.4, 43.8], S5 = [43.4, 50.4];
+  const END = 50.0, DURATION = 56;
 
   const CODES = ["BLÅ-ORM-47", "GUL-RÆV-12", "GRØN-SÆL-31", "RØD-LAKS-05", "HVID-UGLE-63", "SORT-KAT-28", "BRUN-BI-74", "GRÅ-MÅGE-40", "BLÅ-HJORT-22", "GUL-KRAGE-87", "GRØN-FRØ-16", "RØD-RÆV-59"];
   $("#grid").innerHTML = CODES.map((c) => `<span class="code">${c}</span>`).join("");
   const ROWS = [["BLÅ-ORM-47", 8], ["GUL-RÆV-12", 8], ["GRØN-SÆL-31", 6], ["RØD-LAKS-05", 8], ["HVID-UGLE-63", 4], ["SORT-KAT-28", 7]];
   $("#rows").innerHTML = ROWS.map(([c]) => `<div class="pr"><span class="c">${c}</span><span class="seg">${"<i></i>".repeat(8)}</span><span class="st"></span></div>`).join("");
 
+  // Sara's month (lib/skole.ts): net 15.200, shared flat 4.800, all fixed costs 1.627, "Normalt" 2.800 + 1.500
+  const NET = 15200, HOME = 4800, FIXED = 1627, DAILY = 4300, BUFFER = 500, DREAM = 18000;
+  const SEGS = [["#0E1B2C", HOME], ["#5E7FA8", FIXED], ["#F6CF4A", DAILY]];
+  const R = 118, C = 2 * Math.PI * R;
+  $("#arcs").innerHTML = SEGS.map(([c]) => `<circle cx="150" cy="150" r="${R}" fill="none" stroke="${c}" stroke-width="40" />`).join("");
+  const ANSWER = "Ja, hvis hun vælger streaming fra og spiser lidt billigere.";
+
   const ORB = [
-    [0, { x: 1500, y: 560, d: 560 }], [S2[0], { x: 1740, y: 300, d: 600 }], [S3[0] + 0.4, { x: 1000, y: 880, d: 600 }],
-    [S4[0] + 0.4, { x: 1700, y: 820, d: 560 }], [S5[0] + 0.4, { x: 1000, y: 300, d: 640 }],
+    [0, { x: 1500, y: 560, d: 560 }], [S2[0], { x: 1740, y: 300, d: 600 }], [S3[0] + 0.4, { x: 1000, y: 880, d: 640 }],
+    [L1[0] + 0.4, { x: 1720, y: 860, d: 560 }], [L2[0] + 0.4, { x: 960, y: 260, d: 600 }], [L3[0] + 0.4, { x: 1760, y: 380, d: 560 }],
+    [L4[0] + 0.4, { x: 1000, y: 900, d: 600 }], [S5[0] + 0.4, { x: 1000, y: 300, d: 640 }],
   ];
-  const PLUS = [2.5, 2.85, 3.2, 3.55];
+  const PLUS = [2.0, 2.3, 2.6, 2.9];
+  /** Multiplies the opacity an earlier call gave el by k (for a card that leaves before its scene ends). */
+  const dim = (el, k) => {
+    el = $(el);
+    el.style.opacity = Number(el.style.opacity) * k;
+    if (k <= 0.001) el.style.visibility = "hidden";
+  };
+  /** Pops a card in from second a. */
+  const pop = (el, t, a, { x = 0, y = 40, r = 0 } = {}) => {
+    const k = back(p(t, a, a + 0.6));
+    put(el, { o: out(p(t, a, a + 0.3)), x: (1 - k) * x, y: (1 - k) * y, r: (1 - k) * r, s: lerp(0.9, 1, k) });
+  };
 
   function frame(t) {
     // 1 · Intro
@@ -203,41 +386,101 @@
     F.orb(t, ORB);
     rise(".dots", t, S2[0] + 0.4, 1e9, 30);
 
-    // 2 · Make a class
+    // 2 · Make a class, then the codes take its place
     const u2 = t - S2[0];
     scene("#s2", t, S2[0] - 0.4, S2[1]);
     caption("#c2", t, S2[0] + 0.3);
     enter("#create", t, S2[0] + 0.4, S2[1]);
-    $("#g8").classList.toggle("on", u2 >= 1.7);
+    dim("#create", 1 - out(p(u2, 3.6, 4.0)));
+    $("#g8").classList.toggle("on", u2 >= 1.5);
     $("#n").textContent = 20 + PLUS.filter((c) => u2 >= c).length;
     const last = PLUS.filter((c) => u2 >= c).pop();
     $("#n").style.transform = last !== undefined ? `translateY(${(1 - back(p(u2, last, last + 0.25))) * -10}px)` : "";
-    $("#d60").classList.toggle("on", u2 >= 4.3);
-    press("#make", u2, 5.3);
+    press("#make", u2, 3.4);
+    const ck = back(p(u2, 3.7, 4.4));
+    put("#codes", { o: out(p(u2, 3.7, 4.0)), y: (1 - ck) * 40, s: lerp(0.95, 1, ck) });
+    $$("#grid .code").forEach((el, i) => {
+      const a = 4.0 + ((i % 3) + Math.floor(i / 3)) * 0.08, k = back(p(u2, a, a + 0.45));
+      put(el, { o: out(p(u2, a, a + 0.25)), s: lerp(0.6, 1, k) });
+    });
 
-    // 3 · Share the codes: the codes flip in as a grid, two slips fly out of the printer
+    // 3 · The four lessons
     const u3 = t - S3[0];
     scene("#s3", t, S3[0], S3[1]);
     caption("#c3", t, S3[0] + 0.2);
-    enter("#codes", t, S3[0] + 0.3, S3[1]);
-    $$("#grid .code").forEach((el, i) => {
-      const a = 0.8 + ((i % 3) + Math.floor(i / 3)) * 0.08, k = back(p(u3, a, a + 0.45));
-      put(el, { o: out(p(u3, a, a + 0.25)), s: lerp(0.6, 1, k) });
-    });
-    press("#print", u3, 3.0);
-    [["#slip1", -6, 3.3], ["#slip2", 5, 3.55]].forEach(([s, r, a]) => {
-      const k = back(p(u3, a, a + 0.7));
-      put(s, { o: out(p(u3, a, a + 0.3)), x: (1 - k) * 220, y: (1 - k) * -140, r: r * k + (1 - k) * 20 });
+    $$("#plan .ls").forEach((el, i) => {
+      const a = 0.6 + i * 0.25, k = back(p(u3, a, a + 0.7));
+      put(el, { o: out(p(u3, a, a + 0.3)), y: (1 - k) * 80, r: (1 - k) * (i % 2 ? 4 : -4), s: lerp(0.9, 1, k) });
     });
 
-    // 4 · The pupils work
-    scene("#s4", t, S4[0], S4[1]);
-    caption("#c4", t, S4[0] + 0.2);
-    enter("#laptop", t, S4[0] + 0.3, S4[1]);
-    enter("#phone", t, S4[0] + 1.0, S4[1], { x: 180, ry: -24 });
-    $("#phoneImg").style.transform = `translateY(${-320 * inOut(p(t, S4[0] + 3.0, S4[0] + 4.4))}px)`;
+    // 4 · Lesson 1: pick Sara, then her pay after tax
+    const v1 = t - L1[0];
+    scene("#l1", t, L1[0], L1[1]);
+    caption("#cl1", t, L1[0] + 0.2);
+    $$("#cases .pc").forEach((el, i) => pop(el, v1, 0.4 + i * 0.15, { y: 60 }));
+    $("#pcSara").classList.toggle("on", v1 >= 1.7);
+    enter("#pay", t, L1[0] + 2.2, L1[1]);
+    $$("#pay .pay").forEach((row, i) => {
+      const k = out(p(v1, 2.8 + i * 0.5, 3.8 + i * 0.5)), to = Number($(".a", row).dataset.to);
+      $(".b", row).style.transform = `scaleX(${k * Math.abs(to) / 23000})`;
+      $(".a", row).textContent = `${to < 0 ? "−" : ""}${kr(Math.abs(to) * k)} kr.`;
+    });
 
-    // 5 · Follow the class
+    // 5 · Lesson 2: home, fixed costs, daily life – the meter follows each choice
+    const v2 = t - L2[0];
+    scene("#l2", t, L2[0], L2[1]);
+    caption("#cl2", t, L2[0] + 0.2);
+    enter("#choose", t, L2[0] + 0.3, L2[1]);
+    $("#optDel").classList.toggle("on", v2 >= 1.6);
+    const fx = $$("#fx span");
+    fx.forEach((el, i) => el.classList.toggle("on", v2 >= 2.4 + i * 0.15));
+    $("#lvN").classList.toggle("on", v2 >= 3.9);
+    const amts = [HOME * out(p(v2, 1.6, 2.1)), FIXED * out(p(v2, 2.4, 3.4)), DAILY * out(p(v2, 3.9, 4.4))];
+    let off = 0;
+    $$("#arcs circle").forEach((c, i) => {
+      const len = (amts[i] / NET) * C;
+      c.setAttribute("stroke-dasharray", `${len} ${C}`);
+      c.setAttribute("stroke-dashoffset", -off);
+      off += len;
+    });
+    $("#left").textContent = kr(NET - amts[0] - amts[1] - amts[2]);
+
+    // 6 · Lesson 3: drag the goal from 24 to 12 months, then "Hvorfor?" and a reflection answer
+    const v3 = t - L3[0];
+    scene("#l3", t, L3[0], L3[1]);
+    caption("#cl3", t, L3[0] + 0.2);
+    enter("#save", t, L3[0] + 0.3, L3[1]);
+    const months = Math.round(lerp(24, 12, inOut(p(v3, 1.6, 2.8))));
+    const pos = (months - 3) / 21;
+    $("#knob").style.left = `${pos * 100}%`;
+    $("#fill").style.width = `${pos * 100}%`;
+    $("#when").textContent = `Klar om ${months} måneder`;
+    const monthly = Math.round(DREAM / months);
+    $("#svAmt").textContent = `${kr(monthly)} kr.`;
+    $("#svLeft").textContent = `${kr(NET - HOME - FIXED - DAILY - BUFFER - monthly)} kr.`;
+    pop("#ok", v3, 3.0, { y: 20 });
+    pop("#why", v3, 3.6, { x: 100, y: 30, r: 4 });
+    $("#answer").textContent = ANSWER.slice(0, Math.round(ANSWER.length * p(v3, 4.5, 6.6)));
+
+    // 7 · Lesson 4: what if, then "Mit budget" and the PDF
+    const v4 = t - L4[0];
+    scene("#l4", t, L4[0], L4[1]);
+    caption("#cl4", t, L4[0] + 0.2);
+    enter("#what", t, L4[0] + 0.3, L4[1]);
+    const rent = v4 >= 1.5, job = v4 >= 2.5;
+    $("#scRent").classList.toggle("on", rent);
+    $("#scJob").classList.toggle("on", job);
+    const res = 2473 - (rent ? 480 : 0) - (job ? 3700 : 0);
+    $("#resAmt").textContent = `${res < 0 ? "−" : ""}${kr(Math.abs(res))} kr.`;
+    $("#resAmt").classList.toggle("neg", res < 0);
+    $("#resTxt").textContent = res < 0 ? "Budgettet går ikke op" : "Tilbage hver måned";
+    enter("#laptop", t, L4[0] + 3.8, L4[1], { x: 200, ry: -20 });
+    const wk = inOut(p(v4, 3.6, 4.3));
+    dim("#what", 1 - wk);
+    $("#what").style.transform += ` translateX(${-120 * wk}px)`;
+    pop("#pdf", v4, 5.4, { y: 24 });
+
+    // 8 · Follow the class
     const u5 = t - S5[0];
     scene("#s5", t, S5[0], S5[1]);
     caption("#c5", t, S5[0] + 0.2);
@@ -256,7 +499,7 @@
     const dk = back(p(t, S5[0] + 3.8, S5[0] + 4.5));
     put("#detail", { o: out(p(t, S5[0] + 3.8, S5[0] + 4.1)), x: (1 - dk) * 100, y: (1 - dk) * 30, r: (1 - dk) * 4 });
 
-    bars(t, [S2, S3, S4, S5].map(([a, b]) => [a + 0.3, b - 0.2]), [5.4, END + 0.3]);
+    bars(t, [S2, S3, L1, L2, L3, L4, S5].map(([a, b]) => [a + 0.3, b - 0.2]), [5.4, END + 0.3]);
 
     F.curtain(t, ["#s1", S2[0] - 0.1], ["#end", END]);
 
@@ -269,9 +512,12 @@
     put("#endUrl", { o: out(p(t, END + 2.4, END + 2.7)), s: lerp(0.6, 1, ek) });
 
     cursor(t, [
-      { keys: [[S2[0] + 1.7, "#g8"], [S2[0] + 2.5, "#plus"], [S2[0] + 3.55, "#plus"], [S2[0] + 4.3, "#d60"], [S2[0] + 5.3, "#make"]],
-        clicks: [1.7, 2.5, 2.85, 3.2, 3.55, 4.3, 5.3].map((c) => S2[0] + c) },
-      { keys: [[S3[0] + 3.0, "#print"]], clicks: [S3[0] + 3.0] },
+      { keys: [[S2[0] + 1.5, "#g8"], [S2[0] + 2.0, "#plus"], [S2[0] + 2.9, "#plus"], [S2[0] + 3.4, "#make"]],
+        clicks: [1.5, 2.0, 2.3, 2.6, 2.9, 3.4].map((c) => S2[0] + c) },
+      { keys: [[L1[0] + 1.7, "#pcSara"]], clicks: [L1[0] + 1.7] },
+      { keys: [[L2[0] + 1.6, "#optDel"], [L2[0] + 3.9, "#lvN"]], clicks: [L2[0] + 1.6, L2[0] + 3.9] },
+      { keys: [[L3[0] + 1.6, "#knob"], [L3[0] + 2.9, "#knob"]], clicks: [L3[0] + 1.6] },
+      { keys: [[L4[0] + 1.5, "#scRent .tg"], [L4[0] + 2.5, "#scJob .tg"]], clicks: [L4[0] + 1.5, L4[0] + 2.5] },
       { keys: [[S5[0] + 3.6, "#rows .pr"]], clicks: [S5[0] + 3.6] },
     ]);
   }
