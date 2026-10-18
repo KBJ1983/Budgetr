@@ -177,7 +177,7 @@
       const tone = el.dataset.logo || "light";
       el.classList.add("lg");
       if (tone === "dark") el.classList.add("dark");
-      const st = el.dataset.sticker ? `<span class="lg-st">${el.dataset.sticker}</span>` : "";
+      const st = el.dataset.sticker ? `<span class="lg-stw"><span class="lg-st">${el.dataset.sticker}</span></span>` : "";
       el.innerHTML = `${markSvg(tone, el.dataset.bg)}<span class="lg-name"><b>budget</b><i>pro</i></span>${st}`;
     });
     $$("[data-icon]").forEach((el) => {

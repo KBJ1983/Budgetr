@@ -36,7 +36,7 @@ const MONO = "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Libe
 /** Per theme: footer, logo PNG in public/mail/ (made at double size, shown at half), code box and accent text on white. */
 const THEMES = {
   budgetpro: { footer: "budgetpro · Dit overblik. Dine drømme.", name: "budgetpro", logo: { path: "/mail/logo.png", width: 150, height: 33 }, codeBg: C.limeTone, accent: C.olive },
-  skole: { footer: "budgetpro Skole · Et tema om privatøkonomi til udskolingen", name: "budgetpro Skole", logo: { path: "/mail/logo-skole.png", width: 188, height: 33 }, codeBg: "#FCF1C8", accent: "#7A5300" },
+  skole: { footer: "budgetpro Skole · Et tema om privatøkonomi til udskolingen", name: "budgetpro Skole", logo: { path: "/mail/logo-skole.png", width: 192, height: 33 }, codeBg: "#FCF1C8", accent: "#7A5300" },
 };
 
 export const MAIL_LOGO = THEMES.budgetpro.logo;

@@ -40,7 +40,9 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .lg-name i { font-style: normal; font-weight: 200; letter-spacing: -.035em; margin-left: .03em; }
 /* Sticker after "pro" (data-sticker, SkoleLogo): font 0.42 × name size, padding 0.13/0.24 and margin 0.07 of the name
    size – in the sticker's own em, minus the .24em flex gap of .lg */
-.lg-st { display: inline-block; margin-left: calc((.07em - .24em) / .42); font: 700 .42em/1 "Hanken Grotesk", sans-serif; letter-spacing: 0; padding: calc(.13em / .42) calc(.24em / .42); border-radius: 999px; background: var(--lime); color: var(--midnight); transform-origin: 30% 70%; }
+/* line-height 0 on the wrapper + overflow hidden: the pill's baseline is its bottom edge, standing on the baseline of "pro". */
+.lg-stw { line-height: 0; }
+.lg-st { display: inline-block; vertical-align: baseline; overflow: hidden; margin-left: calc((.22em - .24em) / .42); font: 700 .42em/1 "Hanken Grotesk", sans-serif; letter-spacing: 0; padding: calc(.13em / .42) calc(.24em / .42); border-radius: 999px; background: var(--lime); color: var(--midnight); transform-origin: 30% 70%; }
 .pill { display: inline-flex; align-items: center; height: 1.6em; padding: 0 .7em; border-radius: 999px; background: var(--lime); color: var(--midnight); font-weight: 600; }
 
 /* Dark card (intro and end) */

@@ -111,7 +111,7 @@ export function AppIcon({ size = 32 }: { size?: number }) {
 
 /**
  * budgetpro Skole ("Midnat og solgul", docs/design/skole-21b.html): the budgetpro logo with a solgul front card and a
- * solgul "Skole" sticker (Hanken Grotesk 700) on the baseline of "pro". In black/white (`mono`) the sticker takes the
+ * solgul "Skole" sticker (Hanken Grotesk 700) whose bottom edge stands on the baseline of "pro" (the bottom of the "o"). In black/white (`mono`) the sticker takes the
  * name's colour with the background colour as text.
  */
 export function SkoleLogo({ fontSize = 22, dark = false, bg, mono = false }: { fontSize?: number; dark?: boolean; bg?: string; mono?: boolean }) {
@@ -123,20 +123,24 @@ export function SkoleLogo({ fontSize = 22, dark = false, bg, mono = false }: { f
       <span aria-hidden="true" style={{ display: "inline-flex" }}>
         <Logo fontSize={fontSize} tone={tn} bg={bg} front={mono ? ink : BRAND.sun} />
       </span>
-      <span
-        aria-hidden="true"
-        style={{
-          display: "inline-block",
-          marginLeft: fontSize * 0.07,
-          font: `700 ${fontSize * 0.42}px/1 var(--font-logo)`,
-          letterSpacing: 0,
-          background: mono ? ink : BRAND.sun,
-          color: mono ? cut : BRAND.midnight,
-          borderRadius: 999,
-          padding: `${fontSize * 0.13}px ${fontSize * 0.24}px`,
-        }}
-      >
-        Skole
+      {/* line-height 0 + overflow hidden: the pill's baseline is then its bottom edge, so it stands on the baseline. */}
+      <span aria-hidden="true" style={{ lineHeight: 0 }}>
+        <span
+          style={{
+            display: "inline-block",
+            verticalAlign: "baseline",
+            overflow: "hidden",
+            marginLeft: fontSize * 0.22,
+            font: `700 ${fontSize * 0.42}px/1 var(--font-logo)`,
+            letterSpacing: 0,
+            background: mono ? ink : BRAND.sun,
+            color: mono ? cut : BRAND.midnight,
+            borderRadius: 999,
+            padding: `${fontSize * 0.13}px ${fontSize * 0.24}px`,
+          }}
+        >
+          Skole
+        </span>
       </span>
     </span>
   );
