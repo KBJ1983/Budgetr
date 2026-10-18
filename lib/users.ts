@@ -21,6 +21,8 @@ export const USERS: TestUser[] = [
   { id: "test3", logins: ["TEST3"], name: "TEST3" },
   { id: "test4", logins: ["TEST4"], name: "TEST4" },
   { id: "test5", logins: ["TEST5"], name: "TEST5" },
+  // Always starts over in the app's guide (the prelude in public/budgetr-app/index.html ignores saved copies).
+  { id: "guide", logins: ["GUIDE"], name: "GUIDE" },
   // Fictional demo customer (lib/demo-customer.ts); /demobruger resets it and logs in.
   { id: "demo", logins: ["DEMO"], name: "DEMO" },
 ];
