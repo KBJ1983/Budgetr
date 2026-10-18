@@ -48,7 +48,18 @@
   margin-left: 8px;
 }
 
-/* Henvendelser from the Erhverv form */
+/* Henvendelser from the Erhverv form, in the brand's own colours: a lime count pill (lime only as a fill,
+   with midnight text) and a midnight strip on light / a raised midnight strip on dark. */
+.ow {
+  --inq-bg: #15243a;
+  --inq-rule: #2a3d57;
+  --inq-tx: #f3f5f7;
+  --inq-sub: #a7b4c8;
+}
+.ow[data-theme="light"] {
+  --inq-bg: #0e1b2c;
+  --inq-rule: #0e1b2c;
+}
 .ow-badge {
   display: inline-flex;
   align-items: center;
@@ -57,69 +68,71 @@
   height: 22px;
   padding: 0 7px;
   border-radius: 999px;
-  background: var(--warn);
-  color: var(--warn-bg);
+  background: #d4f26b;
+  color: #0e1b2c;
   font: 600 12px var(--font-mono);
   vertical-align: middle;
 }
 .ow-inq-link {
   gap: 8px;
+  color: var(--tx);
   text-decoration: none;
-}
-.ow-inq-link.is-waiting {
-  border-color: var(--warn-rule);
-  background: var(--warn-bg);
-  color: var(--warn);
-  font-weight: 600;
 }
 .ow-alert {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-top: 20px;
-  padding: 16px 20px;
-  border-radius: 12px;
-  border: 1px solid var(--warn-rule);
-  border-left: 5px solid var(--warn);
-  background: var(--warn-bg);
-  color: var(--warn);
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--inq-rule);
+  background: var(--inq-bg);
+  color: var(--inq-tx);
   text-decoration: none;
 }
-.ow-alert b,
-.ow-alert small {
-  color: var(--warn);
-}
 .ow-alert .ow-badge {
-  min-width: 34px;
-  height: 34px;
-  font-size: 16px;
+  min-width: 30px;
+  height: 30px;
+  font-size: 14px;
   flex: none;
+}
+.ow-alert-text {
+  flex: 1;
+  min-width: 0;
 }
 .ow-alert b {
   display: block;
-  font-size: 17px;
+  color: var(--inq-tx);
+  font-size: 16px;
   font-weight: 600;
 }
 .ow-alert small {
   display: block;
   margin-top: 2px;
   font-size: 14px;
+  color: var(--inq-sub);
   overflow-wrap: anywhere;
 }
-.ow-alert:hover b {
+.ow-alert-go {
+  flex: none;
+  color: #d4f26b;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ow-alert:hover .ow-alert-go {
   text-decoration: underline;
 }
-.ow-inq-section.is-waiting > .bx-section-head {
-  border-color: var(--warn-rule);
-  background: var(--warn-bg);
+@media (max-width: 560px) {
+  .ow-alert-go {
+    display: none;
+  }
 }
 .ow .bx-section-head h2 .ow-badge {
   margin-left: 10px;
   font-family: inherit;
-  font-size: 13px;
-}
-.ow-inq-section.is-waiting .ow-inqs > .ow-inq {
-  border-left: 4px solid var(--warn);
+  font-size: 12px;
+  font-weight: 600;
 }
 #henvendelser {
   scroll-margin-top: 80px;

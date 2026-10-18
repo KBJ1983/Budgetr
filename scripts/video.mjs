@@ -4,6 +4,8 @@
  *
  *   pnpm video erhverv                         → public/video/budgetpro-erhverv.mp4
  *   pnpm video privat --still=12.5 out.png     → one PNG of second 12.5 instead (for checking a frame)
+ *   pnpm video skole --reel                    → public/video/budgetpro-skole-reel.mp4, 1080×1920 (9:16) for phones
+ *                                                and reels
  */
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
@@ -16,17 +18,20 @@ const FILMS = ["erhverv", "privat", "skole"];
 const args = process.argv.slice(2);
 const name = args.find((a) => FILMS.includes(a));
 if (!name) {
-  console.error(`Usage: pnpm video <${FILMS.join("|")}> [--still=<seconds>] [out]`);
+  console.error(`Usage: pnpm video <${FILMS.join("|")}> [--reel] [--still=<seconds>] [out]`);
   process.exit(1);
 }
+const reel = args.includes("--reel");
 const still = args.find((a) => a.startsWith("--still="))?.slice(8);
 const outArg = args.find((a) => !a.startsWith("--") && a !== name);
-const out = resolve(outArg ?? (still ? `${name}-${still}.png` : `public/video/budgetpro-${name}.mp4`));
+const base = reel ? `${name}-reel` : name;
+const out = resolve(outArg ?? (still ? `${base}-${still}.png` : `public/video/budgetpro-${base}.mp4`));
 mkdirSync(dirname(out), { recursive: true });
 
 const browser = await chromium.launch({ channel: "chrome" });
-const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
-await page.goto(`${pathToFileURL(resolve(`video/${name}.html`)).href}?render`, { waitUntil: "networkidle" });
+const viewport = reel ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 };
+const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+await page.goto(`${pathToFileURL(resolve(`video/${name}.html`)).href}?render${reel ? "&reel" : ""}`, { waitUntil: "networkidle" });
 await page.evaluate(() => window.ready);
 const duration = await page.evaluate(() => window.DURATION);
 

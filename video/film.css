@@ -1,5 +1,5 @@
 /*
- * Shared styles for the films in video/ (erhverv, privat, skole). One 1920×1080 stage; palette = "Midnat og lime"
+ * Shared styles for the films in video/ (erhverv, privat, skole). One 1920×1080 stage (1080×1920 in a reel, see the end); palette = "Midnat og lime"
  * (docs/design/MIDNAT.md, the landing `.page` block in components/landing/landing.module.css). Screenshots come from
  * public/landing/ and public/skole/.
  * The accent is kept in --lime / --lime-rgb / --lime-dark / --lime-tone / --olive (accent text on light); a film can
@@ -155,3 +155,41 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .labels li { display: flex; align-items: center; gap: 16px; font-size: 28px; font-weight: 500; color: var(--ink); }
 .labels li i { width: 14px; height: 14px; border-radius: 50%; background: var(--rule-2); flex: none; }
 .labels li.on i { background: var(--lime-dark); box-shadow: 0 0 0 6px var(--lime-tone); }
+
+/*
+ * Reel (?reel, film.js): a 1080×1920 stage for phones and reels. The caption sits on top and the visual below it; the
+ * films place their own visuals in [data-format="reel"] blocks. Key content stays between y ≈ 220 and 1640, clear of
+ * the app bars that reels put over the top and bottom. Several elements are placed with inline styles in the 16:9
+ * layout, so these overrides need !important.
+ */
+[data-format="reel"] #stage { width: 1080px; height: 1920px; }
+[data-format="reel"] .curtain { height: 2020px; }
+[data-format="reel"] .dots { left: 64px !important; top: 1700px !important; }
+[data-format="reel"] .cap { left: 80px; top: 280px; width: 920px; }
+[data-format="reel"] .cap h2 { font-size: 78px; margin-bottom: 26px; }
+[data-format="reel"] .cap p { font-size: 32px; }
+[data-format="reel"] #steps { left: 80px; top: 196px; bottom: auto; }
+[data-format="reel"] #steps span { width: 52px; }
+
+/* Intro: logo at the top, cards drifting under it, the headline in the middle */
+[data-format="reel"] .intro .darkcard > .abs:has(> [data-logo]) { left: 80px !important; top: 250px !important; }
+[data-format="reel"] .intro [data-logo] { font-size: 56px !important; }
+[data-format="reel"] .intro .over { left: 80px !important; top: 800px !important; width: 920px; font-size: 28px; }
+[data-format="reel"] .intro h1 { left: 80px; top: 860px !important; width: 920px !important; font-size: 100px; }
+[data-format="reel"] #s1-sub { left: 80px !important; top: 1270px !important; width: 920px !important; font-size: 36px !important; }
+[data-format="reel"] .intro .darkcard > .abs:has(> .dchip) { left: 80px !important; top: 1460px !important; width: 920px; flex-wrap: wrap; }
+[data-format="reel"] .intro .decor { right: -420px !important; top: -260px !important; }
+[data-format="reel"] .intro .ring { right: -640px !important; top: -470px !important; }
+[data-format="reel"] .intro .fcard.b { left: 560px !important; top: 380px !important; }
+[data-format="reel"] .intro .fcard.a { left: 700px !important; top: 540px !important; width: 300px !important; height: 200px !important; }
+[data-format="reel"] .intro .fcard.c { left: 360px !important; top: 560px !important; width: 260px !important; height: 172px !important; }
+
+/* End card: smaller logo, the lines wrap inside the gutters */
+[data-format="reel"] .end .darkcard { padding: 0 80px; }
+[data-format="reel"] .end [data-logo] { font-size: 112px !important; }
+[data-format="reel"] #endLine { font-size: 54px !important; line-height: 1.15; }
+[data-format="reel"] #endSub { font-size: 34px !important; line-height: 1.4; }
+[data-format="reel"] .end .decor { left: -420px !important; bottom: -380px !important; }
+[data-format="reel"] .end .fcard.a { left: 90px !important; top: 300px !important; }
+[data-format="reel"] .end .fcard.b { left: 760px !important; top: 380px !important; }
+[data-format="reel"] .end .fcard.c { left: 700px !important; top: 1420px !important; }

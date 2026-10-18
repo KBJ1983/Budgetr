@@ -60,6 +60,11 @@ const sectorCategory = (id: string): OrgCategory => (id === "maegler" || id === 
 /** The list price of the pack a henvendelse asked about, when it is one of ours. */
 const askedPrice = (p?: { count: number; months: number }) =>
   p && isPackCount(p.count) && isPackMonths(p.months) ? packPrice(p.count, p.months) : undefined;
+/** Links to the folded Henvendelser section open it before the page jumps there. */
+const unfoldInquiries = () => {
+  const el = document.getElementById("henvendelser");
+  if (el instanceof HTMLDetailsElement) el.open = true;
+};
 const time = (iso: string) => `${date(iso)} kl. ${new Date(iso).toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Copenhagen" })}`;
 
 /** One henvendelse from the Erhverv form, with what the owner can do about it. */
@@ -491,7 +496,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           </Link>
           <div className="bx-top-right">
             <span className="bx-muted">Ejeroverblik · {date(data.today)}</span>
-            <a href="#henvendelser" className={`bx-btn ow-inq-link${waiting.length ? " is-waiting" : ""}`}>
+            <a href="#henvendelser" className="bx-btn ow-inq-link" onClick={unfoldInquiries}>
               Henvendelser
               {waiting.length ? <span className="ow-badge">{num(waiting.length)}</span> : null}
             </a>
@@ -525,14 +530,15 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
         ) : null}
 
         {newest ? (
-          <a href="#henvendelser" className="ow-alert">
+          <a href="#henvendelser" className="ow-alert" onClick={unfoldInquiries}>
             <span className="ow-badge">{num(waiting.length)}</span>
-            <span>
+            <span className="ow-alert-text">
               <b>{waiting.length === 1 ? "Der ligger en ny kundehenvendelse" : `Der ligger ${num(waiting.length)} nye kundehenvendelser`}</b>
               <small>
-                Seneste fra {newest.company}, {time(newest.at)}. Se {waiting.length === 1 ? "den" : "dem"} under Henvendelser.
+                Seneste fra {newest.company}, {time(newest.at)}.
               </small>
             </span>
+            <span className="ow-alert-go">Se {waiting.length === 1 ? "den" : "dem"} →</span>
           </a>
         ) : null}
 
@@ -550,14 +556,15 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           ) : null}
         </div>
 
-        <section className={`bx-section${waiting.length ? " ow-inq-section is-waiting" : ""}`} id="henvendelser">
-            <div className="bx-section-head">
+        {/* Folded by default; the banner and the top button unfold it. */}
+        <details className="bx-section ow-fold" id="henvendelser">
+            <summary className="bx-section-head">
               <h2>
                 Henvendelser
                 {waiting.length ? <span className="ow-badge">{num(waiting.length)} venter</span> : null}
               </h2>
               <span className="bx-muted">Fra formularen på Erhverv. De venter her, til du har oprettet en aftale eller markeret dem som klaret.</span>
-            </div>
+            </summary>
             {waiting.length ? (
               <div className="ow-inqs">
                 {waiting.map((x) => (
@@ -584,7 +591,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                 </div>
               </details>
             ) : null}
-          </section>
+          </details>
 
         <section className="bx-section">
           <div className="bx-section-head">

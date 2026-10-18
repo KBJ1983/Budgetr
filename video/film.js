@@ -8,8 +8,13 @@
  * come in word by word (F.split + F.words), key phrases get a lime underline (F.hl), the dark intro lifts like a curtain
  * with a lime band behind it and the end card drops the same way (F.curtain), floating cards drift on the dark cards
  * (F.darkBg), a lime orb travels between the light scenes (F.orb) and screenshots enter in 3D (F.enter).
+ * With ?reel the stage is 1080×1920 (9:16, for phones and reels): <html data-format="reel"> lets film.css and each film
+ * lay the scenes out on top of each other – caption above, visual below – and F.W / F.H give the stage size.
  */
 (function () {
+  const REEL = new URLSearchParams(location.search).has("reel");
+  if (REEL) document.documentElement.dataset.format = "reel";
+  const W = REEL ? 1080 : 1920, H = REEL ? 1920 : 1080;
   const $ = (s, root = document) => (typeof s === "string" ? root.querySelector(s) : s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -108,7 +113,7 @@
   let stage;
   /** Centre of an element in stage pixels (works while the preview is scaled). */
   function centre(sel, dx = 0, dy = 0) {
-    const st = stage.getBoundingClientRect(), r = $(sel).getBoundingClientRect(), k = st.width / 1920;
+    const st = stage.getBoundingClientRect(), r = $(sel).getBoundingClientRect(), k = st.width / W;
     return { x: (r.left - st.left + r.width / 2) / k + dx, y: (r.top - st.top + r.height / 2) / k + dy };
   }
 
@@ -116,7 +121,7 @@
    * The cursor. seqs = [{ keys: [[time, target], …], clicks: [time, …] }]; a target is a selector/element or {x, y}.
    * It travels between the targets (arriving 0.35 s before the key time) and pulses on each click.
    */
-  const OFF = { x: 1990, y: 1110 };
+  const OFF = { x: W + 70, y: H + 30 };
   function cursor(t, seqs) {
     let pos = null, seq = null;
     for (const s of seqs) {
@@ -233,29 +238,33 @@
    * right behind it; at down[1] a lime band drops in and the dark end layer down[0] follows it.
    */
   function curtain(t, up, down) {
-    const H = 1180;
+    const CH = H + 100;
     let ly = null;
     if (up) {
       const [el, a] = up, k = inOut(p(t, a, a + 0.85)), kl = inOut(p(t, a + 0.14, a + 1.0));
       const L = $(el), r = 140 * Math.min(1, k * 4);
       L.style.zIndex = 30;
-      put(L, { o: k >= 1 ? 0 : 1, y: -H * k });
+      put(L, { o: k >= 1 ? 0 : 1, y: -CH * k });
       $(".darkcard", L).style.borderRadius = `0 0 ${r}px ${r}px`;
-      if (t >= a && kl < 1) ly = -H * kl;
+      if (t >= a && kl < 1) ly = -CH * kl;
     }
     if (down) {
       const [el, b] = down, kl = inOut(p(t, b, b + 0.8)), k = inOut(p(t, b + 0.16, b + 0.98));
       const L = $(el), r = 140 * (1 - k);
       L.style.zIndex = 30;
-      put(L, { o: t >= b + 0.16 ? 1 : 0, y: -H * (1 - k) });
+      put(L, { o: t >= b + 0.16 ? 1 : 0, y: -CH * (1 - k) });
       $(".darkcard", L).style.borderRadius = `0 0 ${r}px ${r}px`;
-      if (t >= b && k < 1) ly = -H * (1 - kl);
+      if (t >= b && k < 1) ly = -CH * (1 - kl);
     }
     put("#curtainLime", { o: ly === null ? 0 : 1, y: ly || 0 });
   }
 
-  /** The lime orb behind the light scenes, travelling between keys [[time, {x, y, d}], …] (centre and diameter). */
+  /**
+   * The lime orb behind the light scenes, travelling between keys [[time, {x, y, d}], …] (centre and diameter, in the
+   * 1920×1080 stage; in a reel they are moved into the lower half, where the visuals are).
+   */
   function orb(t, keys) {
+    if (REEL) keys = keys.map(([k, o]) => [k, { x: (o.x / 1920) * 1080, y: 760 + (o.y / 1080) * 1000, d: o.d * 1.1 }]);
     let A = keys[0], B = keys[0];
     for (let i = 0; i < keys.length; i++) if (t >= keys[i][0]) (A = keys[i]), (B = keys[i + 1] || keys[i]);
     const k = B === A ? 0 : inOut(p(t, B[0] - Math.min(1.2, B[0] - A[0]), B[0]));
@@ -385,10 +394,10 @@
     ]);
     if (location.search.includes("render")) return frame(0);
     const fit = () => {
-      const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+      const k = Math.min(innerWidth / W, innerHeight / H);
       stage.style.transform = `scale(${k})`;
-      stage.style.left = (innerWidth - 1920 * k) / 2 + "px";
-      stage.style.top = (innerHeight - 1080 * k) / 2 + "px";
+      stage.style.left = (innerWidth - W * k) / 2 + "px";
+      stage.style.top = (innerHeight - H * k) / 2 + "px";
     };
     addEventListener("resize", fit);
     fit();
@@ -405,7 +414,7 @@
   }
 
   window.F = {
-    $, $$, clamp, inOut, out, back, p, vis, lerp, kr, put, rise, slide, enter, scene, split, words, hl, caption, count, centre,
+    W, H, reel: REEL, $, $$, clamp, inOut, out, back, p, vis, lerp, kr, put, rise, slide, enter, scene, split, words, hl, caption, count, centre,
     cursor, press, bars, buildLogo, darkBg, curtain, orb, importScene, deck, film,
   };
 })();
