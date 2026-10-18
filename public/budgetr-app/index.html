@@ -1115,7 +1115,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 </dialog>
 <dialog id="dlgDImp" class="wide">
   <form method="dialog" id="frmDImp" novalidate>
-    <h2>Kontoudskrifter til kladden</h2>
+    <h2>Filer til kladden</h2>
     <div id="dimpBody"></div>
     <div class="dlgfoot"><span class="muted" id="dimpFoot" style="font-size:13px"></span>
       <div class="rgt"><button type="button" id="dimpBack" hidden>Tilbage</button><button type="button" id="dimpClose">Luk</button><button type="button" class="primary" id="dimpNext">Find faste poster</button></div></div>
@@ -1267,7 +1267,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
       </div>
       <div class="dcol"><h3>Importér</h3>
         <button type="button" class="dtile" data-imp="stmt"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9 12 4l8 5M6 10v7M10 10v7M14 10v7M18 10v7M3.5 20h17"/></svg></span><span class="dtt"><b>Kontoudskrift</b><span>CSV, Excel eller PDF fra netbanken. Opdaterer ydelser og beløb</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-        <button type="button" class="dtile" data-imp="draft"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v6"/><path d="M14 3v4h4M6 3v18h7"/><path d="M17 15v6M14 18h6"/></svg></span><span class="dtt"><b>Kladdebudget</b><span>Byg et budget ud fra kontoudskrifter fra flere konti, fx når to økonomier skal lægges sammen</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button type="button" class="dtile" data-imp="draft"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v6"/><path d="M14 3v4h4M6 3v18h7"/><path d="M17 15v6M14 18h6"/></svg></span><span class="dtt"><b>Kladdebudget</b><span>Byg et budget ud fra kontoudskrifter fra flere konti eller et budget fra Excel, fx når to økonomier skal lægges sammen</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
         <button type="button" class="dtile" data-imp="json"><span class="dti" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19.5h14"/></svg></span><span class="dtt"><b>Sikkerhedskopi</b><span>Gendan et budget fra en gemt fil</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
     </div>
@@ -3594,7 +3594,8 @@ $('jsonFile').onchange=async ev=>{const f=ev.target.files[0];ev.target.value='';
 const nrm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9æøåäöü]+/g,' ').trim();
 function parseAmtX(v){if(typeof v==='number')return v;let t=String(v||'').replace(/\s|kr\.?|dkk/gi,'').replace(/[−–]/g,'-');if(!t)return NaN;
   if(/,\d{1,2}$/.test(t))t=t.replace(/\./g,'').replace(',','.');else if(/\.\d{1,2}$/.test(t))t=t.replace(/,/g,'');else t=t.replace(/[.,]/g,'');const n=parseFloat(t);return isNaN(n)?NaN:n}
-function parseDateX(v){if(v instanceof Date)return v.toISOString().slice(0,10);const t=String(v||'').trim();let m;
+// Excel dates come as local midnight; toISOString would give the day before east of UTC. Noon is safe either way.
+function parseDateX(v){if(v instanceof Date){if(isNaN(v))return null;const d=new Date(v.getTime()+12*36e5);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}const t=String(v||'').trim();let m;
   if(m=/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/.exec(t))return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
   if(m=/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})/.exec(t)){const y=m[3].length===2?'20'+m[3]:m[3];return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`}return null}
 function splitCsv(line,d){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(q){if(c==='"'){if(line[i+1]==='"'){cur+='"';i++}else q=false}else cur+=c}else if(c==='"')q=true;else if(c===d){out.push(cur);cur=''}else cur+=c}out.push(cur);return out.map(x=>x.trim())}
@@ -3693,16 +3694,98 @@ function pdfTx(lines){
     if(fit(p))t.amount=Math.sign(t.saldo-p.saldo)*t.amount||t.amount;else if(fit(n))t.amount=Math.sign(t.saldo-n.saldo)*t.amount||t.amount});
   tx.forEach(t=>delete t.saldo);
   return {tx,cols:{date:'dato',text:'tekst',amount:'beløb'},err:tx.length?null:'Der blev ikke fundet nogen posteringer i PDF-filen. Er den scannet, så hent kontoudskriften som CSV i stedet.'}}
-// Transactions from a statement file: CSV/text, Excel or PDF.
+/* Budgets made in Excel or CSV (not statements): one row per post with months (Jan–Dec) or quarters (Q1–Q4) as
+   columns, or an amount with a frequency, or one row per month and post (long format). Columns named after people
+   (Anna, Bo, Fælles) give the payer; a type or category column, a section row (INDTÆGTER / UDGIFTER), the sheet name
+   or the sign tells income from expenses; totals are skipped. Every sheet of a workbook is read. */
+const BMON=['januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
+const bMonth=h=>{const t=nrm(h).replace(/\s*\d+$/,'');if(t.length<3)return -1;if(t==='may')return 4;if(t==='oct'||t==='october')return 9;return BMON.findIndex(m=>m.startsWith(t)||t.startsWith(m))};
+const bQuarter=h=>/^(?:q|k)\s*[1-4]$|^[1-4]\s*kvartal$/.test(nrm(h));
+// Frequency words: 'w' is weekly (turned into a monthly amount), 0 has no fixed rhythm.
+const bFreq=v=>{const t=nrm(v);if(!t)return null;if(/^uge|ugentlig|week/.test(t))return 'w';if(/kvartal|quarter/.test(t))return 3;if(/halv/.test(t))return 6;
+  if(/^2 m|hver 2|anden m/.test(t))return 2;if(/m[åa]ned|^md|month/.test(t))return 1;if(/^[åa]r|[åa]rlig|year|annual/.test(t))return 12;if(/uregelm|l[øo]bende/.test(t))return 0;return null};
+const bNum=v=>{if(typeof v==='number')return v;const t=String(v??'').trim();return t&&/\d/.test(t)&&!/[a-zæøå]{2}/i.test(t.replace(/kr\.?|dkk/gi,''))?parseAmtX(t):NaN};
+const B_TOTAL=/\bi alt\b|\btotal|\bsum\b|r[åa]dighed|overskud|underskud|^netto\b|akkumuleret|resultat|^balance|opsparingsrate/i;
+const B_SKIP=/i alt|total|^sum|pr\.? ?[åa]r|pr\.? ?m[åa]ned|hel[åa]r|^note|bem[æa]rk|kommentar|betalingsm|konto|saldo|dato|faktor|gange/i;
+const B_SHARED=/f[æa]lles|begge|husstand/i;
+const BCAT=[['Bolig & forsyning',/husleje|bolig|realkredit|ejendomsskat|^el\b|\bel$|varme|\bvand|internet|renovation|vedligehold|andel/],
+  ['Forsikring',/forsikring|a kasse|akasse|fagforening/],['Abonnementer',/streaming|licens|abonnement|fitness|netflix|spotify|golf|klub/],
+  ['Kommunikation',/mobil|telefon/],['Transport',/\bbil|br[æa]ndstof|transport|pendler|rejsekort|opladning|d[æa]k\b|ejerafgift|v[æa]gtafgift|leasing/],
+  ['Børn',/institution|sfo|b[øo]rnehave|vuggestue|dagpleje|fritidsaktivitet/],['Husholdning',/dagligvare|^mad|husholdning|supermarked/],
+  ['Opsparing',/opsparing|pension|buffer|aktiesparekonto/]];
+const bCat=(...t)=>{for(const s of t){const n=nrm(s);if(!n)continue;const c=BCAT.find(([,re])=>re.test(n));if(c)return c[0]}return ''};
+// Which column is what, from the header row and the rows below it; null when the sheet is not a budget.
+function bCols(head,body){
+  const H=head.map(c=>c instanceof Date?'':String(c??'').trim()),col=re=>H.findIndex(h=>h&&re.test(h)),
+    share=(c,f)=>{const L=body.map(r=>r[c]).filter(v=>v instanceof Date||String(v??'').trim());return L.length?L.filter(f).length/L.length:0};
+  const months=H.map((h,c)=>({c,m:h?bMonth(h):-1})).filter(x=>x.m>=0),quarters=H.map((h,c)=>h&&bQuarter(h)?c:-1).filter(c=>c>=0);
+  const freq=H.findIndex((h,c)=>/hyppighed|frekvens|interval|periode|betales/i.test(h)&&share(c,v=>bFreq(v)!==null)>.6);
+  const when=H.findIndex((h,c)=>/m[åa]ned|^dato|^periode|month|date/i.test(h)&&c!==freq&&share(c,v=>!!parseDateX(v))>.7);
+  const type=H.findIndex((h,c)=>/^type$|^art$|indt.*udg/i.test(h)&&share(c,v=>/indt|udg|indkomst|income|expense/i.test(v))>.6);
+  const cat=col(/^kategori|^category|^gruppe/i),sub=col(/underkategori|subcategory/i);
+  const amt=H.findIndex((h,c)=>/^bel[øo]b|^amount|^budget$/i.test(h)&&!B_SKIP.test(h)&&share(c,v=>!isNaN(bNum(v)))>.6);
+  let desc=col(/^post(er)?$|^budgetpost|^udgiftspost/i);if(desc<0)desc=sub;if(desc<0)desc=col(/beskrivelse|tekst|navn|^udgift|^indt/i);
+  if(desc<0)desc=H.findIndex((h,c)=>![freq,when,type,cat].includes(c)&&share(c,v=>!(v instanceof Date)&&isNaN(bNum(v)))>.8);
+  if(desc<0)return null;
+  const used=new Set([desc,freq,when,type,cat,sub,amt,...months.map(x=>x.c),...quarters]);
+  const people=months.length||quarters.length||amt>=0?[]:H.map((h,c)=>({c,h})).filter(x=>x.h&&!used.has(x.c)&&!B_SKIP.test(x.h)
+    &&share(x.c,v=>!isNaN(bNum(v)))>.9&&body.some(r=>bNum(r[x.c])));
+  const ok=months.length>=3||quarters.length>=2||(amt>=0&&(freq>=0||type>=0))||(people.length>0&&freq>=0);
+  return ok?{desc,freq,when,type,cat,sub,amt,months,quarters,people}:null}
+// Amounts per month (n month columns) → amount, frequency and first month. Uneven amounts become a monthly average.
+function bSpread(v,n){const nz=v.map((a,m)=>({a:Math.abs(a),m})).filter(x=>x.a>=0.005);if(!nz.length)return null;
+  const same=nz.every(x=>Math.abs(x.a-nz[0].a)<0.005);
+  if(same&&nz.length===n)return {amount:nz[0].a,freq:1,start:1};
+  if(same&&n===12)for(const f of [2,3,4,6,12])if(nz.length===12/f&&nz.every((x,i)=>x.m===nz[0].m+i*f))return {amount:nz[0].a,freq:f,start:nz[0].m%f+1};
+  return {amount:Math.round(nz.reduce((s,x)=>s+x.a,0)/n*100)/100,freq:0,start:1,avg:true}}
+function budgetRows(sheets){const out=[],people=[];
+  sheets.forEach(({name,rows})=>{rows=(rows||[]).filter(r=>r&&r.some(c=>c instanceof Date||String(c??'').trim()));
+    let hi=-1,C=null;for(let i=0;i<Math.min(15,rows.length)&&!C;i++){C=bCols(rows[i],rows.slice(i+1,i+60));if(C)hi=i}
+    if(!C)return;
+    const body=rows.slice(hi+1),vcols=[...C.months.map(x=>x.c),...C.quarters,C.amt,...C.people.map(p=>p.c)].filter(c=>c>=0),
+      signed=body.some(r=>vcols.some(c=>bNum(r[c])<0)),long={};
+    C.people.forEach(p=>{if(!B_SHARED.test(p.h)&&!people.some(n=>nrm(n)===nrm(p.h)))people.push(p.h)});
+    let sec=/indt|indkomst/i.test(name)?'indtaegt':/udgift/i.test(name)?'udgift':null;
+    body.forEach(r=>{const desc=String(r[C.desc]??'').trim();if(!desc||desc.length>80||B_TOTAL.test(desc))return;
+      // A row with text but no amounts is a section header.
+      if(!vcols.some(c=>String(r[c]??'').trim())&&C.when<0){if(/indt|indkomst/i.test(desc))sec='indtaegt';else if(/udgift/i.test(desc))sec='udgift';return}
+      const tv=C.type>=0?nrm(r[C.type]):'',cv=C.cat>=0?String(r[C.cat]??'').trim():'',sv=C.sub>=0?String(r[C.sub]??'').trim():'',
+        total=vcols.reduce((s,c)=>s+(bNum(r[c])||0),0);
+      const type=/indt|indkomst|income/.test(tv)?'indtaegt':/udg|expense/.test(tv)?'udgift':/^(indkomst|indt[æa]gt|l[øo]n)/i.test(cv)?'indtaegt'
+        :sec||(signed&&total>0?'indtaegt':'udgift');
+      // "Løn – person 1" belongs to the first person.
+      const pm=/person\s*(\d)/i.exec(desc),d=desc.replace(/\s*[–-]\s*person\s*\d\s*$/i,'').trim()||desc,
+        base={type,desc:d,cat:type==='udgift'?bCat(d,sv,cv)||cv:/l[øo]n/i.test(d)?'Løn':'',owner:pm?{idx:+pm[1]-1}:null};
+      if(C.when>=0){const dt=parseDateX(r[C.when]),a=bNum(r[C.amt]);if(!dt||isNaN(a))return;const k=type+'|'+d+'|'+base.cat,m=dt.slice(0,7);
+        const g=long[k]=long[k]||{...base,v:{}};g.v[m]=(g.v[m]||0)+a;return}
+      if(C.months.length){const v=Array(12).fill(0);C.months.forEach(x=>{const n=bNum(r[x.c]);if(!isNaN(n))v[x.m]+=n});
+        const s=bSpread(v,C.months.length);if(s)out.push({...base,...s});return}
+      if(C.quarters.length){const q=C.quarters.map(c=>bNum(r[c])||0),sum=q.reduce((s,n)=>s+Math.abs(n),0);if(sum<0.005)return;
+        out.push({...base,amount:Math.round(sum/(3*q.length)*100)/100,freq:q.every(n=>Math.abs(n-q[0])<0.005)?1:0,start:1,avg:true});return}
+      // Amount + frequency. A month named elsewhere in the row (a note like "Udbetales maj") is when it is paid.
+      let f=C.freq>=0?bFreq(r[C.freq]):1;if(f===null)f=1;
+      const mw=r.map((c,i)=>i===C.desc||typeof c!=='string'?-1:(c.toLowerCase().match(/[a-zæøå]{3,}/g)||[]).map(w=>BMON.indexOf(w)).find(m=>m>=0)??-1).find(m=>m>=0)??-1;
+      const one=(a,owner)=>{a=Math.abs(a);if(!(a>=0.005))return;const wk=f==='w';
+        out.push({...base,owner:owner||base.owner,amount:wk?Math.round(a*52/12*100)/100:a,freq:wk?1:f,start:f>1&&mw>=0?mw%f+1:1,week:wk?a:null})};
+      if(C.people.length)C.people.forEach(p=>{const a=bNum(r[p.c]);if(!isNaN(a))one(a,B_SHARED.test(p.h)?{shared:true}:{name:p.h})});
+      else one(bNum(r[C.amt]))});
+    // Long format: one value per month, the last 12 months in the file.
+    const ms=[...new Set(Object.values(long).flatMap(x=>Object.keys(x.v)))].sort().slice(-12);
+    Object.values(long).forEach(({v:V,...e})=>{const v=Array(12).fill(0);ms.forEach(m=>{v[+m.slice(5,7)-1]+=V[m]||0});const s=bSpread(v,ms.length);if(s)out.push({...e,...s})})});
+  return out.length?{entries:out,people}:null}
+// Transactions from a statement file: CSV/text, Excel or PDF. A budget file gives budget rows instead.
 async function fileTx(f){
   if(/\.pdf$/i.test(f.name)||f.type==='application/pdf')return pdfTx(await pdfLines(await f.arrayBuffer()));
-  let rows;
+  let sheets;
     if(/\.xlsx?$/i.test(f.name)){if(!window.XLSX)return {tx:[],err:'Excel-modulet kunne ikke indlæses. Gem filen som CSV og prøv igen.'};
-      const wb=window.XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});rows=window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''})}
-    else{const buf=await f.arrayBuffer();let t=new TextDecoder('utf-8').decode(buf);if(t.includes('\uFFFD'))t=new TextDecoder('windows-1252').decode(buf);rows=csvRows(t)}
-  return rowsToTx(rows)}
+      const wb=window.XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
+      sheets=wb.SheetNames.map(n=>({name:n,rows:window.XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''})}))}
+    else{const buf=await f.arrayBuffer();let t=new TextDecoder('utf-8').decode(buf);if(t.includes('\uFFFD'))t=new TextDecoder('windows-1252').decode(buf);sheets=[{name:"",rows:csvRows(t)}]}
+  const b=budgetRows(sheets);if(b)return {tx:[],budget:b.entries,people:b.people,err:null};
+  return rowsToTx(sheets[0].rows)}
 async function readStmt(f){try{
-    const r=await fileTx(f);if(r.err){IMP.err=r.err;renderImp();return}
+    const r=await fileTx(f);if(r.budget)r.err='Filen ligner et budget, ikke en kontoudskrift. Læg den ind i en kladde under Import og eksport > Kladdebudget.';
+    if(r.err){IMP.err=r.err;renderImp();return}
     const M=matchEntries(r.tx);IMP={...IMP,stage:'review',tx:r.tx,cols:r.cols,matched:M,rec:recurringUnmatched(r.tx,M),err:null};renderImp()}
   catch(e){IMP.err='Filen kunne ikke læses: '+(e&&e.message||e);renderImp()}}
 $('stmtFile').onchange=ev=>{const f=ev.target.files[0];ev.target.value='';if(f)readStmt(f)};
@@ -3744,8 +3827,8 @@ function draftData(mode,name){const R=rootS(),sp=R.settings||{};
   ['bank','remind'].forEach(k=>{if(sp[k])d.settings[k]=JSON.parse(JSON.stringify(sp[k]))});if(sp.milestones!==undefined)d.settings.milestones=sp.milestones;
   return normalize(d)}
 function renderDraftBar(){const b=$('draftBar');if(!b)return;const d=curDraft();b.hidden=!d;if(!d){b.innerHTML='';return}const n=d.files.length;
-  b.innerHTML=`<div class="dftin"><div class="dftt"><b>Kladde: ${esc(d.name)}</b><span>Du arbejder i en kladde. Det primære budget er ikke ændret${n?`. ${n} ${n===1?'kontoudskrift':'kontoudskrifter'} lagt ind`:''}.</span></div>
-    <div class="dfta"><button type="button" data-dfb="imp">Tilføj kontoudskrifter</button><button type="button" data-dfb="close">Luk kladden</button><button type="button" class="primary" data-dfb="use">Sæt som primært budget</button></div></div>`;
+  b.innerHTML=`<div class="dftin"><div class="dftt"><b>Kladde: ${esc(d.name)}</b><span>Du arbejder i en kladde. Det primære budget er ikke ændret${n?`. ${n} ${n===1?'fil':'filer'} lagt ind`:''}.</span></div>
+    <div class="dfta"><button type="button" data-dfb="imp">Tilføj filer</button><button type="button" data-dfb="close">Luk kladden</button><button type="button" class="primary" data-dfb="use">Sæt som primært budget</button></div></div>`;
   b.querySelectorAll('[data-dfb]').forEach(x=>x.onclick=()=>{const a=x.dataset.dfb;a==='imp'?openDImp():a==='close'?leaveDraft():promoteDraft()})}
 function promoteDraft(){const d=curDraft(),R=ROOT;if(!d)return;
   if(!confirm(`Sæt "${d.name}" som primært budget? Det nuværende budget gemmes som en kladde, så du kan gå tilbage til det. Det gælder for alle, der bruger budgettet.`))return;
@@ -3758,8 +3841,8 @@ function openDft(id){const R=rootS();if(!R)return;const d=id&&(R.drafts||[]).fin
   $('dftTitle').textContent=d?'Kladde':'Ny kladde';$('dftOk').textContent=d?'Gem':'Opret kladde';$('dftDel').hidden=!d;$('dftDel').textContent='Slet kladde';delete $('dftDel').dataset.armed;
   const n=(R.drafts||[]).filter(x=>x.mode!=='prev').length+1;
   $('dftBody').innerHTML=d?`<div class="dftf"><label for="dftName">Navn</label><input id="dftName" value="${esc(d.name)}" autocomplete="off"></div>
-      <p class="wzp">Oprettet ${esc(fmtDate(d.created))}. ${d.files.length?'Kontoudskrifter: '+d.files.map(f=>esc(f.name)).join(', ')+'.':'Ingen kontoudskrifter endnu.'}</p>`
-    :`<p class="wzp">En kladde er et budget ved siden af det, du bruger i dag. Læg kontoudskrifter fra alle konti ind i den, ret til, og sæt den som primært budget, når den er færdig. Indtil da er det nuværende budget uændret.</p>
+      <p class="wzp">Oprettet ${esc(fmtDate(d.created))}. ${d.files.length?'Filer: '+d.files.map(f=>esc(f.name)).join(', ')+'.':'Ingen filer endnu.'}</p>`
+    :`<p class="wzp">En kladde er et budget ved siden af det, du bruger i dag. Læg kontoudskrifter fra alle konti eller et budget fra Excel ind i den, ret til, og sæt den som primært budget, når den er færdig. Indtil da er det nuværende budget uændret.</p>
       <div class="dftf"><label for="dftName">Navn</label><input id="dftName" value="${esc('Kladde '+n)}" autocomplete="off"></div>
       <label class="wzopt"><input type="radio" name="dftMode" value="blank" checked><span>Start fra bunden<br><span class="muted" style="font-size:13px">Til en ny økonomi, fx når to økonomier skal lægges sammen</span></span></label>
       <label class="wzopt"><input type="radio" name="dftMode" value="copy"><span>Start med en kopi af det nuværende budget<br><span class="muted" style="font-size:13px">Ret i en kopi, og hent de nyeste beløb ind fra kontoudskrifterne</span></span></label>`;
@@ -3801,8 +3884,15 @@ async function dAddFiles(list){const F=[...list];if(!F.length||!DI)return;const 
       newName:nm?nm.charAt(0).toUpperCase()+nm.slice(1):'Ny konto',owner:who?who.id:FAELLES}});
   if(add.length<F.length)toast('En fil, der allerede er lagt ind, blev sprunget over');
   DI.files.push(...add);renderDImp();
-  for(const f of add){try{const r=await fileTx(f.file);f.tx=r.tx||[];f.err=r.err}catch(e){f.tx=[];f.err='Filen kunne ikke læses: '+(e&&e.message||e)}
+  for(const f of add){try{const r=await fileTx(f.file);f.tx=r.tx||[];f.err=r.err;
+      // A budget file goes on an existing account by default and brings the names of its people.
+      if(r.budget){f.budget=r.budget;dPeople(r.people||[]);if(f.acc==='__new'&&S.accounts[0])f.acc=S.accounts[0].id}}
+    catch(e){f.tx=[];f.err='Filen kunne ikke læses: '+(e&&e.message||e)}
     f.busy=false;delete f.file;if(DI&&DI.stage==='files'&&$('dlgDImp').open)renderDImp()}}
+// People named in a budget file (columns like Anna, Bo) take the place of "Person 1", "Person 2", or are added.
+function dPeople(names){let ch=false;names.forEach(nm=>{if(S.persons.some(p=>nrm(p.name)===nrm(nm)))return;
+    const free=S.persons.find(p=>/^person \d+$/i.test(p.name||''));if(free)free.name=nm;else if(S.persons.length<6)S.persons.push({id:'p'+uid(),name:nm});else return;ch=true});
+  if(ch)commit()}
 $('dftFile').onchange=ev=>{const L=[...ev.target.files];ev.target.value='';dAddFiles(L)};
 function dAnalyse(){const F=DI.files.filter(f=>f.tx&&f.tx.length),acc={};
   // Two exports of the same account can overlap; each transaction counts once.
@@ -3829,19 +3919,26 @@ function dAnalyse(){const F=DI.files.filter(f=>f.tx&&f.tx.length),acc={};
   A.forEach(a=>{const L=a.tx.filter(t=>t.amount<0&&!t.tr&&!fixed.has(t)&&!used.has(t.acc+'|'+gkTx(t)));if(L.length<3)return;
     const sp=dSpan(a.tx),mo=Math.max(1,(Date.parse(sp.to)-Date.parse(sp.from))/864e5/30.44),amount=Math.round(L.reduce((s,t)=>s-t.amount,0)/mo/100)*100;if(amount<100)return;
     C.push({id:cid(),kind:'forbrug',on:false,acc:a.k,payer:dOwner(a.k),desc:'Forbrug i øvrigt, '+dAccName(a.k),category:'Husholdning',freq:1,start:1,amount,n:L.length})});
-  DI.cand=C;DI.nTx=all.length;DI.nPairs=pairs.length;DI.nFiles=F.length}
+  // Budget files: every post is offered as it stands in the budget.
+  const BF=DI.files.filter(f=>f.budget&&f.budget.length);
+  BF.forEach(f=>{const k=dAccKey(f);f.budget.forEach(e=>{const o=e.owner||{};
+    let payer=(o.name&&(S.persons.find(p=>nrm(p.name)===nrm(o.name))||{}).id)||(o.idx!=null&&(S.persons[o.idx]||{}).id)||(o.shared?FAELLES:dOwner(k));
+    if(e.type==='indtaegt'&&payer===FAELLES)payer=(S.persons[0]||{}).id||FAELLES;
+    C.push({id:cid(),kind:e.type,on:true,src:f.name,acc:k,desc:e.desc.slice(0,60),freq:e.freq,start:e.start,amount:e.amount,payer,category:e.cat||'',
+      note:e.week?`${kr(e.week)} om ugen, omregnet til en måned`:e.avg?'Gennemsnit pr. måned':''})})});
+  DI.cand=C;DI.nTx=all.length;DI.nPairs=pairs.length;DI.nFiles=F.length;DI.nBudget=BF.reduce((s,f)=>s+f.budget.length,0);DI.nBFiles=BF.length}
 function renderDImp(){const b=$('dimpBody'),rev=DI.stage==='review',nx=$('dimpNext');$('dimpBack').hidden=!rev;
-  if(!rev){const ok=DI.files.filter(f=>f.tx&&f.tx.length);
-    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken for hver konto, der skal med, fx de seneste 3–12 måneder, og læg filerne ind her. Læg gerne alle filer ind på én gang, så overførsler mellem egne konti kan findes. Selve filerne bliver ikke gemt eller sendt videre. Kun de poster, du vælger, bliver gemt.</p>
+  if(!rev){const ok=DI.files.filter(f=>(f.tx&&f.tx.length)||(f.budget&&f.budget.length));
+    b.innerHTML=`<p class="wzp">Hent posteringer fra netbanken for hver konto, der skal med, fx de seneste 3–12 måneder, og læg filerne ind her. Læg gerne alle filer ind på én gang, så overførsler mellem egne konti kan findes. Har du allerede et budget i Excel, kan du også lægge det ind her. Selve filerne bliver ikke gemt eller sendt videre. Kun de poster, du vælger, bliver gemt.</p>
       <h3 class="dsec" style="margin-top:0">Personer i kladden</h3>
       <div class="dpers">${S.persons.map(p=>`<input data-dpn="${p.id}" value="${esc(p.name)}" aria-label="Navn på person" autocomplete="off">`).join('')}${S.persons.length<6?'<button type="button" id="dAddP">Tilføj person</button>':''}</div>
-      <h3 class="dsec">Kontoudskrifter</h3>
-      ${DI.files.map(f=>{const sp=f.tx&&f.tx.length?dSpan(f.tx):null;return `<div class="dfile"><div class="dfh"><b>${esc(f.name)}</b>
-        <span${f.err?' class="bad"':''}>${f.busy?'Læser filen…':f.err?esc(f.err):`${f.tx.length} posteringer fra ${esc(fmtDate(sp.from))} til ${esc(fmtDate(sp.to))}`}</span>
+      <h3 class="dsec">Filer</h3>
+      ${DI.files.map(f=>{const sp=f.tx&&f.tx.length?dSpan(f.tx):null,bn=f.budget?f.budget.length:0;return `<div class="dfile"><div class="dfh"><b>${esc(f.name)}</b>
+        <span${f.err?' class="bad"':''}>${f.busy?'Læser filen…':f.err?esc(f.err):bn?`Budget med ${bn} ${bn===1?'post':'poster'}`:`${f.tx.length} posteringer fra ${esc(fmtDate(sp.from))} til ${esc(fmtDate(sp.to))}`}</span>
         <button type="button" class="ghost danger" data-dfx="${f.id}" aria-label="Fjern ${esc(f.name)}">✕</button></div>
-        ${sp?`<div class="dfr"><label>Konto<select data-dfac="${f.id}">${S.accounts.map(a=>`<option value="${a.id}" ${f.acc===a.id?'selected':''}>${esc(a.name)}</option>`).join('')}<option value="__new" ${f.acc==='__new'?'selected':''}>Ny konto</option></select></label>
+        ${sp||bn?`<div class="dfr"><label>${bn?'Posterne lægges på':'Konto'}<select data-dfac="${f.id}">${S.accounts.map(a=>`<option value="${a.id}" ${f.acc===a.id?'selected':''}>${esc(a.name)}</option>`).join('')}<option value="__new" ${f.acc==='__new'?'selected':''}>Ny konto</option></select></label>
           ${f.acc==='__new'?`<label>Navn på kontoen<input data-dfn="${f.id}" value="${esc(f.newName)}" autocomplete="off"></label><label>Kontoen tilhører<select data-dfo="${f.id}">${dPayerOpts(f.owner)}</select></label>`:''}</div>`:''}</div>`}).join('')}
-      <div class="drop" id="dDrop" tabindex="0" role="button" style="margin-top:10px">Træk filerne herind, eller <b>klik for at vælge</b><br><span style="font-size:12px">CSV, Excel eller PDF. Du kan vælge flere filer på én gang</span></div>`;
+      <div class="drop" id="dDrop" tabindex="0" role="button" style="margin-top:10px">Træk filerne herind, eller <b>klik for at vælge</b><br><span style="font-size:12px">Kontoudskrifter som CSV, Excel eller PDF, eller et budget fra Excel. Du kan vælge flere filer på én gang</span></div>`;
     b.querySelectorAll('[data-dpn]').forEach(i=>i.onchange=()=>{const p=S.persons.find(x=>x.id===i.dataset.dpn),v=i.value.trim();if(p&&v){p.name=v;commit()}});
     const ap=$('dAddP');if(ap)ap.onclick=()=>{S.persons.push({id:'p'+uid(),name:'Person '+(S.persons.length+1)});commit();renderDImp();const L=b.querySelectorAll('[data-dpn]'),i=L[L.length-1];if(i){i.focus();i.select()}};
     b.querySelectorAll('[data-dfx]').forEach(x=>x.onclick=()=>{DI.files=DI.files.filter(f=>f.id!==x.dataset.dfx);renderDImp()});
@@ -3852,16 +3949,18 @@ function renderDImp(){const b=$('dimpBody'),rev=DI.stage==='review',nx=$('dimpNe
     d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');d.ondrop=e=>{e.preventDefault();d.classList.remove('over');dAddFiles(e.dataTransfer.files)};
     nx.textContent='Find faste poster';nx.disabled=!ok.length||DI.files.some(f=>f.busy);
     $('dimpFoot').textContent=ok.length?`${ok.length} ${ok.length===1?'fil':'filer'} klar`:'';return}
-  const C=DI.cand,FQ=[1,2,3,4,6,12];
-  const row=c=>{const i=c.id,up=c.kind==='update',note=up?`Nu ${kr(+c.e.amount||0)} · seneste postering ${fmtDate(c.last.date)}`:c.kind==='forbrug'?`${c.n} enkeltstående betalinger, gennemsnit pr. måned`:`${c.n} gange, senest ${fmtDate(c.last.date)}${c.acc?' · '+dAccName(c.acc):''}`;
+  const C=DI.cand,FQ=[1,2,3,4,6,12,0];
+  const row=c=>{const i=c.id,up=c.kind==='update',note=up?`Nu ${kr(+c.e.amount||0)} · seneste postering ${fmtDate(c.last.date)}`:c.src?`Fra ${c.src}${c.note?' · '+c.note:''}`:c.kind==='forbrug'?`${c.n} enkeltstående betalinger, gennemsnit pr. måned`:`${c.n} gange, senest ${fmtDate(c.last.date)}${c.acc?' · '+dAccName(c.acc):''}`;
     return `<tr><td class="chk"><input type="checkbox" data-con="${i}" ${c.on?'checked':''} aria-label="Tag ${esc(c.desc)} med"></td>
       <td class="desc">${up?esc(c.desc):`<input class="dsc" data-cd="${i}" value="${esc(c.desc)}" aria-label="Beskrivelse">`}<span class="note">${esc(note)}</span></td>
       <td>${up?esc(FREQ[c.freq]||''):`<select data-cf="${i}" aria-label="Hyppighed">${FQ.map(f=>`<option value="${f}" ${c.freq===f?'selected':''}>${FREQ[f]}</option>`).join('')}</select>`}</td>
       <td class="r"><input class="amt" data-ca="${i}" inputmode="decimal" value="${nf.format(c.amount)}" aria-label="Beløb"></td>
       <td>${up?'':c.kind==='overfoersel'?esc(dAccName(c.from)+' → '+dAccName(c.to)):`<select data-cp="${i}" aria-label="Betales af">${dPayerOpts(c.payer)}</select>`}</td></tr>`};
-  const sec=(title,sub,kind,last)=>{const L=C.filter(c=>c.kind===kind);return L.length?`<h3 class="dsec">${title} <span>${sub}</span></h3><div class="tablewrap imptbl"><table><thead><tr><th></th><th>Post</th><th>Hyppighed</th><th class="r">Beløb</th><th>${last}</th></tr></thead><tbody>${L.map(row).join('')}</tbody></table></div>`:''};
-  b.innerHTML=`<p class="wzp">${DI.nTx} posteringer fra ${DI.nFiles} ${DI.nFiles===1?'fil':'filer'}. ${DI.nPairs?`${DI.nPairs} overførsler mellem egne konti er holdt ude af udgifter og indtægter. `:''}${C.length?'Vælg de poster, der skal med i kladden. Alt kan rettes bagefter under Budgetposter.':'Der blev ikke fundet nogen faste poster. En fast betaling skal gå igen i mindst to måneder, så hent gerne en længere periode.'}</p>
+  const sec=(title,sub,kind,last,bud)=>{const L=C.filter(c=>c.kind===kind&&!!c.src===!!bud);return L.length?`<h3 class="dsec">${title} <span>${sub}</span></h3><div class="tablewrap imptbl"><table><thead><tr><th></th><th>Post</th><th>Hyppighed</th><th class="r">Beløb</th><th>${last}</th></tr></thead><tbody>${L.map(row).join('')}</tbody></table></div>`:''};
+  b.innerHTML=`<p class="wzp">${DI.nFiles?`${DI.nTx} posteringer fra ${DI.nFiles} ${DI.nFiles===1?'fil':'filer'}. `:''}${DI.nBudget?`${DI.nBudget} poster fra ${DI.nBFiles===1?'budgettet':DI.nBFiles+' budgetter'}. `:''}${DI.nPairs?`${DI.nPairs} overførsler mellem egne konti er holdt ude af udgifter og indtægter. `:''}${C.length?'Vælg de poster, der skal med i kladden. Alt kan rettes bagefter under Budgetposter.':'Der blev ikke fundet nogen faste poster. En fast betaling skal gå igen i mindst to måneder, så hent gerne en længere periode.'}</p>
     ${sec('Poster i kladden med nyt beløb','Det gamle beløb gemmes i postens udvikling','update','')}
+    ${sec('Udgifter fra budgettet','Som de står i budgettet','udgift','Betales af',true)}
+    ${sec('Indtægter fra budgettet','Som de står i budgettet','indtaegt','Hvis indtægt',true)}
     ${sec('Faste udgifter','Betalinger, der går igen','udgift','Betales af')}
     ${sec('Indtægter','Indbetalinger, der går igen','indtaegt','Hvis indtægt')}
     ${sec('Overførsler mellem egne konti','Tælles ikke som udgift eller indtægt','overfoersel','Fra og til')}
@@ -3873,7 +3972,7 @@ function renderDImp(){const b=$('dimpBody'),rev=DI.stage==='review',nx=$('dimpNe
   b.querySelectorAll('[data-cp]').forEach(x=>x.onchange=()=>{get(x.dataset.cp).payer=x.value});
   b.querySelectorAll('[data-ca]').forEach(x=>x.oninput=()=>{const c=get(x.dataset.ca);c.amount=parseAmtX(x.value);c.on=true;const cb=b.querySelector(`[data-con="${c.id}"]`);if(cb)cb.checked=true;upd()});
   nx.textContent='Tilføj til kladden';upd()}
-function dApply(){const d=curDraft();if(!d||!DI)return;const F=DI.files.filter(f=>f.tx&&f.tx.length),accId={};let ne=0,nu=0,nt=0;
+function dApply(){const d=curDraft();if(!d||!DI)return;const F=DI.files.filter(f=>(f.tx&&f.tx.length)||(f.budget&&f.budget.length)),accId={};let ne=0,nu=0,nt=0;
   F.forEach(f=>{const k=dAccKey(f);if(accId[k])return;if(f.acc!=='__new'){accId[k]=f.acc;return}const id='k'+uid();
     S.accounts.push({id,name:(f.newName||'').trim()||'Ny konto',number:'',type:f.owner===FAELLES?'faelles':'personlig',owner:f.owner===FAELLES?'':f.owner,startSaldo:0});accId[k]=id});
   DI.cand.filter(c=>c.on).forEach(c=>{const amt=Math.round((+c.amount||0)*100)/100;if(!(amt>0))return;
@@ -3881,10 +3980,11 @@ function dApply(){const d=curDraft();if(!d||!DI)return;const F=DI.files.filter(f
     const desc=(c.desc||'').trim().slice(0,60)||'Post',since=c.last?c.last.date:DAY();
     if(c.kind==='overfoersel'){S.entries.push({id:uid(),type:'overfoersel',desc,key:'',category:'',freq:c.freq,start:c.start,amount:amt,from:accId[c.from],to:accId[c.to],active:true,note:'Fundet i kontoudskrifter'});nt++;return}
     S.entries.push({id:uid(),type:c.kind==='indtaegt'?'indtaegt':'udgift',desc,key:c.last?(c.last.text.match(/\d{6,}/)||[])[0]||'':'',category:c.category||'',freq:c.freq,start:c.start||1,amount:amt,
-      account:accId[c.acc]||'',payer:c.payer||FAELLES,active:true,check:true,bank:c.category!=='Husholdning',note:c.kind==='forbrug'?'Gennemsnit fra kontoudskrift':'Oprettet fra kontoudskrift',since});ne++});
-  F.forEach(f=>{const sp=dSpan(f.tx);d.files.push({name:f.name,n:f.tx.length,from:sp.from,to:sp.to,account:accId[dAccKey(f)],added:DAY()})});
+      account:accId[c.acc]||'',payer:c.payer||FAELLES,active:true,check:true,bank:c.category!=='Husholdning',note:c.src?`Fra budgettet ${c.src}${c.note?'. '+c.note:''}`:c.kind==='forbrug'?'Gennemsnit fra kontoudskrift':'Oprettet fra kontoudskrift',since});ne++});
+  F.forEach(f=>{if(f.budget){d.files.push({name:f.name,n:f.budget.length,budget:true,account:accId[dAccKey(f)],added:DAY()});return}
+    const sp=dSpan(f.tx);d.files.push({name:f.name,n:f.tx.length,from:sp.from,to:sp.to,account:accId[dAccKey(f)],added:DAY()})});
   $('dlgDImp').close();DI=null;commit();
-  toast([ne&&`${ne} ${ne===1?'post':'poster'} oprettet`,nu&&`${nu} opdateret`,nt&&`${nt} ${nt===1?'overførsel':'overførsler'}`].filter(Boolean).join(', ')||'Kontoudskrifterne er lagt ind')}
+  toast([ne&&`${ne} ${ne===1?'post':'poster'} oprettet`,nu&&`${nu} opdateret`,nt&&`${nt} ${nt===1?'overførsel':'overførsler'}`].filter(Boolean).join(', ')||'Filerne er lagt ind')}
 $('dimpClose').onclick=()=>$('dlgDImp').close();
 $('dimpBack').onclick=()=>{DI.stage='files';renderDImp()};
 $('dimpNext').onclick=()=>{if(!DI)return;if(DI.stage==='files'){dAnalyse();DI.stage='review';renderDImp();$('dimpBody').scrollTop=0;return}dApply()};

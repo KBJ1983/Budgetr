@@ -146,6 +146,13 @@ export function demoCustomer(now = new Date()) {
   next.entries.forEach((x) => { if (raise[x.id as string]) x.amount = raise[x.id as string]; });
   next.entries = next.entries.filter((x) => x.id !== "t1");
   next.settings = { ...next.settings, title: `Budget ${now.getFullYear() + 1}` };
+  // Two posts added from the household's own Excel budget (the draft import reads budgets as well as statements).
+  const sheet = "aarsbudget-excel.xlsx";
+  next.entries.push(
+    exp("nb1", "Sundhed", "Tandlæge", 900, { freq: 6, start: 3, check: true, note: `Fra budgettet ${sheet}` }),
+    exp("nb2", "Gaver", "Gaver og fødselsdage", 750, { freq: 0, check: true, note: `Fra budgettet ${sheet}. Gennemsnit pr. måned` }),
+  );
+  const nextFiles = [{ name: sheet, n: 2, budget: true, account: "budget", added: iso(0, 1) }];
 
   // Draft 2, "blank": built from three months of statements (only the chosen entries are kept, never the transactions).
   const fromStatements = {
@@ -191,7 +198,7 @@ export function demoCustomer(now = new Date()) {
   prev.entries = prev.entries.filter((x) => !["b7", "k4", "t5"].includes(x.id as string));
 
   budget.drafts = [
-    { id: "d1", name: `Budget ${now.getFullYear() + 1}`, created: iso(0, 1), mode: "copy", files: [], data: next },
+    { id: "d1", name: `Budget ${now.getFullYear() + 1}`, created: iso(0, 1), mode: "copy", files: nextFiles, data: next },
     { id: "d2", name: "Fra kontoudskrifter", created: iso(0, 1), mode: "blank", files, data: fromStatements },
     { id: "d3", name: `Tidligere budget, 3. ${monthText(-4)}`, created: iso(-4, 3), mode: "prev", files: [], data: prev },
   ];
