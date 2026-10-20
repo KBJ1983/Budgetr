@@ -14,7 +14,7 @@ import { SiteHeader } from "@/components/landing/SiteHeader";
  * that stands still,
  * followed by a short explainer film (components/Film, made from video/privat.html),
  * a photo banner and Tryghed follow "Sådan virker det", and the product is shown with real screenshots (`pnpm shots`), not mock-ups.
- * The lime call to action (FinalCta) sits after Tryghed, before Rådighed. Funktioner is a light band (the hero's paper):
+ * The lime call to action (FinalCta) sits between Rådighed and Funktioner. Funktioner is a light band (the hero's paper):
  * a sideways tour of the features (opsparing and scenarier with photos, beskeder and påmindelser included) and the full
  * list to unfold. A short midnight Erhverv teaser closes the page. Title, description and lang come from app/layout.tsx.
  */
@@ -28,8 +28,8 @@ export default function HomePage() {
         <HowItWorks />
         <PhotoBanner />
         <Trust />
-        <FinalCta />
         <Availability />
+        <FinalCta />
         <Features />
         <Sharing />
         <Quotes />

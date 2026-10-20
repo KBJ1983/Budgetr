@@ -1147,7 +1147,6 @@
 .featureBand {
   background: var(--v-paper);
   color: var(--v-ink);
-  border-top: 1px solid var(--v-rule);
   --section-y: 112px;
 }
 .tour {
