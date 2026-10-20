@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { DEFAULT_DAYS, dayMonthYear, LIFETIMES, MAX_PUPILS, TRIN, type ClassSummary } from "@/lib/skole";
+import { DEFAULT_DAYS, dayMonthYear, LIFETIMES, MAX_PUPILS, TRIAL_DAYS, TRIN, type ClassSummary } from "@/lib/skole";
 import { skoleBase } from "@/lib/skole-host";
 import type { SeatInfo } from "@/lib/skole-seats";
 import { CodeSheet } from "./CodeSheet";
@@ -15,13 +15,31 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * The logged-in teacher's front page: make a class, and all live classes with their codes. Without a seat from a
- * school's agreement the create form gives way to the demo class and the ways to a seat (SeatPanel).
+ * school's agreement the teacher can make one free class (codes for TRIAL_DAYS); after that the create form gives way
+ * to the demo class and the ways to a seat (SeatPanel).
  */
-export function TeacherHome({ name, school, initial, seat, code }: { name: string; school: string; initial: ClassSummary[]; seat: SeatInfo | null; code?: string }) {
+export function TeacherHome({
+  name,
+  school,
+  initial,
+  seat,
+  trial,
+  code,
+}: {
+  name: string;
+  school: string;
+  initial: ClassSummary[];
+  seat: SeatInfo | null;
+  /** The free class is still unused (only matters without a seat). */
+  trial: boolean;
+  code?: string;
+}) {
   const [classes] = useState(initial);
   const [trin, setTrin] = useState(8);
   const [antal, setAntal] = useState(24);
-  const [days, setDays] = useState(DEFAULT_DAYS);
+  const free = !seat && trial;
+  const lifetimes = free ? [TRIAL_DAYS] : LIFETIMES;
+  const [days, setDays] = useState(free ? TRIAL_DAYS : DEFAULT_DAYS);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [toast, showToast] = useToast();
@@ -63,11 +81,16 @@ export function TeacherHome({ name, school, initial, seat, code }: { name: strin
               ? `Du kan oprette klasser til og med ${dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS))}.`
               : `Din lærerplads fra ${seat.school || "din skole"} gælder til og med ${dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS))}.`}
           </p>
+        ) : free ? (
+          <p className={`${s.seatLine} ${s.noPrint}`}>
+            Du kan prøve budgetpro Skole gratis med én klasse. Elevkoderne virker i {TRIAL_DAYS} dage. Vil du oprette flere klasser, skal du have en lærerplads
+            fra din skoles aftale.
+          </p>
         ) : (
-          <SeatPanel code={code} school={school} />
+          <SeatPanel code={code} school={school} trialUsed />
         )}
 
-        {seat && (
+        {(seat || free) && (
         <form
           className={`${s.card} ${s.createForm} ${s.noPrint}`}
           onSubmit={(e) => {
@@ -106,7 +129,7 @@ export function TeacherHome({ name, school, initial, seat, code }: { name: strin
                 Koderne virker i
               </span>
               <div className={s.trinRow} role="group" aria-labelledby="days-label">
-                {LIFETIMES.map((d) => (
+                {lifetimes.map((d) => (
                   <button key={d} type="button" className={`${s.trinBtn} ${s.daysBtn}`} aria-pressed={days === d} onClick={() => setDays(d)}>
                     {d} dage
                   </button>
@@ -128,6 +151,8 @@ export function TeacherHome({ name, school, initial, seat, code }: { name: strin
           </button>
         </form>
         )}
+
+        {free && <SeatPanel code={code} school={school} />}
 
         {classes.length === 0 ? (
           <p className={`${s.info} ${s.noPrint}`}>Du har ingen klasser endnu. Når du opretter en, kommer den her med sine elevkoder.</p>

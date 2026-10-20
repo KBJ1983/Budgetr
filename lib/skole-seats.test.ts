@@ -6,7 +6,7 @@ import { giveAccess, releaseSeat } from "./agreements";
 import { emptyLedger, type Org } from "./owner";
 import { writeLedger } from "./owner-store";
 import { DEMO_CLASS_ID, demoClass } from "./skole-demo";
-import { EARLY_TEACHERS_UNTIL, claimWaitingSeat, requestSeat, takeSeat, teacherSeat } from "./skole-seats";
+import { EARLY_TEACHERS_UNTIL, canTryFree, claimWaitingSeat, requestSeat, takeSeat, teacherSeat, useTrial } from "./skole-seats";
 import { readTeacher, redeemTeacherLink, signupTeacher, type Teacher } from "./skole-teachers";
 
 const now = new Date("2026-11-02T10:00:00Z");
@@ -41,6 +41,14 @@ describe("teacher seats", () => {
     const early = await teacher("tidlig@skole.dk", new Date("2026-10-01T10:00:00Z"));
     expect(await teacherSeat(early, now, dir)).toEqual({ until: EARLY_TEACHERS_UNTIL, school: "", early: true });
     expect(await teacherSeat(early, new Date(`${EARLY_TEACHERS_UNTIL}T12:00:00Z`), dir)).toBeNull();
+  });
+
+  it("lets a teacher without a seat use the free class once, and remembers it", async () => {
+    const t = await teacher("proeve@skole.dk");
+    expect(canTryFree(t)).toBe(true);
+    await useTrial(t, now, dir);
+    expect(canTryFree(t)).toBe(false);
+    expect(canTryFree((await readTeacher(t.id, dir))!)).toBe(false);
   });
 
   it("takes a school seat with the code; a bank's code is refused without being spent", async () => {

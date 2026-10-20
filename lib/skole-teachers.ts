@@ -34,6 +34,8 @@ export interface Teacher {
   seat?: { org: string; grant: string; until: string };
   /** Last "Bed om adgang" to a school, so it isn't sent again and again. */
   lastRequestAt?: string;
+  /** When the teacher made the one free class without a seat (lib/skole-seats.ts); set means the trial is used. */
+  trialClassAt?: string;
 }
 
 /** A mail to send: "signup" until the e-mail is confirmed, then "login". */

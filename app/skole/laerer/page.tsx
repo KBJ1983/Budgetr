@@ -4,7 +4,7 @@ import { TeacherHome } from "@/components/skole/TeacherHome";
 import { TeacherLogin } from "@/components/skole/TeacherLogin";
 import { TEACHER_COOKIE } from "@/lib/session";
 import { currentTeacher } from "@/lib/skole-auth";
-import { claimWaitingSeat } from "@/lib/skole-seats";
+import { canTryFree, claimWaitingSeat } from "@/lib/skole-seats";
 import { teacherClasses } from "@/lib/skole-store";
 
 export const metadata: Metadata = { title: "budgetpro Skole – lærer" };
@@ -20,5 +20,14 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
   const t = await currentTeacher((await cookies()).get(TEACHER_COOKIE)?.value);
   if (!t) return <TeacherLogin email={one(p.email)} start={p.ny ? "opret" : "login"} />;
   const seat = await claimWaitingSeat(t);
-  return <TeacherHome name={t.name} school={t.school} initial={await teacherClasses(t.id)} seat={seat} code={seat ? undefined : one(p.kode)} />;
+  return (
+    <TeacherHome
+      name={t.name}
+      school={t.school}
+      initial={await teacherClasses(t.id)}
+      seat={seat}
+      trial={canTryFree(t)}
+      code={seat ? undefined : one(p.kode)}
+    />
+  );
 }

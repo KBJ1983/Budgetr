@@ -163,7 +163,7 @@ const FAQ = [
   },
   {
     q: "Hvad hvis jeg vil stoppe?",
-    a: "Eksportér en sikkerhedskopi og slet din bruger. [Tilføj link til sletning og vilkår]",
+    a: "Du kan stoppe når som helst, uden binding. Vil du gemme budgettet, så hent en sikkerhedskopi under Import og eksport. Under Indstillinger > Din bruger sletter du din bruger, så budgettet, alle tidligere versioner og dine kontaktoplysninger bliver slettet med det samme. Læs mere i vilkårene og privatlivspolitikken nederst på siden.",
   },
 ] as const;
 

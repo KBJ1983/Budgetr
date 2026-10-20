@@ -348,6 +348,8 @@ export const MAX_PUPILS = 40;
 export const LIFETIMES: readonly number[] = [30, 60, 90];
 /** For classes made before the teacher could pick (and the default choice). */
 export const DEFAULT_DAYS = 90;
+/** "Prøv gratis med én klasse": the free class of a teacher without a seat (lib/skole-seats.ts) lives this long. */
+export const TRIAL_DAYS = 30;
 /** Longest reflection answer. */
 export const MAX_ANSWER = 1000;
 

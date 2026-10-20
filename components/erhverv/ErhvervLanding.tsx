@@ -315,7 +315,7 @@ function Pricing() {
 const FAQ = [
   {
     q: "Hvad koster en aftale?",
-    a: "Det afhænger af antal koder og hvor længe de gælder. Fx koster 50 koder med 12 måneder 600 kr om måneden, eller 7.200 kr betalt årligt. Jo flere koder og jo længere tid, jo lavere pris pr. kunde. Skal I bruge flere end 200 koder, så skriv til os i formularen. Skoler betaler pr. lærer.",
+    a: "Det afhænger af antal koder og hvor længe de gælder. Fx koster 50 koder med 12 måneder 600 kr om måneden, eller 7.200 kr betalt årligt. Jo flere koder og jo længere tid, jo lavere pris pr. kunde. Skal I bruge flere end 200 koder, så skriv til os i formularen. Skoler har deres egen pris på budgetpro Skole.",
   },
   {
     q: "Hvorfor give budgetpro som en kundefordel?",

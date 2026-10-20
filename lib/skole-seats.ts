@@ -1,6 +1,6 @@
 /**
- * Teacher seats on budgetpro Skole. Every teacher can sign up and look around (the demo class), but only a teacher
- * with a seat can make classes. A seat is a grant from a school's agreement (lib/agreements.ts), taken with the code
+ * Teacher seats on budgetpro Skole. Every teacher can sign up, look around (the demo class) and make one free class
+ * with codes for TRIAL_DAYS (lib/skole.ts), but only a teacher with a seat can make more classes. A seat is a grant from a school's agreement (lib/agreements.ts), taken with the code
  * from the seat mail – or at once, when a seat is waiting for the teacher's e-mail. The teacher keeps a pointer to it
  * (`Teacher.seat`); it counts only while the grant is still theirs (the school can take it back on /aftale) and its
  * months are not up.
@@ -19,6 +19,15 @@ export const EARLY_TEACHERS_BEFORE = "2026-10-14T00:00:00.000Z";
 export const EARLY_TEACHERS_UNTIL = "2027-08-01";
 /** "Bed om adgang" at most once a day per teacher. */
 export const REQUEST_GAP_MS = 24 * 60 * 60 * 1000;
+
+/** True while the teacher hasn't used the free class. Deleting that class doesn't give a new one. */
+export const canTryFree = (t: Teacher) => !t.trialClassAt;
+
+/** Notes the free class on the teacher – before the class is made, so a second request is refused. */
+export async function useTrial(t: Teacher, now = new Date(), dir?: string): Promise<void> {
+  t.trialClassAt = now.toISOString();
+  await saveTeacher(t, dir);
+}
 
 export interface SeatInfo {
   /** YYYY-MM-DD, the first day without the seat. */

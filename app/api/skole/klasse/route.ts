@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { TEACHER_COOKIE } from "@/lib/session";
-import { LIFETIMES, MAX_PUPILS, TRIN } from "@/lib/skole";
+import { LIFETIMES, MAX_PUPILS, TRIAL_DAYS, TRIN } from "@/lib/skole";
 import { currentTeacher } from "@/lib/skole-auth";
-import { teacherSeat } from "@/lib/skole-seats";
+import { canTryFree, teacherSeat, useTrial } from "@/lib/skole-seats";
 import { createClass, teacherClasses } from "@/lib/skole-store";
 
-// budgetpro Skole: the logged-in teacher's classes. GET lists them; POST { trin, antal, days } makes one – only with a
-// seat from a school's agreement (lib/skole-seats.ts), else 403.
+// budgetpro Skole: the logged-in teacher's classes. GET lists them; POST { trin, antal, days } makes one – with a seat
+// from a school's agreement (lib/skole-seats.ts), or once without a seat as the free class (days = TRIAL_DAYS); else 403.
 const noStore = { "Cache-Control": "no-store" };
 
 export async function GET() {
@@ -18,7 +18,8 @@ export async function GET() {
 export async function POST(req: Request) {
   const t = await currentTeacher((await cookies()).get(TEACHER_COOKIE)?.value);
   if (!t) return new Response(null, { status: 401, headers: noStore });
-  if (!(await teacherSeat(t))) return Response.json({ error: "seat" }, { status: 403, headers: noStore });
+  const seat = await teacherSeat(t);
+  if (!seat && !canTryFree(t)) return Response.json({ error: "seat" }, { status: 403, headers: noStore });
   let body: unknown;
   try {
     body = await req.json();
@@ -31,6 +32,10 @@ export async function POST(req: Request) {
   const days = Number(b.days);
   if (!TRIN.includes(trin) || !LIFETIMES.includes(days) || !Number.isInteger(antal) || antal < 1 || antal > MAX_PUPILS) {
     return Response.json({ error: "input" }, { status: 400, headers: noStore });
+  }
+  if (!seat) {
+    if (days !== TRIAL_DAYS) return Response.json({ error: "input" }, { status: 400, headers: noStore });
+    await useTrial(t);
   }
   const cls = await createClass({ trin, count: antal, days, teacherId: t.id });
   return Response.json({ id: cls.id }, { status: 201, headers: noStore });

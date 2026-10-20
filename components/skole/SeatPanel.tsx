@@ -21,7 +21,7 @@ const TRY_AGAIN = "Det lykkedes ikke lige nu. Prøv igen om lidt.";
  * For a teacher without a seat (lib/skole-seats.ts): look at the demo class, use the code from the school's seat
  * mail, or ask a school with an agreement for a seat.
  */
-export function SeatPanel({ code: initialCode = "", school }: { code?: string; school: string }) {
+export function SeatPanel({ code: initialCode = "", school, trialUsed = false }: { code?: string; school: string; trialUsed?: boolean }) {
   const [code, setCode] = useState(initialCode);
   const [codeMsg, setCodeMsg] = useState<string | null>(null);
   const [typed, setTyped] = useState(school);
@@ -93,8 +93,10 @@ export function SeatPanel({ code: initialCode = "", school }: { code?: string; s
       <section className={s.card}>
         <span className={s.cardTitle}>Prøv budgetpro Skole</span>
         <span className={s.note}>
-          Se en demoklasse med opdigtede elever: hvor langt de er nået, om budgettet går op, og hvad de har svaret. For at oprette klasser til dine egne elever
-          skal du have en lærerplads fra din skoles aftale med budgetpro.
+          Se en demoklasse med opdigtede elever: hvor langt de er nået, om budgettet går op, og hvad de har svaret.{" "}
+          {trialUsed
+            ? "Du har brugt din gratis prøveklasse. For at oprette flere klasser skal du have en lærerplads fra din skoles aftale med budgetpro."
+            : "For at oprette flere klasser end din gratis prøveklasse skal du have en lærerplads fra din skoles aftale med budgetpro."}
         </span>
         <Link className={`${s.btn} ${s.btnPrimary}`} href="/skole/klasse/demo" style={{ alignSelf: "flex-start" }}>
           Se demoklassen
