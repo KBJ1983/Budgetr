@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Kom i gang med budgetpro – {{NAVN}}</title>
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+
+<!-- ============ Cover ============ -->
+<div class="cover">
+  <img class="logo" src="../../public/mail/logo.png" alt="budgetpro">
+  <div class="dark">
+    <span class="tag">Til {{NAVN}} · test af budgetpro · oktober 2026</span>
+    <h1>Kom i gang med <span class="hl">budgetpro</span></h1>
+    <p>Tak, fordi du vil teste budgetpro. Denne guide viser dig trin for trin, hvordan du kommer ind og laver dit første budget. Du skal ikke oprette dig, og du får ingen mail eller invitation fra os. Alt, hvad du skal bruge, står på denne side.</p>
+  </div>
+
+  <div class="creds">
+    <div class="credsHead">Dine oplysninger</div>
+    <div class="credsRow"><span>Adresse</span><b>budgetpro.dk</b></div>
+    <div class="credsRow"><span>Adgangskode til siden</span><b class="mono">{{KODE}}</b></div>
+    <div class="credsRow"><span>Dit login</span><b class="mono big">{{LOGIN}}</b></div>
+    <p class="small muted" style="margin:3mm 0 0">Loginet {{LOGIN}} er dit eget i testperioden. Del det og adgangskoden ikke med andre.</p>
+  </div>
+
+  <div class="foot"><span>budgetpro · testversion</span><span>Spørgsmål undervejs: {{KONTAKT}}</span></div>
+</div>
+
+<!-- ============ What is it ============ -->
+<div class="section">
+  <div class="kicker">Først kort</div>
+  <h2>Hvad er budgetpro</h2>
+  <p class="lead">budgetpro er et budgetværktøj på nettet. Du lægger husstandens faste indtægter og udgifter ind, og budgetpro regner ud, hvad der er tilbage hver måned, hvem der skal betale hvad, og hvad du har til rådighed, som banken regner det.</p>
+
+  <div class="grid2">
+    <div class="box soft">
+      <h4>Det gør budgetpro</h4>
+      <ul style="margin:0">
+        <li>Samler alle faste poster ét sted, også dem, der betales hvert kvartal eller en gang om året.</li>
+        <li>Deler fælles udgifter fair mellem dem, der bor sammen.</li>
+        <li>Viser lån, opsparingsmål og “hvad nu hvis”.</li>
+      </ul>
+    </div>
+    <div class="box soft">
+      <h4>Det gør budgetpro ikke</h4>
+      <ul style="margin:0">
+        <li>Har ingen adgang til din netbank og kan ikke flytte penge.</li>
+        <li>Deler ikke dit budget med nogen.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Ét hovedprodukt og to udgaver til andre</h3>
+  <table>
+    <tr><th style="width:26%">Udgave</th><th>Hvad er det</th></tr>
+    <tr><td><strong>budgetpro</strong></td><td>Hovedproduktet til privatpersoner og familier. Det er det, du tester.</td></tr>
+    <tr><td><strong>budgetpro Erhverv</strong></td><td>Banker og ejendomsmæglere kan give deres kunder budgetpro i en periode. Det er det samme værktøj.</td></tr>
+    <tr><td><strong>budgetpro Skole</strong></td><td>En enkel udgave til undervisning i 7.–9. klasse, hvor eleverne laver et budget for en ung voksen.</td></tr>
+  </table>
+
+  <div class="box accent">
+    <h4>Brug opdigtede tal</h4>
+    <p style="margin:0">Du må gerne bruge runde, opdigtede tal, når du tester. Skriv ikke kontonumre, cpr-numre eller andre personlige oplysninger.</p>
+  </div>
+</div>
+
+<!-- ============ Log in ============ -->
+<div class="section">
+  <div class="kicker">Trin 1–2</div>
+  <h2>Sådan kommer du ind</h2>
+  <p class="lead">Siden er låst, mens vi tester. Derfor skal du først skrive en fælles adgangskode til siden. Brug gerne en computer første gang.</p>
+
+  <ol class="steps">
+    <li><strong>Åbn budgetpro.dk</strong>Skriv <span class="label">budgetpro.dk</span> i adresselinjen i Chrome, Edge eller Safari.</li>
+    <li><strong>Skriv adgangskoden til siden</strong>
+      Browseren viser en lille boks. Det er browserens egen boks.
+      <div class="authbox">
+        <div class="t">Log ind</div>
+        <div class="muted">https://budgetpro.dk</div>
+        <div style="margin-top:2mm">Brugernavn</div><div class="f" style="color:var(--ink)">test</div>
+        <div>Adgangskode</div><div class="f" style="color:var(--ink)">{{KODE}}</div>
+        <div class="b"><span>Annuller</span><span class="p">Log ind</span></div>
+      </div>
+      Skriv <span class="label">test</span> som brugernavn og <span class="label">{{KODE}}</span> som adgangskode. Tryk “Log ind”. Nu ser du forsiden af budgetpro.
+    </li>
+  </ol>
+
+  <div class="box soft">
+    <h4>Hvis det ikke virker</h4>
+    <table style="margin:0">
+      <tr><td style="width:42%">Der står “Siden er ikke åben endnu.”</td><td>Adgangskoden til siden var forkert. Genindlæs siden og skriv den igen.</td></tr>
+      <tr><td>Boksen med adgangskoden kommer igen</td><td>Det er normalt, hvis du har lukket browseren. Skriv den igen.</td></tr>
+      <tr><td>Du er logget ud</td><td>Gå til budgetpro.dk/login og skriv {{LOGIN}} igen. Dit budget er gemt.</td></tr>
+      <tr><td>Noget andet</td><td>Skriv til {{KONTAKT}}.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ============ Demo first ============ -->
+<div class="section">
+  <div class="kicker">Trin 3–5</div>
+  <h2>Se et færdigt budget først</h2>
+  <p class="lead">Før du laver dit eget budget, kan du se, hvordan budgetpro ser ud, når alt er udfyldt. Det er budgettet for en opdigtet familie, hvor alle funktioner er i brug.</p>
+
+  <ol class="steps" style="counter-reset: step 2">
+    <li><strong>Gå til budgetpro.dk/demobruger</strong>Skriv <span class="label">budgetpro.dk/demobruger</span> i adresselinjen. Du skal ikke logge ind. Efter et øjeblik ser du familiens budget.</li>
+    <li><strong>Kig dig omkring i 5–10 minutter</strong>
+      Start på fanen “Overblik”. Den viser, hvad familien har tilbage hver måned, og rådighedsbeløbet, som banken regner det. Prøv så de andre faner øverst: “Budgetposter”, “Overblik over lån”, “Faste overførsler” og “Opsparingsmål”.
+      <div class="small muted" style="margin-top:1.5mm">Du må gerne rette i demobudgettet. Det bliver sat tilbage, næste gang nogen åbner adressen.</div>
+    </li>
+    <li><strong>Gå videre til dit eget budget</strong>Når du har set nok, så fortsæt med trin 6 herunder.</li>
+  </ol>
+
+  <figure style="margin-top:2mm">
+    <div class="shot-crop" style="height:58mm"><img src="../../public/landing/overblik-light.jpg" alt=""></div>
+    <figcaption>Fanen “Overblik” i et udfyldt budget</figcaption>
+  </figure>
+
+  <div class="kicker" style="margin-top:5mm">Trin 6–7</div>
+  <h3 style="margin-top:0">Log ind med dit eget login</h3>
+  <ol class="steps" style="counter-reset: step 5">
+    <li><strong>Gå til budgetpro.dk/login</strong>Der står “Du er logget ind som DEMO”. Det er rigtigt. Du skal ikke trykke på “Fortsæt”.</li>
+    <li><strong>Skriv {{LOGIN}} og tryk “Skift bruger”</strong>Skriv <span class="label">{{LOGIN}}</span> i feltet “E-mail eller initialer”. Der er ingen adgangskode her, og der kommer ingen mail. Nu er du i dit eget budget, som er tomt.</li>
+  </ol>
+</div>
+
+<!-- ============ First budget ============ -->
+<div class="section">
+  <div class="kicker">Trin 8–14</div>
+  <h2>Dit første budget</h2>
+  <p class="lead">Første gang er dit budget tomt. Guiden “Start nyt budget” hjælper dig i gang. Det tager omkring 10 minutter. Alt kan rettes bagefter.</p>
+
+  <ol class="steps" style="counter-reset: step 7">
+    <li><strong>En kort film starter af sig selv</strong>Den viser på 1,5 minut, hvordan man kommer i gang. Se den, eller tryk “Spring over”.</li>
+    <li><strong>Tryk “Start guiden”</strong>Du ser siden “Intet budget endnu”. Tryk på den mørke knap “Start guiden”.</li>
+    <li><strong>Vælg “Tomt budget” og tryk “Næste”</strong>De to andre muligheder bruger filer fra netbanken. Dem kan du prøve senere.</li>
+    <li><strong>Giv budgettet et navn og tryk “Næste”</strong>Fx <span class="label">Mit testbudget</span>.</li>
+    <li><strong>Skriv dit fornavn og en løn, og tryk “Næste”</strong>Lønnen er den, der udbetales efter skat hver måned, fx <span class="label">25.000</span>. Bor du sammen med nogen, kan du trykke “Tilføj person” og skrive dem på også.</li>
+    <li><strong>Tryk “Næste” på resten af siderne</strong>Guiden spørger om konti, overskrifter, fordeling, opsparing, banken og påmindelser. Du kan læse med eller bare trykke “Næste”. Forslagene er fine at starte med.</li>
+    <li><strong>Tryk “Opret budget” på sidste side</strong>Nu har du et budget med din løn som indtægt.</li>
+  </ol>
+
+  <h3>Læg din første udgift ind</h3>
+  <ol class="steps" style="counter-reset: step 14">
+    <li><strong>Tryk “+ Ny budgetpost” øverst til højre</strong></li>
+    <li><strong>Udfyld de fire felter</strong>
+      <table style="margin:1.5mm 0 0">
+        <tr><td style="width:36%">Beskrivelse</td><td><span class="label">Husleje</span></td></tr>
+        <tr><td>Kategori</td><td>Skriv eller vælg “Bolig”</td></tr>
+        <tr><td>Beløb pr. betaling (kr.)</td><td><span class="label">8.000</span></td></tr>
+        <tr><td>Hvor ofte</td><td>Hver måned</td></tr>
+      </table>
+    </li>
+    <li><strong>Tryk “Gem post”</strong>Gør det samme med et par udgifter mere, fx el (“Hvert kvartal”) og bilforsikring (“En gang om året”). budgetpro regner selv ud, hvad det svarer til pr. måned.</li>
+    <li><strong>Tryk på fanen “Overblik”</strong>Øverst står, hvad du har tilbage hver måned. Længere nede står rådighedsbeløbet, som banken regner det.</li>
+  </ol>
+</div>
+
+<!-- ============ Look around ============ -->
+<div class="section">
+  <div class="kicker">Når du er i gang</div>
+  <h2>Kig dig omkring</h2>
+  <p class="lead">Nu kan du gå på opdagelse i dit eget tempo. Der er ingen opgaver, og du kan ikke ødelægge noget.</p>
+
+  <div class="box">
+    <h4>Tilbage til demobudgettet</h4>
+    <p style="margin:0">Du kan altid kigge i det færdige budget igen på <span class="label">budgetpro.dk/demobruger</span>. Bagefter kommer du tilbage til dit eget budget på budgetpro.dk/login: skriv {{LOGIN}} og tryk “Skift bruger”.</p>
+  </div>
+
+  <h3>Her finder du tingene</h3>
+  <table>
+    <tr><th style="width:34%">Hvor</th><th>Hvad</th></tr>
+    <tr><td>De fem faner øverst</td><td>“Overblik”, “Budgetposter”, “Overblik over lån”, “Faste overførsler” og “Opsparingsmål”.</td></tr>
+    <tr><td>“+ Ny budgetpost”</td><td>Læg en ny indtægt eller udgift ind.</td></tr>
+    <tr><td>“Scenarie”</td><td>Prøv en ændring, fx “Ny bil”, uden at røre dit budget, og sammenlign.</td></tr>
+    <tr><td>Klokken øverst</td><td>Opgaver: det, der mangler at blive gjort.</td></tr>
+    <tr><td>Det runde ikon øverst til højre</td><td>“Indstillinger”, “Sådan regnes det”, “Kom i gang” (filmen), “Import og eksport” (PDF og Excel), lyst eller mørkt tema og “Log ud”.</td></tr>
+  </table>
+
+  <div class="box accent">
+    <h4>Sig til, når du undrer dig</h4>
+    <p style="margin:0">Det vigtigste for os er at høre, hvor du blev i tvivl, hvad du ikke forstod, og hvad du synes, der mangler. Skriv det ned undervejs, gerne med et skærmbillede, og send det til {{KONTAKT}}. Små ting er lige så vigtige som store.</p>
+  </div>
+</div>
+
+<!-- ============ Features ============ -->
+<div class="section">
+  <div class="kicker">Opslag</div>
+  <h2>Funktionerne i budgetpro</h2>
+  <p class="lead">Brug listen som opslag, hvis du vil vide, hvad en del af budgetpro kan. Navnene i anførselstegn er dem, du ser på skærmen.</p>
+
+  <h3 style="margin-top:0">De fem faner</h3>
+  <table>
+    <tr><th style="width:24%">Fane</th><th>Hvad den viser</th></tr>
+    <tr><td>“Overblik”</td><td>Hvad husstanden har i indtægter og faste udgifter, og hvad der er tilbage pr. måned, før og efter opsparing. Rådighedsbeløbet, som banken regner det. Et kort pr. konto, der viser, om der overføres nok. “Hvem betaler hvad”: et kort pr. person. “Måned for måned”: saldoen på en konto de næste 12 måneder.</td></tr>
+    <tr><td>“Budgetposter”</td><td>Alle poster i én tabel med beskrivelse, hyppighed, beløb, konto og betaler. Søg og filtrér. “Udvikling i poster” viser, hvilke udgifter der er steget.</td></tr>
+    <tr><td>“Overblik over lån”</td><td>Restgæld, ydelse og renter pr. måned, gennemsnitlig rente, hvornår lån er betalt ud, og hvor mange penge det frigør.</td></tr>
+    <tr><td>“Faste overførsler”</td><td>Hvad der skal overføres fra hver lønkonto, og hvilke overførsler der skal rettes i netbanken.</td></tr>
+    <tr><td>“Opsparingsmål”</td><td>Hvert mål med beløb pr. måned, hvor langt man er nået, og hvornår målet nås.</td></tr>
+  </table>
+
+  <h3>På tværs af fanerne</h3>
+  <table>
+    <tr><th style="width:24%">Funktion</th><th>Hvad den gør</th></tr>
+    <tr><td>Guiden “Start nyt budget”</td><td>Hjælper dig i gang: tomt, ud fra kontoudskrifter eller ud fra et budget, du har i Excel.</td></tr>
+    <tr><td>Scenarier</td><td>Prøv en ændring uden at røre dit budget, og sammenlign side om side.</td></tr>
+    <tr><td>Kladder</td><td>Hele budgetter ved siden af dit eget, fx til et nyt budget efter en flytning.</td></tr>
+    <tr><td>Kontoudskrifter</td><td>Læser CSV, Excel og PDF fra netbanken og finder de faste poster. Selve filen gemmes ikke.</td></tr>
+    <tr><td>Fordeling</td><td>Fælles udgifter deles efter indkomst, ligeligt eller med fast procent.</td></tr>
+    <tr><td>Opgaver</td><td>Klokken samler det, der mangler, fx overførsler, der ikke er oprettet i banken.</td></tr>
+    <tr><td>Påmindelser</td><td>Påmindelse om at se budgettet igennem, fx hver måned.</td></tr>
+    <tr><td>Deling</td><td>Op til tre personer på samme budget, hver med sit eget login.</td></tr>
+    <tr><td>Eksport</td><td>Budgettet som PDF eller Excel, fx til et møde i banken.</td></tr>
+    <tr><td>“Sådan regnes det”</td><td>Forklarer i almindeligt dansk, hvordan tallene regnes ud.</td></tr>
+  </table>
+  <p class="small muted">Deling, påmindelser på mail og “Send på mail” kræver en rigtig konto med e-mail. Dem kan du ikke prøve med testloginet.</p>
+</div>
+
+</body>
+</html>

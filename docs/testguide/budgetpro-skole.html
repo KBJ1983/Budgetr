@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="da" data-theme="skole">
+<head>
+<meta charset="utf-8">
+<title>Kom i gang med budgetpro Skole – {{NAVN}}</title>
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+
+<!-- ============ Cover ============ -->
+<div class="cover">
+  <img class="logo" src="../../public/mail/logo-skole.png" alt="budgetpro Skole">
+  <div class="dark">
+    <span class="tag">Til {{NAVN}} · test af budgetpro Skole · oktober 2026</span>
+    <h1>Kom i gang med <span class="hl">budgetpro Skole</span></h1>
+    <p>Tak, fordi du vil teste budgetpro Skole. Denne guide viser dig trin for trin, hvordan du logger ind som lærer, opretter en klasse og prøver forløbet som elev. Du skal ikke oprette dig, og du får ingen mail eller invitation fra os. Alt, hvad du skal bruge, står på denne side.</p>
+  </div>
+
+  <div class="creds">
+    <div class="credsHead">Dine oplysninger</div>
+    <div class="credsRow"><span>Adresse for lærere</span><b>skole.budgetpro.dk/laerer</b></div>
+    <div class="credsRow"><span>Adresse for elever</span><b>skole.budgetpro.dk/elev</b></div>
+    <div class="credsRow"><span>Adgangskode til siden</span><b class="mono">{{KODE}}</b></div>
+    <div class="credsRow"><span>Dit lærerlogin</span><b class="mono big">{{LOGIN}}</b></div>
+    <p class="small muted" style="margin:3mm 0 0">Loginet {{LOGIN}} er dit eget i testperioden. Du er lærer på den opdigtede “Testskolen” og kan oprette så mange klasser, du vil.</p>
+  </div>
+
+  <div class="foot"><span>budgetpro Skole · testversion</span><span>Spørgsmål undervejs: {{KONTAKT}}</span></div>
+</div>
+
+<!-- ============ What is it ============ -->
+<div class="section">
+  <div class="kicker">Først kort</div>
+  <h2>Hvad er budgetpro og budgetpro Skole</h2>
+  <p class="lead">budgetpro er et budgetværktøj på nettet til husstande. Man lægger de faste indtægter og udgifter ind, og budgetpro regner ud, hvad der er tilbage hver måned, og hvad man har til rådighed, som banken regner det. budgetpro Skole bygger på de samme beregninger, men er gjort enkel nok til et forløb i 7.–9. klasse.</p>
+
+  <table>
+    <tr><th style="width:26%">Udgave</th><th>Hvad er det</th></tr>
+    <tr><td><strong>budgetpro</strong></td><td>Hovedproduktet til privatpersoner og familier.</td></tr>
+    <tr><td><strong>budgetpro Erhverv</strong></td><td>Banker og ejendomsmæglere giver deres kunder budgetpro i en periode.</td></tr>
+    <tr><td><strong>budgetpro Skole</strong></td><td>Et færdigt forløb om privatøkonomi. Det er det, du tester.</td></tr>
+  </table>
+
+  <h3>Sådan virker budgetpro Skole</h3>
+  <div class="grid3">
+    <div class="box soft"><h4>Du opretter en klasse</h4><p style="margin:0">Du vælger klassetrin, antal elever og hvor længe koderne skal virke. Du får en elevkode pr. elev, fx <span class="label">BLÅ-ORM-47</span>.</p></div>
+    <div class="box soft"><h4>Eleven laver et budget</h4><p style="margin:0">Eleven skriver sin kode og laver et månedsbudget for en ung voksen i 8 trin, fra løn før skat til “hvad nu hvis”.</p></div>
+    <div class="box soft"><h4>Du følger klassen</h4><p style="margin:0">Du ser, hvor langt hver kode er nået, om budgettet går op, og elevernes valg og svar.</p></div>
+  </div>
+
+  <div class="box dark" style="margin-top:4mm">
+    <h4 style="color:#fff">Ingen elevnavne</h4>
+    <p style="margin:0">budgetpro Skole gemmer <strong>ingen navne</strong> på elever. Eleverne har kun en kode. Når koderne udløber, slettes klassen, koderne og elevernes svar.</p>
+  </div>
+</div>
+
+<!-- ============ Log in ============ -->
+<div class="section">
+  <div class="kicker">Trin 1–5</div>
+  <h2>Sådan logger du ind som lærer</h2>
+  <p class="lead">Siden er låst, mens vi tester. Derfor skal du først skrive adgangskoden til siden og derefter dit lærerlogin. Brug gerne en computer.</p>
+
+  <ol class="steps">
+    <li><strong>Åbn skole.budgetpro.dk/laerer</strong>Skriv <span class="label">skole.budgetpro.dk/laerer</span> i adresselinjen i Chrome, Edge eller Safari.</li>
+    <li><strong>Skriv adgangskoden til siden</strong>
+      Browseren viser en lille boks. Det er browserens egen boks.
+      <div class="authbox">
+        <div class="t">Log ind</div>
+        <div class="muted">https://skole.budgetpro.dk</div>
+        <div style="margin-top:2mm">Brugernavn</div><div class="f" style="color:var(--ink)">test</div>
+        <div>Adgangskode</div><div class="f" style="color:var(--ink)">{{KODE}}</div>
+        <div class="b"><span>Annuller</span><span class="p">Log ind</span></div>
+      </div>
+      Skriv <span class="label">test</span> som brugernavn og <span class="label">{{KODE}}</span> som adgangskode. Tryk “Log ind”.
+    </li>
+    <li><strong>Du ser siden “Log ind som lærer”</strong>Fanen “Log ind” er valgt. Du skal ikke trykke på “Opret bruger”.</li>
+    <li><strong>Skriv {{LOGIN}} i feltet “Din e-mail” og tryk “Log ind”</strong>Feltet hedder “Din e-mail”, men du skriver bare <span class="label">{{LOGIN}}</span>. Der kommer ingen mail.</li>
+    <li><strong>Nu er du på “Mine klasser”</strong>Øverst står “Testskolen” og dit navn, “{{LÆRERNAVN}}”.</li>
+  </ol>
+
+  <div class="box soft">
+    <h4>Hvis det ikke virker</h4>
+    <table style="margin:0">
+      <tr><td style="width:42%">Der står “Siden er ikke åben endnu.”</td><td>Adgangskoden til siden var forkert. Genindlæs siden og skriv den igen.</td></tr>
+      <tr><td>Knappen hedder “Send kode”</td><td>Tjek, at du har skrevet {{LOGIN}} rigtigt. Så skifter knappen til “Log ind”.</td></tr>
+      <tr><td>Du er logget ud</td><td>Gå til skole.budgetpro.dk/laerer og skriv {{LOGIN}} igen. Dine klasser er gemt.</td></tr>
+      <tr><td>Noget andet</td><td>Skriv til {{KONTAKT}}.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ============ Class ============ -->
+<div class="section">
+  <div class="kicker">Trin 6–9</div>
+  <h2>Opret din første klasse</h2>
+  <p class="lead">Det tager to minutter. Brug en lille klasse første gang, så du nemt kan prøve koderne selv.</p>
+
+  <ol class="steps" style="counter-reset: step 5">
+    <li><strong>Find kortet “Opret klasse”</strong>Det står øverst på “Mine klasser”.</li>
+    <li><strong>Vælg tre ting</strong>
+      <table style="margin:1.5mm 0 0">
+        <tr><td style="width:36%">Klassetrin</td><td>Tryk på <span class="label">8</span></td></tr>
+        <tr><td>Antal elever</td><td>Tryk på “−”, til der står <span class="label">3</span></td></tr>
+        <tr><td>Koderne virker i</td><td>Tryk på <span class="label">30 dage</span></td></tr>
+      </table>
+    </li>
+    <li><strong>Tryk “Lav elevkoder”</strong>Du kommer til klassens side, “Klasseoverblik”.</li>
+    <li><strong>Find elevkoderne nederst på siden</strong>Der er tre koder, fx <span class="label">GRØN-UGLE-41</span>. “Kopiér” kopierer dem, og “Print” giver kodesedler til at klippe ud. Skriv den første kode ned. Den skal du bruge om lidt.</li>
+  </ol>
+
+  <div class="kicker" style="margin-top:6mm">Trin 10–14</div>
+  <h3 style="margin-top:0">Prøv forløbet som elev</h3>
+  <p>Du kan være både lærer og elev på samme tid. Eleven skal bare have sit eget vindue, så du ikke bliver logget ud som lærer.</p>
+  <ol class="steps" style="counter-reset: step 9">
+    <li><strong>Åbn et privat vindue</strong>I Chrome og Edge: tryk <span class="label">Ctrl+Shift+N</span> (Mac: <span class="label">Cmd+Shift+N</span>). I Safari: menuen “Arkiv” og “Nyt privat vindue”.</li>
+    <li><strong>Gå til skole.budgetpro.dk/elev</strong>Skriv adgangskoden til siden igen (<span class="label">test</span> og <span class="label">{{KODE}}</span>).</li>
+    <li><strong>Skriv elevkoden i feltet “Din elevkode” og tryk “Start”</strong>Store eller små bogstaver er lige meget.</li>
+    <li><strong>Vælg en fremtidsperson og tryk “Næste”</strong>Sara, Jonas eller Mira. Gå trinene igennem med “Næste”. På trin 8 hedder knappen “Se opsummering”.</li>
+    <li><strong>Gå tilbage til lærervinduet</strong>Klasseoverblikket opdaterer sig selv hvert 15. sekund. Tryk på elevkoden i tabellen for at se elevens valg og svar.</li>
+  </ol>
+</div>
+
+<!-- ============ Look around ============ -->
+<div class="section">
+  <div class="kicker">Når du er i gang</div>
+  <h2>Kig dig omkring</h2>
+  <p class="lead">Nu kan du gå på opdagelse i dit eget tempo. Der er ingen opgaver, og du kan ikke ødelægge noget.</p>
+
+  <div class="box">
+    <h4>Se en klasse med flere elever</h4>
+    <p style="margin:0">Gå til <span class="label">skole.budgetpro.dk/klasse/demo</span>. Den viser en opdigtet 9. klasse med seks elever, der er nået forskellige steder i forløbet, med svar på refleksionsspørgsmålene.</p>
+  </div>
+
+  <div class="box">
+    <h4>Vil du prøve det med en rigtig klasse?</h4>
+    <p style="margin:0">Opret en klasse med det antal elever, du har, og print kodesedlerne. Eleverne går til <span class="label">skole.budgetpro.dk/elev</span>. De skal også skrive adgangskoden til siden (<span class="label">test</span> og <span class="label">{{KODE}}</span>), så skriv den på tavlen, men del den ikke uden for klassen. Eleverne skal ikke skrive deres navne nogen steder.</p>
+  </div>
+
+  <h3>Her finder du tingene</h3>
+  <table>
+    <tr><th style="width:34%">Hvor</th><th>Hvad</th></tr>
+    <tr><td>“Mine klasser”</td><td>Opret klasser og se alle dine klasser. “Vis elevkoder” viser koderne.</td></tr>
+    <tr><td>“Åbn klasse”</td><td>Klasseoverblikket: tre tal for hele klassen og en tabel med hver elevkode.</td></tr>
+    <tr><td>En elevkode i tabellen</td><td>Elevens valg på hvert trin og svarene på de syv refleksionsspørgsmål.</td></tr>
+    <tr><td>“Slet klassen”</td><td>Nederst på klassens side. Klassen slettes også af sig selv, når koderne udløber.</td></tr>
+    <tr><td>“Log ud”</td><td>Øverst på “Mine klasser”.</td></tr>
+  </table>
+
+  <div class="box accent">
+    <h4>Sig til, når du undrer dig</h4>
+    <p style="margin:0">Det vigtigste for os er at høre, om det passer ind i din undervisning, hvor du eller eleverne blev i tvivl, og hvad du savner, fx materiale til at printe. Skriv det ned undervejs, gerne med et skærmbillede, og send det til {{KONTAKT}}.</p>
+  </div>
+</div>
+
+<!-- ============ Features ============ -->
+<div class="section">
+  <div class="kicker">Opslag</div>
+  <h2>Funktionerne i budgetpro Skole</h2>
+
+  <h3 style="margin-top:0">For eleven: 8 trin og “Mit budget”</h3>
+  <table>
+    <tr><th style="width:4%">#</th><th style="width:22%">Trin</th><th>Hvad eleven gør</th></tr>
+    <tr><td>1</td><td>Fremtidsperson</td><td>Vælger Sara (20, tømrerlærling, 15.200 kr. udbetalt), Jonas (22, social- og sundhedsassistent, 19.800 kr.) eller Mira (21, SU og fritidsjob, 9.900 kr.). Hver har en drøm: kørekort, en rejse til Japan eller en ny computer.</td></tr>
+    <tr><td>2</td><td>Indtægt</td><td>Ser en lønseddel blive til: løn før skat, skat og AM-bidrag, udbetalt.</td></tr>
+    <tr><td>3</td><td>Bolig</td><td>Vælger værelse (3.500 kr.), delelejlighed (4.800 kr.) eller 1-værelses (6.900 kr.).</td></tr>
+    <tr><td>4</td><td>Faste udgifter</td><td>Vælger til og fra: forsikring, mobil, internet, transport, fagforening og a-kasse, streaming. Kan tilføje egne.</td></tr>
+    <tr><td>5</td><td>Mad og hverdag</td><td>Vælger stramt, normalt eller rummeligt for mad og for tøj og fritid.</td></tr>
+    <tr><td>6</td><td>Opsparing</td><td>Sætter en buffer og bestemmer, hvornår drømmen skal være klar.</td></tr>
+    <tr><td>7</td><td>Går det op?</td><td>Ser, hvad der er tilbage. Går det ikke op, skal eleven tilbage og prioritere.</td></tr>
+    <tr><td>8</td><td>Hvad nu hvis?</td><td>Fire scenarier: huslejen stiger 10 %, jobbet forsvinder, man flytter sammen, man køber en brugt bil på lån.</td></tr>
+  </table>
+  <ul>
+    <li><strong>Budgetmåleren</strong> følger med fra trin 2 og viser med det samme, hvad der er tilbage.</li>
+    <li><strong>“Hvorfor?”</strong> på trin 2–8 forklarer i et par linjer, hvorfor trinet er vigtigt.</li>
+    <li><strong>Syv refleksionsspørgsmål</strong>, ét pr. trin, fx “Hvad er et behov, og hvad er et ønske?”.</li>
+    <li><strong>Opsummering</strong> med budget, drøm og svar, som eleven kan gemme som PDF og aflevere.</li>
+    <li><strong>“Mit budget”</strong>: eleven bygger videre med egne poster og fem nøgletal.</li>
+  </ul>
+
+  <h3>For læreren</h3>
+  <ul>
+    <li><strong>“Mine klasser”</strong>: opret en klasse (7., 8. eller 9. klasse, 1–40 elever, koder der virker i 30, 60 eller 90 dage).</li>
+    <li><strong>Elevkoder</strong>: kopiér dem eller print dem som kodesedler.</li>
+    <li><strong>Klasseoverblik</strong>: hvor langt hver kode er nået, om budgettet går op, den valgte case og tre tal for hele klassen.</li>
+    <li><strong>Elevens valg og svar</strong> for hver kode.</li>
+    <li><strong>Demoklasse</strong> til at vise kolleger og ledelse, hvordan det ser ud.</li>
+  </ul>
+</div>
+
+</body>
+</html>

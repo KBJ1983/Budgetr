@@ -1,0 +1,147 @@
+@import url("../../public/budgetr-app/fonts/fonts.css");
+
+:root {
+  --ink: #0E1B2C;
+  --muted: #4A5868;
+  --line: #DCE1E7;
+  --page: #F3F5F7;
+  --accent: #D4F26B;      /* lime, only on dark */
+  --accent-text: #3F6A0E; /* olive, accent text on light */
+  --soft: #EEF7CF;
+}
+html[data-theme="skole"] {
+  --accent: #F6CF4A;
+  --accent-text: #7A5300;
+  --page: #F5F5F0;
+  --line: #E2DFD8;
+  --soft: #FDF2CC;
+}
+
+@page { size: A4; margin: 16mm 16mm 18mm; }
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  margin: 0;
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: 9.6pt;
+  line-height: 1.5;
+  color: var(--ink);
+  background: #fff;
+}
+h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: 18pt; font-weight: 600; margin: 0 0 4mm; }
+h3 { font-size: 12pt; font-weight: 600; margin: 5mm 0 1.5mm; }
+p { margin: 0 0 2.5mm; }
+ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+li { margin: 0 0 1.2mm; }
+a { color: var(--accent-text); text-decoration: none; }
+code, .mono { font-family: "Geist Mono", ui-monospace, monospace; font-size: 0.92em; }
+strong { font-weight: 600; }
+
+.section { break-before: page; }
+.kicker {
+  font-size: 8.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent-text); margin-bottom: 2mm;
+}
+.lead { font-size: 10.8pt; color: var(--muted); margin-bottom: 5mm; }
+.muted { color: var(--muted); }
+.small { font-size: 8.8pt; }
+
+/* Cover */
+.cover { height: 263mm; display: flex; flex-direction: column; }
+.cover .logo { height: 11mm; width: auto; align-self: flex-start; }
+.cover .dark {
+  margin-top: 18mm; background: var(--ink); color: #fff; border-radius: 6mm; padding: 14mm 12mm;
+  position: relative; overflow: hidden;
+}
+.cover .dark::after {
+  content: ""; position: absolute; right: -22mm; top: -22mm; width: 70mm; height: 70mm;
+  border-radius: 50%; background: var(--accent); opacity: 0.9;
+}
+.cover .dark .tag {
+  display: inline-block; background: var(--accent); color: var(--ink); font-weight: 600; font-size: 9pt;
+  padding: 1mm 3.5mm; border-radius: 99px; margin-bottom: 6mm; position: relative; z-index: 1;
+}
+.cover h1 { font-size: 34pt; font-weight: 600; position: relative; z-index: 1; max-width: 140mm; }
+.cover h1 .hl { color: var(--accent); }
+.cover .dark p { color: #C9D2DD; font-size: 12pt; margin-top: 5mm; max-width: 140mm; position: relative; z-index: 1; }
+.cover .toc { margin-top: 12mm; columns: 2; column-gap: 10mm; font-size: 10.5pt; }
+.cover .toc div { break-inside: avoid; padding: 2mm 0; border-bottom: 1px solid var(--line); display: flex; gap: 3mm; }
+.cover .toc b { font-family: "Geist Mono", monospace; color: var(--accent-text); font-weight: 500; min-width: 7mm; }
+.cover .foot { margin-top: auto; font-size: 8.8pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; display: flex; justify-content: space-between; }
+
+/* Boxes */
+.box { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 0 0 4mm; break-inside: avoid; }
+.box.soft { background: var(--page); border-color: transparent; }
+.box.accent { background: var(--soft); border-color: transparent; }
+.box.dark { background: var(--ink); color: #fff; border-color: transparent; }
+.box.dark .muted, .box.dark p { color: #C9D2DD; }
+.box.dark strong { color: var(--accent); }
+.box h3:first-child, .box h4:first-child { margin-top: 0; }
+.box h4 { font-size: 10.5pt; margin: 0 0 1.5mm; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+.grid2 > .box, .grid3 > .box { margin: 0; }
+
+/* Numbered steps */
+.steps { counter-reset: step; list-style: none; padding: 0; margin: 0 0 4mm; }
+.steps > li {
+  counter-increment: step; position: relative; padding: 0 0 2.6mm 11mm; margin: 0; break-inside: avoid;
+}
+.steps > li::before {
+  content: counter(step); position: absolute; left: 0; top: -0.5mm; width: 7mm; height: 7mm; border-radius: 50%;
+  background: var(--ink); color: #fff; font-weight: 600; font-size: 9.5pt; display: grid; place-items: center;
+}
+.steps > li > strong:first-child { display: block; font-size: 10.8pt; }
+
+/* The browser's password box, drawn */
+.authbox {
+  width: 92mm; border: 1px solid #C8CED6; border-radius: 3mm; padding: 4mm 5mm; background: #fff;
+  box-shadow: 0 2mm 6mm rgba(14, 27, 44, 0.12); font-size: 9pt; margin: 1.5mm 0 2.5mm;
+}
+.authbox .t { font-weight: 600; font-size: 10pt; margin-bottom: 1mm; }
+.authbox .f { border: 1px solid #C8CED6; border-radius: 1.5mm; padding: 1.5mm 2.5mm; margin: 1mm 0 2.5mm; color: var(--muted); }
+.authbox .b { display: flex; justify-content: flex-end; gap: 2mm; }
+.authbox .b span { border-radius: 1.5mm; padding: 1mm 3.5mm; border: 1px solid #C8CED6; }
+.authbox .b span.p { background: #1A73E8; color: #fff; border-color: #1A73E8; }
+
+.fill { display: inline-block; min-width: 55mm; border-bottom: 1.2px solid var(--ink); height: 5mm; vertical-align: bottom; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 0 0 4mm; font-size: 9.2pt; break-inside: auto; }
+th, td { text-align: left; vertical-align: top; padding: 1.8mm 2.5mm; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; background: var(--page); font-size: 8.6pt; }
+tr { break-inside: avoid; }
+td.num, th.num { text-align: right; font-family: "Geist Mono", monospace; white-space: nowrap; }
+td:first-child { font-weight: 500; }
+
+/* Checklists */
+.check { list-style: none; padding: 0; }
+.check li { padding-left: 7mm; position: relative; break-inside: avoid; }
+.check li::before {
+  content: ""; position: absolute; left: 0; top: 0.8mm; width: 3.6mm; height: 3.6mm;
+  border: 1.3px solid var(--ink); border-radius: 0.8mm;
+}
+
+.pill {
+  display: inline-block; font-size: 8pt; font-weight: 600; padding: 0.3mm 2.2mm; border-radius: 99px;
+  background: var(--soft); color: var(--accent-text); white-space: nowrap;
+}
+.pill.new { background: var(--ink); color: var(--accent); }
+
+figure { margin: 0 0 4mm; break-inside: avoid; }
+figure img { width: 100%; display: block; border-radius: 2.5mm; border: 1px solid var(--line); }
+figcaption { font-size: 8.5pt; color: var(--muted); margin-top: 1.5mm; }
+.shot-crop { height: 62mm; overflow: hidden; border-radius: 2.5mm; border: 1px solid var(--line); }
+.shot-crop img { width: 100%; display: block; }
+
+/* The tester's own login details on the cover */
+.creds { margin-top: 10mm; border: 1.5px solid var(--ink); border-radius: 4mm; padding: 5mm 6mm; }
+.credsHead { font-size: 8.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-text); margin-bottom: 2mm; }
+.credsRow { display: flex; justify-content: space-between; align-items: baseline; padding: 2.2mm 0; border-bottom: 1px solid var(--line); font-size: 11pt; }
+.credsRow span { color: var(--muted); }
+.credsRow b { font-weight: 600; }
+.credsRow b.big { font-size: 18pt; background: var(--soft); padding: 0.5mm 3mm; border-radius: 1.5mm; }
+
+.label { font-family: "Geist Mono", monospace; font-size: 8.8pt; background: var(--page); padding: 0.2mm 1.5mm; border-radius: 1mm; }
