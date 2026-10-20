@@ -123,7 +123,7 @@ const ALL: readonly { title: string; items: readonly string[] }[] = [
 type FeaturesHead = { eyebrow?: string; title?: string; body?: string };
 
 /**
- * All the features in a dark band between the light sections: a sideways tour, and the full list to unfold. The Erhverv
+ * All the features in a light band (the hero's paper): a sideways tour, and the full list to unfold. The Erhverv
  * page passes its own head ("Det får kunderne med budgetpro").
  */
 export function Features({
@@ -136,12 +136,12 @@ export function Features({
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>{eyebrow}</span>
-            <h2 id="mere-title" className={`${styles.h2} ${styles.h2Light}`}>
+            <span className={styles.eyebrow}>{eyebrow}</span>
+            <h2 id="mere-title" className={styles.h2}>
               {title}
             </h2>
           </div>
-          <p className={`${styles.headBody} ${styles.headBodyDark}`}>{body}</p>
+          <p className={styles.headBody}>{body}</p>
         </div>
         <div data-reveal>
           <FeatureTour slides={SLIDES} />

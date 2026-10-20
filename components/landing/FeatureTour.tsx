@@ -83,7 +83,7 @@ export function FeatureTour({ slides }: { slides: readonly TourSlide[] }) {
               <Visual v={s.visual} />
             </div>
             <div className={styles.tourText}>
-              <span className={`${styles.eyebrow} ${styles.eyebrowDark} ${styles.tourLabel}`}>{s.label}</span>
+              <span className={`${styles.eyebrow} ${styles.tourLabel}`}>{s.label}</span>
               <h3 className={styles.trustBandCardTitle}>{s.title}</h3>
               <p className={styles.trustBandCardBody}>{s.body}</p>
             </div>

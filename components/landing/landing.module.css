@@ -1142,11 +1142,12 @@
   text-align: center;
 }
 
-/* ================= Funktioner: dark band with a sideways tour ================= */
+/* ================= Funktioner: light band (the hero's paper) with a sideways tour of white cards ================= */
 
 .featureBand {
-  background: var(--v-dark);
-  color: var(--v-dark-text);
+  background: var(--v-paper);
+  color: var(--v-ink);
+  border-top: 1px solid var(--v-rule);
   --section-y: 112px;
 }
 .tour {
@@ -1166,16 +1167,16 @@
   height: 44px;
   padding: 0;
   border-radius: 999px;
-  border: 1px solid var(--v-dark-rule);
-  background: var(--v-dark-card);
-  color: var(--v-dark-text);
+  border: 1px solid var(--v-rule);
+  background: var(--v-white);
+  color: var(--v-ink);
   cursor: pointer;
   transition:
     background-color 0.15s,
     opacity 0.15s;
 }
 .tourArrow:hover:not(:disabled) {
-  background: var(--v-dark-2nd);
+  background: var(--v-stone);
 }
 .tourArrow:disabled {
   opacity: 0.35;
@@ -1206,8 +1207,8 @@
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
   border-radius: 20px;
   overflow: hidden;
 }
@@ -1215,8 +1216,8 @@
   position: relative;
   height: 210px;
   overflow: hidden;
-  background: var(--v-dark-2nd);
-  border-bottom: 1px solid var(--v-dark-rule);
+  background: var(--v-stone);
+  border-bottom: 1px solid var(--v-rule);
 }
 .tourVisual .tourShot {
   width: 100%;
@@ -1227,7 +1228,7 @@
 .tourVisualIcon {
   display: grid;
   place-items: center;
-  background: #1a2b42;
+  background: var(--v-dark);
 }
 .tourIcon {
   display: grid;
@@ -1247,10 +1248,13 @@
 .tourLabel {
   font-size: 12px;
 }
+.tourText .trustBandCardBody {
+  color: var(--v-ink-2);
+}
 
 /* "Se alle funktioner": the classic list, folded away. */
 .allFeatures {
-  border-top: 1px solid var(--v-dark-rule);
+  border-top: 1px solid var(--v-rule);
   padding-top: 8px;
 }
 .allFeaturesToggle {
@@ -1262,15 +1266,15 @@
   list-style: none;
   font-size: 16px;
   font-weight: 600;
-  color: var(--v-dark-text);
+  color: var(--v-ink);
   border-radius: 8px;
 }
 .allFeaturesToggle::-webkit-details-marker {
   display: none;
 }
 .allFeaturesToggle .faqPlus {
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
 }
 .allFeatures[open] .faqPlus {
   transform: rotate(45deg);
@@ -1300,7 +1304,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--v-lime);
+  color: var(--v-olive);
 }
 .allList {
   gap: 10px;
@@ -1308,7 +1312,7 @@
 .allList li {
   font-size: 15px;
   line-height: 1.45;
-  color: #d3dae2;
+  color: var(--v-ink-2);
 }
 
 /* ================= Pris og spørgsmål ================= */
@@ -1501,7 +1505,7 @@
 /* ================= Afsluttende opfordring ================= */
 
 .ctaWrap {
-  padding: 0 var(--gutter) var(--gutter);
+  padding: var(--gutter) var(--gutter) 0;
 }
 /* A full lime band (the complementary colour, like Skole's solgul closing) with midnight text; it stands still – no cards,
    circles or reveal. */
@@ -1570,7 +1574,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: 40px;
   align-items: center;
-  background: var(--v-stone);
+  background: var(--v-dark);
+  color: var(--v-dark-text);
   border-radius: 28px;
 }
 .bizText {
@@ -1591,7 +1596,7 @@
   margin: 0;
   font-size: 16px;
   line-height: 1.55;
-  color: var(--v-ink-2);
+  color: var(--v-dark-2);
 }
 .bizLink {
   display: inline-flex;
@@ -1600,7 +1605,7 @@
   align-self: flex-start;
   font-size: 15px;
   font-weight: 600;
-  color: var(--v-olive);
+  color: var(--v-lime);
   text-decoration: none;
 }
 .bizLink:hover {
@@ -1621,16 +1626,17 @@
   flex-direction: column;
   gap: 2px;
   padding: 14px 18px;
-  background: var(--v-white);
+  background: var(--v-dark-card);
+  border: 1px solid var(--v-dark-rule);
   border-radius: 16px;
   font-size: 14.5px;
   line-height: 1.45;
-  color: var(--v-ink-2);
+  color: var(--v-dark-2);
 }
 .bizList b {
   font-size: 15.5px;
   font-weight: 600;
-  color: var(--v-ink);
+  color: var(--v-dark-text);
 }
 @media (max-width: 1019.98px) {
   .biz {
@@ -2026,7 +2032,7 @@
   }
 
   .ctaWrap {
-    padding: 0 8px 8px;
+    padding: 8px 8px 0;
   }
   .cta {
     border-radius: 24px;
