@@ -17,6 +17,7 @@
     "smoke": "node scripts/smoke.mjs",
     "shots": "node scripts/landing-shots.mjs",
     "shots:skole": "node scripts/skole-shots.mjs",
+    "guides": "node scripts/guides.mjs",
     "video": "node scripts/video.mjs",
     "reminders": "node scripts/send-reminders.mjs",
     "extract:app": "node scripts/extract-original-app.mjs",
