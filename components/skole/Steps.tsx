@@ -95,7 +95,7 @@ function Pay({ c, reveal }: { c: Case; reveal: number }) {
       ))}
       {reveal >= 3 && (
         <span className={s.note}>
-          <b>AM-bidrag</b> er 8 % af lønnen og går til staten. Skatten afhænger af, hvor meget man tjener.
+          <b>AM-bidrag</b> er 8 % af lønnen og går til staten. Skatten afhænger af, hvor meget man tjener. Unge under 18 år betaler ikke AM-bidrag. Fra 2026 slipper man for det til og med det år, man fylder 17.
         </span>
       )}
     </div>

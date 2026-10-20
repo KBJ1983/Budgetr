@@ -101,7 +101,7 @@ describe("skole money", () => {
     expect(s).toHaveLength(8);
     expect(s[2]?.q).toBe("Hvor skal Jonas bo?");
     expect(s[0]?.fact).toBeUndefined();
-    expect(s[7]?.refl).toBe("Hvilket scenarie rammer hårdest?");
+    expect(s[7]?.refl).toBe("Hvilket scenarie rammer Jonas hårdest, og hvor mange kr. om måneden ændrer det budgettet?");
   });
 });
 
@@ -219,7 +219,7 @@ describe("class overview", () => {
       { label: "Hvad nu hvis", value: "Huslejen stiger 10 %" },
     ]);
     expect(d.answers).toHaveLength(7);
-    expect(d.answers[0]).toEqual({ q: "Hvor stor en del af lønnen gik til skat?", a: "En tredjedel" });
+    expect(d.answers[0]).toEqual({ q: "Hvor stor en del af lønnen gik til skat og AM-bidrag? Svar i kr. og i procent af lønnen før skat.", a: "En tredjedel" });
     expect(d.answers[1]?.a).toBe("");
     expect(pupilDetail("BLÅ-ORM-47", null, {})).toMatchObject({ status: "Ikke startet", choices: [], answers: [] });
   });

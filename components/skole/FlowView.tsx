@@ -45,7 +45,7 @@ export function FlowView({ flow, update, go, reveal, onBack, onFinish }: Props) 
                 onClick={() => go(n)}
               >
                 {n > 1 && <span className={s.dotLine} data-on={n <= flow.maxStep || undefined} />}
-                <span className={s.dot} data-state={isCur ? "cur" : done ? "done" : undefined}>
+                <span className={s.dot} data-state={isCur ? "cur" : done ? "done" : n <= flow.maxStep ? "seen" : undefined}>
                   {done ? <Check size={14} color="#0E1B2C" /> : n}
                 </span>
                 <span className={s.dotLabel} data-cur={isCur || undefined}>

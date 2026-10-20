@@ -11,13 +11,15 @@ interface Props {
   expires: string | null;
   onRefl: (step: number, text: string) => void;
   onBudget: () => void;
+  /** Back into the steps to change the choices. */
+  onEdit: () => void;
   onPdf: () => void;
   onRestart: () => void;
   /** Where "Prøv budgetpro" goes (the main site). */
   mainSite: string;
 }
 
-export function Summary({ code, flow, refl, expires, onRefl, onBudget, onPdf, onRestart, mainSite }: Props) {
+export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, onPdf, onRestart, mainSite }: Props) {
   const c = caseById(flow.caseId);
   const t = totals(flow);
   const now = new Date();
@@ -62,6 +64,9 @@ export function Summary({ code, flow, refl, expires, onRefl, onBudget, onPdf, on
         </button>
         <button type="button" className={`${s.btn} ${s.btnPrimary}`} onClick={onPdf}>
           Gem som PDF
+        </button>
+        <button type="button" className={s.btn} onClick={onEdit}>
+          Gå tilbage og ret dine valg
         </button>
         <button type="button" className={s.btn} onClick={onRestart}>
           Start forfra

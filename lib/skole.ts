@@ -75,13 +75,13 @@ export interface Step {
 export function steps(c: Case): Step[] {
   return [
     { short: "Fremtidsperson", q: "Mød din fremtidsperson" },
-    { short: "Indtægt", q: `Hvor mange penge får ${c.name} udbetalt?`, fact: "Man kan kun bruge de penge, der kommer ind på kontoen. Skat og AM-bidrag trækkes fra, før lønnen bliver udbetalt.", refl: "Hvor stor en del af lønnen gik til skat?" },
-    { short: "Bolig", q: `Hvor skal ${c.name} bo?`, fact: "Boligen er som regel den største faste udgift og svær at ændre hurtigt. Derfor vælger man den først.", refl: "Hvad fik du for at betale mere?" },
-    { short: "Faste udgifter", q: `Hvad betaler ${c.name} hver måned?`, fact: "Faste udgifter kommer uanset hvad. Dem skal man kende, før man ved, hvad der er tilbage.", refl: `Hvilke kunne ${c.name} undvære?` },
-    { short: "Mad og hverdag", q: `Hvordan vil ${c.name} leve i hverdagen?`, fact: "Det, der er tilbage efter de faste udgifter, er rådighedsbeløbet. Det skal række til hverdagen, og det er det tal, banken kigger på.", refl: "Hvad er et behov, og hvad er et ønske?" },
-    { short: "Opsparing", q: `Hvordan når ${c.name} sin drøm?`, fact: "Uforudsete udgifter kommer altid. Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.", refl: "Kan det gå hurtigere?" },
-    { short: "Går det op?", q: `Har ${c.name} penge nok?`, fact: "Et budget, der ikke går op, bliver betalt med lån eller kreditkort, og det koster renter. Det er bedre at prioritere nu.", refl: "Hvad valgte du at ændre?" },
-    { short: "Hvad nu hvis?", q: "Hvad sker der, hvis …?", fact: "Livet ændrer sig. Et budget er en plan, der skal kunne tilpasses, ikke et regnestykke, man laver én gang.", refl: "Hvilket scenarie rammer hårdest?" },
+    { short: "Indtægt", q: `Hvor mange penge får ${c.name} udbetalt?`, fact: "Man kan kun bruge de penge, der kommer ind på kontoen. Skat og AM-bidrag trækkes fra, før lønnen bliver udbetalt.", refl: "Hvor stor en del af lønnen gik til skat og AM-bidrag? Svar i kr. og i procent af lønnen før skat." },
+    { short: "Bolig", q: `Hvor skal ${c.name} bo?`, fact: "Boligen er som regel den største faste udgift og svær at ændre hurtigt. Derfor vælger man den først.", refl: `Hvad fik ${c.name} ud af den bolig, du valgte? Hvor mange kr. om måneden koster den mere end den billigste?` },
+    { short: "Faste udgifter", q: `Hvad betaler ${c.name} hver måned?`, fact: "Faste udgifter kommer uanset hvad. Dem skal man kende, før man ved, hvad der er tilbage.", refl: `Hvilke faste udgifter kunne ${c.name} undvære, og hvor mange kr. om måneden ville det spare?` },
+    { short: "Mad og hverdag", q: `Hvordan vil ${c.name} leve i hverdagen?`, fact: "Det, der er tilbage efter de faste udgifter, er rådighedsbeløbet. Det skal række til hverdagen, og det er det tal, banken kigger på.", refl: "Nævn et behov og et ønske i hverdagen. Hvor mange kr. om måneden koster ønsket?" },
+    { short: "Opsparing", q: `Hvordan når ${c.name} sin drøm?`, fact: "Uforudsete udgifter kommer altid. Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.", refl: `Hvor mange kr. mere om måneden skal ${c.name} spare for at nå sin drøm 3 måneder hurtigere? Hvor i budgettet kan pengene komme fra?` },
+    { short: "Går det op?", q: `Har ${c.name} penge nok?`, fact: "Et budget, der ikke går op, bliver betalt med lån eller kreditkort, og det koster renter. Det er bedre at prioritere nu.", refl: "Hvad ændrede du for at få budgettet til at gå op, og hvor mange kr. om måneden gav det? Gik det op med det samme, så skriv, hvor mange kr. der var tilbage." },
+    { short: "Hvad nu hvis?", q: "Hvad sker der, hvis …?", fact: "Livet ændrer sig. Et budget er en plan, der skal kunne tilpasses, ikke et regnestykke, man laver én gang.", refl: `Hvilket scenarie rammer ${c.name} hårdest, og hvor mange kr. om måneden ændrer det budgettet?` },
   ];
 }
 

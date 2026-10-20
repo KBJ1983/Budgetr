@@ -149,6 +149,7 @@ export function StudentApp() {
             update((f) => ({ posts: f.posts ?? seedPosts(f) }));
             setScreen("budget");
           }}
+          onEdit={() => go(1)}
           onPdf={() => summaryPdf(code, flow, refl).catch(() => showToast("PDF’en kunne ikke laves. Prøv igen."))}
           onRestart={restart}
           mainSite={mainSite}

@@ -35,7 +35,7 @@ export interface Lesson {
 }
 
 const pct = (a: number, b: number) => `${Math.round((a / b) * 1000) / 10} %`.replace(".", ",");
-const refl = (step: number) => steps(CASES[0]!)[step - 1]!.refl!.replace(CASES[0]!.name, "din person");
+const refl = (step: number) => steps(CASES[0]!)[step - 1]!.refl!.replaceAll(CASES[0]!.name, "din person");
 const fasteAll = FASTE.reduce((a, f) => a + f.amt, 0);
 const mid = BOLIG[1];
 /** "Tømrerlærling" → "tømrerlærling", but "SU" stays. */
@@ -64,7 +64,7 @@ export const LESSONS: Lesson[] = [
     talk: ["Hvad betaler skatten til? Nævn tre ting, I selv bruger.", "Hvorfor betaler Mira mindre i skat end Jonas?", "Hvad overraskede jer mest ved lønsedlen?"],
     key: {
       title: "Lønsedlen",
-      note: "Skat og AM-bidrag står samlet på lønsedlen. AM-bidrag er 8 % af lønnen før skat.",
+      note: "Skat og AM-bidrag står samlet på lønsedlen. AM-bidrag er 8 % af lønnen før skat. Unge under 18 år betaler ikke AM-bidrag (fra 2026, til og med det år, man fylder 17).",
       cols: ["Person", "Før skat", "Skat og AM", "Udbetalt", "Andel", "AM-bidrag"],
       rows: CASES.map((c) => [caseRow(c), kr(c.gross), kr(c.tax), kr(c.net), pct(c.tax, c.gross), kr(c.gross * 0.08)]),
     },
@@ -210,7 +210,7 @@ export const LESSONS: Lesson[] = [
           cols: ["Ændring pr. md.", "Tilbage pr. md."],
           rows: ["Huslejen stiger 10 %", `Mister jobbet (indtægt ${kr(JOBLESS_INCOME)})`, "Flytter sammen (husleje halveres)", `Køber brugt bil på lån (${kr(CAR_COST)}/md.)`],
         },
-        { kind: "lines", q: `${refl(8)} Hvorfor?`, lines: 2 },
+        { kind: "lines", q: refl(8), lines: 3 },
         {
           kind: "fields",
           q: "Nøgletal fra Mit budget",
@@ -272,7 +272,7 @@ export const COURSE = {
     "budgetpro gemmer ingen navne. Eleverne bruger en kode, og deres valg og svar slettes sammen med klassen, når koderne udløber efter 30, 60 eller 90 dage.",
   glossary: [
     { t: "Løn før skat", d: "Det, man tjener, før skat og AM-bidrag er trukket." },
-    { t: "AM-bidrag", d: "Arbejdsmarkedsbidrag: 8 % af lønnen, som går til staten." },
+    { t: "AM-bidrag", d: "Arbejdsmarkedsbidrag: 8 % af lønnen, som går til staten. Unge under 18 år betaler det ikke." },
     { t: "Udbetalt løn", d: "Det, der kommer ind på kontoen." },
     { t: "Faste udgifter", d: "Udgifter, der kommer hver måned uanset hvad, fx forsikring og mobil." },
     { t: "Rådighedsbeløb", d: "Det, der er tilbage efter bolig og faste udgifter. Det skal række til hverdagen." },

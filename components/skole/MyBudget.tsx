@@ -119,13 +119,19 @@ export function MyBudget({ flow, update, onBack }: { flow: Flow; update: Update;
 
         <div className={s.side}>
           <form
-            className={s.card}
+            className={`${s.card} ${s.newCard}`}
             onSubmit={(e) => {
               e.preventDefault();
               addPost();
             }}
           >
-            <span className={s.cardTitle}>Ny budgetpost</span>
+            <div className={s.newHead}>
+              <span className={s.newPlus} aria-hidden="true">+</span>
+              <div>
+                <span className={s.cardTitle}>Ny budgetpost</span>
+                <p className={s.newHint}>Mangler der noget i budgettet? Tilføj det her.</p>
+              </div>
+            </div>
             <input className={s.input} value={nf.name} maxLength={40} onChange={(e) => setNf((x) => ({ ...x, name: e.target.value }))} placeholder="Fx Fitness, Gave, Telefon" aria-label="Navn på ny post" />
             <div className={s.chips} role="group" aria-label="Kategori">
               {CATS.map((cat) => (

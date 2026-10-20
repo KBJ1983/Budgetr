@@ -13,7 +13,7 @@ describe("skole-materiale", () => {
 
   it("asks the pupils' own reflection questions", () => {
     const sheetText = JSON.stringify(LESSONS.map((l) => l.sheet));
-    for (const n of [3, 8]) expect(sheetText).toContain(steps(CASES[0]!)[n - 1]!.refl!);
+    for (const n of [3, 8]) expect(sheetText).toContain(steps(CASES[0]!)[n - 1]!.refl!.replaceAll(CASES[0]!.name, "din person"));
   });
 
   it("gives the teacher the same numbers as the pupils' steps", () => {

@@ -74,7 +74,7 @@ describe("skole store", () => {
     expect(view.stats).toMatchObject({ started: 1, finished: 1, finishedOk: 1, topCase: "Sara", topBolig: { label: "Delelejlighed", pct: 100 } });
 
     const pupil = await classPupil(cls, code, dir);
-    expect(pupil?.answers[0]).toEqual({ q: "Hvor stor en del af lønnen gik til skat?", a: "En tredjedel" });
+    expect(pupil?.answers[0]).toEqual({ q: "Hvor stor en del af lønnen gik til skat og AM-bidrag? Svar i kr. og i procent af lønnen før skat.", a: "En tredjedel" });
     expect(pupil?.choices.find((c) => c.label === "Bolig")?.value).toBe("Delelejlighed, 4.800 kr.");
     expect(await classPupil(cls, other, dir)).toBeNull();
   });
