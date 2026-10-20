@@ -6,6 +6,8 @@ import { Shell } from "./Shell";
 import s from "./skole.module.css";
 
 type Mode = "login" | "opret";
+/** A test teacher's login (lib/skole-test-teachers.ts) – logs in without a mail. */
+const TEST_LOGIN = /^\s*l(æ|ae)rer\s*\d+\s*$/i;
 interface Sent {
   email: string;
   devLink?: string;
@@ -31,13 +33,14 @@ export function TeacherLogin({ email = "", start = "login" }: { email?: string; 
     if (mode === "opret") {
       const v = validateTeacher(values);
       if (!v.ok) return setErrors(v.errors);
-    } else if (!validateTeacher({ ...values, name: "xx", school: "xx" }).ok) {
+    } else if (!TEST_LOGIN.test(values.email) && !validateTeacher({ ...values, name: "xx", school: "xx" }).ok) {
       return setErrors({ email: "Skriv en gyldig e-mail, fx navn@skole.dk." });
     }
     setBusy(true);
     try {
       const r = await fetch(`/api/skole/auth/${mode}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
-      const j = (await r.json().catch(() => ({}))) as { errors?: Partial<Record<TeacherField, string>>; devLink?: string; devCode?: string };
+      const j = (await r.json().catch(() => ({}))) as { errors?: Partial<Record<TeacherField, string>>; devLink?: string; devCode?: string; loggedIn?: boolean };
+      if (r.ok && j.loggedIn) return window.location.reload();
       if (!r.ok) {
         if (j.errors) setErrors(j.errors);
         else setFail("Det lykkedes ikke. Prøv igen om lidt.");
@@ -98,7 +101,8 @@ export function TeacherLogin({ email = "", start = "login" }: { email?: string; 
                   <SchoolCheck school={values.school} />
                 </>
               )}
-              <Field id="laerer-mail" label="Din e-mail" type="email" value={values.email} error={errors.email} onChange={(v) => set("email", v)} autoComplete="email" placeholder="navn@skole.dk" />
+              {mode === "login" && <p className={s.hint}>Testlærere skriver deres testlogin, fx LÆRER1.</p>}
+              <Field id="laerer-mail" label="Din e-mail" type={mode === "login" ? "text" : "email"} value={values.email} error={errors.email} onChange={(v) => set("email", v)} autoComplete="email" placeholder="navn@skole.dk" />
               {fail && (
                 <span className={s.err} role="alert">
                   {fail}

@@ -11,6 +11,7 @@
 import { findGrant, grantCode, readGrant, useCode, waitingGrant } from "./agreements";
 import { orgActive, today, type Org } from "./owner";
 import { readLedger } from "./owner-store";
+import { isTestTeacher, TEST_SCHOOL } from "./skole-test-teachers";
 import { saveTeacher, type Teacher } from "./skole-teachers";
 
 /** Teachers made before this moment came before seats … */
@@ -47,6 +48,7 @@ export async function teacherSeat(t: Teacher, now = new Date(), dir?: string): P
       return { until: t.seat.until, school: org?.name ?? "" };
     }
   }
+  if (isTestTeacher(t.id) && day < EARLY_TEACHERS_UNTIL) return { until: EARLY_TEACHERS_UNTIL, school: TEST_SCHOOL, early: true };
   const testTeacher = process.env.NODE_ENV === "development" && t.email.endsWith("@eksempel.dk");
   if ((t.createdAt < EARLY_TEACHERS_BEFORE || testTeacher) && day < EARLY_TEACHERS_UNTIL) return { until: EARLY_TEACHERS_UNTIL, school: "", early: true };
   return null;
