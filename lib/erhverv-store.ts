@@ -28,8 +28,9 @@ export async function takeInquiry(email: string, now = new Date(), dir?: string)
   return true;
 }
 
-export async function saveInquiry(i: Inquiry, now = new Date(), dir?: string): Promise<string> {
+export async function saveInquiry(i: Inquiry, now = new Date(), dir?: string, source?: string): Promise<string> {
   const id = `${now.toISOString().replace(/[:.]/g, "-")}-${randomBytes(3).toString("hex")}`;
-  await openStore(dir).set(`erhverv/henvendelser/${id}.json`, JSON.stringify({ id, at: now.toISOString(), ...i }, null, 2));
+  const row = { id, at: now.toISOString(), ...i, ...(source ? { source } : {}) };
+  await openStore(dir).set(`erhverv/henvendelser/${id}.json`, JSON.stringify(row, null, 2));
   return id;
 }

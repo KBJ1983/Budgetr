@@ -3,6 +3,7 @@ import { sendMail } from "@/lib/auth-mail";
 import { inquiryMail, validateInquiry } from "@/lib/erhverv";
 import { saveInquiry, takeInquiry } from "@/lib/erhverv-store";
 import { ownerEmails } from "@/lib/owner-store";
+import { tryNoteGoal } from "@/lib/traffic-store";
 
 // The Erhverv page's contact form (lib/erhverv.ts). Saved in the store and mailed to the owner; "website" is a field
 // people never see, so a filled one is a bot and gets the same answer without anything being saved.
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
   if (!r.ok) return Response.json({ errors: r.errors }, { status: 400 });
   if (!(await takeInquiry(r.value.email))) return Response.json({ error: "limit" }, { status: 429 });
 
-  await saveInquiry(r.value);
+  await saveInquiry(r.value, undefined, undefined, await tryNoteGoal("henvendelse", req.headers));
   const origin = new URL(req.url).origin;
   const mail = inquiryMail(r.value, siteUrl(origin));
   for (const to of ownerEmails()) {

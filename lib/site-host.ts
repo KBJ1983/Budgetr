@@ -43,7 +43,7 @@ const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|js|mjs|css|map|json|txt|xml|woff2?
  */
 export function erhvervRoute(pathname: string): ErhvervRoute {
   if (pathname === "/") return { kind: "rewrite", path: "/erhverv" };
-  if (pathname === "/erhverv" || pathname.startsWith("/erhverv/") || pathname.startsWith("/_next/") || pathname.startsWith("/api/erhverv/")) return { kind: "pass" };
+  if (pathname === "/erhverv" || pathname.startsWith("/erhverv/") || pathname.startsWith("/_next/") || pathname.startsWith("/api/erhverv/") || pathname === "/api/besoeg") return { kind: "pass" };
   if (pathname.startsWith("/api/") || pathname.startsWith("/private/") || pathname.startsWith("/budgetr-app/")) return { kind: "main" };
   if (FILE.test(pathname)) return { kind: "pass" };
   return { kind: "main" };

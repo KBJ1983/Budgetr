@@ -459,3 +459,242 @@
 .ow-inq-summary {
   margin-bottom: 14px;
 }
+
+/* ---------- Trafik (components/owner/TrafficPanel.tsx) ---------- */
+.ow-tabbar {
+  margin: 0 0 8px;
+}
+.tr-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+.tr-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tr-presets .bx-btn[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-tx);
+}
+.tr-site {
+  width: auto;
+  min-width: 150px;
+}
+.tr-own {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.tr-own label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--tx-2);
+}
+.tr-period {
+  margin: 12px 0 0;
+}
+.tr-card {
+  padding: 16px;
+}
+.tr-trend {
+  margin-top: 16px;
+}
+.tr-tip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  min-height: 22px;
+  font-size: 13px;
+  color: var(--tx-2);
+}
+.tr-tip b {
+  color: var(--tx);
+}
+.tr-plot {
+  position: relative;
+  margin-top: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+.tr-max {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  font: 500 11px var(--font-mono);
+  color: var(--tx-3);
+}
+.tr-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 180px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--rule);
+}
+.tr-col {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: default;
+}
+.tr-col i {
+  display: block;
+  width: 100%;
+  min-height: 1px;
+  border-radius: 4px 4px 0 0;
+  background: var(--bar-rev);
+  opacity: 0.85;
+}
+.tr-col.is-on i,
+.tr-col:focus-visible i {
+  opacity: 1;
+  outline: 2px solid var(--tx);
+  outline-offset: 1px;
+}
+.tr-axis {
+  display: flex;
+  gap: 2px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--tx-3);
+}
+.tr-axis span {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: visible;
+}
+.tr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0 24px;
+}
+.tr-grid > .bx-section {
+  min-width: 0;
+}
+.tr-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+}
+.tr-note code {
+  font-size: 12px;
+  word-break: break-all;
+}
+@media (max-width: 600px) {
+  .tr-bars {
+    height: 140px;
+  }
+  .tr-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Trafik: kort (components/owner/TrafficMap.tsx) ---------- */
+.tr-map {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(220px, 2fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 16px;
+}
+.tr-map svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.tr-land {
+  fill: var(--band);
+  stroke: var(--rule);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.tr-dot {
+  fill: var(--bar-rev);
+  fill-opacity: 0.85;
+  stroke: var(--card);
+  stroke-width: 2;
+}
+.tr-map g.is-on .tr-dot {
+  fill-opacity: 1;
+  stroke: var(--tx);
+}
+.tr-pulse {
+  fill: none;
+  stroke: var(--bar-rev);
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tr-pulse 2.4s ease-out infinite;
+}
+@keyframes tr-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.tr-city {
+  font: 600 22px var(--font);
+  fill: var(--tx);
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.tr-places .bx-table tr.is-on td {
+  background: var(--band);
+}
+.tr-live {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: tr-blink 1.6s ease-in-out infinite;
+}
+@keyframes tr-blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+.tr-livesites {
+  font-size: 13px;
+}
+.tr-livepages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 13px;
+}
+@media (max-width: 760px) {
+  .tr-map {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tr-pulse,
+  .tr-live {
+    animation: none;
+  }
+  .tr-pulse {
+    display: none;
+  }
+}

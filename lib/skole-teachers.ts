@@ -36,6 +36,8 @@ export interface Teacher {
   lastRequestAt?: string;
   /** When the teacher made the one free class without a seat (lib/skole-seats.ts); set means the trial is used. */
   trialClassAt?: string;
+  /** Where the visit that signed the teacher up came from (lib/traffic.ts). */
+  source?: string;
 }
 
 /** A mail to send: "signup" until the e-mail is confirmed, then "login". */
@@ -100,14 +102,14 @@ async function issue(t: Teacher, now: Date, dir?: string): Promise<TeacherMail> 
  * Signs a teacher up, or – when the e-mail is already a teacher – hands out a login mail (a confirmed teacher keeps
  * their details; an unconfirmed one takes the new ones). Null when a mail went out less than TEACHER_RESEND_GAP_MS ago.
  */
-export async function signupTeacher(input: TeacherInput, now = new Date(), dir?: string): Promise<TeacherMail | null> {
+export async function signupTeacher(input: TeacherInput, now = new Date(), dir?: string, source?: string): Promise<TeacherMail | null> {
   const existing = await findTeacher(input.email, dir);
   if (existing) {
     if (throttled(existing, now)) return null;
     if (!existing.verifiedAt) Object.assign(existing, { name: input.name, school: input.school });
     return issue(existing, now, dir);
   }
-  const t: Teacher = { id: newId(), name: input.name, school: input.school, email: normalizeEmail(input.email), createdAt: now.toISOString() };
+  const t: Teacher = { id: newId(), name: input.name, school: input.school, email: normalizeEmail(input.email), createdAt: now.toISOString(), ...(source ? { source } : {}) };
   await openStore(dir).set(emailKey(t.email), JSON.stringify({ id: t.id }));
   return issue(t, now, dir);
 }

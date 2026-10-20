@@ -14,7 +14,7 @@ const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|js|mjs|css|map|json|txt|xml|woff2?
 
 /** What to do with a request path on the school host. */
 export function skoleRoute(pathname: string): SkoleRoute {
-  if (pathname === "/skole" || pathname.startsWith("/skole/") || pathname.startsWith("/_next/") || pathname.startsWith("/api/skole/")) return { kind: "pass" };
+  if (pathname === "/skole" || pathname.startsWith("/skole/") || pathname.startsWith("/_next/") || pathname.startsWith("/api/skole/") || pathname === "/api/besoeg") return { kind: "pass" };
   if (pathname.startsWith("/api/") || pathname.startsWith("/private/") || pathname.startsWith("/budgetr-app/index")) return { kind: "block" };
   if (FILE.test(pathname)) return { kind: "pass" };
   return { kind: "rewrite", path: pathname === "/" ? "/skole" : `/skole${pathname}` };

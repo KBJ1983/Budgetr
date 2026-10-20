@@ -23,6 +23,12 @@ export interface Store {
   del(key: string): Promise<void>;
   /** The names directly in a folder ("" is the top level), in no particular order. */
   list(folder: string): Promise<string[]>;
+  /** Adds to number fields of a record (a Redis hash; a JSON object on disk), made when missing. */
+  bump(key: string, by: Record<string, number>): Promise<void>;
+  /** Sets one field of a record unless it is there already; the field's value afterwards and whether it was new. */
+  claim(key: string, field: string, value: string): Promise<{ value: string; fresh: boolean }>;
+  /** Every field of a record made by bump or claim ({} when there is none). */
+  fields(key: string): Promise<Record<string, string>>;
 }
 
 export const dataDir = () => process.env.BUDGETR_DATA_DIR || path.join(process.cwd(), "data");
@@ -31,8 +37,38 @@ export const dataDir = () => process.env.BUDGETR_DATA_DIR || path.join(process.c
  * a save waits for the one before it. */
 const writing = new Map<string, Promise<void>>();
 
+/** Runs one change to a file after the one before it. */
+async function queued<T>(f: string, change: () => Promise<T>): Promise<T> {
+  const run = (writing.get(f) ?? Promise.resolve()).catch(() => {}).then(change);
+  const done = run.then(() => {}, () => {});
+  writing.set(f, done);
+  try {
+    return await run;
+  } finally {
+    if (writing.get(f) === done) writing.delete(f);
+  }
+}
+
 function diskStore(dir: string): Store {
   const file = (key: string) => path.join(dir, ...key.split("/"));
+  const readRecord = async (f: string): Promise<Record<string, string>> => {
+    try {
+      const x = JSON.parse(await readFile(f, "utf8"));
+      return x && typeof x === "object" ? x : {};
+    } catch {
+      return {};
+    }
+  };
+  const writeFileSafe = async (f: string, value: string) => {
+    await mkdir(path.dirname(f), { recursive: true });
+    // A temp file of its own, also when another process (a script) writes the same key.
+    const tmp = `${f}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
+    await writeFile(tmp, value, "utf8");
+    await rename(tmp, f).catch(async (e) => {
+      await unlink(tmp).catch(() => {});
+      throw e;
+    });
+  };
   return {
     async get(key) {
       try {
@@ -43,25 +79,7 @@ function diskStore(dir: string): Store {
       }
     },
     async set(key, value) {
-      const f = file(key);
-      const run = (writing.get(f) ?? Promise.resolve())
-        .catch(() => {})
-        .then(async () => {
-          await mkdir(path.dirname(f), { recursive: true });
-          // A temp file of its own, also when another process (a script) writes the same key.
-          const tmp = `${f}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
-          await writeFile(tmp, value, "utf8");
-          await rename(tmp, f).catch(async (e) => {
-            await unlink(tmp).catch(() => {});
-            throw e;
-          });
-        });
-      writing.set(f, run);
-      try {
-        await run;
-      } finally {
-        if (writing.get(f) === run) writing.delete(f);
-      }
+      await queued(file(key), () => writeFileSafe(file(key), value));
     },
     async add(key, value) {
       const f = file(key);
@@ -86,6 +104,28 @@ function diskStore(dir: string): Store {
       } catch {
         return [];
       }
+    },
+    async bump(key, by) {
+      const f = file(key);
+      await queued(f, async () => {
+        const r = await readRecord(f);
+        for (const [k, n] of Object.entries(by)) r[k] = String((Number(r[k]) || 0) + n);
+        await writeFileSafe(f, JSON.stringify(r));
+      });
+    },
+    async claim(key, field, value) {
+      const f = file(key);
+      return queued(f, async () => {
+        const r = await readRecord(f);
+        const had = r[field];
+        if (had !== undefined) return { value: had, fresh: false };
+        r[field] = value;
+        await writeFileSafe(f, JSON.stringify(r));
+        return { value, fresh: true };
+      });
+    },
+    async fields(key) {
+      return readRecord(file(key));
     },
   };
 }
@@ -119,6 +159,22 @@ export function redisStore(redis: Redis): Store {
     },
     async list(folder) {
       return redis.smembers(index(folder));
+    },
+    async bump(key, by) {
+      const [folder, name] = split(key);
+      const tx = redis.multi();
+      for (const [f, n] of Object.entries(by)) tx.hincrby(k(key), f, n);
+      await tx.sadd(index(folder), name).exec();
+    },
+    async claim(key, field, value) {
+      const [folder, name] = split(key);
+      const [fresh] = await redis.multi().hsetnx(k(key), field, value).sadd(index(folder), name).exec<[number, number]>();
+      if (fresh) return { value, fresh: true };
+      return { value: (await redis.hget<string>(k(key), field)) ?? value, fresh: false };
+    },
+    async fields(key) {
+      const all = await redis.hgetall<Record<string, unknown>>(k(key));
+      return Object.fromEntries(Object.entries(all ?? {}).map(([f, v]) => [f, String(v)]));
     },
   };
 }

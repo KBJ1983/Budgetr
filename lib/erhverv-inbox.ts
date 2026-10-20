@@ -25,6 +25,8 @@ export interface InquiryRow {
   doneAt?: string;
   /** The agreement made from it. */
   org?: string;
+  /** Where the visit that sent it came from (lib/traffic.ts). */
+  source?: string;
 }
 
 const str = (v: unknown) => (typeof v === "string" ? v : "");
@@ -48,6 +50,7 @@ function toRow(x: unknown): InquiryRow | null {
     billing: str(o.billing) || undefined,
     doneAt: str(o.doneAt) || undefined,
     org: str(o.org) || undefined,
+    source: str(o.source) || undefined,
   };
 }
 

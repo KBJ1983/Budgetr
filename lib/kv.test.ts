@@ -7,12 +7,21 @@ import { openStore, redisStore, type Store } from "./kv";
 
 /** Just the Redis calls lib/kv.ts makes, kept in memory. */
 function fakeRedis() {
-  const strings = new Map<string, string>(), sets = new Map<string, Set<string>>();
+  const strings = new Map<string, string>(), sets = new Map<string, Set<string>>(), hashes = new Map<string, Map<string, string>>();
   const set = (k: string) => sets.get(k) ?? sets.set(k, new Set()).get(k)!;
+  const hash = (k: string) => hashes.get(k) ?? hashes.set(k, new Map()).get(k)!;
   const r = {
     get: async (k: string) => strings.get(k) ?? null,
     set: async (k: string, v: string, o?: { nx?: boolean }) => (o?.nx && strings.has(k) ? null : (strings.set(k, v), "OK")),
-    del: async (k: string) => Number(strings.delete(k)),
+    del: async (k: string) => Number(strings.delete(k) || hashes.delete(k)),
+    hincrby: async (k: string, f: string, n: number) => {
+      const v = Number(hash(k).get(f) ?? 0) + n;
+      hash(k).set(f, String(v));
+      return v;
+    },
+    hsetnx: async (k: string, f: string, v: string) => (hash(k).has(f) ? 0 : (hash(k).set(f, v), 1)),
+    hget: async (k: string, f: string) => hash(k).get(f) ?? null,
+    hgetall: async (k: string) => (hashes.has(k) ? Object.fromEntries(hash(k)) : null),
     sadd: async (k: string, m: string) => (set(k).add(m), 1),
     srem: async (k: string, m: string) => Number(set(k).delete(m)),
     smembers: async (k: string) => [...set(k)],
@@ -23,6 +32,8 @@ function fakeRedis() {
         del: (k: string) => (ops.push(() => r.del(k)), tx),
         sadd: (k: string, m: string) => (ops.push(() => r.sadd(k, m)), tx),
         srem: (k: string, m: string) => (ops.push(() => r.srem(k, m)), tx),
+        hincrby: (k: string, f: string, n: number) => (ops.push(() => r.hincrby(k, f, n)), tx),
+        hsetnx: (k: string, f: string, v: string) => (ops.push(() => r.hsetnx(k, f, v)), tx),
         exec: async () => Promise.all(ops.map((f) => f())),
       };
       return tx;
@@ -62,6 +73,18 @@ describe.each<[string, () => Store]>([
     await s.del("backups/kbj/missing.json");
     expect(await s.list("backups/kbj")).toEqual(["b.json"]);
     expect(await s.get("backups/kbj/a.json")).toBeNull();
+  });
+
+  it("keeps counter records", async () => {
+    const s = make();
+    expect(await s.fields("stats/dag/2026-10-20.json")).toEqual({});
+    await Promise.all([s.bump("stats/dag/2026-10-20.json", { a: 1, b: 2 }), s.bump("stats/dag/2026-10-20.json", { a: 1 })]);
+    expect(await s.fields("stats/dag/2026-10-20.json")).toEqual({ a: "2", b: "2" });
+    expect(await s.claim("stats/besoeg/x.json", "h", "Google")).toEqual({ value: "Google", fresh: true });
+    expect(await s.claim("stats/besoeg/x.json", "h", "LinkedIn")).toEqual({ value: "Google", fresh: false });
+    expect(await s.list("stats/besoeg")).toEqual(["x.json"]);
+    await s.del("stats/besoeg/x.json");
+    expect(await s.fields("stats/besoeg/x.json")).toEqual({});
   });
 
   it("takes two saves of the same key at once", async () => {

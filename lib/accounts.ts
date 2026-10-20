@@ -66,6 +66,8 @@ export interface Account extends Holder {
   phone: string;
   createdAt: string;
   members?: Member[];
+  /** Where the visit that made the account came from (lib/traffic.ts), for the owner's traffic overview. */
+  source?: string;
 }
 
 /** Who logged in: the account, and the member when it wasn't the primary e-mail. */
@@ -157,7 +159,7 @@ async function issue(l: Login, purpose: Purpose, now: Date, dir: string | undefi
  * or a member gets a login link (nothing is changed), an unconfirmed account takes the new details and a new
  * confirm link. Returns null when a mail went out to that e-mail less than RESEND_GAP_MS ago.
  */
-export async function signup(input: SignupInput, now = new Date(), dir?: string): Promise<Link | null> {
+export async function signup(input: SignupInput, now = new Date(), dir?: string, source?: string): Promise<Link | null> {
   const existing = await findLogin(input.email, dir);
   if (existing) {
     if (throttled(holderOf(existing), now)) return null;
@@ -165,7 +167,7 @@ export async function signup(input: SignupInput, now = new Date(), dir?: string)
     Object.assign(existing.account, { firstName: input.firstName, lastName: input.lastName, phone: input.phone });
     return issue(existing, "verify", now, dir);
   }
-  const a: Account = { id: newId(), ...input, createdAt: now.toISOString() };
+  const a: Account = { id: newId(), ...input, createdAt: now.toISOString(), ...(source ? { source } : {}) };
   return issue({ account: a }, "verify", now, dir);
 }
 

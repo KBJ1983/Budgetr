@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Hanken_Grotesk } from "next/font/google";
+import { Track } from "@/components/Track";
 import "./globals.css";
 
 const geist = Geist({
@@ -33,7 +34,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="da" className={`${geist.variable} ${geistMono.variable} ${logo.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Track />
+      </body>
     </html>
   );
 }

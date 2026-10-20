@@ -26,6 +26,7 @@ import { inquiryChoices, sectorLabel } from "@/lib/erhverv";
 import type { InquiryRow } from "@/lib/erhverv-inbox";
 import { isPackCount, isPackMonths, packLabel, packPrice } from "@/lib/erhverv-packs";
 import type { OwnerData } from "@/lib/owner-store";
+import { TrafficPanel } from "./TrafficPanel";
 
 const kr = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 2 })} kr`;
 const num = (n: number) => n.toLocaleString("da-DK");
@@ -386,10 +387,17 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
   const [filter, setFilter] = useState<Category | "alle">("alle");
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  // "Overblik" (the numbers below) or "Trafik" (components/owner/TrafficPanel.tsx); #trafik opens the second.
+  const [tab, setTab] = useState<"overblik" | "trafik">("overblik");
 
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: light)").matches) setTheme("light");
+    if (location.hash === "#trafik") setTab("trafik");
   }, []);
+  const openTab = (t: "overblik" | "trafik") => {
+    setTab(t);
+    history.replaceState(null, "", t === "trafik" ? "#trafik" : location.pathname);
+  };
 
   // New henvendelser show up without a reload: fetch again when the tab is back in view, and once a minute.
   const editingRef = useRef(false);
@@ -496,7 +504,14 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           </Link>
           <div className="bx-top-right">
             <span className="bx-muted">Ejeroverblik · {date(data.today)}</span>
-            <a href="#henvendelser" className="bx-btn ow-inq-link" onClick={unfoldInquiries}>
+            <a
+              href="#henvendelser"
+              className="bx-btn ow-inq-link"
+              onClick={() => {
+                if (tab !== "overblik") setTab("overblik");
+                requestAnimationFrame(unfoldInquiries);
+              }}
+            >
               Henvendelser
               {waiting.length ? <span className="ow-badge">{num(waiting.length)}</span> : null}
             </a>
@@ -529,6 +544,21 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           </div>
         ) : null}
 
+        <div className="bx-tabbar ow-tabbar">
+          <div className="bx-tabs" role="tablist">
+            <button type="button" role="tab" className="bx-tab" aria-selected={tab === "overblik"} onClick={() => openTab("overblik")}>
+              Overblik
+            </button>
+            <button type="button" role="tab" className="bx-tab" aria-selected={tab === "trafik"} onClick={() => openTab("trafik")}>
+              Trafik
+            </button>
+          </div>
+        </div>
+
+        {tab === "trafik" ? (
+          <TrafficPanel />
+        ) : (
+          <>
         {newest ? (
           <a href="#henvendelser" className="ow-alert" onClick={unfoldInquiries}>
             <span className="ow-badge">{num(waiting.length)}</span>
@@ -913,6 +943,8 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             <div className="bx-empty">Ingen udgifter endnu. Tilføj fx hosting, mail, domæne og markedsføring.</div>
           )}
         </section>
+          </>
+        )}
       </main>
 
       {editing?.kind === "plan" ? (

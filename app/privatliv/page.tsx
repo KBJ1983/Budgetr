@@ -16,7 +16,7 @@ const mail = <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>;
 /**
  * Privacy policy and cookie list (also at /skole/privatliv). Keep it in step with what the code actually stores:
  * lib/accounts.ts (deleteAccount), lib/budget-file.ts, lib/session.ts (cookies), lib/owner-store.ts (activity),
- * lib/send-file.ts, lib/skole-store.ts, lib/skole-teachers.ts, lib/erhverv-inbox.ts, the app's localStorage keys and
+ * lib/send-file.ts, lib/skole-store.ts, lib/skole-teachers.ts, lib/erhverv-inbox.ts, lib/traffic-store.ts (page views), the app's localStorage keys and
  * the processors in the env (Vercel, Upstash, Resend, GatewayAPI).
  */
 export default function PrivacyPage() {
@@ -62,6 +62,18 @@ export default function PrivacyPage() {
               <td>Hvornår der sidst er logget ind (højst én gang i timen)</td>
               <td>For at drive tjenesten og vide, hvor mange der bruger den</td>
               <td>Vores legitime interesse (art. 6, stk. 1, f)</td>
+            </tr>
+            <tr>
+              <td>
+                Besøg på hjemmesiden: hvilke sider der ses, hvilken side du kom fra, om det er mobil eller computer, og den
+                omtrentlige by, som vores hostingleverandør udleder af IP-adressen
+              </td>
+              <td>
+                For at vide, hvor mange der besøger siden, og hvor de finder os. Vi gemmer kun tal pr. dag, ingen IP-adresse og
+                ingen cookie. Opretter du en bruger eller sender en forespørgsel, gemmer vi, hvor besøget kom fra (fx
+                &quot;Google&quot;)
+              </td>
+              <td>Vores legitime interesse</td>
             </tr>
             <tr>
               <td>Antal filer sendt på mail pr. dag og modtagerens e-mail</td>
@@ -125,6 +137,10 @@ export default function PrivacyPage() {
         </li>
         <li>Engangskoder og login-links holder i 20 minutter, en bekræftelse i 48 timer og en invitation i 7 dage.</li>
         <li>Skoleklasser slettes, når deres dage er gået. En lærerbruger slettes, når læreren beder os om det.</li>
+        <li>
+          Tal for besøg gemmes pr. dag og by uden oplysninger om, hvem der besøgte siden. Oversigten over, hvem der er på siden
+          lige nu (by og side), slettes efter 10 minutter.
+        </li>
         <li>Henvendelser fra Erhverv-siden gemmes, så længe vi har brug for dem for at svare og eventuelt lave en aftale.</li>
         <li>Betalinger og aftaler gemmes i 5 år, som bogføringsloven kræver.</li>
       </ul>
@@ -164,7 +180,10 @@ export default function PrivacyPage() {
       <h2 id="cookies">Cookies og lagring i browseren</h2>
       <p>
         budgetpro bruger kun cookies og lagring, der er nødvendige, for at siden virker. Vi bruger ingen cookies til
-        statistik, reklame eller sporing, og derfor beder vi dig ikke om samtykke. Skrifttyperne hentes fra vores eget domæne,
+        statistik, reklame eller sporing, og derfor beder vi dig ikke om samtykke. Besøg tælles uden cookies og uden at gemme
+        noget i din browser: en besøgende genkendes kun samme dag ud fra en uigenkendelig udgave af IP-adresse og browser, og
+        den slettes efter to dage. Har din browser slået &quot;Global Privacy Control&quot; eller &quot;Do Not Track&quot; til, tæller
+        vi dig ikke. Skrifttyperne hentes fra vores eget domæne,
         så din browser kontakter ikke andre for at vise siden.
       </p>
       <div className={legal.tableWrap}>
