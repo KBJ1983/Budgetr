@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { FeatureTour, type TourSlide } from "./FeatureTour";
-import { BellIcon, BranchIcon, CalendarIcon, DownloadIcon, PlusIcon, TransferIcon, UploadIcon } from "./icons";
+import { BellIcon, BranchIcon, CalendarIcon, DownloadIcon, LoanIcon, PlusIcon, TransferIcon, UploadIcon } from "./icons";
 
 const icon = (node: ReactNode) => ({ kind: "icon", icon: node }) as const;
 
@@ -17,7 +17,7 @@ const SLIDES: readonly TourSlide[] = [
   {
     label: "Scenarier",
     title: "Kend rådigheden, før I byder.",
-    body: "Hvad sker der, hvis I køber bolig, går på barsel eller skifter job? Hvert scenarie holdes op mod det nuværende budget.",
+    body: "Opret et scenarie og prøv en ændring uden at røre budgettet: bolig, barsel eller nyt job. Hvert scenarie holdes op mod det nuværende budget.",
     visual: { kind: "photo", src: "/landing/foto-noegler.jpg", alt: "En familie, der får nøglerne til et nyt hjem", position: "center 45%" },
   },
   {
@@ -25,6 +25,12 @@ const SLIDES: readonly TourSlide[] = [
     title: "Se, hvornår lånene er betalt ud.",
     body: "Restgæld, rente og ydelse giver en beregnet slutdato for hvert lån, og en tidslinje viser, hvor meget der frigives om måneden.",
     visual: { kind: "shot", name: "laan", alt: "Overblik over lån: samlet restgæld, ydelser og renter", width: 2360, height: 1474 },
+  },
+  {
+    label: "Fremskriv lån",
+    title: "Hvad skylder I om fem år?",
+    body: "Vælg en dato, og se hvad restgælden på hvert lån er nede på til den tid, regnet ud fra restgæld, rente og ydelse.",
+    visual: icon(<LoanIcon size={34} strokeWidth={1.5} />),
   },
   {
     label: "Budgetposter",
@@ -98,11 +104,11 @@ const ALL: readonly { title: string; items: readonly string[] }[] = [
   },
   {
     title: "Lån og opsparing",
-    items: ["Restgæld, rente og beregnet slutdato for hvert lån", "Tidslinje over det, der frigives", "Opsparingsmål med dato eller fast beløb pr. måned", "Feriepenge og bonus som ekstra indbetalinger"],
+    items: ["Restgæld, rente og beregnet slutdato for hvert lån", "Fremskriv restgælden til en dato, du vælger", "Tidslinje over det, der frigives", "Opsparingsmål med dato eller fast beløb pr. måned", "Feriepenge og bonus som ekstra indbetalinger"],
   },
   {
     title: "Planlægning",
-    items: ["Scenarier holdt op mod det nuværende budget", "Kladder med nye budgetter ved siden af det, du har", "Guide i 9 trin til et nyt budget"],
+    items: ["Opret scenarier og hold dem op mod det nuværende budget", "Kladder med nye budgetter ved siden af det, du har", "Guide i 9 trin til et nyt budget"],
   },
   {
     title: "Beskeder",

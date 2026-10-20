@@ -209,9 +209,10 @@ export function FinalCta() {
         <div className={styles.ctaInner}>
           <Logo fontSize={36} tone="lime" />
           <h2 id="cta-title" className={styles.ctaTitle}>
-            Giv din økonomi et hjem. Det tager 29 minutter.
+            Slip for de mange versioner af Excel-budgettet.
           </h2>
-          <p className={styles.ctaBody}>Prøv gratis i 30 dage, følg guiden, og se med det samme, hvad du har til rådighed. Betalingskortet skal først bruges, når de 30 dage er gået.</p>
+          <p className={styles.ctaLead}>Ét samlet budget. Tilgængeligt overalt.</p>
+          <p className={styles.ctaBody}>Prøv gratis i 30 dage, og følg guiden. Betalingskortet skal først bruges, når de 30 dage er gået.</p>
           <div className={styles.ctaForm}>
             <SignupForm idPrefix="cta" centered />
           </div>

@@ -1012,6 +1012,11 @@
   overflow: hidden;
   background: #f3f5f7;
 }
+.devPhoneScreen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 
 /* Deler du økonomi: photo with the screenshot overlapping its lower edge. */
 .sharePhotoWrap {
@@ -1525,6 +1530,13 @@
   font-weight: 700;
   text-wrap: balance;
 }
+.ctaLead {
+  margin: -8px 0 0;
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
 .ctaBody {
   margin: 0;
   max-width: 560px;
@@ -2028,6 +2040,10 @@
   .ctaTitle {
     font-size: 36px;
     line-height: 1.08;
+  }
+  .ctaLead {
+    margin-top: -4px;
+    font-size: 21px;
   }
   .ctaBody {
     font-size: 17px;

@@ -160,7 +160,10 @@ export function Availability() {
   );
 }
 
-/** A laptop and a phone with the overview (bank's rådighedsbeløb), like the devices on the Skole front page. */
+/**
+ * A laptop and a phone with the overview (bank's rådighedsbeløb), like the devices on the Skole front page. The phone
+ * always shows the light theme (user's wish); the laptop follows the visitor's theme.
+ */
 function AvailabilityDevices() {
   return (
     <div className={styles.devices}>
@@ -182,7 +185,7 @@ function AvailabilityDevices() {
       </div>
       <div className={styles.devPhone}>
         <div className={styles.devPhoneScreen}>
-          <ThemeShot name="mobil" alt="Overblik og rådighedsbeløbet på en mobil" width={780} height={1560} sizes="160px" />
+          <Image src="/landing/mobil-light.jpg" alt="Overblik og rådighedsbeløbet på en mobil" width={780} height={1560} sizes="160px" />
         </div>
       </div>
     </div>
