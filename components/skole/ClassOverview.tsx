@@ -185,6 +185,9 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
           </>
         )}
         <div className={`${s.actions} ${s.noPrint}`}>
+          <Link className={`${s.btn} ${s.btnPrimary}`} href={`/skole/klasse/${initial.id}/materiale`}>
+            Undervisningsmateriale
+          </Link>
           <Link className={s.btn} href="/skole/laerer">
             Til mine klasser
           </Link>

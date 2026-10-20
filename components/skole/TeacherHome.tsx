@@ -70,6 +70,9 @@ export function TeacherHome({
         <div className={`${s.titleRow} ${s.noPrint}`}>
           <h1 className={s.q}>Mine klasser</h1>
           <span className={s.note}>{school}</span>
+          <Link className={s.small} href="/skole/materiale">
+            Undervisningsmateriale
+          </Link>
           <button type="button" className={`${s.btn} ${s.btnSmall}`} style={{ marginLeft: "auto" }} onClick={() => void logout()}>
             Log ud
           </button>
@@ -180,9 +183,14 @@ function ClassCard({ c, onCopied }: { c: ClassSummary; onCopied: (msg: string) =
             Oprettet {dayMonthYear(new Date(c.created))} · {c.codes.length} elevkoder · {c.started} i gang · {c.finished} færdige
           </span>
         </div>
-        <Link className={`${s.btn} ${s.btnSmall} ${s.btnPrimary}`} href={`/skole/klasse/${c.id}`}>
-          Åbn klasse
-        </Link>
+        <div className={s.classBtns}>
+          <Link className={`${s.btn} ${s.btnSmall}`} href={`/skole/klasse/${c.id}/materiale`}>
+            Materiale
+          </Link>
+          <Link className={`${s.btn} ${s.btnSmall} ${s.btnPrimary}`} href={`/skole/klasse/${c.id}`}>
+            Åbn klasse
+          </Link>
+        </div>
       </div>
       <p className={`${s.expirySmall} ${s.noPrint}`} suppressHydrationWarning>
         Udløber den {dayMonthYear(new Date(c.expires))} (om {daysLeft} {daysLeft === 1 ? "dag" : "dage"})

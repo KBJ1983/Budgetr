@@ -156,6 +156,12 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
               </article>
             ))}
           </div>
+          <p className={l.body}>
+            Til forløbet hører en forløbsbeskrivelse, en lærervejledning og et elevark til hver lektion.{" "}
+            <a href={`${base}/materiale`} className={l.underline}>
+              Se og print materialet
+            </a>
+          </p>
         </div>
       </section>
 

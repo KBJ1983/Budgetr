@@ -268,6 +268,7 @@
 .expiry { margin: 0; font-weight: 600; font-size: 17px; line-height: 1.5; color: var(--sun-ink-2); background: var(--sun-bg); border-left: 4px solid var(--sun-ink); border-radius: 12px; padding: 12px 16px; }
 .classCard { gap: 10px; }
 .classHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.classBtns { display: flex; gap: 8px; }
 .expirySmall { margin: 0; font-weight: 600; font-size: 15px; color: var(--sun-ink-2); }
 .codeUntil { margin-left: auto; font-size: 12px; color: var(--ink-2); }
 .linkBtn { all: unset; cursor: pointer; font-weight: 600; letter-spacing: 0.04em; color: var(--navy); text-decoration: underline; text-underline-offset: 3px; }
