@@ -206,20 +206,14 @@ export function FinalCta() {
   return (
     <section className={styles.ctaWrap} aria-labelledby="cta-title">
       <div className={styles.cta}>
-        <div className={styles.ctaCircle} aria-hidden="true" />
-        <div className={styles.ctaCards} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className={styles.ctaInner} data-reveal-group>
-          <Logo fontSize={36} dark />
+        <div className={styles.ctaInner}>
+          <Logo fontSize={36} tone="lime" />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Giv din økonomi et hjem. Det tager 29 minutter.
           </h2>
           <p className={styles.ctaBody}>Prøv gratis i 30 dage, følg guiden, og se med det samme, hvad du har til rådighed. Betalingskortet skal først bruges, når de 30 dage er gået.</p>
           <div className={styles.ctaForm}>
-            <SignupForm idPrefix="cta" variant="dark" centered />
+            <SignupForm idPrefix="cta" centered />
           </div>
         </div>
       </div>

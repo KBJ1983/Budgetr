@@ -87,7 +87,8 @@ for (const theme of ["light", "dark"]) {
       st.textContent = "nextjs-portal{display:none!important} *{caret-color:transparent!important}" + css;
       document.head.append(st);
     }, s.css ?? "");
-    if (s.tab) await page.locator(`.tabs [data-page="${s.tab}"]`).click();
+    // On phones the pages sit in the bottom bar (.mnav); the top tabs are hidden there.
+    if (s.tab) await page.locator(`${s.mobile ? ".mnav" : ".tabs"} [data-page="${s.tab}"]`).click();
     if (s.notes) await page.locator("#dlgNote").waitFor();
     if (s.settings) {
       // The app opens a settings page from any [data-set] element (its functions are not on window).

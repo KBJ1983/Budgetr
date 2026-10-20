@@ -1498,65 +1498,14 @@
 .ctaWrap {
   padding: 0 var(--gutter) var(--gutter);
 }
+/* A full lime band (the complementary colour, like Skole's solgul closing) with midnight text; it stands still – no cards,
+   circles or reveal. */
 .cta {
-  position: relative;
-  overflow: hidden;
   max-width: 1280px;
   margin: 0 auto;
-  background: var(--v-dark);
-  color: var(--v-dark-text);
-  border-radius: 36px;
-}
-.ctaCircle {
-  position: absolute;
-  top: -260px;
-  left: -200px;
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
-  background: var(--v-circle);
-}
-/* Floating cards on the final call to action (the logo's cards), animated in the Motion block. */
-.ctaCards span {
-  position: absolute;
-  border-radius: 20px;
-  pointer-events: none;
-}
-.ctaCards span:nth-child(1) {
-  right: 7%;
-  top: 64px;
-  width: 150px;
-  height: 100px;
   background: var(--v-lime);
-  rotate: 9deg;
-}
-.ctaCards span:nth-child(2) {
-  right: 13%;
-  bottom: 56px;
-  width: 190px;
-  height: 126px;
-  background: var(--v-dark-2nd);
-  border: 1.5px solid var(--v-dark-rule);
-  rotate: -8deg;
-}
-.ctaCards span:nth-child(3) {
-  left: 8%;
-  bottom: 80px;
-  width: 120px;
-  height: 80px;
-  border: 2px solid rgba(212, 242, 107, 0.55);
-  rotate: -5deg;
-}
-@media (max-width: 1019.98px) {
-  .ctaCards span:nth-child(1) {
-    top: 24px;
-    width: 96px;
-    height: 64px;
-  }
-  .ctaCards span:nth-child(2),
-  .ctaCards span:nth-child(3) {
-    display: none;
-  }
+  color: var(--v-ink);
+  border-radius: 36px;
 }
 .ctaInner {
   position: relative;
@@ -1581,7 +1530,13 @@
   max-width: 560px;
   font-size: 18px;
   line-height: 1.6;
-  color: var(--v-dark-2);
+  color: var(--v-ink-2);
+}
+.cta .label {
+  color: var(--v-ink-2);
+}
+.cta .input {
+  border-color: var(--v-ink);
 }
 .ctaForm {
   width: 100%;
@@ -2064,12 +2019,6 @@
   .cta {
     border-radius: 24px;
   }
-  .ctaCircle {
-    width: 380px;
-    height: 380px;
-    top: -180px;
-    left: -160px;
-  }
   .ctaInner {
     padding: 64px 20px;
     align-items: stretch;
@@ -2211,15 +2160,6 @@
     background-size: 100% 0.12em;
   }
 }
-@keyframes cardFloat {
-  0%,
-  100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(6px, -14px) rotate(2.5deg);
-  }
-}
 @keyframes breathe {
   0%,
   100% {
@@ -2245,30 +2185,15 @@
   .accent {
     animation: drawLine 0.8s cubic-bezier(0.65, 0, 0.35, 1) 0.75s both;
   }
-  .ctaCards span {
-    animation: cardFloat 8s ease-in-out infinite;
-  }
-  .ctaCards span:nth-child(2) {
-    animation-duration: 10s;
-    animation-delay: -3s;
-  }
-  .ctaCards span:nth-child(3) {
-    animation-duration: 7s;
-    animation-delay: -5s;
-  }
   .trustCircle,
-  .quotesCircle,
-  .ctaCircle {
+  .quotesCircle {
     animation: breathe 16s ease-in-out infinite;
   }
   .quotesCircle {
     animation-delay: -5s;
   }
-  .ctaCircle {
-    animation-delay: -9s;
-  }
   /* Headlines below the fold wipe up out of a mask when their block comes into view. */
-  .page :global([data-reveal-state]) :is(.h2, .ctaTitle, .bannerTitle) {
+  .page :global([data-reveal-state]) :is(.h2, .bannerTitle) {
     transition:
       clip-path 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 80ms),
       transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 80ms);
@@ -2276,7 +2201,7 @@
   }
   /* Only headlines inside an observed block: a clip on the observed element itself would hide it from the
      IntersectionObserver, so it would never be shown (the final call to action's title just fades up). */
-  .page :global([data-reveal-state="pending"]) :is(.h2, .ctaTitle, .bannerTitle) {
+  .page :global([data-reveal-state="pending"]) :is(.h2, .bannerTitle) {
     clip-path: inset(0 -6% 100% -6%);
     transform: translateY(0.35em);
   }
