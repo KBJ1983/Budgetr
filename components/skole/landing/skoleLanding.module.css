@@ -1082,3 +1082,115 @@
     padding-bottom: 56px;
   }
 }
+
+/* Teaching material: the text, and the printed sheets with the phone on top (real shots, `pnpm shots:skole`). */
+.matSplit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 48px 64px;
+}
+.matList {
+  list-style: none;
+  margin: 4px 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.matList li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 18px;
+  border-left: 3px solid var(--sun);
+  font: 400 16px/1.5 var(--font-geist);
+  color: var(--body);
+}
+.matList b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.matStage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 560px;
+  justify-self: center;
+}
+.matSheet {
+  position: absolute;
+  top: 4%;
+  right: 4%;
+  width: 66%;
+  aspect-ratio: 210 / 297;
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  transform: rotate(2deg);
+  box-shadow: 0 2px 4px rgba(14, 27, 44, 0.08), 0 24px 48px -16px rgba(14, 27, 44, 0.3);
+}
+.matSheetBack {
+  top: 0;
+  right: 20%;
+  transform: rotate(-5deg);
+  opacity: 0.95;
+}
+.matPhone {
+  left: 2%;
+  right: auto;
+  bottom: 0;
+  width: 31%;
+  min-width: 120px;
+}
+.matChip {
+  position: absolute;
+  right: 0;
+  bottom: 6%;
+  background: var(--night);
+  color: var(--paper);
+  font: 600 14px var(--font-geist);
+  padding: 9px 14px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px -10px rgba(14, 27, 44, 0.5);
+}
+.matChip::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sun);
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+@media (max-width: 900px) {
+  .matSplit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .matStage {
+    aspect-ratio: 4 / 5;
+  }
+  .matSheet {
+    width: 74%;
+    right: 0;
+  }
+  .matSheetBack {
+    right: 18%;
+  }
+  .matPhone {
+    left: 0;
+    width: 36%;
+    padding: 6px;
+    border-radius: 24px;
+  }
+  .matPhone .phoneScreen {
+    border-radius: 19px;
+  }
+  .matChip {
+    font-size: 13px;
+    bottom: 2%;
+  }
+}

@@ -156,12 +156,48 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
               </article>
             ))}
           </div>
-          <p className={l.body}>
-            Til forløbet hører en forløbsbeskrivelse, en lærervejledning og et elevark til hver lektion.{" "}
-            <a href={`${base}/materiale`} className={l.underline}>
-              Se og print materialet
-            </a>
-          </p>
+        </div>
+      </section>
+
+      <section id="materiale" className={l.sand} aria-labelledby="materiale-h">
+        <div className={`${l.inner} ${l.section} ${l.matSplit}`}>
+          <div className={l.col}>
+            <span className={l.kicker}>Undervisningsmateriale</span>
+            <h2 id="materiale-h" className={`${l.h2} ${l.h2s}`}>
+              Papir og skærm, der hænger sammen.
+            </h2>
+            <p className={l.body}>
+              Til hver lektion er der et elevark, som følger trinene på skærmen. Eleven læser lønsedlen på trin 2 og skriver tallene ind i opgave 3,
+              regner skatten i procent og tager arket med til opsamlingen.
+            </p>
+            <ul className={l.matList}>
+              {MATERIAL.map((x) => (
+                <li key={x.t}>
+                  <b>{x.t}</b>
+                  <span>{x.b}</span>
+                </li>
+              ))}
+            </ul>
+            <div>
+              <a href={`${base}/materiale`} className={l.btnDark}>
+                Se og print materialet
+              </a>
+            </div>
+          </div>
+          <div className={l.matStage}>
+            <div className={`${l.matSheet} ${l.matSheetBack}`}>
+              <Image src="/skole/materiale-vejledning.jpg" alt="Lærervejledning til lektion 1 med lektionen trin for trin og tal til tavlen" fill sizes="(max-width: 900px) 60vw, 380px" />
+            </div>
+            <div className={l.matSheet}>
+              <Image src="/skole/materiale-elevark.jpg" alt="Elevark til lektion 1 med elevkoden BLÅ-ORM-47 og opgaver om lønsedlen" fill sizes="(max-width: 900px) 70vw, 420px" />
+            </div>
+            <div className={`${l.phone} ${l.matPhone}`}>
+              <div className={l.phoneScreen}>
+                <Image src="/skole/trin2-mobil.jpg" alt="Trin 2, lønsedlen, på en mobil med samme elevkode" fill sizes="(max-width: 900px) 34vw, 200px" style={{ objectFit: "cover", objectPosition: "top" }} />
+              </div>
+            </div>
+            <span className={l.matChip}>Trin 2 på skærmen · opgave 3 på arket</span>
+          </div>
         </div>
       </section>
 
@@ -458,6 +494,12 @@ const LESSONS = [
   { n: 2, steps: "Trin 3–5", t: "Bolig, faste udgifter og hverdag", b: "Valg med konsekvenser. Budgetmåleren viser med det samme, hvad der er tilbage.", tags: ["Rådighedsbeløb", "Behov og ønsker"], tone: "yellow" },
   { n: 3, steps: "Trin 6–7", t: "Opsparing og drømme", b: "Buffer og et opsparingsmål med en dato. Går budgettet ikke op, skal eleven gå tilbage og prioritere.", tags: ["Buffer", "Mål med dato"], tone: "light" },
   { n: 4, steps: "Trin 8 + Mit budget", t: "Hvad nu hvis …?", b: "Huslejen stiger, jobbet forsvinder, man flytter sammen. Til sidst bygger eleven sit eget budget med poster og nøgletal.", tags: ["Scenarier", "Nøgletal"], tone: "dark" },
+];
+
+const MATERIAL = [
+  { t: "Elevark med elevens kode", b: "Ét ark pr. lektion. Print det med hver elevs kode på, så arket også er elevens login." },
+  { t: "Lærervejledning", b: "Mål, lektionen minut for minut, spørgsmål til samtalen og tal til tavlen." },
+  { t: "Forløbsbeskrivelse", b: "Formål, læringsmål og de fire lektioner på to sider, til årsplanen eller kollegerne." },
 ];
 
 const FEATURES = [

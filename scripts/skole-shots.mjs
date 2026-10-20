@@ -1,6 +1,7 @@
 // Screenshots of the real budgetpro Skole pupil pages for the school front page (components/skole/landing/).
 // Needs the dev server (`pnpm dev`), then `pnpm shots:skole`. The pupil's saved choices are served by a Playwright
 // route with a made-up code, so nothing is read from or saved to the store.
+// The teaching material comes from the demo class's material page (made-up codes), printed as A4 sheets.
 // Output: public/skole/<name>.jpg
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
@@ -30,6 +31,8 @@ const SHOTS = [
   { name: "mit-budget", viewport: [1366, 768], flow: { ...base, step: 8, maxStep: 8, done: true }, open: "Lav dit eget budget med budgetposter" },
   // Step 3 (Bolig) on a phone, before the later choices are made.
   { name: "trin3-mobil", viewport: [390, 844], mobile: true, flow: { ...base, step: 3, maxStep: 3, mad: null, toj: null } },
+  // Step 2 (the pay slip) on a phone, next to the lesson 1 worksheet on the front page; the rows show one by one.
+  { name: "trin2-mobil", viewport: [390, 844], mobile: true, wait: 2500, flow: { ...base, step: 2, maxStep: 2, bolig: null, mad: null, toj: null } },
 ];
 
 const browser = await chromium.launch({ channel: "chrome" });
@@ -57,10 +60,30 @@ for (const s of SHOTS) {
     window.scrollTo(0, 0);
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   });
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(s.wait ?? 600);
   const path = `${OUT}/${s.name}.jpg`;
   await page.screenshot({ path, type: "jpeg", quality: 84 });
   console.log("ok", path);
   await ctx.close();
+}
+// The worksheet for lesson 1 and the teacher's page for lesson 1, as printed, with the same code as the pupil shots.
+{
+  const page = await browser.newPage({ viewport: { width: 1100, height: 1300 }, deviceScaleFactor: 1.5 });
+  await page.goto(`${BASE}/skole/klasse/demo/materiale`);
+  await page.getByLabel("Lærervejledning til de fire lektioner").check();
+  await page.emulateMedia({ media: "print" });
+  await page.evaluate((code) => {
+    for (const el of document.querySelectorAll("[data-code]")) el.textContent = code;
+    for (const el of document.querySelectorAll("article p b")) if (el.textContent.endsWith("/elev")) el.textContent = "skole.budgetpro.dk/elev";
+  }, CODE);
+  await page.evaluate(() => document.fonts.ready);
+  const sheets = page.locator("article");
+  // The teacher's pages come first (1–4), then one worksheet per pupil.
+  for (const [name, i] of [["materiale-vejledning", 0], ["materiale-elevark", 4]]) {
+    const path = `${OUT}/${name}.jpg`;
+    await sheets.nth(i).screenshot({ path, type: "jpeg", quality: 84 });
+    console.log("ok", path);
+  }
+  await page.close();
 }
 await browser.close();
