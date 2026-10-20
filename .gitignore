@@ -15,3 +15,7 @@ next-env.d.ts
 Thumbs.db
 # Log from a dev server started in its own window
 .next-dev.log
+
+# Test persons' guides: names and the site password never go into git
+docs/testguide/testers.json
+docs/testguide/ud/
