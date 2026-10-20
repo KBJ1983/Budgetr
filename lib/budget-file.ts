@@ -25,6 +25,13 @@ export async function readBudget(userId: string, dir?: string): Promise<string |
   return openStore(dir).get(`${userId}.json`);
 }
 
+/** Deletes the budget and all its backups, so the user starts over on "Intet budget endnu" (test users, /admin). */
+export async function deleteBudget(userId: string, dir?: string): Promise<void> {
+  const store = openStore(dir);
+  const backups = await store.list(`backups/${userId}`);
+  await Promise.all([store.del(`${userId}.json`), ...backups.map((n) => store.del(`backups/${userId}/${n}`))]);
+}
+
 /** Writes the budget and first keeps the previous version as a backup when the last one is old enough. */
 export async function writeBudget(userId: string, json: string, dir?: string, now = new Date()): Promise<void> {
   const store = openStore(dir);

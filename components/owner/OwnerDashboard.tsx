@@ -387,6 +387,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
   const [filter, setFilter] = useState<Category | "alle">("alle");
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [resetDone, setResetDone] = useState(false);
   // "Overblik" (the numbers below) or "Trafik" (components/owner/TrafficPanel.tsx); #trafik opens the second.
   const [tab, setTab] = useState<"overblik" | "trafik">("overblik");
 
@@ -942,6 +943,28 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
           ) : (
             <div className="bx-empty">Ingen udgifter endnu. Tilføj fx hosting, mail, domæne og markedsføring.</div>
           )}
+        </section>
+
+        <section className="bx-section">
+          <div className="bx-section-head">
+            <h2>Testbrugere</h2>
+            <button
+              type="button"
+              className="bx-btn bx-btn-danger"
+              onClick={async () => {
+                if (!window.confirm("Slet budgetterne for TEST1–TEST5? Det kan ikke fortrydes.")) return;
+                setResetDone(false);
+                if (await send({ type: "resetTestUsers" })) setResetDone(true);
+              }}
+            >
+              Nulstil TEST1–TEST5
+            </button>
+          </div>
+          <div className="bx-empty">
+            {resetDone
+              ? "TEST1–TEST5 er nulstillet. Næste gang en tester logger ind, starter budgettet forfra."
+              : "Sletter de gemte budgetter og sikkerhedskopier for TEST1–TEST5, så testerne starter på et tomt budget. KBJ, GUIDE og DEMO bliver ikke rørt."}
+          </div>
         </section>
           </>
         )}

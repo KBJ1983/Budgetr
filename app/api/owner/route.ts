@@ -5,10 +5,16 @@ import { markInquiry } from "@/lib/erhverv-inbox";
 import { applyChange } from "@/lib/owner";
 import { isOwner, listAccounts, loadOwnerData, readLedger, writeLedger } from "@/lib/owner-store";
 import { ADMIN_COOKIE, SESSION_COOKIE } from "@/lib/session";
+import { deleteBudget } from "@/lib/budget-file";
+import { USERS } from "@/lib/users";
+
+// "Nulstil testbrugere" on /admin empties TEST1–TEST5 (never KBJ, GUIDE or DEMO).
+const TEST_USER_IDS = USERS.map((u) => u.id).filter((id) => /^test\d+$/.test(id));
 
 // Owner overview (lib/owner.ts): GET the numbers, POST one change to the ledger (plans, organisations, seat packs, expenses)
 // or to a henvendelse from the Erhverv form ({ type: "inquiry", id, done }; an org change may carry "inquiry" too, which
 // marks that henvendelse as done with the agreement it became, and "pack" for the new agreement's first pack).
+// { type: "resetTestUsers" } deletes the saved budgets of TEST1–TEST5 before a round of tests.
 // Anyone but the owner gets a plain 404, so the route doesn't give itself away.
 const noStore = { "Cache-Control": "no-store" };
 const denied = async (req: NextRequest) =>
@@ -28,6 +34,10 @@ export async function POST(req: NextRequest) {
     return new Response(null, { status: 400 });
   }
   const change = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  if (change.type === "resetTestUsers") {
+    await Promise.all(TEST_USER_IDS.map((id) => deleteBudget(id)));
+    return Response.json(await loadOwnerData(), { headers: noStore });
+  }
   if (change.type === "inquiry") {
     if (!(await markInquiry(change.id, change.done === true))) return Response.json({ error: "inquiry" }, { status: 400, headers: noStore });
     return Response.json(await loadOwnerData(), { headers: noStore });

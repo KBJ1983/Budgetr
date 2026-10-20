@@ -2,7 +2,7 @@ import { mkdtemp, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { BACKUP_EVERY_MS, isBudget, readBudget, writeBudget } from "./budget-file";
+import { BACKUP_EVERY_MS, deleteBudget, isBudget, readBudget, writeBudget } from "./budget-file";
 
 let dir: string;
 beforeEach(async () => {
@@ -32,6 +32,17 @@ describe("budget file storage", () => {
     await writeBudget("test1", doc(4), dir, later(BACKUP_EVERY_MS + 2000));
     expect(await readdir(backups)).toHaveLength(2);
     expect(await readBudget("test1", dir)).toBe(doc(4));
+  });
+
+  it("deletes a budget with its backups and leaves other users alone", async () => {
+    const t0 = new Date("2026-01-01T10:00:00.000Z");
+    await writeBudget("test1", doc(1), dir, t0);
+    await writeBudget("test1", doc(2), dir, new Date(t0.getTime() + BACKUP_EVERY_MS + 1));
+    await writeBudget("test2", doc(3), dir, t0);
+    await deleteBudget("test1", dir);
+    expect(await readBudget("test1", dir)).toBeNull();
+    expect(await readdir(path.join(dir, "backups", "test1")).catch(() => [])).toHaveLength(0);
+    expect(await readBudget("test2", dir)).toBe(doc(3));
   });
 
   it("accepts only objects with an entries array", () => {
