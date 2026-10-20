@@ -109,7 +109,7 @@ export function TeacherLogin({ email = "", start = "login" }: { email?: string; 
                 </span>
               )}
               <button className={`${s.btn} ${s.btnPrimary}`} disabled={busy}>
-                {mode === "login" ? "Send kode" : "Opret bruger"}
+                {mode === "opret" ? "Opret bruger" : TEST_LOGIN.test(values.email) ? "Log ind" : "Send kode"}
               </button>
             </form>
           )}
