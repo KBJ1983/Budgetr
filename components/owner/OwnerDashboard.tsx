@@ -647,6 +647,35 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
 
         <section className="bx-section">
           <div className="bx-section-head">
+            <h2>Testere</h2>
+            <span className="bx-muted">Testbrugerne i appen. Aktiv = har åbnet eller gemt budgettet. De tæller ikke med i tallene ovenfor.</span>
+          </div>
+          <div className="bx-card bx-scroll-x">
+            <table className="bx-table">
+              <thead>
+                <tr>
+                  <th>Testbruger</th>
+                  <th>Senest aktiv</th>
+                  <th className="r">Dage aktiv, 7 dage</th>
+                  <th className="r">Dage aktiv, 30 dage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(data.testers ?? []).map((t) => (
+                  <tr key={t.id}>
+                    <td>{t.name}</td>
+                    <td>{t.last ? time(t.last) : "Ikke endnu"}</td>
+                    <td className="r">{num(t.d7)}</td>
+                    <td className="r">{num(t.d30)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="bx-section">
+          <div className="bx-section-head">
             <h2>Næste måned · {data.nextMonth}</h2>
           </div>
           <div className="bx-tiles is-3">

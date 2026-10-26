@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { redeem, signup } from "./accounts";
-import { adminLogin, isOwner, loadOverview, MAX_ADMIN_TRIES, LOCK_MS, readActivity, touchActivity } from "./owner-store";
+import { adminLogin, isOwner, loadOverview, MAX_ADMIN_TRIES, LOCK_MS, readActivity, readTesters, touchActivity, touchTester } from "./owner-store";
 import { makeSession } from "./session";
 
 const now = new Date("2026-10-07T10:00:00Z");
@@ -28,6 +28,24 @@ describe("owner store", () => {
     });
   });
 
+  it("notes test users apart: the last time and the days they were active", async () => {
+    const hour = 60 * 60 * 1000;
+    await touchTester("test1", new Date(now.getTime() - 9 * 24 * hour), dir);
+    await touchTester("test1", now, dir);
+    await touchTester("test1", new Date(now.getTime() + 60_000), dir);
+    await touchTester("test1", new Date(now.getTime() + 2 * hour), dir);
+    await touchTester("u-aaaaaaaaaaaa", now, dir);
+    const rows = await readTesters(new Date(now.getTime() + 2 * hour), dir);
+    expect(rows.find((r) => r.id === "test1")).toEqual({
+      id: "test1",
+      name: "TEST1",
+      last: new Date(now.getTime() + 2 * hour).toISOString(),
+      d7: 1,
+      d30: 2,
+    });
+    expect(rows.find((r) => r.id === "test2")).toMatchObject({ last: null, d7: 0, d30: 0 });
+    expect(rows.some((r) => r.id === "u-aaaaaaaaaaaa")).toBe(false);
+  });
 
   it("lets only owner e-mails in outside development", async () => {
     vi.stubEnv("ADMIN_PASSWORD", "");

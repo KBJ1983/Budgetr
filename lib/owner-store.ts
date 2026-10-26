@@ -4,6 +4,7 @@
  *   owner/ledger.json      plans, organisations (with kundeadmins and seat packs) and expenses kept by hand on /admin
  *   activity/<id>.json     { <holder id>: ISO time } – when the primary (account id) or a member (m-…) last
  *                          loaded or saved the budget; written at most once per ACTIVITY_GAP_MS per holder
+ *   testers/<id>.json      { last, days: { <day>: hours } } – when a test user (lib/users.ts) used its budget
  *   owner/login-tries.json wrong owner passwords in the current window
  *
  * in the store (lib/kv.ts). Only the owner may see or change any of this: logged in on /admin with an e-mail from
@@ -15,10 +16,10 @@ import { readAccount, type Account } from "./accounts";
 import { loadPackUse } from "./agreements";
 import { listInquiries, type InquiryRow } from "./erhverv-inbox";
 import { openStore } from "./kv";
-import { buildOverview, emptyLedger, type Activity, type Ledger, type Overview } from "./owner";
+import { addDays, buildOverview, emptyLedger, today, type Activity, type Ledger, type Overview } from "./owner";
 import { makeAdminSession, readAdminSession, readSession } from "./session";
 import { normalizeEmail } from "./signup";
-import { isAccountId } from "./users";
+import { isAccountId, userById, USERS } from "./users";
 
 export const ACTIVITY_GAP_MS = 60 * 60 * 1000;
 
@@ -83,11 +84,67 @@ export async function loadOverview(now = new Date(), dir?: string): Promise<Over
   return buildOverview(accounts, ledger, activity, now, await loadPackUse(ledger.orgs, dir));
 }
 
-/** What /admin shows: the overview plus the henvendelser from the Erhverv form. */
-export type OwnerData = Overview & { inquiries: InquiryRow[] };
+// ---- Testers -----------------------------------------------------------------------------------------------------
+
+/** How many days of tester activity are kept. */
+const TESTER_DAYS = 60;
+
+interface TesterRecord {
+  last?: string;
+  /** Copenhagen day → number of hours (ACTIVITY_GAP_MS) in which the test user used the budget. */
+  days?: Record<string, number>;
+}
+
+/**
+ * Notes that a test user (lib/users.ts) used its budget: "testers/<id>.json", kept apart from the real accounts so
+ * the user and revenue numbers stay clean. Written at most once per ACTIVITY_GAP_MS.
+ */
+export async function touchTester(userId: string, now = new Date(), dir?: string): Promise<void> {
+  if (!userById(userId)) return;
+  const store = openStore(dir);
+  const key = `testers/${userId}.json`;
+  let r: TesterRecord = {};
+  try {
+    r = JSON.parse((await store.get(key)) ?? "{}") ?? {};
+  } catch {}
+  if (r.last && now.getTime() - Date.parse(r.last) < ACTIVITY_GAP_MS) return;
+  const day = today(now);
+  const keep = addDays(day, -TESTER_DAYS);
+  const days = Object.fromEntries(Object.entries(r.days ?? {}).filter(([d]) => d > keep));
+  days[day] = (days[day] ?? 0) + 1;
+  await store.set(key, JSON.stringify({ last: now.toISOString(), days }));
+}
+
+export interface TesterRow {
+  id: string;
+  name: string;
+  last: string | null;
+  /** Days with activity in the last 7 / 30 days (today included). */
+  d7: number;
+  d30: number;
+}
+
+export async function readTesters(now = new Date(), dir?: string): Promise<TesterRow[]> {
+  const store = openStore(dir);
+  const day = today(now);
+  return Promise.all(
+    USERS.map(async (u) => {
+      let r: TesterRecord = {};
+      try {
+        r = JSON.parse((await store.get(`testers/${u.id}.json`)) ?? "{}") ?? {};
+      } catch {}
+      const active = Object.keys(r.days ?? {});
+      const since = (n: number) => active.filter((d) => d > addDays(day, -n)).length;
+      return { id: u.id, name: u.name, last: r.last ?? null, d7: since(7), d30: since(30) };
+    }),
+  );
+}
+
+/** What /admin shows: the overview plus the henvendelser from the Erhverv form and the testers' activity. */
+export type OwnerData = Overview & { inquiries: InquiryRow[]; testers: TesterRow[] };
 export async function loadOwnerData(now = new Date(), dir?: string): Promise<OwnerData> {
-  const [overview, inquiries] = await Promise.all([loadOverview(now, dir), listInquiries(dir)]);
-  return { ...overview, inquiries };
+  const [overview, inquiries, testers] = await Promise.all([loadOverview(now, dir), listInquiries(dir), readTesters(now, dir)]);
+  return { ...overview, inquiries, testers };
 }
 
 // ---- Access ------------------------------------------------------------------------------------------------------

@@ -49,6 +49,9 @@ function siteGate(request: NextRequest): NextResponse | null {
   if (!password) return null;
   // The logo in mails (public/mail/): mail clients can't send a password.
   if (/^\/mail\/[\w.-]+\.png$/.test(request.nextUrl.pathname)) return null;
+  // The page-view beacon (components/Track.tsx): sendBeacon may go without the typed password, and the route only
+  // counts and answers empty, so it shows nothing behind the gate.
+  if (request.method === "POST" && request.nextUrl.pathname === "/api/besoeg") return null;
 
   const header = request.headers.get("authorization") ?? "";
   if (header.startsWith("Basic ")) {

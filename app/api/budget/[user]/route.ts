@@ -1,15 +1,18 @@
 import { after, type NextRequest } from "next/server";
 import { isBudget, MAX_BYTES, readBudget, writeBudget } from "@/lib/budget-file";
-import { touchActivity } from "@/lib/owner-store";
+import { touchActivity, touchTester } from "@/lib/owner-store";
 import { canAccess, readSession, SESSION_COOKIE } from "@/lib/session";
+import { userById } from "@/lib/users";
 
 // Stored through lib/kv.ts (local disk, or Upstash Redis on Vercel). Test users need no auth (same trust level
 // as the test-user login); a real account only with its own session cookie (lib/session.ts). 401 sends the app back to /login.
-// Each allowed request also notes who used the budget, for the owner page's active users (lib/owner.ts).
+// Each allowed request also notes who used the budget, for the owner page's active users (lib/owner.ts) – test
+// users apart, under "Testere".
 async function denied(req: NextRequest, user: string) {
   const cookie = req.cookies.get(SESSION_COOKIE)?.value;
   if (!(await canAccess(user, cookie))) return true;
   after(async () => {
+    if (userById(user)) return touchTester(user).catch((e) => console.error("[budgetr] tester activity", e));
     const s = await readSession(cookie);
     if (s?.user === user) await touchActivity(user, s.member ?? user).catch((e) => console.error("[budgetr] activity", e));
   });
