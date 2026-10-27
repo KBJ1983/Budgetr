@@ -5,7 +5,7 @@ import { emptyFlow, isCode, normalizeCode, seedPosts, type Answers, type Flow } 
 import { mainSiteUrl } from "@/lib/skole-host";
 import { FlowView } from "./FlowView";
 import { MyBudget } from "./MyBudget";
-import { summaryPdf } from "./pdf";
+import { budgetPdf, summaryPdf } from "./pdf";
 import { Shell } from "./Shell";
 import s from "./skole.module.css";
 import { Start } from "./Start";
@@ -165,6 +165,7 @@ export function StudentApp() {
           // Opened from step 1 (before the summary): back to the steps.
           back={flow.done ? "Tilbage til opsummering" : "Tilbage til trinene"}
           onBack={() => setScreen(flow.done ? "sum" : "flow")}
+          onPdf={(posts) => budgetPdf(code, flow, posts).catch(() => showToast("PDF’en kunne ikke laves. Prøv igen."))}
         />
       )}
     </Shell>

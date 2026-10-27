@@ -190,12 +190,12 @@ export const LESSONS: Lesson[] = [
       "Eleven kan læse og forklare nøgletal: boligandel, opsparingsrate og rådighed pr. dag.",
       "Eleven kan give råd om et budget og begrunde dem.",
     ],
-    prep: ["Print elevarket til lektion 4.", "Fortæl eleverne, at opsummeringen gemmes som PDF og afleveres."],
+    prep: ["Print elevarket til lektion 4.", "Fortæl eleverne, at opsummeringen gemmes som PDF og afleveres.", "Som lektie snakker eleverne med deres forældre om budgettet. Spørgsmålene står i PDF’en fra Mit budget (knappen Hent som PDF). Intet af det skal afleveres."],
     plan: [
       { min: "0–5", title: "Fælles start", text: "Hvad kan ske i livet, der ændrer økonomien? Lav en liste på tavlen." },
       { min: "5–20", title: "Trin 8 og elevark", text: "Eleverne slår scenarierne til et ad gangen og skriver, hvad der sker." },
       { min: "20–35", title: "Mit budget", text: "Eleverne åbner Mit budget, tilføjer egne poster og læser nøgletallene." },
-      { min: "35–45", title: "Aflevering og opsamling", text: "Eleverne gemmer opsummeringen som PDF. Fælles: Hvilket scenarie ramte hårdest?" },
+      { min: "35–45", title: "Aflevering og opsamling", text: "Eleverne gemmer opsummeringen som PDF og henter Mit budget som PDF til samtalen derhjemme. Fælles: Hvilket scenarie ramte hårdest?" },
     ],
     talk: ["Hvilket scenarie ramte hårdest, og hvorfor?", "Hvad kan man gøre i dag for at klare sig, hvis jobbet forsvinder?", "Hvad betyder det at flytte sammen for økonomien?"],
     key: {
@@ -227,7 +227,7 @@ export const LESSONS: Lesson[] = [
           ],
         },
         { kind: "lines", q: "Giv tre gode råd til din fremtidsperson.", lines: 3 },
-        { kind: "choice", q: "Aflevering", options: ["Jeg har gemt opsummeringen som PDF", "Jeg har afleveret den"] },
+        { kind: "choice", q: "Aflevering", options: ["Jeg har gemt opsummeringen som PDF", "Jeg har afleveret den", "Jeg har hentet Mit budget som PDF til samtalen derhjemme"] },
       ],
     },
   },

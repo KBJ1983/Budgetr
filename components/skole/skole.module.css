@@ -257,6 +257,8 @@
 .newCard { border: 2px solid var(--sun); box-shadow: 0 0 0 5px var(--sun-bg); }
 .newHead { display: flex; align-items: center; gap: 12px; }
 .newPlus { width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; background: var(--sun); color: var(--ink); display: grid; place-items: center; font-weight: 700; font-size: 22px; line-height: 1; }
+.homeCard { background: var(--sun-bg); border-color: var(--sun-bg); }
+.homeCard .newHint { margin: 0; color: var(--sun-ink-2); }
 .newHint { margin: 2px 0 0; font-size: 14px; line-height: 1.35; color: var(--ink-2); }
 .newAmt { display: flex; gap: 8px; }
 .newAmt .amtBox { flex: 1; height: 46px; }

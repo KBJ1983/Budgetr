@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  boligLevel, budgetNumbers, canNext, caseById, classStats, pupilDetail, pupilRow, sanitizeAnswers, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, randomCode, scenarios, seedPosts,
+  boligLevel, budgetNumbers, canNext, caseById, classStats, pupilDetail, pupilRow, sanitizeAnswers, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, parentTalk, randomCode, scenarios, seedPosts,
   signedKr, steps, totals, type Flow,
 } from "./skole";
 
@@ -108,6 +108,15 @@ describe("skole money", () => {
 });
 
 describe("Mit budget", () => {
+  it("gives the PDF a talk with the parents and a word to them about the free month", () => {
+    const t = parentTalk(caseById("mira"));
+    expect(t.questions.length).toBeGreaterThanOrEqual(6);
+    expect(t.questions.some((q) => q.includes("Mira"))).toBe(true);
+    for (const text of [t.parents, t.footer]) expect(text).toMatch(/gratis i 30 dage på budgetpro\.dk/);
+    // Calm copy: no exclamation marks.
+    expect(JSON.stringify(t)).not.toContain("!");
+  });
+
   it("seeds the posts from the choices, with insurance as a yearly post", () => {
     const posts = seedPosts(sara());
     expect(posts.find((p) => p.name === "Forsikring")).toMatchObject({ cat: "faste", amt: 1800, freq: "aar" });

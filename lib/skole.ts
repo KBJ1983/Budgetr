@@ -379,6 +379,30 @@ export function budgetNumbers(posts: Post[], c: Case): BudgetNumbers {
   };
 }
 
+/**
+ * Page 2 of the Mit budget PDF (components/skole/pdf.ts): a talk with the parents about having a budget, with open
+ * questions, and a word to the parents. Nothing of it is saved or handed in.
+ */
+export function parentTalk(c: Case) {
+  return {
+    title: "Snak med dine forældre om budgettet",
+    intro: `Vis ${c.gen} budget til en voksen derhjemme, og snak om det at have et budget. Brug spørgsmålene her, og skriv et par stikord. I bestemmer selv, hvor meget I vil fortælle. Der er ingen rigtige svar.`,
+    questions: [
+      `Hvad overraskede dig mest, da du lavede budgettet for ${c.name}? Hvad tror din forælder, der overrasker de fleste, når de flytter hjemmefra?`,
+      "Hvilke udgifter tror du er de største i jeres hjem? Spørg, om du har ret.",
+      "Hvordan holder I styr på pengene derhjemme: i et budget, i en app, på papir eller i hovedet?",
+      "Hvad gør I, når der kommer en regning, I ikke havde regnet med?",
+      "Hvad var det første, din forælder sparede op til, og hvordan gik det?",
+      "Hvad er et behov, og hvad er et ønske i jeres familie? Er I enige?",
+      `Hvad ville din forælder ændre i budgettet for ${c.name}, og hvorfor?`,
+      "Hvilket råd om penge vil din forælder give dig, når du selv flytter hjemmefra?",
+    ],
+    parentsTitle: "Til dig som forælder",
+    parents: `Dit barn har lavet et månedsbudget for en ung voksen i budgetpro Skole: løn, bolig, faste udgifter, hverdag og opsparing. Vil I selv have et overblik over familiens økonomi, kan I prøve budgetpro gratis i 30 dage på budgetpro.dk. Du skal ikke oplyse betalingskort for at starte.`,
+    footer: "Vil I lave et budget for hele familien? Prøv budgetpro gratis i 30 dage på budgetpro.dk.",
+  };
+}
+
 /** 0 fine, 1 watch, 2 too high – housing should be at most 30 % of the income. */
 export const boligLevel = (pct: number) => (pct <= 30 ? 0 : pct <= 40 ? 1 : 2);
 /** 0 fine, 1 a bit low, 2 too low – save at least 10 % of the income. */

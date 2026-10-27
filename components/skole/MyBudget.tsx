@@ -10,7 +10,7 @@ import type { Update } from "./StudentApp";
 const toAmount = (v: string) => Math.max(0, Math.min(1_000_000, Number(v) || 0));
 const newId = () => `n${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-export function MyBudget({ flow, update, back, onBack }: { flow: Flow; update: Update; back: string; onBack: () => void }) {
+export function MyBudget({ flow, update, back, onBack, onPdf }: { flow: Flow; update: Update; back: string; onBack: () => void; onPdf: (posts: Post[]) => void }) {
   const c = caseById(flow.caseId);
   const uid = useId();
   const posts = flow.posts ?? seedPosts(flow);
@@ -183,6 +183,14 @@ export function MyBudget({ flow, update, back, onBack }: { flow: Flow; update: U
             ))}
             <button type="button" className={`${s.btn} ${s.btnSmall}`} onClick={() => update({ posts: seedPosts(flow) })}>
               {flow.maxStep > 1 ? "Hent mine valg fra trinene igen" : "Start forfra med de almindelige poster"}
+            </button>
+          </div>
+
+          <div className={`${s.card} ${s.homeCard}`}>
+            <span className={s.cardTitle}>Tag budgettet med hjem</span>
+            <p className={s.newHint}>Hent {c.gen} budget som PDF. Den har også nogle spørgsmål, du kan snakke med dine forældre om.</p>
+            <button type="button" className={`${s.btn} ${s.btnPrimary}`} onClick={() => onPdf(posts)}>
+              Hent som PDF
             </button>
           </div>
 
