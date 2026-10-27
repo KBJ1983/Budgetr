@@ -176,7 +176,24 @@
 .factTitle { font-weight: 700; font-size: 17px; color: var(--ink); }
 .factToggle { margin-left: auto; font-weight: 600; font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .factText { margin: 0; font-size: 17px; line-height: 1.5; color: var(--ink); text-wrap: pretty; }
-.refl { display: flex; align-items: center; gap: 10px; font-style: italic; font-size: 17px; color: var(--ink-2); }
+.refl { display: flex; align-items: flex-start; gap: 10px; font-size: 17px; color: var(--ink-2); }
+.refl > svg { flex-shrink: 0; margin-top: 1px; }
+.reflBody { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.reflBody b { font-weight: 600; color: var(--ink); }
+.reflHelp { font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
+
+/* The "i" next to a post (Info.tsx) and its text */
+.infoI { all: unset; position: relative; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 6px; vertical-align: 2px; border: 1.5px solid currentColor; border-radius: 50%; font-weight: 700; font-size: 12px; font-style: normal; line-height: 1; letter-spacing: 0; cursor: help; opacity: 0.6; flex-shrink: 0; }
+.infoI:hover, .infoI[data-open] { opacity: 1; }
+.infoI:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; opacity: 1; }
+/* A taller tap area on touch screens, without moving the circle. */
+.infoI::before { content: ""; position: absolute; width: 40px; height: 40px; }
+.tip { position: fixed; z-index: 20; box-sizing: border-box; background: var(--ink); color: var(--on-dark); border-radius: 12px; padding: 12px 14px; font-weight: 400; font-size: 15px; font-style: normal; line-height: 1.45; letter-spacing: 0; text-align: left; white-space: normal; text-transform: none; cursor: auto; box-shadow: 0 8px 24px rgba(14, 27, 44, 0.18); }
+.tip[hidden] { display: none; }
+
+/* Step 1: straight to Mit budget */
+.ownStart { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; }
+.ownStart > div { flex: 1 1 320px; display: flex; flex-direction: column; gap: 2px; }
 
 /* Meter */
 .meter { position: sticky; top: 16px; background: var(--navy); color: var(--on-dark); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
@@ -214,7 +231,7 @@
 .sumCard { align-items: center; gap: 18px; padding: 22px; }
 .star { width: 100%; box-sizing: border-box; background: var(--sun-bg); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 17px; color: var(--sun-ink-2); }
 .reflField { display: flex; flex-direction: column; gap: 6px; }
-.reflQ { font-style: italic; font-size: 16px; color: var(--ink-2); }
+.reflQ { font-weight: 600; font-size: 17px; line-height: 1.35; color: var(--ink); }
 .textarea { resize: vertical; border: 1px solid var(--rule); border-radius: 12px; padding: 10px 14px; font-size: 17px; line-height: 1.4; background: #fff; color: var(--ink); outline-color: var(--navy); }
 .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .kpi { gap: 6px; min-width: 0; }

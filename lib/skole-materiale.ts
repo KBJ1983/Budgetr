@@ -35,7 +35,10 @@ export interface Lesson {
 }
 
 const pct = (a: number, b: number) => `${Math.round((a / b) * 1000) / 10} %`.replace(".", ",");
-const refl = (step: number) => steps(CASES[0]!)[step - 1]!.refl!.replaceAll(CASES[0]!.name, "din person");
+const forSheet = (t: string) => t.replaceAll(CASES[0]!.name, "din person");
+const refl = (step: number) => forSheet(steps(CASES[0]!)[step - 1]!.refl!);
+/** What a good answer holds, as on the pupil's screen. */
+const help = (step: number) => forSheet(steps(CASES[0]!)[step - 1]!.help!);
 const fasteAll = FASTE.reduce((a, f) => a + f.amt, 0);
 const mid = BOLIG[1];
 /** "Tømrerlærling" → "tømrerlærling", but "SU" stays. */
@@ -108,7 +111,7 @@ export const LESSONS: Lesson[] = [
     sheet: {
       intro: "Arbejd med trin 3, 4 og 5. Hold øje med budgetmåleren, mens du vælger.",
       tasks: [
-        { kind: "choice", q: "Hvor skal din person bo?", options: BOLIG.map((b) => `${b.label}, ${kr(b.amt)}`), follow: refl(3), lines: 2 },
+        { kind: "choice", q: "Hvor skal din person bo?", hint: help(3), options: BOLIG.map((b) => `${b.label}, ${kr(b.amt)}`), follow: refl(3), lines: 3 },
         {
           kind: "choice",
           q: "Faste udgifter. Sæt kryds ved dem, din person har.",
@@ -172,7 +175,7 @@ export const LESSONS: Lesson[] = [
         },
         { kind: "choice", q: "Går budgettet op?", options: ["Ja", "Nej"], follow: "Tilbage hver måned: ____________ kr." },
         { kind: "table", q: "Gik det ikke op? Skriv, hvad du ændrede.", cols: ["Før", "Efter"], rows: ["Bolig", "Faste udgifter", "Mad", "Tøj og fritid", "Opsparing"] },
-        { kind: "lines", q: refl(6), lines: 3 },
+        { kind: "lines", q: refl(6), hint: help(6), lines: 3 },
       ],
     },
   },
@@ -210,7 +213,7 @@ export const LESSONS: Lesson[] = [
           cols: ["Ændring pr. md.", "Tilbage pr. md."],
           rows: ["Huslejen stiger 10 %", `Mister jobbet (indtægt ${kr(JOBLESS_INCOME)})`, "Flytter sammen (husleje halveres)", `Køber brugt bil på lån (${kr(CAR_COST)}/md.)`],
         },
-        { kind: "lines", q: refl(8), lines: 3 },
+        { kind: "lines", q: refl(8), hint: help(8), lines: 3 },
         {
           kind: "fields",
           q: "Nøgletal fra Mit budget",

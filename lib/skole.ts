@@ -70,46 +70,103 @@ export interface Step {
   fact?: string;
   /** The reflection question, asked again on the summary. */
   refl?: string;
+  /** What a good answer to `refl` holds, so the pupil knows what to write. */
+  help?: string;
 }
 
 export function steps(c: Case): Step[] {
+  const n = c.name;
   return [
     { short: "Fremtidsperson", q: "Mød din fremtidsperson" },
-    { short: "Indtægt", q: `Hvor mange penge får ${c.name} udbetalt?`, fact: "Man kan kun bruge de penge, der kommer ind på kontoen. Skat og AM-bidrag trækkes fra, før lønnen bliver udbetalt.", refl: "Hvor stor en del af lønnen gik til skat og AM-bidrag? Svar i kr. og i procent af lønnen før skat." },
-    { short: "Bolig", q: `Hvor skal ${c.name} bo?`, fact: "Boligen er som regel den største faste udgift og svær at ændre hurtigt. Derfor vælger man den først.", refl: `Hvad fik ${c.name} ud af den bolig, du valgte? Hvor mange kr. om måneden koster den mere end den billigste?` },
-    { short: "Faste udgifter", q: `Hvad betaler ${c.name} hver måned?`, fact: "Faste udgifter kommer uanset hvad. Dem skal man kende, før man ved, hvad der er tilbage.", refl: `Hvilke faste udgifter kunne ${c.name} undvære, og hvor mange kr. om måneden ville det spare?` },
-    { short: "Mad og hverdag", q: `Hvordan vil ${c.name} leve i hverdagen?`, fact: "Det, der er tilbage efter de faste udgifter, er rådighedsbeløbet. Det skal række til hverdagen, og det er det tal, banken kigger på.", refl: "Nævn et behov og et ønske i hverdagen. Hvor mange kr. om måneden koster ønsket?" },
-    { short: "Opsparing", q: `Hvordan når ${c.name} sin drøm?`, fact: "Uforudsete udgifter kommer altid. Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.", refl: `Hvor mange kr. mere om måneden skal ${c.name} spare for at nå sin drøm 3 måneder hurtigere? Hvor i budgettet kan pengene komme fra?` },
-    { short: "Går det op?", q: `Har ${c.name} penge nok?`, fact: "Et budget, der ikke går op, bliver betalt med lån eller kreditkort, og det koster renter. Det er bedre at prioritere nu.", refl: "Hvad ændrede du for at få budgettet til at gå op, og hvor mange kr. om måneden gav det? Gik det op med det samme, så skriv, hvor mange kr. der var tilbage." },
-    { short: "Hvad nu hvis?", q: "Hvad sker der, hvis …?", fact: "Livet ændrer sig. Et budget er en plan, der skal kunne tilpasses, ikke et regnestykke, man laver én gang.", refl: `Hvilket scenarie rammer ${c.name} hårdest, og hvor mange kr. om måneden ændrer det budgettet?` },
+    {
+      short: "Indtægt",
+      q: `Hvor mange penge får ${n} udbetalt?`,
+      fact: "Man kan kun bruge de penge, der kommer ind på kontoen. Skat og AM-bidrag trækkes fra, før lønnen bliver udbetalt.",
+      refl: "Hvor meget af lønnen gik til skat og AM-bidrag?",
+      help: "Find tallene på lønsedlen i trin 2. Skriv beløbet i kr. Regn derefter procenten ud: skat og AM-bidrag delt med løn før skat, gange 100. Eksempel: 2.500 kr. af 10.000 kr. er 25 %.",
+    },
+    {
+      short: "Bolig",
+      q: `Hvor skal ${n} bo?`,
+      fact: "Boligen er som regel den største faste udgift og svær at ændre hurtigt. Derfor vælger man den først.",
+      refl: `Hvorfor valgte du den bolig, og hvad koster valget?`,
+      help: `Skriv, hvilken bolig du valgte, og hvad ${n} får ud af den, fx mere plads, ro eller at bo for sig selv. Skriv også, hvor mange kr. om måneden den koster mere end værelset (${kr(BOLIG[0].amt)}). Valgte du værelset, så skriv, hvad ${n} sparer, og hvad ${n} må undvære.`,
+    },
+    {
+      short: "Faste udgifter",
+      q: `Hvad betaler ${n} hver måned?`,
+      fact: "Faste udgifter kommer uanset hvad. Dem skal man kende, før man ved, hvad der er tilbage.",
+      refl: `Hvilke faste udgifter kunne ${n} undvære?`,
+      help: `Kig på listen i trin 4. Vælg en eller flere udgifter, ${n} kunne klare sig uden, og skriv kort hvorfor. Læg beløbene sammen, og skriv, hvor mange kr. om måneden ${n} ville spare. Synes du, at alle er nødvendige, så forklar hvorfor.`,
+    },
+    {
+      short: "Mad og hverdag",
+      q: `Hvordan vil ${n} leve i hverdagen?`,
+      fact: "Det, der er tilbage efter de faste udgifter, er rådighedsbeløbet. Det skal række til hverdagen, og det er det tal, banken kigger på.",
+      refl: "Hvad er et behov, og hvad er et ønske?",
+      help: `Et behov er noget, ${n} skal have for at klare hverdagen, fx mad. Et ønske er noget, der er rart, men ikke nødvendigt, fx takeaway eller en koncert. Skriv ét behov og ét ønske, og gæt på, hvor mange kr. ønsket koster om måneden.`,
+    },
+    {
+      short: "Opsparing",
+      q: `Hvordan når ${n} sin drøm?`,
+      fact: "Uforudsete udgifter kommer altid. Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.",
+      refl: `Hvordan kan ${n} nå sin drøm 3 måneder hurtigere?`,
+      help: `Prøv det i trin 6: flyt skyderen 3 måneder tættere på, og se, hvor meget ${n} så skal spare hver måned. Skriv, hvor mange kr. mere det er om måneden, og hvilken anden post i budgettet pengene kunne tages fra.`,
+    },
+    {
+      short: "Går det op?",
+      q: `Har ${n} penge nok?`,
+      fact: "Et budget, der ikke går op, bliver betalt med lån eller kreditkort, og det koster renter. Det er bedre at prioritere nu.",
+      refl: "Gik budgettet op, og hvad gjorde du?",
+      help: `Gik det ikke op første gang, så skriv, hvad du ændrede, fx en billigere bolig eller en strammere hverdag, og hvor mange kr. om måneden det gav. Gik det op med det samme, så skriv, hvor mange kr. ${n} har tilbage hver måned, og hvad pengene kunne bruges til.`,
+    },
+    {
+      short: "Hvad nu hvis?",
+      q: "Hvad sker der, hvis …?",
+      fact: "Livet ændrer sig. Et budget er en plan, der skal kunne tilpasses, ikke et regnestykke, man laver én gang.",
+      refl: `Hvilket scenarie ville ramme ${n} hårdest?`,
+      help: `Slå scenarierne til ét ad gangen i trin 8, og se, hvor meget "Tilbage hver måned" ændrer sig. Skriv, hvilket der rammer hårdest, hvor mange kr. om måneden det ændrer, og hvad ${n} kunne gøre, hvis det skete.`,
+    },
   ];
 }
 
 // ---- The choices -------------------------------------------------------------------------------------------------
+// `info` is the text behind the small "i" next to each post (components/skole/Info.tsx).
+
+/** The pay slip on step 2. */
+export const PAY_INFO = {
+  gross: "Det, man får på en måned, før der er trukket skat: løn og for studerende også SU. Det er tallet, der står i kontrakten eller på SU-oversigten.",
+  tax: "Først trækkes AM-bidrag: 8 % af lønnen (ikke af SU). Af resten betaler man skat til kommunen og staten, men en del af indkomsten er skattefri, det hedder personfradraget. Skatten trækkes automatisk, før pengene bliver udbetalt.",
+  net: "Det beløb, der lander på kontoen. Det er det, budgettet skal bygges på.",
+};
 
 export const BOLIG = [
-  { amt: 3500, label: "Værelse", sub: "Lejer et værelse hos en anden" },
-  { amt: 4800, label: "Delelejlighed", sub: "Deler en lejlighed med en ven" },
-  { amt: 6900, label: "1-værelses", sub: "Egen lille lejlighed" },
+  { amt: 3500, label: "Værelse", sub: "Lejer et værelse hos en anden", info: "Man lejer et værelse i en andens bolig og deler køkken og bad. Det er billigst, men man har mindre plads og privatliv. Ofte er varme og el med i lejen." },
+  { amt: 4800, label: "Delelejlighed", sub: "Deler en lejlighed med en ven", info: "To deler en lejlighed og huslejen. Man har sit eget værelse og deler køkken, bad og stue. Det er en god idé at aftale, hvem der betaler hvad, og hvad der sker, hvis en flytter." },
+  { amt: 6900, label: "1-værelses", sub: "Egen lille lejlighed", info: "En lille lejlighed for sig selv med eget køkken og bad. Mest frihed, men man betaler hele huslejen selv. Her er varme og el regnet med i huslejen. I virkeligheden betaler man det ofte for sig." },
 ] as const;
 
 export type FasteKey = "forsikring" | "mobil" | "internet" | "transport" | "fag" | "stream";
 export type IconName = "shield" | "phone" | "wifi" | "bus" | "people" | "play" | "food" | "shirt" | "house" | "chat";
 
-export const FASTE: { key: FasteKey; label: string; amt: number; icon: IconName }[] = [
-  { key: "forsikring", label: "Forsikring", amt: 150, icon: "shield" },
-  { key: "mobil", label: "Mobil", amt: 129, icon: "phone" },
-  { key: "internet", label: "Internet", amt: 199, icon: "wifi" },
-  { key: "transport", label: "Transport", amt: 400, icon: "bus" },
-  { key: "fag", label: "Fagforening og a-kasse", amt: 650, icon: "people" },
-  { key: "stream", label: "Streaming", amt: 99, icon: "play" },
+export const FASTE: { key: FasteKey; label: string; amt: number; icon: IconName; info: string }[] = [
+  { key: "forsikring", label: "Forsikring", amt: 150, icon: "shield", info: "En indboforsikring dækker ens ting ved fx brand, indbrud eller vandskade. Den har som regel også en ansvarsforsikring, hvis man kommer til at ødelægge noget for andre. Mange betaler én gang om året. Her er den regnet om til et beløb pr. måned." },
+  { key: "mobil", label: "Mobil", amt: 129, icon: "phone", info: "Abonnement til opkald og data. Prisen afhænger mest af, hvor meget data man bruger. Selve telefonen er ikke med." },
+  { key: "internet", label: "Internet", amt: 199, icon: "wifi", info: "Internet i boligen, fx til computer og tv. Bor man på værelse eller deler lejlighed, deler man ofte regningen, eller den er med i huslejen." },
+  { key: "transport", label: "Transport", amt: 400, icon: "bus", info: "Bus eller tog til arbejde eller skole, fx et pendlerkort. Studerende kan ofte få et billigere ungdomskort. Har man bil, koster det meget mere." },
+  { key: "fag", label: "Fagforening og a-kasse", amt: 650, icon: "people", info: "A-kassen udbetaler dagpenge, hvis man mister jobbet, men kun hvis man har været medlem et stykke tid. Fagforeningen hjælper med løn, kontrakt og problemer på arbejdspladsen. Begge dele giver fradrag i skatten." },
+  { key: "stream", label: "Streaming", amt: 99, icon: "play", info: "Abonnementer på film, serier eller musik. Hvert enkelt er et lille beløb, men flere abonnementer løber hurtigt op. De er nemme at opsige igen." },
 ];
 
 export const LEVELS = ["Stramt", "Normalt", "Rummeligt"] as const;
 export const HVERDAG = [
-  { key: "mad", title: "Mad", icon: "food", vals: [2000, 2800, 3800] },
-  { key: "toj", title: "Tøj og fritid", icon: "shirt", vals: [800, 1500, 2500] },
+  { key: "mad", title: "Mad", icon: "food", vals: [2000, 2800, 3800], info: "Alt, man spiser og drikker: indkøb, madpakker, kantine og takeaway. Stramt betyder, at man laver al maden selv og planlægger indkøbene. Rummeligt giver plads til takeaway og til at spise ude." },
+  { key: "toj", title: "Tøj og fritid", icon: "shirt", vals: [800, 1500, 2500], info: "Tøj, sko, frisør, sport, biograf, at gå i byen og gaver. Stramt betyder få nye ting og billige fritidsinteresser. Rummeligt giver plads til mere af det hele." },
 ] as const;
+
+/** Step 6. */
+export const BUFFER_INFO = "Penge, der står klar til regninger, man ikke havde regnet med, fx en ødelagt telefon, en tandlægeregning eller en cykel, der skal repareres. Med en buffer behøver man ikke låne, når det sker.";
+export const dreamInfo = (c: Case) => `Det beløb, ${c.name} skal spare op til drømmen. Jo længere tid der er til, jo mindre skal der spares hver måned. Er drømmen nået, kan pengene bruges på noget andet.`;
 
 export const BUFFER_MAX = 1500;
 export const MONTHS_MIN = 3;
@@ -123,12 +180,17 @@ export type ScenKey = "rent" | "job" | "together" | "car";
 export const SCEN_KEYS: ScenKey[] = ["rent", "job", "together", "car"];
 
 /** Step 8's "what if" cards and what each does to the month (before the others are applied). */
-export function scenarios(c: Case, bolig: number): { key: ScenKey; label: string; delta: number }[] {
+export function scenarios(c: Case, bolig: number): { key: ScenKey; label: string; delta: number; info: string }[] {
   return [
-    { key: "rent", label: "Huslejen stiger 10 %", delta: -Math.round(bolig * 0.1) },
-    { key: "job", label: `${c.name} mister jobbet (indtægt 11.500 kr.)`, delta: JOBLESS_INCOME - c.net },
-    { key: "together", label: "Flytter sammen (husleje halveres)", delta: Math.round(bolig / 2) },
-    { key: "car", label: "Køber brugt bil på lån (2.100 kr./md.)", delta: -CAR_COST },
+    { key: "rent", label: "Huslejen stiger 10 %", delta: -Math.round(bolig * 0.1), info: "Udlejeren kan sætte huslejen op, fx når priserne i samfundet stiger. Her stiger den 10 %, og resten af budgettet er det samme." },
+    {
+      key: "job",
+      label: `${c.name} mister jobbet (indtægt 11.500 kr.)`,
+      delta: JOBLESS_INCOME - c.net,
+      info: `Er man medlem af en a-kasse, får man dagpenge, når man mister jobbet. Uden a-kasse kan man søge kontanthjælp hos kommunen. Her er indtægten sat til ${kr(JOBLESS_INCOME)} udbetalt om måneden.`,
+    },
+    { key: "together", label: "Flytter sammen (husleje halveres)", delta: Math.round(bolig / 2), info: "Flytter man sammen med en kæreste eller en ven, deler man huslejen. Her halveres den. Andre udgifter, fx internet, kan også deles, men det er ikke regnet med her." },
+    { key: "car", label: "Køber brugt bil på lån (2.100 kr./md.)", delta: -CAR_COST, info: `Lånet til bilen koster ${kr(CAR_COST)} om måneden. En bil koster også brændstof, forsikring, grøn ejerafgift og service, som ikke er regnet med her.` },
   ];
 }
 
@@ -251,12 +313,12 @@ export function isOk(f: Flow): boolean | null {
 
 // ---- Mit budget --------------------------------------------------------------------------------------------------
 
-export const CATS: { key: Cat; label: string; color: string }[] = [
-  { key: "ind", label: "Indtægt", color: "#9AA3AF" },
-  { key: "bolig", label: "Bolig", color: "#0E1B2C" },
-  { key: "faste", label: "Faste udgifter", color: "#5E7FA8" },
-  { key: "hverdag", label: "Hverdag", color: "#F6CF4A" },
-  { key: "ops", label: "Opsparing", color: "#D49A1A" },
+export const CATS: { key: Cat; label: string; color: string; info: string }[] = [
+  { key: "ind", label: "Indtægt", color: "#9AA3AF", info: "Det, der kommer ind på kontoen efter skat: løn, SU eller andet." },
+  { key: "bolig", label: "Bolig", color: "#0E1B2C", info: "Husleje og det, der ellers hører til boligen, fx el og varme, hvis det ikke er med i huslejen." },
+  { key: "faste", label: "Faste udgifter", color: "#5E7FA8", info: "Udgifter, der kommer hver måned eller hvert år uanset hvad, fx forsikring, mobil, transport og abonnementer." },
+  { key: "hverdag", label: "Hverdag", color: "#F6CF4A", info: "Det, man selv bestemmer fra måned til måned, fx mad, tøj og fritid." },
+  { key: "ops", label: "Opsparing", color: "#D49A1A", info: "Penge, der bliver sat til side: buffer, drømme og andet, man sparer op til." },
 ];
 
 export const FREQS: Record<Freq, { div: number; long: string; short: string }> = {
@@ -506,6 +568,7 @@ export function pupilDetail(code: string, f: Flow | null, answers: Answers): Pup
     const on = scenarios(c, f.bolig ?? 0).filter((x) => f.scen[x.key]).map((x) => x.label);
     add("Hvad nu hvis", on.length ? on.join(", ") : "Ingen slået til");
   }
+  if (f.posts) add("Mit budget", `${f.posts.length} poster · tilbage ${signedKr(budgetNumbers(f.posts, c).left)} pr. måned`);
   return {
     ...row,
     choices,

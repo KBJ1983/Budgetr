@@ -14,9 +14,10 @@ interface Props {
   reveal: number;
   onBack: () => void;
   onFinish: () => void;
+  onBudget: () => void;
 }
 
-export function FlowView({ flow, update, go, reveal, onBack, onFinish }: Props) {
+export function FlowView({ flow, update, go, reveal, onBack, onFinish, onBudget }: Props) {
   const [closed, setClosed] = useState<Record<number, boolean>>({});
   const all = steps(caseById(flow.caseId));
   const cur = all[flow.step - 1]!;
@@ -69,7 +70,7 @@ export function FlowView({ flow, update, go, reveal, onBack, onFinish }: Props) 
             <h1 className={s.q}>{cur.q}</h1>
           </div>
 
-          <StepBody flow={flow} update={update} go={go} reveal={reveal} t={t} />
+          <StepBody flow={flow} update={update} go={go} reveal={reveal} t={t} onBudget={onBudget} />
 
           {cur.fact && (
             <>
@@ -83,7 +84,12 @@ export function FlowView({ flow, update, go, reveal, onBack, onFinish }: Props) 
               </div>
               <div className={s.refl}>
                 <Icon name="chat" color="#5A6577" />
-                <span>{cur.refl}</span>
+                <span className={s.reflBody}>
+                  <span>
+                    <b>Til opsummeringen:</b> {cur.refl}
+                  </span>
+                  {cur.help && <span className={s.reflHelp}>{cur.help}</span>}
+                </span>
               </div>
             </>
           )}

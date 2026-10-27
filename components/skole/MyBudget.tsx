@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
   addMonths, boligLevel, budgetNumbers, caseById, CATS, FREQS, kr, MAX_POSTS, monthly, monthYear, opsLevel, seedPosts, signedKr,
   type Cat, type Flow, type Freq, type Post,
 } from "@/lib/skole";
+import { Info } from "./Info";
 import s from "./skole.module.css";
 import type { Update } from "./StudentApp";
 
 const toAmount = (v: string) => Math.max(0, Math.min(1_000_000, Number(v) || 0));
 const newId = () => `n${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-export function MyBudget({ flow, update, onBack }: { flow: Flow; update: Update; onBack: () => void }) {
+export function MyBudget({ flow, update, back, onBack }: { flow: Flow; update: Update; back: string; onBack: () => void }) {
   const c = caseById(flow.caseId);
+  const uid = useId();
   const posts = flow.posts ?? seedPosts(flow);
   const setPosts = (fn: (ps: Post[]) => Post[]) => update((f) => ({ posts: fn(f.posts ?? seedPosts(f)) }));
   const n = budgetNumbers(posts, c);
@@ -70,7 +72,10 @@ export function MyBudget({ flow, update, onBack }: { flow: Flow; update: Update;
             <section key={cat.key} className={s.card} aria-label={cat.label}>
               <div className={s.groupTitle}>
                 <span className={s.swatch} style={{ background: cat.color }} />
-                <span>{cat.label}</span>
+                <span>
+                  {cat.label}
+                  <Info id={`${uid}-${cat.key}`} text={cat.info} about={cat.label} />
+                </span>
                 <span>{kr(n.byCat[cat.key])}/md.</span>
               </div>
               {posts
@@ -177,12 +182,12 @@ export function MyBudget({ flow, update, onBack }: { flow: Flow; update: Update;
               </div>
             ))}
             <button type="button" className={`${s.btn} ${s.btnSmall}`} onClick={() => update({ posts: seedPosts(flow) })}>
-              Hent mine valg fra trinene igen
+              {flow.maxStep > 1 ? "Hent mine valg fra trinene igen" : "Start forfra med de almindelige poster"}
             </button>
           </div>
 
           <button type="button" className={s.btn} onClick={onBack}>
-            Tilbage til opsummering
+            {back}
           </button>
         </div>
       </div>

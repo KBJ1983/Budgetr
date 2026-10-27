@@ -13,7 +13,13 @@ describe("skole-materiale", () => {
 
   it("asks the pupils' own reflection questions", () => {
     const sheetText = JSON.stringify(LESSONS.map((l) => l.sheet));
-    for (const n of [3, 8]) expect(sheetText).toContain(steps(CASES[0]!)[n - 1]!.refl!.replaceAll(CASES[0]!.name, "din person"));
+    for (const n of [3, 6, 8]) {
+      const st = steps(CASES[0]!)[n - 1]!;
+      // As JSON text, so quotes in a text match the escaped sheet.
+      const asJson = (x: string) => JSON.stringify(x.replaceAll(CASES[0]!.name, "din person")).slice(1, -1);
+      expect(sheetText).toContain(asJson(st.refl!));
+      expect(sheetText).toContain(asJson(st.help!));
+    }
   });
 
   it("gives the teacher the same numbers as the pupils' steps", () => {

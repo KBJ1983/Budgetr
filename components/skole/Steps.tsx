@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
-  addMonths, BOLIG, BUFFER_MAX, CASES, caseById, dreamMonthly, FASTE, HVERDAG, kr, LEVELS, MAX_OWN, monthYear, MONTHS_MAX, MONTHS_MIN, scenarios, signedKr,
+  addMonths, BOLIG, BUFFER_INFO, BUFFER_MAX, CASES, caseById, dreamInfo, dreamMonthly, FASTE, HVERDAG, kr, LEVELS, MAX_OWN, monthYear, MONTHS_MAX, MONTHS_MIN, PAY_INFO,
+  scenarios, signedKr,
   type Case, type Flow, type Own, type Totals,
 } from "@/lib/skole";
 import { Avatar } from "./Avatar";
 import { Check, Icon } from "./Icons";
+import { Info } from "./Info";
 import s from "./skole.module.css";
 import type { Update } from "./StudentApp";
 
@@ -14,14 +16,16 @@ interface Props {
   go: (step: number) => void;
   reveal: number;
   t: Totals;
+  /** Straight to Mit budget (offered on step 1 once a person is chosen). */
+  onBudget: () => void;
 }
 
 /** The body of the step on screen. */
-export function StepBody({ flow, update, go, reveal, t }: Props) {
+export function StepBody({ flow, update, go, reveal, t, onBudget }: Props) {
   const c = caseById(flow.caseId);
   switch (flow.step) {
     case 1:
-      return <CasePick flow={flow} update={update} />;
+      return <CasePick flow={flow} update={update} onBudget={onBudget} />;
     case 2:
       return <Pay c={c} reveal={reveal} />;
     case 3:
@@ -49,47 +53,66 @@ export function StepBody({ flow, update, go, reveal, t }: Props) {
   }
 }
 
-function CasePick({ flow, update }: { flow: Flow; update: Update }) {
+function CasePick({ flow, update, onBudget }: { flow: Flow; update: Update; onBudget: () => void }) {
   return (
-    <div className={s.caseGrid}>
-      {CASES.map((x) => {
-        const on = flow.caseId === x.id;
-        return (
-          <button key={x.id} type="button" className={`${s.choice} ${s.caseCard}`} aria-pressed={on} onClick={() => update({ caseId: x.id })}>
-            {on && (
-              <span className={s.badge}>
-                <Check size={16} color="#0E1B2C" />
+    <>
+      <div className={s.caseGrid}>
+        {CASES.map((x) => {
+          const on = flow.caseId === x.id;
+          return (
+            <button key={x.id} type="button" className={`${s.choice} ${s.caseCard}`} aria-pressed={on} onClick={() => update({ caseId: x.id })}>
+              {on && (
+                <span className={s.badge}>
+                  <Check size={16} color="#0E1B2C" />
+                </span>
+              )}
+              <Avatar c={x} size={84} />
+              <span className={s.caseName}>
+                {x.name}, {x.age}
               </span>
-            )}
-            <Avatar c={x} size={84} />
-            <span className={s.caseName}>
-              {x.name}, {x.age}
-            </span>
-            <span className={s.caseJob}>{x.job}</span>
-            <span className={s.caseNet}>
-              {kr(x.net)} <span>udbetalt/md.</span>
-            </span>
-            <span className={s.dream}>
-              Drøm: {x.dream}, {kr(x.dreamAmt)}
-            </span>
+              <span className={s.caseJob}>{x.job}</span>
+              <span className={s.caseNet}>
+                {kr(x.net)} <span>udbetalt/md.</span>
+              </span>
+              <span className={s.dream}>
+                Drøm: {x.dream}, {kr(x.dreamAmt)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      {flow.caseId && (
+        <div className={`${s.card} ${s.ownStart}`}>
+          <div>
+            <span className={s.cardTitle}>Vil du hellere lave budgettet selv?</span>
+            <p className={s.newHint}>
+              Gå direkte til {caseById(flow.caseId).gen} budget. Det starter med almindelige poster, som du kan rette, slette og tilføje til. Du kan altid gå tilbage til trinene.
+            </p>
+          </div>
+          <button type="button" className={`${s.btn} ${s.btnOutline}`} onClick={onBudget}>
+            Lav dit eget budget
           </button>
-        );
-      })}
-    </div>
+        </div>
+      )}
+    </>
   );
 }
 
 function Pay({ c, reveal }: { c: Case; reveal: number }) {
+  const uid = useId();
   const rows = [
-    { label: "Løn før skat", amt: kr(c.gross), kind: undefined },
-    { label: "Skat og AM-bidrag", amt: kr(-c.tax), kind: "neg" },
-    { label: "Udbetalt", amt: kr(c.net), kind: "net" },
+    { label: "Løn før skat", amt: kr(c.gross), kind: undefined, info: PAY_INFO.gross },
+    { label: "Skat og AM-bidrag", amt: kr(-c.tax), kind: "neg", info: PAY_INFO.tax },
+    { label: "Udbetalt", amt: kr(c.net), kind: "net", info: PAY_INFO.net },
   ];
   return (
     <div className={s.stack} aria-live="polite">
       {rows.map((r, i) => (
         <div key={r.label} className={s.payRow} data-kind={r.kind} data-shown={reveal > i || undefined}>
-          <span className={s.payLabel}>{r.label}</span>
+          <span className={s.payLabel}>
+            {r.label}
+            <Info id={`${uid}-${i}`} text={r.info} about={r.label} />
+          </span>
           <span className={s.payAmt}>{r.amt}</span>
         </div>
       ))}
@@ -103,17 +126,29 @@ function Pay({ c, reveal }: { c: Case; reveal: number }) {
 }
 
 function Bolig({ flow, update }: { flow: Flow; update: Update }) {
+  const uid = useId();
   return (
     <div className={s.stack} role="radiogroup" aria-label="Bolig">
       {BOLIG.map((b) => {
         const on = flow.bolig === b.amt;
         return (
-          <button key={b.amt} type="button" role="radio" aria-checked={on} className={`${s.choice} ${s.boligOpt}`} onClick={() => update({ bolig: b.amt })}>
+          <button
+            key={b.amt}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            aria-describedby={`${uid}-${b.amt}`}
+            className={`${s.choice} ${s.boligOpt}`}
+            onClick={() => update({ bolig: b.amt })}
+          >
             <span className={s.iconBox}>
               <Icon name="house" size={24} color="#0E1B2C" width={2} />
             </span>
             <span className={s.optText}>
-              <span className={s.optTitle}>{b.label}</span>
+              <span className={s.optTitle}>
+                {b.label}
+                <Info inline id={`${uid}-${b.amt}`} text={b.info} about={b.label} />
+              </span>
               <span className={s.optSub}>{b.sub}</span>
             </span>
             <span className={s.optAmt}>{kr(b.amt)}</span>
@@ -128,6 +163,7 @@ function Bolig({ flow, update }: { flow: Flow; update: Update }) {
 }
 
 function Faste({ flow, update, t }: { flow: Flow; update: Update; t: Totals }) {
+  const uid = useId();
   return (
     <div className={s.stack}>
       <div className={s.twoCols}>
@@ -139,6 +175,7 @@ function Faste({ flow, update, t }: { flow: Flow; update: Update; t: Totals }) {
               type="button"
               role="checkbox"
               aria-checked={on}
+              aria-describedby={`${uid}-${f.key}`}
               className={`${s.choice} ${s.fasteOpt}`}
               onClick={() => update((x) => ({ faste: { ...x.faste, [f.key]: !x.faste[f.key] } }))}
             >
@@ -146,7 +183,10 @@ function Faste({ flow, update, t }: { flow: Flow; update: Update; t: Totals }) {
                 <Check />
               </span>
               <Icon name={f.icon} color="#5A6577" />
-              <span className={s.fasteLabel}>{f.label}</span>
+              <span className={s.fasteLabel}>
+                {f.label}
+                <Info inline id={`${uid}-${f.key}`} text={f.info} about={f.label} />
+              </span>
               <span className={s.fasteAmt}>{kr(f.amt)}</span>
             </button>
           );
@@ -203,13 +243,17 @@ function OwnList({ title, placeholder, list, onChange }: { title: string; placeh
 }
 
 function Hverdag({ flow, update }: { flow: Flow; update: Update }) {
+  const uid = useId();
   return (
     <div className={s.groups}>
       {HVERDAG.map((g) => (
         <div key={g.key} className={s.stack} role="radiogroup" aria-label={g.title}>
           <div className={s.groupHead}>
             <Icon name={g.icon} color="#0E1B2C" />
-            <span>{g.title}</span>
+            <span>
+              {g.title}
+              <Info id={`${uid}-${g.key}`} text={g.info} about={g.title} />
+            </span>
           </div>
           <div className={s.threeCols}>
             {g.vals.map((v, i) => {
@@ -236,18 +280,25 @@ function Hverdag({ flow, update }: { flow: Flow; update: Update }) {
 function Savings({ c, flow, update }: { c: Case; flow: Flow; update: Update }) {
   const dm = dreamMonthly(c, flow.months);
   const ready = monthYear(addMonths(new Date(), flow.months));
+  const uid = useId();
   return (
     <div className={s.stack}>
       <div className={s.card}>
         <label className={s.sliderHead} htmlFor="buffer">
-          <span>Buffer til uforudsete udgifter</span>
+          <span>
+            Buffer til uforudsete udgifter
+            <Info inline id={`${uid}-buffer`} text={BUFFER_INFO} about="buffer" />
+          </span>
           <b>{kr(flow.buffer)}/md.</b>
         </label>
-        <input id="buffer" type="range" min={0} max={BUFFER_MAX} step={100} value={flow.buffer} onChange={(e) => update({ buffer: Number(e.target.value) })} />
+        <input id="buffer" aria-describedby={`${uid}-buffer`} type="range" min={0} max={BUFFER_MAX} step={100} value={flow.buffer} onChange={(e) => update({ buffer: Number(e.target.value) })} />
       </div>
       <div className={s.card}>
         <div className={s.sliderHead}>
-          <span>Mål: {c.dream}</span>
+          <span>
+            Mål: {c.dream}
+            <Info id={`${uid}-dream`} text={dreamInfo(c)} about={c.dream} />
+          </span>
           <b>{kr(c.dreamAmt)}</b>
         </div>
         <label className={s.sliderSub} htmlFor="months">
@@ -287,6 +338,7 @@ function Result({ c, t, go }: { c: Case; t: Totals; go: (step: number) => void }
 }
 
 function Scenarios({ c, flow, update }: { c: Case; flow: Flow; update: Update }) {
+  const uid = useId();
   return (
     <div className={s.stack} style={{ alignItems: "flex-start" }}>
       <div className={s.twoCols} style={{ width: "100%" }}>
@@ -298,10 +350,14 @@ function Scenarios({ c, flow, update }: { c: Case; flow: Flow; update: Update })
               type="button"
               role="switch"
               aria-checked={on}
+              aria-describedby={`${uid}-${x.key}`}
               className={`${s.choice} ${s.scenOpt}`}
               onClick={() => update((f) => ({ scen: { ...f.scen, [x.key]: !f.scen[x.key] } }))}
             >
-              <span className={s.scenLabel}>{x.label}</span>
+              <span className={s.scenLabel}>
+                {x.label}
+                <Info inline id={`${uid}-${x.key}`} text={x.info} about={x.label} />
+              </span>
               <span className={s.scenFoot}>
                 <span className={s.delta} data-neg={x.delta < 0 || undefined}>
                   {signedKr(x.delta)}

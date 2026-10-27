@@ -367,7 +367,7 @@ try {
     await p.getByRole("button", { name: "Se opsummering" }).click();
     await p.getByRole("heading", { name: "Saras budget" }).waitFor();
     check((await p.getByText(/Din kode udløber den/).count()) === 1 && (await p.getByText(/Din lærer kan se dine svar/).count()) === 1, "the pupil sees the expiry date and that the teacher reads the answers");
-    await p.getByLabel(/Hvor stor en del af lønnen gik til skat/).fill("En tredjedel");
+    await p.getByLabel(/Hvor meget af lønnen gik til skat/).fill("En tredjedel");
     const [pdf] = await Promise.all([p.waitForEvent("download"), p.getByRole("button", { name: "Gem som PDF" }).click()]);
     check(pdf.suggestedFilename() === `budget-${codes[0]}.pdf`, `the summary downloads a PDF (${pdf.suggestedFilename()})`);
     await p.getByRole("button", { name: "Lav dit eget budget med budgetposter" }).click();
@@ -392,7 +392,7 @@ try {
     await p2.setViewportSize({ width: 390, height: 844 });
     await enterCode(p2, codes[0]);
     await p2.getByRole("heading", { name: "Saras budget" }).waitFor();
-    check((await p2.getByLabel(/Hvor stor en del af lønnen gik til skat/).inputValue()) === "En tredjedel", "a pupil can go on later, with their answers");
+    check((await p2.getByLabel(/Hvor meget af lønnen gik til skat/).inputValue()) === "En tredjedel", "a pupil can go on later, with their answers");
     for (const where of ["summary", "/skole", "/skole/elev", "/skole/laerer", new URL(link).pathname, "/skole/klasse/demo"]) {
       if (where !== "summary") await p2.goto(`${BASE}${where}`);
       await p2.waitForTimeout(600);

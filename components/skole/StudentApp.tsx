@@ -93,6 +93,11 @@ export function StudentApp() {
     setScreen("flow");
   };
 
+  const openBudget = () => {
+    update((f) => ({ posts: f.posts ?? seedPosts(f) }));
+    setScreen("budget");
+  };
+
   const answer = (step: number, text: string) => setRefl((r) => ({ ...r, [step]: text }));
 
   const restart = () => {
@@ -136,6 +141,7 @@ export function StudentApp() {
             update({ done: true });
             setScreen("sum");
           }}
+          onBudget={openBudget}
         />
       )}
       {screen === "sum" && (
@@ -145,17 +151,22 @@ export function StudentApp() {
           refl={refl}
           expires={expires}
           onRefl={answer}
-          onBudget={() => {
-            update((f) => ({ posts: f.posts ?? seedPosts(f) }));
-            setScreen("budget");
-          }}
+          onBudget={openBudget}
           onEdit={() => go(1)}
           onPdf={() => summaryPdf(code, flow, refl).catch(() => showToast("PDF’en kunne ikke laves. Prøv igen."))}
           onRestart={restart}
           mainSite={mainSite}
         />
       )}
-      {screen === "budget" && <MyBudget flow={flow} update={update} onBack={() => setScreen("sum")} />}
+      {screen === "budget" && (
+        <MyBudget
+          flow={flow}
+          update={update}
+          // Opened from step 1 (before the summary): back to the steps.
+          back={flow.done ? "Tilbage til opsummering" : "Tilbage til trinene"}
+          onBack={() => setScreen(flow.done ? "sum" : "flow")}
+        />
+      )}
     </Shell>
   );
 }

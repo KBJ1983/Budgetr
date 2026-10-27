@@ -53,6 +53,7 @@ export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, o
                 <span className={s.reflQ}>
                   {i + 1}. {st.refl}
                 </span>
+                {st.help && <span className={s.reflHelp}>{st.help}</span>}
                 <textarea className={s.textarea} rows={2} maxLength={1000} placeholder="Skriv dit svar" value={refl[i + 2] ?? ""} onChange={(e) => onRefl(i + 2, e.target.value)} />
               </label>
             ))}
