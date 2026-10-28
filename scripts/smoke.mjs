@@ -354,6 +354,8 @@ try {
     const next = () => p.getByRole("button", { name: "Næste" }).click();
     await p.getByRole("button", { name: /Sara, 20/ }).click();
     await next(); // Indtægt – "Næste" waits until the pay slip is shown
+    // Each reflection question is answered in its own step.
+    await p.getByLabel(/Hvor meget af lønnen gik til skat/).fill("En tredjedel");
     await next(); // Bolig
     await p.getByRole("radio", { name: /Delelejlighed/ }).click();
     await next(); // Faste udgifter
@@ -370,7 +372,7 @@ try {
     await p.getByRole("button", { name: "Se opsummering" }).click();
     await p.getByRole("heading", { name: "Saras budget" }).waitFor();
     check((await p.getByText(/Din kode udløber den/).count()) === 1 && (await p.getByText(/Din lærer kan se dine svar/).count()) === 1, "the pupil sees the expiry date and that the teacher reads the answers");
-    await p.getByLabel(/Hvor meget af lønnen gik til skat/).fill("En tredjedel");
+    check((await p.getByLabel(/Hvor meget af lønnen gik til skat/).inputValue()) === "En tredjedel", "the summary shows the answer given in step 2");
     const [pdf] = await Promise.all([p.waitForEvent("download"), p.getByRole("button", { name: "Gem som PDF" }).click()]);
     check(pdf.suggestedFilename() === `budget-${codes[0]}.pdf`, `the summary downloads a PDF (${pdf.suggestedFilename()})`);
     await p.getByRole("button", { name: "Lav dit eget budget med budgetposter" }).click();

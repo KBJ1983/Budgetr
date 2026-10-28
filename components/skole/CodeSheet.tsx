@@ -7,9 +7,22 @@ import s from "./skole.module.css";
 
 /**
  * A class's pupil codes with Kopiér and Print. The printout is slips to cut out, each with the code and its expiry
- * date, under the address the pupils go to.
+ * date, under the address the pupils go to. `printOnly`: the codes are already on the page (the class page's table),
+ * so the slips only show up on paper.
  */
-export function CodeSheet({ label, codes, expires, onCopied }: { label: string; codes: string[]; expires: string; onCopied: (msg: string) => void }) {
+export function CodeSheet({
+  label,
+  codes,
+  expires,
+  onCopied,
+  printOnly,
+}: {
+  label: string;
+  codes: string[];
+  expires: string;
+  onCopied: (msg: string) => void;
+  printOnly?: boolean;
+}) {
   const until = dayMonthYear(new Date(expires));
   // Read in an effect so the server render and the first browser render match.
   const [address, setAddress] = useState("");
@@ -34,16 +47,17 @@ export function CodeSheet({ label, codes, expires, onCopied }: { label: string; 
           Kopiér
         </button>
         <button type="button" className={`${s.btn} ${s.btnSmall}`} onClick={() => window.print()}>
-          Print
+          {printOnly ? "Print kodesedler" : "Print"}
         </button>
       </div>
+      {printOnly && <p className={`${s.small} ${s.noPrint}`}>Koderne står i tabellen ovenfor. Print giver sedler til at klippe ud, én pr. elev.</p>}
       <div className={s.printOnly}>
         <h1 className={s.h2}>budgetpro Skole · {label}</h1>
         <p className={s.note}>
           Gå ind på {address}, og skriv din kode. Koden virker til den {until}. Klip langs de stiplede linjer.
         </p>
       </div>
-      <div className={s.codes}>
+      <div className={printOnly ? `${s.codes} ${s.printOnly}` : s.codes}>
         {codes.map((code, i) => (
           <div key={code} className={s.codeCell}>
             <span className={s.codeNo}>{i + 1}</span>

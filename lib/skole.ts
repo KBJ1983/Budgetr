@@ -83,7 +83,7 @@ export function steps(c: Case): Step[] {
       q: `Hvor mange penge får ${n} udbetalt?`,
       fact: "Man kan kun bruge de penge, der kommer ind på kontoen. Skat og AM-bidrag trækkes fra, før lønnen bliver udbetalt.",
       refl: "Hvor meget af lønnen gik til skat og AM-bidrag?",
-      help: "Find tallene på lønsedlen i trin 2. Skriv beløbet i kr. Regn derefter procenten ud: skat og AM-bidrag delt med løn før skat, gange 100. Eksempel: 2.500 kr. af 10.000 kr. er 25 %.",
+      help: "Find tallene på lønsedlen. Skriv beløbet i kr. Regn derefter procenten ud: skat og AM-bidrag delt med løn før skat, gange 100. Eksempel: 2.500 kr. af 10.000 kr. er 25 %.",
     },
     {
       short: "Bolig",
@@ -97,7 +97,7 @@ export function steps(c: Case): Step[] {
       q: `Hvad betaler ${n} hver måned?`,
       fact: "Faste udgifter kommer uanset hvad. Dem skal man kende, før man ved, hvad der er tilbage.",
       refl: `Hvilke faste udgifter kunne ${n} undvære?`,
-      help: `Kig på listen i trin 4. Vælg en eller flere udgifter, ${n} kunne klare sig uden, og skriv kort hvorfor. Læg beløbene sammen, og skriv, hvor mange kr. om måneden ${n} ville spare. Synes du, at alle er nødvendige, så forklar hvorfor.`,
+      help: `Kig på listen over faste udgifter. Vælg en eller flere udgifter, ${n} kunne klare sig uden, og skriv kort hvorfor. Læg beløbene sammen, og skriv, hvor mange kr. om måneden ${n} ville spare. Synes du, at alle er nødvendige, så forklar hvorfor.`,
     },
     {
       short: "Mad og hverdag",
@@ -111,7 +111,7 @@ export function steps(c: Case): Step[] {
       q: `Hvordan når ${n} sin drøm?`,
       fact: "Uforudsete udgifter kommer altid. Sparer man op først, når man sine mål, og en buffer betyder, at en uventet regning ikke bliver et lån.",
       refl: `Hvordan kan ${n} nå sin drøm 3 måneder hurtigere?`,
-      help: `Prøv det i trin 6: flyt skyderen 3 måneder tættere på, og se, hvor meget ${n} så skal spare hver måned. Skriv, hvor mange kr. mere det er om måneden, og hvilken anden post i budgettet pengene kunne tages fra.`,
+      help: `Prøv det med skyderen: flyt den 3 måneder tættere på, og se, hvor meget ${n} så skal spare hver måned. Skriv, hvor mange kr. mere det er om måneden, og hvilken anden post i budgettet pengene kunne tages fra.`,
     },
     {
       short: "Går det op?",
@@ -125,7 +125,7 @@ export function steps(c: Case): Step[] {
       q: "Hvad sker der, hvis …?",
       fact: "Livet ændrer sig. Et budget er en plan, der skal kunne tilpasses, ikke et regnestykke, man laver én gang.",
       refl: `Hvilket scenarie ville ramme ${n} hårdest?`,
-      help: `Slå scenarierne til ét ad gangen i trin 8, og se, hvor meget "Tilbage hver måned" ændrer sig. Skriv, hvilket der rammer hårdest, hvor mange kr. om måneden det ændrer, og hvad ${n} kunne gøre, hvis det skete.`,
+      help: `Slå scenarierne til ét ad gangen, og se, hvor meget "Tilbage hver måned" ændrer sig. Skriv, hvilket der rammer hårdest, hvor mange kr. om måneden det ændrer, og hvad ${n} kunne gøre, hvis det skete.`,
     },
   ];
 }

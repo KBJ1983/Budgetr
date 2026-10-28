@@ -12,12 +12,15 @@ interface Props {
   go: (step: number) => void;
   /** How many lines of step 2's pay slip are shown (0–3). */
   reveal: number;
+  /** The reflection answers by step; each step's question is answered right there. */
+  refl: Record<number, string>;
+  onRefl: (step: number, text: string) => void;
   onBack: () => void;
   onFinish: () => void;
   onBudget: () => void;
 }
 
-export function FlowView({ flow, update, go, reveal, onBack, onFinish, onBudget }: Props) {
+export function FlowView({ flow, update, go, reveal, refl, onRefl, onBack, onFinish, onBudget }: Props) {
   const [closed, setClosed] = useState<Record<number, boolean>>({});
   const all = steps(caseById(flow.caseId));
   const cur = all[flow.step - 1]!;
@@ -82,15 +85,22 @@ export function FlowView({ flow, update, go, reveal, onBack, onFinish, onBudget 
                 </button>
                 {factOpen && <p className={s.factText}>{cur.fact}</p>}
               </div>
-              <div className={s.refl}>
+              <label className={s.refl}>
                 <Icon name="chat" color="#5A6577" />
                 <span className={s.reflBody}>
-                  <span>
-                    <b>Til opsummeringen:</b> {cur.refl}
-                  </span>
+                  <b>{cur.refl}</b>
                   {cur.help && <span className={s.reflHelp}>{cur.help}</span>}
+                  <textarea
+                    className={s.textarea}
+                    rows={3}
+                    maxLength={1000}
+                    placeholder="Skriv dit svar"
+                    value={refl[flow.step] ?? ""}
+                    onChange={(e) => onRefl(flow.step, e.target.value)}
+                  />
+                  <span className={s.reflNote}>Din lærer kan læse dit svar. Skriv ikke navne på dig selv eller andre.</span>
                 </span>
-              </div>
+              </label>
             </>
           )}
 

@@ -43,6 +43,7 @@ export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, o
         </div>
         <div className={s.stack}>
           <h2 className={s.h2}>Dine svar</h2>
+          <p className={s.small} style={{ margin: 0 }}>Du har svaret undervejs i trinene. Her kan du læse dem igennem og rette dem.</p>
           <p className={s.warn}>Din lærer kan se dine svar. Skriv ikke navne på dig selv eller andre.</p>
           {steps(c)
             .slice(1)
@@ -51,7 +52,8 @@ export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, o
                 <span className={s.reflQ}>
                   {i + 1}. {st.refl}
                 </span>
-                {st.help && <span className={s.reflHelp}>{st.help}</span>}
+                {/* The help only where the answer is still missing, so a filled-in list stays short. */}
+                {st.help && !refl[i + 2]?.trim() && <span className={s.reflHelp}>{st.help}</span>}
                 <textarea className={s.textarea} rows={2} maxLength={1000} placeholder="Skriv dit svar" value={refl[i + 2] ?? ""} onChange={(e) => onRefl(i + 2, e.target.value)} />
               </label>
             ))}

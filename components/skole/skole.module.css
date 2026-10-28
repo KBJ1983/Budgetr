@@ -181,6 +181,8 @@
 .reflBody { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .reflBody b { font-weight: 600; color: var(--ink); }
 .reflHelp { font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
+.reflBody .textarea { margin-top: 4px; }
+.reflNote { font-size: 13.5px; color: var(--ink-2); }
 
 /* The "i" next to a post (Info.tsx) and its text */
 .infoI { all: unset; position: relative; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 6px; vertical-align: 2px; border: 1.5px solid currentColor; border-radius: 50%; font-weight: 700; font-size: 12px; font-style: normal; line-height: 1; letter-spacing: 0; cursor: help; opacity: 0.6; flex-shrink: 0; }
@@ -321,6 +323,7 @@
 .codesHead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .codesHead .h2 { margin-right: auto; }
 .codes { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.codes.printOnly { display: none; }
 .codeCell { background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; display: flex; gap: 10px; align-items: baseline; }
 .codeNo { font-weight: 500; font-size: 13px; color: var(--ink-2); width: 20px; }
 .codeText { font-weight: 600; font-size: 16px; letter-spacing: 0.04em; white-space: nowrap; }
@@ -392,6 +395,7 @@
   .page { background: #fff; min-height: 0; }
   .printOnly { display: block; }
   .codeUntil.printOnly { display: inline; }
+  .codes.printOnly { display: grid; }
   .classCard { border: 0; padding: 0; background: none; }
   .classCard:not([data-print]):has(> .noPrint:only-child) { display: none; }
   .codes { grid-template-columns: repeat(3, 1fr); gap: 0; }

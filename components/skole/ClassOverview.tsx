@@ -205,7 +205,7 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
         {!demo && (
           <>
             <div className={`${s.card} ${s.classCard}`}>
-              <CodeSheet label={classLabel(view)} codes={view.codes} expires={view.expires} onCopied={showToast} />
+              <CodeSheet label={classLabel(view)} codes={view.codes} expires={view.expires} onCopied={showToast} printOnly />
             </div>
             <span className={`${s.small} ${s.noPrint}`}>Opdateres af sig selv.</span>
           </>

@@ -160,6 +160,8 @@ export function StudentApp() {
           update={update}
           go={go}
           reveal={reveal}
+          refl={refl}
+          onRefl={answer}
           onBack={() => (flow.step === 1 ? setScreen("start") : go(flow.step - 1))}
           onFinish={() => {
             update({ done: true });
