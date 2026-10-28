@@ -340,7 +340,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
         <a href={`mailto:${COMPANY.email}`}>Kontakt</a>
         <a href={mainSite}>budgetpro.dk</a>
         <span>
-          {COMPANY.name} · CVR {COMPANY.cvr}
+          {COMPANY.name} · {COMPANY.address} · CVR {COMPANY.cvr}
         </span>
       </footer>
     </div>

@@ -6,14 +6,14 @@
 export const COMPANY = {
   name: "Budgetpro",
   cvr: "36656077",
-  address: "",
+  address: "Norgaardsvej 108, 7800 Skive",
   email: "info@budgetpro.dk",
 } as const;
 
 /** True while any value above is still a placeholder; the legal pages then say they are a draft. */
 export const companyIsDraft = Object.values(COMPANY).some((v) => v.startsWith("["));
 
-/** "Budgetpro, CVR 36656077" plus the address when there is one. */
+/** "Budgetpro, CVR 36656077, <address>" (the address is left out while it is empty). */
 export const companyLine = [COMPANY.name, `CVR ${COMPANY.cvr}`, COMPANY.address].filter(Boolean).join(", ");
 
 /** When the privacy policy and the terms last changed in substance (shown at the top of each page). */
