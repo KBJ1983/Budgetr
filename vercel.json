@@ -1,3 +1,6 @@
 {
-  "crons": [{ "path": "/api/cron/aftaler", "schedule": "0 7 * * *" }]
+  "crons": [
+    { "path": "/api/cron/aftaler", "schedule": "0 7 * * *" },
+    { "path": "/api/cron/paamindelser", "schedule": "30 7 * * *" }
+  ]
 }
