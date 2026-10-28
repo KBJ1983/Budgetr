@@ -105,6 +105,8 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .wide{max-width:min(980px,96vw)!important;width:min(980px,96vw)}
 .wzhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
 .wzhead h2{margin:0}
+.wzhead{position:relative;padding-right:44px}
+#dlgWiz .wzhead .dx{position:absolute;top:-4px;right:0}
 .wzsteps{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--ink3)}
 .wzsteps span{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--paper)}
 .wzsteps span.on{background:var(--pine);border-color:var(--pine);color:var(--paper);font-weight:700}
@@ -824,8 +826,8 @@ dialog#dlgPdf,dialog#dlgMail{width:min(560px,94vw)}
 #dlgCmp .dhead,#dlgPdf .dhead,#dlgMail .dhead{display:flex;align-items:flex-start;gap:16px}
 #dlgCmp .dhead h2,#dlgPdf .dhead h2,#dlgMail .dhead h2{margin:0 0 6px;font-size:22px;font-weight:600}
 #dlgCmp .dhead p,#dlgPdf .dhead p,#dlgMail .dhead p{margin:0;font-size:15px;color:var(--ink2)}
-#dlgCmp .dx,#dlgPdf .dx,#dlgMail .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
-#dlgCmp .dx svg,#dlgPdf .dx svg,#dlgMail .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#dlgCmp .dx,#dlgPdf .dx,#dlgMail .dx,#dlgWiz .dx{margin-left:auto;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);background:transparent;flex:0 0 auto}
+#dlgCmp .dx svg,#dlgPdf .dx svg,#dlgMail .dx svg,#dlgWiz .dx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
 #dlgCmp .dlgfoot,#dlgPdf .dlgfoot,#dlgMail .dlgfoot{margin:0}
 /* Kom i gang: the how-to film from video/kom-i-gang.html (public/video/), the upright reel on phones */
 dialog.filmdlg{width:min(980px,96vw);max-width:none}
@@ -1274,12 +1276,12 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 </dialog>
 <dialog id="dlgWiz" class="wide">
   <form method="dialog" id="frmWiz" novalidate>
-    <div class="wzhead"><h2 id="wzTitle">Start nyt budget</h2><div class="wzsteps" id="wzSteps"></div></div>
+    <div class="wzhead"><h2 id="wzTitle">Start nyt budget</h2><div class="wzsteps" id="wzSteps"></div><button type="button" class="dx" id="wzCancel" aria-label="Luk guiden" title="Luk guiden"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <div id="wzBody"></div>
     <div class="verdict bad" id="wzErr" hidden style="margin:10px 0 0"></div>
     <p class="wzhint" id="wzHint"></p>
     <div class="dlgfoot"><button type="button" id="wzBack">Tilbage</button>
-      <div class="rgt"><button type="button" id="wzCancel">Annullér</button><button type="button" id="wzSkip" hidden>Spring over</button><button type="button" class="primary" id="wzNext">Næste</button></div></div>
+      <div class="rgt"><button type="button" id="wzSkip" hidden>Spring over</button><button type="button" class="primary" id="wzNext">Næste</button></div></div>
   </form>
 </dialog>
 <dialog id="dlgSet" class="setdlg" aria-labelledby="setTitle">
