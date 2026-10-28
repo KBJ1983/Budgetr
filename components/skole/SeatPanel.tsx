@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { COMPANY, companyIsDraft } from "@/lib/company";
 import s from "./skole.module.css";
+
+/** How to reach budgetpro, once the company e-mail is filled in (lib/company.ts). */
+const CONTACT = companyIsDraft ? "" : ` Skriv til os på ${COMPANY.email}.`;
 
 const CODE_ERRORS: Record<string, string> = {
   unknown: "Koden passer ikke. Tjek mailen fra din skole, eller spørg den, der gav dig adgangen.",
@@ -12,7 +16,7 @@ const CODE_ERRORS: Record<string, string> = {
 };
 const ASK_ERRORS: Record<string, string> = {
   limit: "Du har allerede bedt om en plads i dag. Du får en mail, når skolen giver dig adgang.",
-  noAdmins: "Skolen har ingen, der kan give adgang endnu. Kontakt budgetpro.",
+  noAdmins: `Skolen har ingen, der kan give adgang endnu.${CONTACT || " Tal med skolens ledelse om det."}`,
   unknown: "Vi kan ikke finde skolens aftale. Prøv at skrive navnet igen.",
 };
 const TRY_AGAIN = "Det lykkedes ikke lige nu. Prøv igen om lidt.";
@@ -21,6 +25,23 @@ const TRY_AGAIN = "Det lykkedes ikke lige nu. Prøv igen om lidt.";
  * For a teacher without a seat (lib/skole-seats.ts): look at the demo class, use the code from the school's seat
  * mail, or ask a school with an agreement for a seat.
  */
+/** A ready mail for the teacher to send to the school's leaders: what budgetpro Skole is, with a link. */
+function tellSchoolHref(): string {
+  const { origin, pathname } = window.location;
+  // On skole.<domain> the school pages are served from the root; elsewhere they live under /skole.
+  const site = origin + (pathname.startsWith("/skole") ? "/skole" : "/");
+  const body = [
+    "Hej",
+    "",
+    "Jeg vil gerne bruge budgetpro Skole i undervisningen. Eleverne laver et månedsbudget for en ung voksen over fire lektioner, og der følger undervisningsmateriale med. Skolen kan købe lærerpladser til de lærere, der skal bruge det.",
+    "",
+    `Læs mere her: ${site}`,
+    "",
+    "Venlig hilsen",
+  ].join("\n");
+  return `mailto:?subject=${encodeURIComponent("budgetpro Skole til vores skole")}&body=${encodeURIComponent(body)}`;
+}
+
 export function SeatPanel({ code: initialCode = "", school, trialUsed = false }: { code?: string; school: string; trialUsed?: boolean }) {
   const [code, setCode] = useState(initialCode);
   const [codeMsg, setCodeMsg] = useState<string | null>(null);
@@ -138,7 +159,13 @@ export function SeatPanel({ code: initialCode = "", school, trialUsed = false }:
             ))}
           </div>
         ) : typed.trim().length >= 3 ? (
-          <span className={s.small}>Vi kender ikke en aftale med en skole med det navn. Fortæl gerne din skole om budgetpro Skole.</span>
+          <span className={s.small}>
+            Vi kender ikke en aftale med en skole med det navn.{" "}
+            <a href="#" onClick={(e) => ((e.currentTarget as HTMLAnchorElement).href = tellSchoolHref())}>
+              Skriv en mail til din skoles ledelse om budgetpro Skole
+            </a>
+            .{CONTACT}
+          </span>
         ) : null}
         {askMsg && (
           <span className={askMsg.ok ? s.note : s.err} role={askMsg.ok ? "status" : "alert"}>

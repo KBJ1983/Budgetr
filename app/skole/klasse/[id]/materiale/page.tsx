@@ -37,5 +37,5 @@ export default async function ClassMaterialPage({ params }: PageProps<"/skole/kl
       </Shell>
     );
   }
-  return <Material teacher={t.name} cls={{ id: cls.id, trin: cls.trin, codes: cls.codes, expires: classExpires(cls).toISOString() }} />;
+  return <Material teacher={t.name} cls={{ id: cls.id, trin: cls.trin, name: cls.name, codes: cls.codes, expires: classExpires(cls).toISOString() }} />;
 }

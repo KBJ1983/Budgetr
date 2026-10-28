@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { DEFAULT_DAYS, dayMonthYear, LIFETIMES, MAX_PUPILS, TRIAL_DAYS, TRIN, type ClassSummary } from "@/lib/skole";
+import { classLabel, DEFAULT_DAYS, dayMonthYear, LIFETIMES, MAX_CLASS_NAME, MAX_PUPILS, TRIAL_DAYS, TRIN, type ClassSummary } from "@/lib/skole";
 import { skoleBase } from "@/lib/skole-host";
 import type { SeatInfo } from "@/lib/skole-seats";
 import { CodeSheet } from "./CodeSheet";
@@ -37,6 +37,7 @@ export function TeacherHome({
   const [classes] = useState(initial);
   const [trin, setTrin] = useState(8);
   const [antal, setAntal] = useState(24);
+  const [className, setClassName] = useState("");
   const free = !seat && trial;
   const lifetimes = free ? [TRIAL_DAYS] : LIFETIMES;
   const [days, setDays] = useState(free ? TRIAL_DAYS : DEFAULT_DAYS);
@@ -48,7 +49,7 @@ export function TeacherHome({
     setBusy(true);
     setErr(null);
     try {
-      const r = await fetch("/api/skole/klasse", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trin, antal, days }) });
+      const r = await fetch("/api/skole/klasse", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trin, antal, days, name: className }) });
       if (r.status === 401 || r.status === 403) return window.location.reload();
       if (!r.ok) throw new Error(String(r.status));
       const { id } = (await r.json()) as { id: string };
@@ -102,6 +103,18 @@ export function TeacherHome({
           }}
         >
           <span className={s.cardTitle}>Opret klasse</span>
+          <label className={s.field}>
+            <span className={s.label}>Klassens navn (kan udelades)</span>
+            <input
+              className={s.input}
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
+              maxLength={MAX_CLASS_NAME}
+              placeholder={`fx ${trin}.A`}
+              autoComplete="off"
+              style={{ maxWidth: 260 }}
+            />
+          </label>
           <div className={s.createRow}>
             <div className={s.field}>
               <span className={s.label} id="trin-label">
@@ -175,12 +188,12 @@ function ClassCard({ c, onCopied }: { c: ClassSummary; onCopied: (msg: string) =
   const [open, setOpen] = useState(false);
   const daysLeft = Math.max(0, Math.ceil((Date.parse(c.expires) - Date.now()) / DAY_MS));
   return (
-    <section className={`${s.card} ${s.classCard}`} aria-label={`${c.trin}. klasse`} data-print={open || undefined}>
+    <section className={`${s.card} ${s.classCard}`} aria-label={classLabel(c)} data-print={open || undefined}>
       <div className={`${s.classHead} ${s.noPrint}`}>
         <div className={s.titleBlock} style={{ gap: 2 }}>
-          <span className={s.h2}>{c.trin}. klasse</span>
+          <span className={s.h2}>{classLabel(c)}</span>
           <span className={s.small} suppressHydrationWarning>
-            Oprettet {dayMonthYear(new Date(c.created))} · {c.codes.length} elevkoder · {c.started} i gang · {c.finished} færdige
+            {c.name ? `${c.trin}. klasse · ` : ""}Oprettet {dayMonthYear(new Date(c.created))} · {c.codes.length} elevkoder · {c.started} i gang · {c.finished} færdige
           </span>
         </div>
         <div className={s.classBtns}>
@@ -198,7 +211,7 @@ function ClassCard({ c, onCopied }: { c: ClassSummary; onCopied: (msg: string) =
       <button type="button" className={`${s.linkBtn} ${s.noPrint}`} aria-expanded={open} onClick={() => setOpen((o) => !o)} style={{ alignSelf: "flex-start" }}>
         {open ? "Skjul elevkoder" : "Vis elevkoder"}
       </button>
-      {open && <CodeSheet trin={c.trin} codes={c.codes} expires={c.expires} onCopied={onCopied} />}
+      {open && <CodeSheet label={classLabel(c)} codes={c.codes} expires={c.expires} onCopied={onCopied} />}
     </section>
   );
 }

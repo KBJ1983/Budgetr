@@ -149,7 +149,7 @@ export function Availability() {
       id="funktioner"
       eyebrow="Rådighed"
       title="Se, hvad du har til rådighed. Som banken ser det."
-      body="Rådighedsbeløbet regnes, som banken gør, når I søger lån. Mad, opsparing og gaver holdes ude, så du kan se, om du ligger over eller under kravet."
+      body="Rådighedsbeløbet regnes efter samme princip, som bankerne bruger, når I søger lån. Mad, opsparing og gaver holdes ude, så du kan se, om du ligger over eller under kravet."
       bullets={[
         "Nettoindtægt minus bankens faste udgifter, måned for måned",
         "Se hvornår et lån udløber og giver luft i budgettet",

@@ -9,7 +9,7 @@ import s from "./skole.module.css";
  * A class's pupil codes with Kopiér and Print. The printout is slips to cut out, each with the code and its expiry
  * date, under the address the pupils go to.
  */
-export function CodeSheet({ trin, codes, expires, onCopied }: { trin: number; codes: string[]; expires: string; onCopied: (msg: string) => void }) {
+export function CodeSheet({ label, codes, expires, onCopied }: { label: string; codes: string[]; expires: string; onCopied: (msg: string) => void }) {
   const until = dayMonthYear(new Date(expires));
   // Read in an effect so the server render and the first browser render match.
   const [address, setAddress] = useState("");
@@ -28,7 +28,7 @@ export function CodeSheet({ trin, codes, expires, onCopied }: { trin: number; co
     <section className={s.stack} aria-label="Elevkoder">
       <div className={`${s.codesHead} ${s.noPrint}`}>
         <h2 className={s.h2}>
-          {codes.length} elevkoder · {trin}. klasse
+          {codes.length} elevkoder · {label}
         </h2>
         <button type="button" className={`${s.btn} ${s.btnSmall}`} onClick={() => void copy()}>
           Kopiér
@@ -38,7 +38,7 @@ export function CodeSheet({ trin, codes, expires, onCopied }: { trin: number; co
         </button>
       </div>
       <div className={s.printOnly}>
-        <h1 className={s.h2}>budgetpro Skole · {trin}. klasse</h1>
+        <h1 className={s.h2}>budgetpro Skole · {label}</h1>
         <p className={s.note}>
           Gå ind på {address}, og skriv din kode. Koden virker til den {until}. Klip langs de stiplede linjer.
         </p>

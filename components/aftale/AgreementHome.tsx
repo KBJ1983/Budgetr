@@ -45,7 +45,7 @@ function message(result: string, email: string, max: number): { tone: "pos" | "e
     case "used":
       return { tone: "err", text: "Den e-mail har allerede brugt en plads fra aftalen." };
     case "full":
-      return { tone: "err", text: "Der er ingen fri pladser lige nu. Kontakt budgetpro, hvis I har brug for flere." };
+      return { tone: "err", text: "Der er ingen frie pladser lige nu. Kontakt budgetpro, hvis I har brug for flere." };
     case "limit":
       return { tone: "err", text: "Koden er sendt tre gange det seneste døgn. Prøv igen i morgen." };
     case "exists":
@@ -161,7 +161,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
           </p>
           <div className="bx-tiles">
             <div className={`bx-tile${view.seats.free ? " is-hi" : ""}`}>
-              <span>Fri pladser</span>
+              <span>Frie pladser</span>
               <b>{num(view.seats.free)}</b>
               <span>kan sendes nu</span>
             </div>
@@ -200,7 +200,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
               />
             </label>
             <button type="submit" className="bx-btn bx-btn-primary" disabled={busy || !email.trim() || !view.seats.free}>
-              Send kode
+              Giv adgang
             </button>
           </form>
           {note ? (
@@ -208,7 +208,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
               <span>{note.text}</span>
             </p>
           ) : null}
-          {!view.seats.free ? <p className="bx-muted">Der er ingen fri pladser lige nu. Kontakt budgetpro, hvis I har brug for flere.</p> : null}
+          {!view.seats.free ? <p className="bx-muted">Der er ingen frie pladser lige nu. Kontakt budgetpro, hvis I har brug for flere.</p> : null}
         </section>
 
         <section className="bx-section">
@@ -284,7 +284,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
                   </span>
                   <span className="af-list-num">
                     {num(p.used)} i brug
-                    <small>{num(Math.max(0, p.count - p.sent))} fri</small>
+                    <small>{num(Math.max(0, p.count - p.sent))} {p.count - p.sent === 1 ? "fri" : "frie"}</small>
                   </span>
                 </div>
               ))}

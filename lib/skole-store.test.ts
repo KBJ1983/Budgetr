@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { openStore } from "./kv";
 import { emptyFlow, isCode, type Flow } from "./skole";
 import {
-  adoptLegacyClasses, classOverview, classPupil, codeKey, createClass, deleteClass, emailHash, lookupCode, readClassFor, saveProgress, teacherClasses,
+  adoptLegacyClasses, classOverview, classPupil, codeKey, createClass, deleteClass, emailHash, lookupCode, readClassFor, renameClass, saveProgress, teacherClasses,
 } from "./skole-store";
 
 const now = new Date("2026-10-08T08:00:00Z");
@@ -32,6 +32,16 @@ describe("skole store", () => {
     expect((await readClassFor(T1, cls.id, now, dir))?.id).toBe(cls.id);
     expect(await readClassFor(T2, cls.id, now, dir)).toBeNull();
     expect(await readClassFor(T1, "nonsense", now, dir)).toBeNull();
+  });
+
+  it("names a class when it is made, and renames it later", async () => {
+    const cls = await createClass({ trin: 8, count: 2, days: 90, teacherId: T1, name: "  8.A " }, now, dir);
+    expect(cls.name).toBe("8.A");
+    expect((await teacherClasses(T1, now, dir))[0]?.name).toBe("8.A");
+    expect((await classOverview(await renameClass(cls, "8.B valghold", dir), dir)).name).toBe("8.B valghold");
+    const unnamed = await renameClass((await readClassFor(T1, cls.id, now, dir))!, "", dir);
+    expect(unnamed.name).toBeUndefined();
+    expect((await readClassFor(T1, cls.id, now, dir))?.name).toBeUndefined();
   });
 
   it("refuses odd classes", async () => {
@@ -69,7 +79,7 @@ describe("skole store", () => {
 
     const view = await classOverview(cls, dir);
     expect(view).toMatchObject({ id: cls.id, trin: 9, days: 60, codes: cls.codes, expires: after(60).toISOString() });
-    expect(view.rows[0]).toEqual({ code, status: "Færdig", ok: true, caseName: "Sara" });
+    expect(view.rows[0]).toEqual({ code, status: "Færdig", ok: true, caseName: "Sara", seen: now.toISOString() });
     expect(view.rows[1]?.status).toBe("Ikke startet");
     expect(view.stats).toMatchObject({ started: 1, finished: 1, finishedOk: 1, topCase: "Sara", topBolig: { label: "Delelejlighed", pct: 100 } });
 

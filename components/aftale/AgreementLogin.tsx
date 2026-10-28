@@ -86,6 +86,9 @@ export function AgreementLogin({ email: initialEmail = "" }: { email?: string })
             <button type="submit" className="bx-btn bx-btn-primary bx-btn-lg" disabled={busy}>
               {busy ? "Et øjeblik …" : "Send kode"}
             </button>
+            <p className="bx-muted" style={{ marginTop: 4 }}>
+              Er du kunde og vil se dit budget? <a href="/login">Log ind her</a>.
+            </p>
           </form>
         ) : (
           <form className="bx-auth-form" onSubmit={submitCode} noValidate>

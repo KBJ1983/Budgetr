@@ -33,7 +33,17 @@ export default async function UseSeatPage({ searchParams }: { searchParams: Prom
 
   let body;
   if (!grant || !org) {
-    body = <p className="bx-muted">Koden passer ikke, eller den er trukket tilbage. Tjek linket i mailen, eller spørg den, der gav dig adgangen.</p>;
+    body = (
+      <>
+        <p className="bx-muted">Koden passer ikke, eller den er trukket tilbage. Tjek linket i mailen, eller spørg den, der gav dig adgangen.</p>
+        <a className="bx-btn bx-btn-primary bx-btn-lg" href="/login">
+          Log ind
+        </a>
+        <a className="bx-btn" href="/">
+          Til budgetpro.dk
+        </a>
+      </>
+    );
   } else if (grant.usedBy) {
     body = (
       <>
@@ -44,7 +54,14 @@ export default async function UseSeatPage({ searchParams }: { searchParams: Prom
       </>
     );
   } else if (today() > grant.sendBy) {
-    body = <p className="bx-muted">Koden skulle bruges senest den {danishDate(grant.sendBy)}. Spørg {org.name}, om du kan få en ny.</p>;
+    body = (
+      <>
+        <p className="bx-muted">Koden skulle bruges senest den {danishDate(grant.sendBy)}. Spørg {org.name}, om du kan få en ny.</p>
+        <a className="bx-btn" href="/">
+          Til budgetpro.dk
+        </a>
+      </>
+    );
   } else if (org.category === "skole") {
     body = (
       <>

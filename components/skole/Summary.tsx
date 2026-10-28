@@ -15,11 +15,9 @@ interface Props {
   onEdit: () => void;
   onPdf: () => void;
   onRestart: () => void;
-  /** Where "Prøv budgetpro" goes (the main site). */
-  mainSite: string;
 }
 
-export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, onPdf, onRestart, mainSite }: Props) {
+export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, onPdf, onRestart }: Props) {
   const c = caseById(flow.caseId);
   const t = totals(flow);
   const now = new Date();
@@ -73,9 +71,6 @@ export function Summary({ code, flow, refl, expires, onRefl, onBudget, onEdit, o
           Start forfra
         </button>
       </div>
-      <a href={mainSite} className={s.small}>
-        Vil du lave et rigtigt budget derhjemme? Prøv budgetpro.
-      </a>
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { emptyFlow, isCode, normalizeCode, seedPosts, type Answers, type Flow } from "@/lib/skole";
-import { mainSiteUrl } from "@/lib/skole-host";
 import { FlowView } from "./FlowView";
 import { MyBudget } from "./MyBudget";
 import { budgetPdf, summaryPdf } from "./pdf";
@@ -13,6 +12,19 @@ import { Summary } from "./Summary";
 import { useToast } from "./useToast";
 
 type Screen = "start" | "flow" | "sum" | "budget";
+
+/**
+ * The open code, kept in this tab only: a reload (or a phone that locked) opens it again, while closing the tab
+ * leaves a shared Chromebook with an empty code field for the next pupil.
+ */
+const OPEN_KEY = "budgetpro-skole:kode";
+const remember = (c: string | null) => {
+  try {
+    if (c) sessionStorage.setItem(OPEN_KEY, c);
+    else sessionStorage.removeItem(OPEN_KEY);
+  } catch {}
+};
+
 export type Update = (patch: Partial<Flow> | ((f: Flow) => Partial<Flow>)) => void;
 
 export function StudentApp() {
@@ -29,11 +41,6 @@ export function StudentApp() {
   const [expires, setExpires] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, showToast] = useToast();
-  // Read in an effect so the server render and the first browser render match.
-  const [mainSite, setMainSite] = useState("/");
-  useEffect(() => {
-    setMainSite(mainSiteUrl(window.location));
-  }, []);
 
   const update: Update = (patch) => setFlow((f) => ({ ...f, ...(typeof patch === "function" ? patch(f) : patch) }));
 
@@ -61,6 +68,7 @@ export function StudentApp() {
   }, [opened, flow, refl]);
 
   const open = (c: string, f: Flow, answers: Answers, until: string) => {
+    remember(c);
     setCode(c);
     setOpened(c);
     setFlow(f);
@@ -70,14 +78,17 @@ export function StudentApp() {
     setScreen(f.done ? "sum" : "flow");
   };
 
-  const begin = async () => {
-    const c = normalizeCode(code);
+  const begin = async (typed = code) => {
+    const c = normalizeCode(typed);
     if (!isCode(c)) return setCodeErr("Skriv den kode, du har fået af din lærer.");
     if (c === opened) return setScreen(flow.done ? "sum" : "flow");
     setBusy(true);
     try {
       const r = await fetch("/api/skole/elev", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: c }) });
-      if (r.status === 404) return setCodeErr("Den kode kender vi ikke, eller den er udløbet. Tjek, at den er skrevet rigtigt, eller spørg din lærer.");
+      if (r.status === 404) {
+        remember(null);
+        return setCodeErr("Den kode kender vi ikke, eller den er udløbet. Tjek, at den er skrevet rigtigt, ellers spørg din lærer om en ny.");
+      }
       if (!r.ok) throw new Error(String(r.status));
       const saved = (await r.json()) as { flow: Flow | null; answers: Answers; expires: string };
       open(c, saved.flow ?? emptyFlow(), saved.answers ?? {}, saved.expires);
@@ -87,6 +98,19 @@ export function StudentApp() {
       setBusy(false);
     }
   };
+
+  // After a reload: open the code this tab had open, right where the pupil was.
+  useEffect(() => {
+    let saved: string | null = null;
+    try {
+      saved = sessionStorage.getItem(OPEN_KEY);
+    } catch {}
+    if (saved) {
+      setCode(saved);
+      void begin(saved);
+    }
+    // Only on the first render.
+  }, []);
 
   const go = (n: number) => {
     update((f) => ({ step: n, maxStep: Math.max(f.maxStep, n) }));
@@ -155,7 +179,6 @@ export function StudentApp() {
           onEdit={() => go(1)}
           onPdf={() => summaryPdf(code, flow, refl).catch(() => showToast("PDF’en kunne ikke laves. Prøv igen."))}
           onRestart={restart}
-          mainSite={mainSite}
         />
       )}
       {screen === "budget" && (

@@ -149,7 +149,7 @@ function Sectors() {
     {
       tag: "Banker",
       title: "Kunder, der kommer forberedte til lånesamtalen.",
-      body: "Rådighedsbeløbet i budgetpro regnes, som banken gør. Giv adgang før mødet eller som en kundefordel til nye og faste kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
+      body: "Rådighedsbeløbet i budgetpro regnes efter samme princip som bankernes: de faste udgifter trækkes fra, og mad, opsparing og gaver holdes ude. Giv adgang før mødet eller som en kundefordel til nye og faste kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
       bullets: ["Fx 12 eller 24 måneder pr. kode", "Løn, lån, opsparing og rådighed ét sted", "Kunden deler selv budgettet som PDF eller Excel"],
       photo: { src: "/landing/foto-flytning.jpg", alt: "Et par, der flytter sammen, med flyttekasser", position: "50% 35%" },
     },

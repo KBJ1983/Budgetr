@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { dayMonthYear, type ClassView, type PupilDetail } from "@/lib/skole";
+import { classLabel, dayMonthYear, MAX_CLASS_NAME, seenAgo, type ClassView, type PupilDetail } from "@/lib/skole";
 import { CodeSheet } from "./CodeSheet";
 import { Shell } from "./Shell";
 import s from "./skole.module.css";
@@ -55,6 +55,14 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
     requestAnimationFrame(() => detailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
+  const rename = async () => {
+    const typed = window.prompt(`Klassens navn, fx ${view.trin}.A. Tomt felt giver "${view.trin}. klasse".`, view.name ?? "");
+    if (typed === null) return;
+    const r = await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: typed.slice(0, MAX_CLASS_NAME) }) });
+    if (r.ok) setView((await r.json()) as ClassView);
+    else showToast("Navnet kunne ikke gemmes. Prøv igen.");
+  };
+
   const remove = async () => {
     if (!window.confirm("Vil du slette klassen? Koderne og elevernes valg og svar bliver slettet, og det kan ikke fortrydes.")) return;
     const r = await fetch(url, { method: "DELETE" });
@@ -80,7 +88,12 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
 
   const st = view.stats;
   const stats = [
-    { v: st.topBolig ? `${st.topBolig.pct} %` : "–", l: st.topBolig ? `valgte ${st.topBolig.label.toLowerCase()}` : "har endnu ikke valgt bolig" },
+    {
+      v: st.topBolig ? `${st.topBolig.pct} %` : "–",
+      l: st.topBolig
+        ? `af ${st.topBolig.of} ${st.topBolig.of === 1 ? "elev" : "elever"} valgte ${st.topBolig.label.toLowerCase()}`
+        : "har endnu ikke valgt bolig",
+    },
     { v: `${st.finishedOk} af ${st.finished}`, l: "færdige elever fik budgettet til at gå op" },
     { v: st.topCase ?? "–", l: st.topCase ? "var den mest valgte case" : "ingen har valgt case endnu" },
   ];
@@ -94,10 +107,16 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
           ← Mine klasser
         </Link>
         <div className={`${s.titleRow} ${s.noPrint}`}>
-          <h1 className={s.q}>Klasseoverblik</h1>
+          <h1 className={s.q}>{demo ? "Klasseoverblik" : classLabel(view)}</h1>
           <span className={s.note}>
-            {view.trin}. klasse · {st.started} af {view.rows.length} elever i gang
+            {view.name || demo ? `${view.trin}. klasse · ` : ""}
+            {st.started} af {view.rows.length} elever i gang
           </span>
+          {!demo && (
+            <button type="button" className={s.linkBtn} onClick={() => void rename()}>
+              {view.name ? "Omdøb" : "Giv klassen et navn"}
+            </button>
+          )}
         </div>
         {demo && (
           <p className={`${s.agreeNote} ${s.noPrint}`}>
@@ -131,7 +150,14 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
                   {r.code}
                 </button>
               </span>
-              <span role="cell">{r.status}</span>
+              <span role="cell">
+                {r.status}
+                {r.seen && (
+                  <span className={s.small} style={{ display: "block" }} suppressHydrationWarning>
+                    {seenAgo(r.seen)}
+                  </span>
+                )}
+              </span>
               <span role="cell" className={r.ok == null ? undefined : r.ok ? s.ok : s.notOk}>
                 {r.ok == null ? "–" : r.ok ? "✓ Ja" : "✗ Nej"}
               </span>
@@ -179,7 +205,7 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
         {!demo && (
           <>
             <div className={`${s.card} ${s.classCard}`}>
-              <CodeSheet trin={view.trin} codes={view.codes} expires={view.expires} onCopied={showToast} />
+              <CodeSheet label={classLabel(view)} codes={view.codes} expires={view.expires} onCopied={showToast} />
             </div>
             <span className={`${s.small} ${s.noPrint}`}>Opdateres af sig selv.</span>
           </>

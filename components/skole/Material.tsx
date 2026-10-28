@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
 import { SkoleLogo } from "@/components/Logo";
-import { dayMonthYear } from "@/lib/skole";
+import { classLabel, dayMonthYear } from "@/lib/skole";
 import { pupilAddress } from "@/lib/skole-host";
 import { COURSE, LESSONS, type Lesson, type Task } from "@/lib/skole-materiale";
 import m from "./material.module.css";
@@ -23,7 +23,7 @@ const PARTS: { key: Part; label: string; pages: string }[] = [
  * lesson and a worksheet per lesson. With a class (`codes`), the worksheets come one per pupil with the code printed on
  * it; without, one blank sheet to copy. Content in lib/skole-materiale.ts.
  */
-export function Material({ teacher, cls }: { teacher: string | null; cls?: { id: string; trin: number; codes: string[]; expires: string } }) {
+export function Material({ teacher, cls }: { teacher: string | null; cls?: { id: string; trin: number; name?: string; codes: string[]; expires: string } }) {
   const [parts, setParts] = useState<Set<Part>>(() => new Set(cls ? ["elev1"] : ["forloeb"]));
   const [withCodes, setWithCodes] = useState(!!cls);
   // Read in an effect so the server render and the first browser render match.
@@ -77,7 +77,7 @@ export function Material({ teacher, cls }: { teacher: string | null; cls?: { id:
               <label className={m.pickRow}>
                 <input type="radio" name="codes" checked={withCodes} onChange={() => setWithCodes(true)} />
                 <span>
-                  Ét ark pr. elev med elevkoden på ({cls.codes.length} elever, {cls.trin}. klasse)
+                  Ét ark pr. elev med elevkoden på ({cls.codes.length} elever, {classLabel(cls)})
                 </span>
               </label>
               <label className={m.pickRow}>

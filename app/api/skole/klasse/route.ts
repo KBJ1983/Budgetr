@@ -5,7 +5,7 @@ import { currentTeacher } from "@/lib/skole-auth";
 import { canTryFree, teacherSeat, useTrial } from "@/lib/skole-seats";
 import { createClass, teacherClasses } from "@/lib/skole-store";
 
-// budgetpro Skole: the logged-in teacher's classes. GET lists them; POST { trin, antal, days } makes one – with a seat
+// budgetpro Skole: the logged-in teacher's classes. GET lists them; POST { trin, antal, days, name? } makes one – with a seat
 // from a school's agreement (lib/skole-seats.ts), or once without a seat as the free class (days = TRIAL_DAYS); else 403.
 const noStore = { "Cache-Control": "no-store" };
 
@@ -37,6 +37,6 @@ export async function POST(req: Request) {
     if (days !== TRIAL_DAYS) return Response.json({ error: "input" }, { status: 400, headers: noStore });
     await useTrial(t);
   }
-  const cls = await createClass({ trin, count: antal, days, teacherId: t.id });
+  const cls = await createClass({ trin, count: antal, days, teacherId: t.id, name: typeof b.name === "string" ? b.name : undefined });
   return Response.json({ id: cls.id }, { status: 201, headers: noStore });
 }

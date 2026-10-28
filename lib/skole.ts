@@ -415,8 +415,26 @@ const COLORS = ["BLÅ", "GUL", "RØD", "GRØN", "LILLA", "SORT", "HVID", "BRUN",
 const ANIMALS = ["ORM", "RÆV", "UGLE", "ULV", "HARE", "SÆL", "MÅGE", "LAKS", "BJØRN", "ODDER", "MUS", "HJORT", "KAT", "HUND", "GED", "HEST", "ELG", "LØVE", "TIGER", "PANDA", "KRAGE", "SVANE", "ØRN", "FRØ"];
 const CODE_RE = new RegExp(`^(?:${COLORS.join("|")})-(?:${ANIMALS.join("|")})-[1-9][0-9]$`);
 
-/** " blå orm 47 " → "BLÅ-ORM-47". */
-export const normalizeCode = (s: string) => s.trim().toUpperCase().replace(/[\s_]+/g, "-").replace(/-{2,}/g, "-");
+// A word as a keyboard without æøå may type it: Å as AA or A, Ø as OE or O, Æ as AE, A or E.
+const ALT: Record<string, string> = { Å: "(?:Å|AA|A)", Ø: "(?:Ø|OE|O)", Æ: "(?:Æ|AE|A|E)" };
+const loose = (w: string) => [...w].map((ch) => ALT[ch] ?? ch).join("");
+const LOOSE = (words: string[]) => words.map((w) => `(${loose(w)})`).join("|");
+const LOOSE_RE = new RegExp(`^(?:${LOOSE(COLORS)})-?(?:${LOOSE(ANIMALS)})-?([1-9][0-9])$`);
+
+/**
+ * " blå orm 47 " → "BLÅ-ORM-47". Dashes and spaces may be left out, and æøå typed as aa/oe/ae or a/o/e:
+ * "blaaorm47" and "gron-love-12" find their code too. Anything else is only cleaned up (and fails isCode).
+ */
+export function normalizeCode(s: string): string {
+  const typed = s.trim().toUpperCase().replace(/[\s_]+/g, "-").replace(/-{2,}/g, "-");
+  const m = LOOSE_RE.exec(typed);
+  if (!m) return typed;
+  // One group per word: the first match in the colours, then in the animals, then the number.
+  const groups = m.slice(1);
+  const color = COLORS[groups.slice(0, COLORS.length).findIndex((g) => g !== undefined)];
+  const animal = ANIMALS[groups.slice(COLORS.length, COLORS.length + ANIMALS.length).findIndex((g) => g !== undefined)];
+  return `${color}-${animal}-${groups.at(-1)}`;
+}
 export const isCode = (s: string) => CODE_RE.test(s);
 
 /** A random code; `rnd` returns a number in [0, 1). */
@@ -514,11 +532,25 @@ export interface PupilRow {
   status: string;
   ok: boolean | null;
   caseName: string | null;
+  /** When the pupil last saved anything (ISO), for "sidst aktiv". */
+  seen?: string;
 }
 
-export function pupilRow(code: string, f: Flow | null): PupilRow {
-  if (!f) return { code, status: "Ikke startet", ok: null, caseName: null };
-  return { code, status: f.done ? "Færdig" : `Trin ${f.maxStep}`, ok: isOk(f), caseName: f.caseId ? caseById(f.caseId).name : null };
+export function pupilRow(code: string, f: Flow | null, seen?: string): PupilRow {
+  const at = seen ? { seen } : {};
+  if (!f) return { code, status: "Ikke startet", ok: null, caseName: null, ...at };
+  return { code, status: f.done ? "Færdig" : `Trin ${f.maxStep}`, ok: isOk(f), caseName: f.caseId ? caseById(f.caseId).name : null, ...at };
+}
+
+/** "lige nu", "for 4 min. siden", "for 2 timer siden", "i går", "3. nov." – how long ago a pupil was active. */
+export function seenAgo(iso: string, now = new Date()): string {
+  const min = Math.floor((now.getTime() - Date.parse(iso)) / 60_000);
+  if (min < 1) return "lige nu";
+  if (min < 60) return `for ${min} min. siden`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `for ${h} ${h === 1 ? "time" : "timer"} siden`;
+  if (h < 48) return "i går";
+  return new Date(iso).toLocaleDateString("da-DK", { day: "numeric", month: "short", timeZone: "Europe/Copenhagen" });
 }
 
 export interface ClassStats {
@@ -528,7 +560,7 @@ export interface ClassStats {
   finishedOk: number;
   topCase: string | null;
   /** The most chosen home, and its share of the pupils who chose one. */
-  topBolig: { label: string; pct: number } | null;
+  topBolig: { label: string; pct: number; of: number } | null;
 }
 
 /** The most common value and its count; ties go to the one seen first. */
@@ -552,7 +584,7 @@ export function classStats(flows: (Flow | null)[]): ClassStats {
     finished: finished.length,
     finishedOk: finished.filter((f) => isOk(f) === true).length,
     topCase: topCase ? caseById(topCase[0]).name : null,
-    topBolig: topHome ? { label: BOLIG.find((b) => b.amt === topHome[0])?.label ?? "", pct: Math.round((topHome[1] / homes.length) * 100) } : null,
+    topBolig: topHome ? { label: BOLIG.find((b) => b.amt === topHome[0])?.label ?? "", pct: Math.round((topHome[1] / homes.length) * 100), of: homes.length } : null,
   };
 }
 
@@ -624,9 +656,18 @@ export function validateTeacher(x: unknown): { ok: true; value: TeacherInput } |
 }
 
 /** One class on the teacher's front page. */
+/** At most this many characters in a class's own name ("8.A", "Valghold 2"). */
+export const MAX_CLASS_NAME = 24;
+/** The name the teacher typed, cleaned up; "" for none. */
+export const cleanClassName = (v: unknown) => (typeof v === "string" ? v.trim().replace(/\s+/g, " ").slice(0, MAX_CLASS_NAME) : "");
+/** What a class is called on the teacher's pages and the code slips: its own name, or "8. klasse". */
+export const classLabel = (c: { trin: number; name?: string }) => c.name || `${c.trin}. klasse`;
+
 export interface ClassSummary {
   id: string;
   trin: number;
+  /** The teacher's own name for the class, if any. */
+  name?: string;
   created: string;
   expires: string;
   days: number;
@@ -639,6 +680,7 @@ export interface ClassSummary {
 export interface ClassView {
   id: string;
   trin: number;
+  name?: string;
   codes: string[];
   created: string;
   /** When the codes stop working and everything is deleted. */

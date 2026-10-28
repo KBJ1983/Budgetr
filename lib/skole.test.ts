@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  boligLevel, budgetNumbers, canNext, caseById, classStats, pupilDetail, pupilRow, sanitizeAnswers, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, parentTalk, randomCode, scenarios, seedPosts,
+  boligLevel, budgetNumbers, classLabel, cleanClassName, seenAgo, canNext, caseById, classStats, pupilDetail, pupilRow, sanitizeAnswers, sanitizeFlow, dreamMonthly, emptyFlow, isCode, isOk, kr, monthly, normalizeCode, opsLevel, parentTalk, randomCode, scenarios, seedPosts,
   signedKr, steps, totals, type Flow,
 } from "./skole";
 
@@ -153,6 +153,28 @@ describe("pupil codes", () => {
     expect(normalizeCode("gul--ræv-12")).toBe("GUL-RÆV-12");
   });
 
+  it("reads a code typed without dashes or æøå", () => {
+    expect(normalizeCode("blaaorm47")).toBe("BLÅ-ORM-47");
+    expect(normalizeCode("BRUNLAKS21")).toBe("BRUN-LAKS-21");
+    expect(normalizeCode("gra-maage-59")).toBe("GRÅ-MÅGE-59");
+    expect(normalizeCode("moerk panda 35")).toBe("MØRK-PANDA-35");
+    expect(normalizeCode("rod-ulv-25")).toBe("RØD-ULV-25");
+    expect(normalizeCode("lillaelg12")).toBe("LILLA-ELG-12");
+    expect(normalizeCode("lilleelg12")).toBe("LILLE-ELG-12");
+    expect(normalizeCode("gul-rev-12")).toBe("GUL-RÆV-12");
+    expect(normalizeCode("blå-orm-09")).toBe("BLÅ-ORM-09");
+    expect(isCode(normalizeCode("blå-orm-09"))).toBe(false);
+  });
+
+  it("reads every code the same way, typed as is or the plain way", () => {
+    const plain = (c: string) => c.replace(/Å/g, "AA").replace(/Ø/g, "OE").replace(/Æ/g, "AE").replace(/-/g, "");
+    for (let i = 0; i < 2000; i++) {
+      const c = randomCode();
+      expect(normalizeCode(c)).toBe(c);
+      expect(normalizeCode(plain(c).toLowerCase())).toBe(c);
+    }
+  });
+
   it("knows the format COLOUR-ANIMAL-10..99", () => {
     expect(isCode("BLÅ-ORM-47")).toBe(true);
     expect(isCode("SJOV-FRØ-99")).toBe(true);
@@ -235,9 +257,22 @@ describe("class overview", () => {
     expect(pupilDetail("BLÅ-ORM-47", null, {})).toMatchObject({ status: "Ikke startet", choices: [], answers: [] });
   });
 
+  it("says how long ago a pupil was active", () => {
+    const now = new Date("2026-11-03T12:00:00Z");
+    const ago = (min: number) => new Date(now.getTime() - min * 60_000).toISOString();
+    expect(seenAgo(ago(0), now)).toBe("lige nu");
+    expect(seenAgo(ago(4), now)).toBe("for 4 min. siden");
+    expect(seenAgo(ago(60), now)).toBe("for 1 time siden");
+    expect(seenAgo(ago(180), now)).toBe("for 3 timer siden");
+    expect(seenAgo(ago(30 * 60), now)).toBe("i går");
+    expect(classLabel({ trin: 8 })).toBe("8. klasse");
+    expect(classLabel({ trin: 8, name: "8.A" })).toBe("8.A");
+    expect(cleanClassName("  8.A   valghold  ")).toBe("8.A valghold");
+  });
+
   it("sums up the class", () => {
     const flows = [done({}), done({ caseId: "mira", bolig: 6900 }), done({ bolig: 3500 }), sara({ caseId: "jonas", step: 3, maxStep: 3 }), null];
-    expect(classStats(flows)).toEqual({ started: 4, finished: 3, finishedOk: 2, topCase: "Sara", topBolig: { label: "Delelejlighed", pct: 50 } });
+    expect(classStats(flows)).toEqual({ started: 4, finished: 3, finishedOk: 2, topCase: "Sara", topBolig: { label: "Delelejlighed", pct: 50, of: 4 } });
     expect(classStats([null, null])).toEqual({ started: 0, finished: 0, finishedOk: 0, topCase: null, topBolig: null });
   });
 });
