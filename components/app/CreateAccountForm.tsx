@@ -14,8 +14,20 @@ const FIELDS: { key: SignupField; label: string; autoComplete: string; type?: st
   { key: "phone", label: "Mobilnummer", autoComplete: "tel-national", type: "tel", inputMode: "tel" },
 ];
 
-/** Sign up (/opret). The fields are checked here and again on the server (lib/signup.ts), which mails a confirm link. */
-export function CreateAccountForm({ email }: { email?: string }) {
+export interface SeatOffer {
+  code: string;
+  org: string;
+  months: number;
+}
+
+export const seatMonths = (n: number) => `${n} ${n === 1 ? "måned" : "måneder"}`;
+
+/**
+ * Sign up (/opret). The fields are checked here and again on the server (lib/signup.ts), which mails a confirm link.
+ * With a seat code from a bank or estate agent (/opret?kode=…, lib/customer-seats.ts) the code goes along and the seat
+ * is taken when the e-mail is confirmed.
+ */
+export function CreateAccountForm({ email, seat }: { email?: string; seat?: SeatOffer }) {
   const [values, setValues] = useState<Values>({ firstName: "", lastName: "", email: email ?? "", phone: "" });
   const [errors, setErrors] = useState<Partial<Values>>({});
   const [error, setError] = useState("");
@@ -39,7 +51,7 @@ export function CreateAccountForm({ email }: { email?: string }) {
       const r = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(seat ? { ...values, kode: seat.code } : values),
       });
       const j = (await r.json().catch(() => ({}))) as { errors?: Partial<Values>; devLink?: string; devCode?: string };
       if (r.status === 400 && j.errors) return showErrors(j.errors);
@@ -75,12 +87,19 @@ export function CreateAccountForm({ email }: { email?: string }) {
 
   return (
     <AuthShell>
-      <h1>Opret gratis konto</h1>
-      <p className="bx-guide-lead">
-        Udfyld felterne, så sender vi dig en kode, som bekræfter din e-mail. Der er ingen adgangskode – du logger ind
-        med en kode eller et link på mail. De første 30 dage er gratis, og du skal ikke bruge betalingskort, før de er
-        gået.
-      </p>
+      <h1>{seat ? `Din adgang fra ${seat.org}` : "Opret konto"}</h1>
+      {seat ? (
+        <p className="bx-guide-lead">
+          {seat.org} har givet dig budgetpro i {seatMonths(seat.months)} uden betaling. Udfyld felterne, så sender vi dig
+          en kode, som bekræfter din e-mail. Perioden starter, når den er bekræftet. {seat.org} kan ikke se dit budget.
+        </p>
+      ) : (
+        <p className="bx-guide-lead">
+          Udfyld felterne, så sender vi dig en kode, som bekræfter din e-mail. Der er ingen adgangskode – du logger ind
+          med en kode eller et link på mail. De første 30 dage er gratis, og du skal ikke bruge betalingskort, før de er
+          gået.
+        </p>
+      )}
       <form onSubmit={submit} noValidate className="bx-auth-form">
         {FIELDS.map((f) => {
           const id = `${idBase}-${f.key}`, err = errors[f.key];
@@ -130,7 +149,7 @@ export function CreateAccountForm({ email }: { email?: string }) {
         <Link href="/privatliv">privatlivspolitik</Link>.
       </p>
       <p className="bx-help" style={{ marginTop: 8 }}>
-        Har du allerede en konto? <Link href="/login">Log ind</Link>.
+        Har du allerede en konto? <Link href={seat ? `/login?kode=${seat.code}` : "/login"}>Log ind</Link>.
       </p>
     </AuthShell>
   );

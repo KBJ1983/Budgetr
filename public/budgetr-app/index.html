@@ -105,7 +105,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .wide{max-width:min(980px,96vw)!important;width:min(980px,96vw)}
 .wzhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
 .wzhead h2{margin:0}
-.wzsteps{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--ink3)}
+.wzsteps{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--ink3)}
 .wzsteps span{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--paper)}
 .wzsteps span.on{background:var(--pine);border-color:var(--pine);color:var(--paper);font-weight:700}
 .wzsteps span.done{border-color:var(--pine);color:var(--pine)}
@@ -126,6 +126,25 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
 .wzgn{display:flex;flex-direction:column;min-width:0;line-height:1.3}
 .wzgn small{color:var(--ink3);font-size:12.5px}
 .wzopt button{flex:none}
+/* A table whose rows become small cards on phones, each cell with its column name (data-l) above it. */
+@media (max-width:760px){
+  .tstack thead{display:none}
+  .tstack tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;padding:12px 14px;border-bottom:1px solid var(--rule)}
+  .tstack td{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:0!important;border:0!important;text-align:left!important;min-width:0;white-space:normal!important;overflow-wrap:break-word}
+  .tstack td::before{content:attr(data-l);font-size:11.5px;color:var(--ink3);font-weight:400}
+  .tstack td.desc{grid-column:1/-1}
+  .tstack td.act{grid-column:1/-1;width:auto!important;align-items:stretch}.tstack td.act::before{content:none}.tstack td.act button{width:100%;white-space:nowrap}.tstack td.act:empty{display:none}
+  .tstack tr.cat{grid-template-columns:minmax(0,1fr) auto}.tstack tr.cat td::before{content:none}}
+/* Goals in the guide: a row of the grid on wide screens, a small card with its own labels on phones. */
+.wzgrow,.wzf{display:contents}
+.wzf>span{display:none}
+@media (max-width:640px){
+  .wzgoals{grid-template-columns:minmax(0,1fr)!important;gap:8px}.wzgoals>.hd{display:none}
+  .wzgrow{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--rule);border-radius:10px;min-width:0}
+  .wzf{display:flex;flex-direction:column;gap:4px;flex:1 1 calc(50% - 4px);min-width:0}.wzf>span{display:block;font-size:12px;color:var(--ink3)}
+  .wzf.wide{flex-basis:100%}
+  .wzacc{flex-wrap:wrap}.wzacc input[type=text],.wzacc input[type=date]{flex:1 1 140px;max-width:none!important}
+  .wzacc.sub{margin-left:0!important}}
 .imptbl{max-height:52vh;overflow:auto;margin-top:8px}
 .imptbl input.amt{width:110px;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 7px;font:inherit;font-size:13px;color:var(--ink);text-align:right}
 .imptbl select{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 7px;font:inherit;font-size:13px;color:var(--ink);max-width:260px}
@@ -1324,6 +1343,11 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
           <div class="setgrp"><span class="flabel">Dine data</span>
             <p class="setnote">Hent hele budgettet som sikkerhedskopi. Den kan læses ind igen senere, også på en ny bruger.</p>
             <div><button type="button" id="userBackup">Gem sikkerhedskopi</button></div></div>
+          <div class="setgrp" id="userSeat" hidden><span class="flabel">Adgang fra bank eller ejendomsmægler</span>
+            <p class="setnote" id="userSeatNote"></p>
+            <div id="userSeatAdd"><div class="field"><label for="userSeatCode">Kode fra mailen</label><input id="userSeatCode" autocomplete="off" autocapitalize="characters" maxlength="12" placeholder="ABCD-EFGH"></div>
+              <div><button type="button" id="userSeatGo">Brug koden</button></div></div>
+            <div id="userSeatMsg" class="verdict" role="status" hidden></div></div>
           <div class="setgrp"><span class="flabel">Slet bruger</span>
             <p class="setnote" id="userDelNote">Henter …</p>
             <div id="userDel" hidden>
@@ -2176,8 +2200,8 @@ function overfHtml(){
    <small>Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.${sc?' Ændringer her gælder kun scenariet.':''}</small></div>`;
   if(fixes.length)h+=`<section><div class="sechead"><h2>Skal rettes i netbanken</h2><button type="button" class="primary" data-tfixall>Markér alle som rettet</button></div>
    <div class="verdict warn" style="margin:0 0 10px">Budgettet er ændret, fx af opsparingsmål eller nye poster. Disse faste overførsler passer ikke længere med det, der bør overføres${sc?' i '+esc(sc.name||'scenariet'):''}. Ret dem i netbanken, og markér dem derefter som rettet.</div>
-   <div class="tablewrap"><table><thead><tr><th>Fra</th><th>Til</th><th>Beskrivelse</th><th class="r">Sat op nu</th><th class="r">Bør være</th><th class="r">Ændring</th><th></th></tr></thead><tbody>${fixes.map(({e,rec})=>{const d=rec-setupAmt(e);
-     return `<tr><td>${esc(accName(e.from))}</td><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}</td><td class="r">${kr(setupAmt(e))}</td><td class="r"><b>${kr(rec)}</b></td><td class="r" style="color:${d>0?'var(--brick)':'var(--pine)'};font-weight:500">${d>0?'+':'−'}${kr(Math.abs(d))}</td><td class="act"><button type="button" data-tfix="${e.id}" data-v="${rec}">Markér som rettet</button></td></tr>`}).join('')}</tbody></table></div>
+   <div class="tablewrap"><table class="tstack"><thead><tr><th>Fra</th><th>Til</th><th>Beskrivelse</th><th class="r">Sat op nu</th><th class="r">Bør være</th><th class="r">Ændring</th><th></th></tr></thead><tbody>${fixes.map(({e,rec})=>{const d=rec-setupAmt(e);
+     return `<tr><td data-l="Fra">${esc(accName(e.from))}</td><td data-l="Til">${esc(accName(e.to))}</td><td class="desc" data-l="Beskrivelse">${esc(e.desc)}</td><td class="r" data-l="Sat op nu">${kr(setupAmt(e))}</td><td class="r" data-l="Bør være"><b>${kr(rec)}</b></td><td class="r" data-l="Ændring" style="color:${d>0?'var(--brick)':'var(--pine)'};font-weight:500">${d>0?'+':'−'}${kr(Math.abs(d))}</td><td class="act"><button type="button" data-tfix="${e.id}" data-v="${rec}">Markér som rettet</button></td></tr>`}).join('')}</tbody></table></div>
    <p class="muted" style="font-size:13px;margin-top:8px">"Bør være" følger jeres fordeling efter betaler og rundes op til nærmeste 100 kr. "Sat op nu" er det beløb, der er registreret som overførslens beløb.</p></section>`;
   if(T.length)h+=`<section class="tflow"><div class="sechead"><h2>Pengestrømme</h2><span class="hint">Klik på en streg eller en konto for at fremhæve den. Stregens tykkelse følger beløbet ${per()}.</span></div>${flowSvg(T)}<div class="flowinfo" id="flowInfo" aria-live="polite"></div></section>`;
   const fixIds=new Set(fixes.map(x=>x.e.id)), nf0=(S.accounts.find(a=>a.type==='faelles')||S.accounts[0]||{}).id||'';
@@ -2187,10 +2211,10 @@ function overfHtml(){
   src.forEach(a=>{
     const out=all.filter(e=>e.from===a.id).sort((x,y)=>mAvg(y)-mAvg(x)), sOut=out.filter(e=>e.active!==false).reduce((s,e)=>s+mAvg(e),0);
     h+=`<div class="tcard"><div class="ghead"><div><h3 style="margin:0;font-size:16px">Fra ${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div></div>`;
-    h+=`<div class="tablewrap"><table><thead><tr><th>Til konto</th><th>Beskrivelse</th><th>Hyppighed</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th></th></tr></thead><tbody>${out.map(e=>{
+    h+=`<div class="tablewrap"><table class="tstack"><thead><tr><th>Til konto</th><th>Beskrivelse</th><th>Hyppighed</th><th class="r">${view==='aar'?'Pr. år':'Pr. md.'}</th><th></th></tr></thead><tbody>${out.map(e=>{
       const f=e.auto?1:(+e.freq||1), when=f>1?` <span class="muted">(${kr(amtOf(e))} i ${monthsOf(e).join(', ')})</span>`:'';
-      return `<tr class="row ${e.active===false?'off':''}" data-tid="${e.id}" tabindex="0"><td>${esc(accName(e.to))}</td><td class="desc">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._cover?`<span class="badge gtag">${e._cinc?'Flytter indtægt':'Dækker udgift'}</span>`:''}${e.auto?'<span class="badge auto">Auto</span>':''}${fixIds.has(e.id)?'<span class="badge un">Skal rettes</span>':''}${e.made===false?'<span class="badge un">Ikke oprettet i banken</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.active===false&&!e.removed?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
-        <td>${FREQ[f]||''}${when}</td><td class="r">${disp(mAvg(e))}</td><td class="act">${e._goal||e._cover||(e._ovr&&e.removed)?'':`<button type="button" class="ghost danger" data-tdel="${e.id}">Fjern</button>`}</td></tr>`}).join('')}
+      return `<tr class="row ${e.active===false?'off':''}" data-tid="${e.id}" tabindex="0"><td data-l="Til konto">${esc(accName(e.to))}</td><td class="desc" data-l="Beskrivelse">${esc(e.desc)}${e._goal?'<span class="badge gtag">Opsparingsmål</span>':''}${e._cover?`<span class="badge gtag">${e._cinc?'Flytter indtægt':'Dækker udgift'}</span>`:''}${e.auto?'<span class="badge auto">Auto</span>':''}${fixIds.has(e.id)?'<span class="badge un">Skal rettes</span>':''}${e.made===false?'<span class="badge un">Ikke oprettet i banken</span>':''}${e._added?'<span class="badge sc">Ny i scenariet</span>':e._ovr&&e.removed?'<span class="badge un">Fjernet i scenariet</span>':e._ovr?'<span class="badge sc">Ændret i scenariet</span>':''}${e.active===false&&!e.removed?'<span class="badge un">Inaktiv</span>':''}${e.note?`<span class="note">${esc(e.note)}</span>`:''}</td>
+        <td data-l="Hyppighed">${FREQ[f]||''}${when}</td><td class="r" data-l="${view==='aar'?'Pr. år':'Pr. md.'}">${disp(mAvg(e))}</td><td class="act">${e._goal||e._cover||(e._ovr&&e.removed)?'':`<button type="button" class="ghost danger" data-tdel="${e.id}">Fjern</button>`}</td></tr>`}).join('')}
       <tr class="cat"><td colspan="3">I alt ud</td><td class="r">${disp(sOut)}</td><td></td></tr></tbody></table></div></div>`;
   });
   h+=`</div></section>`;
@@ -3688,6 +3712,26 @@ function loadUser(){userMsg('');$('userDel').hidden=true;$('userDelWord').value=
     $('userDelNote').textContent='Sletter du din bruger, sletter vi budgettet, alle tidligere versioner, kladder og dine kontaktoplysninger. '
       +(d.members.length?'De andre, der kan logge ind på budgettet, mister også adgangen. ':'')+'Det kan ikke fortrydes, så gem en sikkerhedskopi først, hvis du vil beholde noget.';
     $('userDel').hidden=false})}
+/* A seat from a bank or estate agent (lib/customer-seats.ts, /api/account/<id>/adgang): shows the seat the budget has,
+   or a field for the code from the seat mail. Real accounts only (the API answers 401 for test users). */
+const seatUrl=()=>'/api/account/'+encodeURIComponent(window.BUDGETR_USER)+'/adgang';
+function seatMsg(txt,kind){const m=$('userSeatMsg');m.hidden=!txt;m.className='verdict'+(kind?' '+kind:'');m.textContent=txt||''}
+function renderSeat(seat){$('userSeat').hidden=false;$('userSeatAdd').hidden=!!seat;
+  $('userSeatNote').textContent=seat?`Du har budgetpro uden betaling fra ${seat.org} til og med ${fmtDate(addDaysISO(seat.until,-1))}. ${seat.org} kan ikke se dit budget.`
+    :'Har du fået en kode fra din bank eller ejendomsmægler, så skriv den her.'}
+const addDaysISO=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+function loadSeat(){seatMsg('');$('userSeat').hidden=true;
+  fetch(seatUrl(),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null).then(d=>{if(d)renderSeat(d.seat)})}
+$('userSeatGo').onclick=()=>{const b=$('userSeatGo'),kode=$('userSeatCode').value.trim();
+  if(!kode){seatMsg('Skriv koden fra mailen.','bad');$('userSeatCode').focus();return}
+  b.disabled=true;seatMsg('');
+  fetch(seatUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kode})})
+    .then(r=>r.json().catch(()=>({})).then(j=>({r,j}))).then(({r,j})=>{
+      const E={unknown:'Den kode kender vi ikke. Tjek, at den er skrevet som i mailen.',used:'Koden er allerede brugt.',
+        expired:'Koden er udløbet. Spørg den, der gav dig den, om en ny.',school:'Koden er til budgetpro Skole. Brug den på skole-siden.'};
+      if(r.ok){$('userSeatCode').value='';renderSeat(j.seat);seatMsg('Koden er brugt. Adgangen er din.','ok')}
+      else seatMsg(E[j.error]||'Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')})
+    .catch(()=>seatMsg('Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')).finally(()=>{b.disabled=false})};
 $('userBackup').onclick=()=>exportJson();
 $('userDelGo').onclick=()=>{const b=$('userDelGo'),w=$('userDelWord').value.trim().toUpperCase();
   if(w!=='SLET'){userMsg('Skriv SLET i feltet for at bekræfte.','bad');$('userDelWord').focus();return}
@@ -3699,7 +3743,7 @@ $('userDelGo').onclick=()=>{const b=$('userDelGo'),w=$('userDelWord').value.trim
       try{Object.keys(localStorage).filter(k=>k===window.BUDGETR_KEY||k.startsWith(window.BUDGETR_KEY+':')).forEach(k=>localStorage.removeItem(k))}catch(e){}
       window.BUDGETR_LOGOUT()})
     .catch(()=>{b.disabled=false;userMsg('Det lykkedes ikke lige nu. Prøv igen om lidt.','bad')})};
-function setShow(sec){if(!$('set-'+sec))sec='hus';setPage=sec;if(sec==='deling'){shareMsg('');loadShare()}if(sec==='bruger')loadUser();
+function setShow(sec){if(!$('set-'+sec))sec='hus';setPage=sec;if(sec==='deling'){shareMsg('');loadShare()}if(sec==='bruger'){loadUser();loadSeat()}
   document.querySelectorAll('#setMain .setsec').forEach(x=>x.classList.toggle('on',x.id==='set-'+sec));
   document.querySelectorAll('.setnav [data-sp]').forEach(b=>{if(b.dataset.sp===sec){b.setAttribute('aria-current','page');
     // On a phone the tabs are one scrolling row: bring the open one into view.
@@ -4187,10 +4231,10 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
     ${W.persons.map((p,i)=>`<div style="display:contents" data-wp="${i}"><input data-f="name" value="${esc(p.name)}" placeholder="Person ${i+1}" autocomplete="off"><input data-f="sal" inputmode="decimal" value="${esc(p.salary)}" placeholder="fx 32.000"><button type="button" class="ghost danger" data-wpx="${i}" ${W.persons.length<2?'disabled':''} aria-label="Fjern person">✕</button></div>`).join('')}</div>
     ${W.persons.length<4?'<button type="button" id="wzAddP" style="margin-top:8px">Tilføj person</button>':''}`;
   if(WS===WS_ACC)b.innerHTML=`<p class="wzp">Hvilke konti bruger I? Navne og kontonumre kan rettes senere under Indstillinger.</p>
-    <label class="wzopt"><input type="checkbox" id="wzAB" ${W.acc.budget?'checked':''}> Fælles budgetkonto til de faste udgifter <input type="text" id="wzABn" value="${esc(W.acc.budgetName)}"></label>
-    <div class="wzopt" style="margin-left:26px"><span>Saldo på budgetkontoen</span><input type="text" id="wzSal" inputmode="decimal" value="${esc(W.acc.saldo||'')}" placeholder="0" style="max-width:130px"><span>pr.</span><input type="date" id="wzSalD" value="${esc(W.acc.saldoDate||DAY())}" style="border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:5px 9px;font:inherit;color:var(--ink)"><span class="muted" style="font-size:12.5px">valgfri</span></div>
+    <label class="wzopt wzacc"><input type="checkbox" id="wzAB" ${W.acc.budget?'checked':''}> Fælles budgetkonto til de faste udgifter <input type="text" id="wzABn" value="${esc(W.acc.budgetName)}"></label>
+    <div class="wzopt wzacc sub" style="margin-left:26px"><span>Saldo på budgetkontoen</span><input type="text" id="wzSal" inputmode="decimal" value="${esc(W.acc.saldo||'')}" placeholder="0" style="max-width:130px"><span>pr.</span><input type="date" id="wzSalD" value="${esc(W.acc.saldoDate||DAY())}" style="border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:5px 9px;font:inherit;color:var(--ink)"><span class="muted" style="font-size:12.5px">valgfri</span></div>
     <label class="wzopt"><input type="checkbox" id="wzAP" ${W.acc.personal?'checked':''}> En lønkonto til hver person${P.length?` (${P.map(p=>esc(p.name)).join(', ')})`:''}</label>
-    <label class="wzopt"><input type="checkbox" id="wzAS" ${W.acc.savings?'checked':''}> Fælles opsparingskonto <input type="text" id="wzASn" value="${esc(W.acc.savingsName)}"></label>`;
+    <label class="wzopt wzacc"><input type="checkbox" id="wzAS" ${W.acc.savings?'checked':''}> Fælles opsparingskonto <input type="text" id="wzASn" value="${esc(W.acc.savingsName)}"></label>`;
   if(WS===WS_GRP){const opt=(attr,on,name,hint,dis)=>`<label class="wzopt"><input type="checkbox" ${attr} ${on?'checked':''} ${dis?'disabled':''}><span class="wzgn"><b>${esc(name)}</b>${hint?`<small>${esc(hint)}</small>`:''}</span></label>`;
     b.innerHTML=`<p class="wzp">Hvilke overskrifter skal budgettet have? Et forslag er sat til. Slå til og fra, så det passer til jer. Posterne lægger du bagefter ind under hver overskrift på siden Budgetposter.</p>
     <h4 class="wzgh">Indtægter</h4><div class="wzgrps">${opt('',true,'Indtægter','løn og andre faste indtægter, altid med',true)}${opt('id="wzGX"',W.extra,'Ekstra indtægter','bonus, honorarer, salg, regnes med i beregningen')}</div>
@@ -4202,8 +4246,8 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
     ${two?`<label class="wzopt"><input type="radio" name="wzSplit" value="manuel" ${W.split==='manuel'?'checked':''}> Fast procent: ${esc(P[0].name)} betaler <input type="number" id="wzPct" min="0" max="100" value="${W.manualPct}" style="width:70px;border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:4px 8px;color:var(--ink);font:inherit"> %</label>`:''}
     ${W.acc.budget&&W.acc.personal?`<label class="wzopt"><input type="checkbox" id="wzAuto" ${W.auto?'checked':''}> Opret automatiske overførsler fra hver lønkonto til ${esc(W.acc.budgetName)}, der følger fordelingen</label>`:''}`}
   if(WS===WS_GOALS)b.innerHTML=`<p class="wzp">Har I noget, I sparer op til? Korte svar er nok. Alt kan rettes under Opsparingsmål.</p>
-    <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 170px 140px 160px"><span class="hd">Mål</span><span class="hd">Type</span><span class="hd">Beløb</span><span class="hd">Måldato</span>
-    ${W.goals.map((g,i)=>`<div style="display:contents" data-wg="${i}"><input data-f="name" value="${esc(g.name)}" placeholder="fx Udbetaling til hus" autocomplete="off"><select data-f="mode"><option value="target" ${g.mode==='target'?'selected':''}>Fast beløb</option><option value="monthly" ${g.mode==='monthly'?'selected':''}>Beløb pr. md.</option></select><input data-f="amt" inputmode="decimal" value="${esc(g.amount)}" placeholder="0"><input data-f="end" type="date" value="${esc(g.end)}"></div>`).join('')}</div>
+    <div class="wzgrid wzgoals" style="grid-template-columns:minmax(0,1fr) 170px 140px 160px"><span class="hd">Mål</span><span class="hd">Type</span><span class="hd">Beløb</span><span class="hd">Måldato</span>
+    ${W.goals.map((g,i)=>`<div class="wzgrow" data-wg="${i}"><label class="wzf wide"><span>Mål</span><input data-f="name" value="${esc(g.name)}" placeholder="fx Udbetaling til hus" autocomplete="off" aria-label="Mål"></label><label class="wzf"><span>Type</span><select data-f="mode" aria-label="Type"><option value="target" ${g.mode==='target'?'selected':''}>Fast beløb</option><option value="monthly" ${g.mode==='monthly'?'selected':''}>Beløb pr. md.</option></select></label><label class="wzf"><span>Beløb</span><input data-f="amt" inputmode="decimal" value="${esc(g.amount)}" placeholder="0" aria-label="Beløb"></label><label class="wzf wide"><span>Måldato</span><input data-f="end" type="date" value="${esc(g.end)}" aria-label="Måldato"></label></div>`).join('')}</div>
     ${W.goals.length<5?'<button type="button" id="wzAddG" style="margin-top:8px">Tilføj mål</button>':''}<p class="muted" style="font-size:13px;margin-top:8px">Målene starter næste måned og betales fælles${W.acc.savings?` til ${esc(W.acc.savingsName)}`:''}. Ved "Beløb pr. md." er måldatoen valgfri.</p>`;
   if(WS===WS_BANK){const inp='style="max-width:100%"';
     b.innerHTML=`<p class="wzp">Når banken regner rådighedsbeløbet ud, trækker den de faste udgifter fra indtægterne. Når du opretter dine udgifter, kan du på hver post vælge, om banken tager den med.</p>

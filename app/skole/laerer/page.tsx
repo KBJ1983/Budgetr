@@ -18,7 +18,7 @@ const one = (v: string | string[] | undefined) => (typeof v === "string" ? v.sli
 export default async function TeacherPage({ searchParams }: { searchParams: Promise<Params> }) {
   const p = await searchParams;
   const t = await currentTeacher((await cookies()).get(TEACHER_COOKIE)?.value);
-  if (!t) return <TeacherLogin email={one(p.email)} start={p.ny ? "opret" : "login"} />;
+  if (!t) return <TeacherLogin email={one(p.email)} start={p.ny ? "opret" : "login"} testHint={process.env.NODE_ENV === "development"} />;
   const seat = await claimWaitingSeat(t);
   return (
     <TeacherHome

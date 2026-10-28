@@ -89,7 +89,14 @@ export interface Expense {
 export interface Ledger {
   orgs: Org[];
   expenses: Expense[];
-  accounts: Record<string, { org?: string; plan?: Plan }>;
+  accounts: Record<string, LedgerAccount>;
+}
+
+export interface LedgerAccount {
+  org?: string;
+  plan?: Plan;
+  /** YYYY-MM-DD, the first day without the seat the account took from `org`'s agreement (lib/customer-seats.ts). */
+  until?: string;
 }
 
 /** Price list from the landing page (components/landing/PricePlans.tsx): base price + each extra login. */
@@ -160,6 +167,8 @@ export interface CustomerRow {
   plan?: Plan;
   status: Status;
   trialEnds?: string;
+  /** The end of a seat from the organisation's agreement: "Betalt af aftale" until then. */
+  seatUntil?: string;
   lastSeen?: string;
 }
 
@@ -242,9 +251,11 @@ export function buildOverview(accounts: Account[], ledger: Ledger, activity: Act
     const logins = 1 + (a.members ?? []).filter((m) => m.verifiedAt).length;
     const trialEnds = addDays(today(new Date(a.createdAt)), TRIAL_DAYS);
     const plan = org ? org.plan : entry.plan;
+    const seatUntil = org ? entry.until : undefined;
+    const seatStatus: Status | null = !seatUntil ? null : day < seatUntil ? "paying" : "ended";
     const status: Status = !a.verifiedAt
       ? "unconfirmed"
-      : planStatus(plan, day) ?? (!org && trialEnds > day ? "trial" : "free");
+      : planStatus(plan, day) ?? seatStatus ?? (!org && trialEnds > day ? "trial" : "free");
     return {
       id: a.id,
       name: `${a.firstName} ${a.lastName}`,
@@ -256,6 +267,7 @@ export function buildOverview(accounts: Account[], ledger: Ledger, activity: Act
       plan: entry.plan,
       status,
       trialEnds: org ? undefined : trialEnds,
+      ...(seatUntil ? { seatUntil } : {}),
       lastSeen: seen,
     };
   });
@@ -467,6 +479,8 @@ export function applyChange(ledger: Ledger, change: unknown, accountIds: string[
         if (c.org === null || c.org === "") delete entry.org;
         else if (typeof c.org === "string" && next.orgs.some((o) => o.id === c.org)) entry.org = c.org;
         else return { ok: false, error: "org" };
+        // A seat belongs to the organisation it came from.
+        if (entry.org !== ledger.accounts[c.id]?.org) delete entry.until;
       }
       if (c.plan !== undefined) {
         if (c.plan === null) delete entry.plan;
@@ -540,6 +554,7 @@ export function applyChange(ledger: Ledger, change: unknown, accountIds: string[
       for (const [id, e] of Object.entries(next.accounts)) {
         if (e.org !== c.id) continue;
         delete e.org;
+        delete e.until;
         if (!e.plan) delete next.accounts[id];
       }
       return { ok: true, ledger: next };

@@ -95,7 +95,9 @@ export default function PrivacyPage() {
       <p>
         Sender du en prisforespørgsel fra Erhverv-siden, gemmer vi navn, firma, e-mail, telefon og det, du skriver, så vi kan
         svare dig. Kundeadministratorer hos virksomheder med en aftale gemmes med e-mail, så de kan logge ind og sende
-        adgange. Den, der får en adgang, får koden på mail. Virksomheden kan ikke se dit budget. Vi er selv dataansvarlige for
+        adgange. Den, der får en adgang, får koden på mail. Når du bruger koden, noterer vi, at din konto har adgang fra
+        virksomheden, og hvornår adgangen slutter. Virksomheden kan se, at adgangen er taget i brug, men ikke dit budget.
+        Vi er selv dataansvarlige for
         dit budget, også når du har fået adgang gennem en aftale.
       </p>
 

@@ -135,10 +135,10 @@ const seatsText = (o: OrgRow) =>
       ? "–"
       : `${num(o.seats)} licenser`;
 
-function StatusTag({ status, trialEnds }: { status: Status; trialEnds?: string }) {
+function StatusTag({ status, trialEnds, seatUntil }: { status: Status; trialEnds?: string; seatUntil?: string }) {
   switch (status) {
     case "paying":
-      return <span className="bx-tag">Betaler</span>;
+      return <span className="bx-tag">{seatUntil ? `Betalt af aftale til ${date(seatUntil)}` : "Betaler"}</span>;
     case "trial":
       return <span className="bx-tag is-warn">Prøveperiode til {date(trialEnds)}</span>;
     case "ended":
@@ -918,7 +918,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                         )}
                       </td>
                       <td>
-                        <StatusTag status={c.status} trialEnds={c.trialEnds} />
+                        <StatusTag status={c.status} trialEnds={c.trialEnds} seatUntil={c.seatUntil} />
                       </td>
                     </tr>
                   ))}

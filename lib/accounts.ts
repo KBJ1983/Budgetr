@@ -68,6 +68,8 @@ export interface Account extends Holder {
   members?: Member[];
   /** Where the visit that made the account came from (lib/traffic.ts), for the owner's traffic overview. */
   source?: string;
+  /** A seat code typed on /opret or /login, taken on the next login (lib/customer-seats.ts). Ids only, never the code. */
+  pendingSeat?: { org: string; grant: string };
 }
 
 /** Who logged in: the account, and the member when it wasn't the primary e-mail. */
@@ -235,6 +237,16 @@ export async function redeemCode(email: unknown, code: unknown, now = new Date()
   if (t.tries >= MAX_CODE_TRIES) delete holderOf(l).token;
   await saveAccount(l.account, dir);
   return null;
+}
+
+/** Notes (or clears, with null) a seat to take on the next login. */
+export async function setPendingSeat(id: string, seat: Account["pendingSeat"] | null, dir?: string): Promise<void> {
+  const a = await readAccount(id, dir);
+  if (!a) return;
+  if (seat) a.pendingSeat = seat;
+  else if (a.pendingSeat) delete a.pendingSeat;
+  else return;
+  await saveAccount(a, dir);
 }
 
 // ---- Sharing a budget ------------------------------------------------------------------------------------------

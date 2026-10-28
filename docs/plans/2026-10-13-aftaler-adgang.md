@@ -107,7 +107,8 @@ text and the ways to a seat. `POST /api/skole/klasse` answers 403 without an act
 3. **Skole.** Seat for teachers (grant link, waiting grant on sign-up, code, request + send), demo class, 403 on class
    creation without a seat, "Tidlige lærere", remove a teacher.
 4. **Bank/estate-agent customers.** Link/code on `/opret` and in the app, ledger link + `until`, status in the overview,
-   the reminder mail before the end, the demo customer.
+   the reminder mail before the end, the demo customer. *Done (2026-10-28) except the reminder mail and the demo
+   customer (a test user has no account, so it can't hold a seat).*
 
 Each step ends with `pnpm test`, `pnpm typecheck`, `pnpm build`, and for UI `pnpm dev` + `pnpm smoke`. CLAUDE.md gets a
 short "Aftaler" paragraph in step 1, updated as the steps land.
