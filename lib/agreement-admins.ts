@@ -166,6 +166,8 @@ export interface GrantRow {
   open: boolean;
   /** A school's teacher using the seat: the school can take it back for another teacher. */
   release: boolean;
+  /** The kundeadmins' own note (Grant.note). */
+  note?: string;
 }
 
 export interface AgreementView {
@@ -183,12 +185,13 @@ export interface AgreementView {
 
 export function grantRow(g: Grant, day: string, school = false): GrantRow {
   const lastSentAt = g.sends.at(-1) ?? g.sentAt;
+  const note = g.note ? { note: g.note } : {};
   if (g.usedBy) {
     const status = g.until && g.until > day ? "active" : "ended";
-    return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status, usedAt: g.usedAt, until: g.until, open: false, release: school && status === "active" };
+    return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status, usedAt: g.usedAt, until: g.until, open: false, release: school && status === "active", ...note };
   }
   const open = day <= g.sendBy;
-  return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status: open ? "sent" : "lapsed", open, release: false };
+  return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status: open ? "sent" : "lapsed", open, release: false, ...note };
 }
 
 export function buildAgreementView(org: Org, me: string, grants: Grant[], now = new Date()): AgreementView {

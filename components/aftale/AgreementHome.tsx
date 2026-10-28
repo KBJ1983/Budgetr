@@ -3,6 +3,11 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Logo } from "@/components/Logo";
 import type { AgreementView, GrantRow } from "@/lib/agreement-admins";
+import { parseEmails } from "@/lib/email-list";
+
+// Mirrors MAX_BATCH / MAX_NOTE in lib/agreements.ts (a server module, so not imported here).
+const MAX_BATCH = 50;
+const MAX_NOTE = 80;
 
 const num = (n: number) => n.toLocaleString("da-DK");
 const date = (iso?: string) => {
@@ -54,14 +59,30 @@ function message(result: string, email: string, max: number): { tone: "pos" | "e
       return { tone: "err", text: `Der kan højst være ${max} administratorer.` };
     case "self":
       return { tone: "err", text: "Du kan ikke fjerne dig selv." };
+    case "noted":
+      return { tone: "pos", text: `Noten ved ${email} er gemt.` };
+    case "noEmails":
+      return { tone: "err", text: "Vi fandt ingen e-mails i listen." };
     default:
       return { tone: "err", text: "Det lykkedes ikke lige nu. Prøv igen om lidt." };
   }
 }
 
+/** How "Giv adgang til flere" went, per kind of result, in the order the kundeadmin cares about. */
+const MANY: [string, (n: number) => string][] = [
+  ["sent", (n) => `${n} har fået en kode på mail`],
+  ["nomail", (n) => `${n} er gemt, men mailen kunne ikke sendes (mail er ikke sat op endnu – brug Send igen senere)`],
+  ["mail", (n) => `${n} er gemt, men mailen fejlede – brug Send igen om lidt`],
+  ["exists", (n) => `${n} havde allerede fået en kode og fik ikke en ny`],
+  ["used", (n) => `${n} har allerede brugt en plads`],
+  ["full", (n) => `${n} fik ingen plads, fordi der ikke var flere frie (højst ${MAX_BATCH} ad gangen)`],
+  ["email", (n) => `${n} ${n === 1 ? "var ikke en gyldig e-mail" : "var ikke gyldige e-mails"}`],
+];
+
 /**
- * /aftale for a logged-in kundeadmin: free seats, "give access" (an e-mail – nothing else), the list of e-mails with
- * send again / withdraw, the packs and the colleagues who are administrators too. No code is ever on this page.
+ * /aftale for a logged-in kundeadmin: free seats, "give access" (an e-mail – nothing else, or a whole list), the list
+ * of e-mails with send again / withdraw and the kundeadmins' own note, the packs and the colleagues who are
+ * administrators too. No code is ever on this page.
  */
 export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initial: AgreementView; orgs: { id: string; name: string }[]; give?: string }) {
   const [view, setView] = useState(initial);
@@ -69,6 +90,11 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
   const [busy, setBusy] = useState(false);
   // ?giv=… from a teacher's "Bed om adgang" mail fills in the e-mail.
   const [email, setEmail] = useState(initialGive);
+  const [giveNote, setGiveNote] = useState("");
+  const [many, setMany] = useState(false);
+  const [list, setList] = useState("");
+  const [manyNote, setManyNote] = useState("");
+  const [report, setReport] = useState<{ email: string; result: string }[] | null>(null);
   const [colleague, setColleague] = useState("");
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<"dark" | "light">("light");
@@ -104,7 +130,47 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
   const give = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const to = email.trim();
-    if (await act({ action: "give", email: to }, to)) setEmail("");
+    if (await act({ action: "give", email: to, note: giveNote }, to)) {
+      setEmail("");
+      setGiveNote("");
+    }
+  };
+  const found = parseEmails(list);
+  const giveMany = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setBusy(true);
+    setNote(null);
+    setReport(null);
+    try {
+      const r = await fetch("/api/aftale", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ org: view.id, action: "giveMany", emails: list, note: manyNote }),
+      });
+      if (r.status === 401) return window.location.reload();
+      const j = (await r.json().catch(() => ({}))) as { result?: string; report?: { email: string; result: string }[]; view?: AgreementView };
+      if (j.view) setView(j.view);
+      if (j.report) {
+        setReport(j.report);
+        // What went fine leaves the list; the rest stays, so it can be fixed and sent again.
+        const left = j.report.filter((x) => !["sent", "nomail", "mail", "exists", "used"].includes(x.result)).map((x) => x.email);
+        setList(left.join("\n"));
+      } else setNote(message(j.result ?? "", "", view.maxAdmins));
+    } catch {
+      setNote(message("", "", view.maxAdmins));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const readFile = async (f: File | undefined) => {
+    if (!f) return;
+    if (f.size > 1024 * 1024) return setNote({ tone: "err", text: "Filen er for stor. Brug en CSV- eller tekstfil på under 1 MB." });
+    const text = await f.text();
+    setList((l) => (l.trim() ? `${l.trim()}\n${text}` : text));
+  };
+  const editNote = (g: GrantRow) => {
+    const next = window.prompt(`Note ved ${g.email} (kun for jer, fx et sagsnummer – kunden ser den ikke):`, g.note ?? "");
+    if (next !== null) void act({ action: "note", grant: g.id, note: next.slice(0, MAX_NOTE) }, g.email);
   };
   const addColleague = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -199,10 +265,63 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
                 autoComplete="off"
               />
             </label>
+            <label className="bx-field">
+              <span>Note til jer selv (valgfri)</span>
+              <input className="bx-input" value={giveNote} maxLength={MAX_NOTE} onChange={(e) => setGiveNote(e.target.value)} placeholder="fx sagsnummer" autoComplete="off" />
+            </label>
             <button type="submit" className="bx-btn bx-btn-primary" disabled={busy || !email.trim() || !view.seats.free}>
               Giv adgang
             </button>
           </form>
+          <button type="button" className="bx-btn af-many-toggle" aria-expanded={many} onClick={() => setMany((m) => !m)}>
+            {many ? "Skjul" : `Giv adgang til flere ${school ? "lærere" : "kunder"} på én gang`}
+          </button>
+          {many ? (
+            <form className="bx-card af-many" onSubmit={giveMany} noValidate>
+              <label className="bx-field">
+                <span>E-mails – én pr. linje, eller adskilt med komma</span>
+                <textarea className="bx-input af-many-list" rows={6} value={list} onChange={(e) => setList(e.target.value)} placeholder={"navn@eksempel.dk\nanden@eksempel.dk"} />
+              </label>
+              <label className="bx-field">
+                <span>Eller hent dem fra en fil (CSV eller tekst, fx et udtræk fra jeres system)</span>
+                <input className="bx-input" type="file" accept=".csv,.txt,text/csv,text/plain" onChange={(e) => void readFile(e.target.files?.[0]).then(() => (e.target.value = ""))} />
+              </label>
+              <label className="bx-field">
+                <span>Note til jer selv ved alle (valgfri)</span>
+                <input className="bx-input" value={manyNote} maxLength={MAX_NOTE} onChange={(e) => setManyNote(e.target.value)} placeholder="fx kampagne eller afdeling" autoComplete="off" />
+              </label>
+              <p className="bx-muted">
+                {found.emails.length
+                  ? `Fundet: ${num(found.emails.length)} ${found.emails.length === 1 ? "e-mail" : "e-mails"}${found.invalid.length ? ` og ${num(found.invalid.length)} ugyldige` : ""}. Der kan sendes ${num(Math.min(MAX_BATCH, view.seats.free))} nu.`
+                  : `Vi finder e-mails i teksten, også i en CSV med flere kolonner. Højst ${MAX_BATCH} ad gangen. E-mails, der allerede har fået en kode, springes over.`}
+              </p>
+              <button type="submit" className="bx-btn bx-btn-primary" disabled={busy || !found.emails.length || !view.seats.free}>
+                {busy ? "Sender …" : `Giv adgang til ${num(Math.min(found.emails.length, MAX_BATCH, view.seats.free))}`}
+              </button>
+            </form>
+          ) : null}
+          {report ? (
+            <div className="bx-note is-pos af-report" role="status">
+              <ul>
+                {MANY.map(([k, t]) => {
+                  const n = report.filter((x) => x.result === k).length;
+                  return n ? <li key={k}>{t(n)}</li> : null;
+                })}
+              </ul>
+              {report.some((x) => ["full", "email", "mail", "nomail"].includes(x.result)) ? (
+                <details>
+                  <summary>Se hvilke</summary>
+                  <ul>
+                    {report
+                      .filter((x) => ["full", "email", "mail", "nomail"].includes(x.result))
+                      .map((x) => (
+                        <li key={x.email + x.result}>{x.email}</li>
+                      ))}
+                  </ul>
+                </details>
+              ) : null}
+            </div>
+          ) : null}
           {note ? (
             <p className={note.tone === "pos" ? "bx-note is-pos" : "bx-error"} role={note.tone === "pos" ? "status" : "alert"}>
               <span>{note.text}</span>
@@ -227,9 +346,13 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
                     <small>
                       {STATUS[g.status](g)} · sendt {date(g.lastSentAt)}
                     </small>
+                    {g.note ? <small className="af-grant-note">Note: {g.note}</small> : null}
                   </div>
                   {g.open ? (
                     <div className="af-grant-actions">
+                      <button type="button" className="bx-btn" disabled={busy} onClick={() => editNote(g)}>
+                        Note
+                      </button>
                       <button type="button" className="bx-btn" disabled={busy} onClick={() => void act({ action: "again", grant: g.id }, g.email)}>
                         Send igen
                       </button>
@@ -247,6 +370,9 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
                     </div>
                   ) : g.release ? (
                     <div className="af-grant-actions">
+                      <button type="button" className="bx-btn" disabled={busy} onClick={() => editNote(g)}>
+                        Note
+                      </button>
                       <button
                         type="button"
                         className="bx-btn"
@@ -259,7 +385,13 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
                         Fjern lærer
                       </button>
                     </div>
-                  ) : null}
+                  ) : (
+                    <div className="af-grant-actions">
+                      <button type="button" className="bx-btn" disabled={busy} onClick={() => editNote(g)}>
+                        Note
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

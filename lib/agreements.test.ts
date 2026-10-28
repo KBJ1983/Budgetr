@@ -7,7 +7,9 @@ import {
   findGrant,
   formatCode,
   giveAccess,
+  giveAccessMany,
   grantCode,
+  setGrantNote,
   listGrants,
   loadPackUse,
   normalizeCode,
@@ -15,6 +17,7 @@ import {
   useCode,
   withdrawGrant,
 } from "./agreements";
+import { parseEmails } from "./email-list";
 import type { Org } from "./owner";
 
 const now = new Date("2026-10-13T10:00:00Z");
@@ -121,5 +124,43 @@ describe("agreements", () => {
       expect(text).not.toContain(g.code);
       expect(f.name).not.toContain(g.code);
     }
+  });
+
+  it("gives seats to a whole list, skips e-mails that already have one, and stops when the seats run out", async () => {
+    await giveAccess(twoSeats, "har@eksempel.dk", now, dir);
+    const list = ["ny1@eksempel.dk", "HAR@eksempel.dk", "ny1@eksempel.dk", "ikke-en-mail", "ny2@eksempel.dk", "ny3@eksempel.dk", "ny4@eksempel.dk", "ny5@eksempel.dk", "ny6@eksempel.dk"];
+    const r = await giveAccessMany(twoSeats, list, now, dir, "Kampagne");
+    expect(r.map((x) => [x.email, x.result])).toEqual([
+      ["ny1@eksempel.dk", "sent"],
+      ["har@eksempel.dk", "exists"],
+      ["ikke-en-mail", "email"],
+      ["ny2@eksempel.dk", "sent"],
+      ["ny3@eksempel.dk", "sent"],
+      ["ny4@eksempel.dk", "sent"],
+      ["ny5@eksempel.dk", "sent"],
+      ["ny6@eksempel.dk", "full"],
+    ]);
+    const grants = await listGrants(twoSeats.id, dir);
+    expect(grants).toHaveLength(6);
+    expect(grants.find((g) => g.email === "ny1@eksempel.dk")?.note).toBe("Kampagne");
+    // The oldest pack first, as with one e-mail at a time.
+    expect(grants.find((g) => g.email === "ny1@eksempel.dk")?.pack).toBe("p-b");
+    expect(await findGrant(r[0]!.code, dir)).toMatchObject({ email: "ny1@eksempel.dk" });
+  });
+
+  it("keeps a note on a seat for the kundeadmins", async () => {
+    const g = await giveAccess(twoSeats, "kunde@eksempel.dk", now, dir);
+    if (!g.ok) throw new Error(g.error);
+    expect((await setGrantNote(twoSeats.id, g.grant.id, "  Sag   1234 ", dir))?.note).toBe("Sag 1234");
+    expect((await setGrantNote(twoSeats.id, g.grant.id, "", dir))?.note).toBeUndefined();
+    expect(await setGrantNote(twoSeats.id, "g-ukendt", "x", dir)).toBeNull();
+  });
+});
+
+describe("parseEmails", () => {
+  it("finds the e-mails in a pasted list or a CSV, without repeats", () => {
+    const csv = 'navn;email;telefon\n"Anna";anna@eksempel.dk;12345678\nJonas,<Jonas@Eksempel.dk>,\nmailto:anna@eksempel.dk\nfejl@\n';
+    expect(parseEmails(csv)).toEqual({ emails: ["anna@eksempel.dk", "jonas@eksempel.dk"], invalid: ["fejl@"] });
+    expect(parseEmails(null)).toEqual({ emails: [], invalid: [] });
   });
 });

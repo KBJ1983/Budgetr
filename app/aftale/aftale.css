@@ -67,6 +67,40 @@
 .af-colleague {
   margin-top: 12px;
 }
+/* "Giv adgang til flere": a list or a file, then a report of how it went. */
+.af-many-toggle {
+  margin-top: 12px;
+}
+.af-many {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.af-many-list {
+  height: auto;
+  min-height: 120px;
+  padding: 10px 12px;
+  resize: vertical;
+  font-family: inherit;
+}
+.af-many .bx-btn {
+  align-self: flex-start;
+  height: 44px;
+}
+.af-report {
+  display: block;
+}
+.af-report ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.af-report details {
+  margin-top: 6px;
+}
+.af-grant-note {
+  font-style: italic;
+}
 .af .bx-note,
 .af .bx-error {
   margin: 12px 0 0;

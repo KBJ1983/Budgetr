@@ -107,6 +107,24 @@ export function seatEndingMail(o: { firstName: string; orgName: string; lastDay:
   };
 }
 
+/**
+ * To an agreement's kundeadmins, at most once a week, when something waits for them: seats sent a while ago and not
+ * used yet, and free seats in a pack whose last day to send is near. No e-mails of customers in it.
+ */
+export function adminDigestMail(o: { orgName: string; unused: number; unusedDays: number; ending: { free: number; sendBy: string }[]; link: string }) {
+  const lines: string[] = [];
+  if (o.unused)
+    lines.push(
+      `- ${o.unused === 1 ? "1 kode er" : `${o.unused} koder er`} sendt for mere end ${o.unusedDays} dage siden og ikke brugt endnu. Måske er mailen havnet i spam – du kan sende den samme kode igen.`,
+    );
+  for (const p of o.ending)
+    lines.push(`- ${p.free === 1 ? "1 fri plads" : `${p.free} frie pladser`} kan kun sendes til og med den ${danishDate(p.sendBy)}. Derefter kan de ikke bruges.`);
+  return {
+    subject: `Status for ${o.orgName}s aftale med budgetpro`,
+    text: ["Hej", "", `Der er ${lines.length === 1 ? "en ting" : "et par ting"} at se på i ${o.orgName}s aftale:`, "", ...lines, "", "Se aftalen og giv adgang her:", "", o.link, "", "Du får højst én sådan mail om ugen, og kun når der er noget at se på.", ...signOff].join("\n"),
+  };
+}
+
 /** To a school's kundeadmins when a teacher asks for a seat. The link opens /aftale with the teacher's e-mail filled in. */
 export function seatRequestMail(o: { teacherName: string; teacherEmail: string; orgName: string; link: string }) {
   return {

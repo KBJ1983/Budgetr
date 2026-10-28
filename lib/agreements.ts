@@ -40,7 +40,13 @@ export interface Grant {
   usedAt?: string;
   /** YYYY-MM-DD, the first day without access. */
   until?: string;
+  /** The kundeadmins' own note, e.g. a case number. Never in a mail and never shown to the customer. */
+  note?: string;
 }
+
+/** How many e-mails one "Giv adgang til flere" may send at once (mails go out one by one, paced for Resend). */
+export const MAX_BATCH = 50;
+export const MAX_NOTE = 80;
 
 // No 0/O/1/I: the code is read from a mail and maybe typed by hand. 32 letters, so a byte % 32 is even.
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -124,13 +130,64 @@ export async function giveAccess(org: Org, email: string, now = new Date(), dir?
   if (mine) return mine.usedBy ? { ok: false, error: "used" } : sendAgain(org.id, mine.id, now, dir);
   const pack = openPack(org, packUse(grants), today(now));
   if (!pack) return { ok: false, error: "full" };
+  return { ok: true, ...(await newGrant(org, pack, to, now, dir)), again: false };
+}
+
+async function newGrant(org: Org, pack: Pack, to: string, now: Date, dir?: string, note?: string): Promise<{ grant: Grant; code: string }> {
   const at = now.toISOString();
-  const grant: Grant = { id: newId(), org: org.id, pack: pack.id, email: to, months: pack.months, sendBy: pack.sendBy, sentAt: at, sends: [at] };
+  const grant: Grant = { id: newId(), org: org.id, pack: pack.id, email: to, months: pack.months, sendBy: pack.sendBy, sentAt: at, sends: [at], ...(note ? { note } : {}) };
   const code = await grantCode(grant.id, dir);
-  const store = openStore(dir);
-  await store.set(codeKey(code), JSON.stringify({ org: org.id, grant: grant.id }));
+  await openStore(dir).set(codeKey(code), JSON.stringify({ org: org.id, grant: grant.id }));
   await saveGrant(grant, dir);
-  return { ok: true, grant, code, again: false };
+  return { grant, code };
+}
+
+export type ManyResult = { email: string; result: "sent" | "exists" | "used" | "full" | "email"; grant?: Grant; code?: string };
+
+/**
+ * Seats for many e-mails at once (at most MAX_BATCH new ones). Unlike giveAccess, an e-mail that already has a seat
+ * is left alone ("exists"), so the same list can be sent twice without mailing anyone again. Lists the grants once.
+ * The caller mails each `code` – never shown or returned to the kundeadmin.
+ */
+export async function giveAccessMany(org: Org, emails: string[], now = new Date(), dir?: string, note?: string): Promise<ManyResult[]> {
+  const grants = await listGrants(org.id, dir);
+  const use = packUse(grants), day = today(now), out: ManyResult[] = [];
+  let made = 0;
+  for (const raw of emails) {
+    const to = normalizeEmail(raw);
+    if (out.some((r) => r.email === to)) continue;
+    if (!isEmail(to)) {
+      out.push({ email: raw.trim(), result: "email" });
+      continue;
+    }
+    const mine = grants.find((g) => g.email === to);
+    if (mine) {
+      out.push({ email: to, result: mine.usedBy ? "used" : "exists" });
+      continue;
+    }
+    const pack = made < MAX_BATCH ? openPack(org, use, day) : null;
+    if (!pack) {
+      out.push({ email: to, result: "full" });
+      continue;
+    }
+    const { grant, code } = await newGrant(org, pack, to, now, dir, note);
+    (use[pack.id] ??= { sent: 0, used: 0 }).sent++;
+    grants.push(grant);
+    made++;
+    out.push({ email: to, result: "sent", grant, code });
+  }
+  return out;
+}
+
+/** The kundeadmins' note on a seat ("" removes it). */
+export async function setGrantNote(orgId: string, grantId: string, note: unknown, dir?: string): Promise<Grant | null> {
+  const grant = await readGrant(orgId, grantId, dir);
+  if (!grant) return null;
+  const clean = typeof note === "string" ? note.trim().replace(/\s+/g, " ").slice(0, MAX_NOTE) : "";
+  if (clean) grant.note = clean;
+  else delete grant.note;
+  await saveGrant(grant, dir);
+  return grant;
 }
 
 /** The same code to the same e-mail again, at most MAX_SENDS_PER_DAY times in 24 hours. */

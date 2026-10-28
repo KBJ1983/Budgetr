@@ -10,7 +10,7 @@
 import { readAccount, setPendingSeat, type Login } from "./accounts";
 import { seatEndingMail } from "./agreement-mail";
 import { findGrant, formatCode, grantCode, useCode, waitingGrant, type Grant } from "./agreements";
-import { orgActive, PRICES, today, type Org } from "./owner";
+import { addDays, orgActive, PRICES, today, type Org } from "./owner";
 import { readLedger, writeLedger } from "./owner-store";
 
 export interface CustomerSeat {
@@ -74,12 +74,6 @@ export async function noteSeatCode(accountId: string, code: unknown, dir?: strin
 
 /** How many days before a seat ends its customer gets a mail about it. */
 export const REMIND_DAYS = 7;
-
-const addDays = (day: string, n: number) => {
-  const d = new Date(`${day}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
-};
 
 /**
  * Mails each customer whose seat ends within REMIND_DAYS (once per seat: the ledger notes `reminded`). Run once a day
