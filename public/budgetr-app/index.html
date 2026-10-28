@@ -139,6 +139,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
   .tstack tr.cat{grid-template-columns:minmax(0,1fr) auto}.tstack tr.cat td::before{content:none}}
 /* Goals in the guide: a row of the grid on wide screens, a small card with its own labels on phones. */
 .wzgrow,.wzf{display:contents}
+.wzinv{display:flex;flex-direction:column;gap:10px}.wzinvf{display:flex;flex-direction:column;gap:4px;max-width:420px}.wzinvf span{font-size:12.5px;color:var(--ink3)}
 .wzf>span{display:none}
 @media (max-width:640px){
   .wzgoals{grid-template-columns:minmax(0,1fr)!important;gap:8px}.wzgoals>.hd{display:none}
@@ -315,6 +316,11 @@ tr.paused td{color:var(--ink3)}
 .kpi.good{background:var(--pine-bg);border-color:transparent} .kpi.good b,.kpi.good span{color:var(--pine)}
 .kpi.bad{background:var(--brick-bg);border-color:transparent} .kpi.bad b,.kpi.bad span{color:var(--brick)}
 .bankdet{margin-top:12px;font-size:14px} .bankdet summary{cursor:pointer;color:var(--ink2)}
+/* Månedstjek on Overblik (monthCheckHtml) */
+.mcheck{margin:24px 0 0;padding:18px 20px;border:1px solid var(--rule);border-left:4px solid var(--lime,#D4F26B);border-radius:14px;background:var(--card)}
+.mcheck .mchead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.mcheck h2{margin:0;font-size:18px}
+.mcheck p{margin:8px 0 0;font-size:14.5px;color:var(--ink2)}.mcheck ul{margin:10px 0 0;padding-left:18px;font-size:14.5px;line-height:1.6}
+.mcheck .mcbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .bankset{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;align-items:flex-end}
 .bankset label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink2)}
 .bankset label.check{flex-direction:row;align-items:center}
@@ -1698,6 +1704,8 @@ function bankCalc(){
   return {b,inc,extra,fixed,excl,exclSum:excl.reduce((a,e)=>a+mAvg(e),0),rad:disp_,req,buf:disp_-req};
 }
 // Who the adults' amount in the bank's guide figure covers: the persons in the budget.
+// One person: "du"/"dine", else "I"/"jeres" (the guide has its own wzT).
+const wI=(du,i)=>S&&S.persons&&S.persons.length===1?du:i;
 const adultsLbl=()=>{const n=Math.max(1,(S.persons||[]).length);return n===1?'1 voksen':n+' voksne'};
 /* What the bank leaves out of the faste udgifter in the sentence at the top, by category, largest first.
    Goals are not faste udgifter in the sentence either, so they are not listed. */
@@ -1735,8 +1743,8 @@ function render(){
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
   document.body.toggleAttribute('data-nobudget',!S);
   renderScn();renderDraftBar();renderTodos();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
-  if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>I guiden vælger du først, om budgettet skal starte tomt, ud fra kontoudtog eller ud fra de budgetter, du har. Derefter skal du kun udfylde navn og personer. Resten kan du springe over. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button><p style="margin-top:14px"><button type="button" class="helplink" id="btnFilm">Se en hurtig intro til, hvordan du kommer i gang (1,5 min.)</button></p></div>`;
-    $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();$('btnFilm').onclick=()=>openFilm();
+  if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>I guiden vælger du først, om budgettet skal starte tomt, ud fra kontoudtog eller ud fra de budgetter, du har. Derefter skal du kun udfylde navn og personer. Resten kan du springe over. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button> <button type="button" id="btnExample">Prøv med eksempeldata</button><p style="margin-top:14px"><button type="button" class="helplink" id="btnFilm">Se en hurtig intro til, hvordan du kommer i gang (1,5 min.)</button></p></div>`;
+    $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();$('btnExample').onclick=()=>loadExample();$('btnFilm').onclick=()=>openFilm();
     // The first time the app opens without a budget, the film starts by itself (once per browser).
     if(!filmSeen())setTimeout(()=>{if(!S&&!filmSeen()&&!document.querySelector('dialog[open]'))openFilm()},400);return}
   syncENT();
@@ -1758,6 +1766,7 @@ function render(){
   h+=`<div class="hero"><p>${S.persons.length===1?'Du har':'Husstanden har'} <b>${disp(t.inc)}</b> i indtægter${t.sav?`, <b>${disp(t.exp)}</b> i faste udgifter${fixInfo} og <b>${disp(t.sav)}</b> i opsparing${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''}`:` og <b>${disp(t.exp)}</b> i faste udgifter${fixInfo}`}. Tilbage ${per()}: <b class="${main>=0?'left':'neg'}">${disp(main)}</b>.</p>
   <small class="hbar">${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} ${checks===1?'post er':'poster er'} markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>`;
 
+  if(!sc&&!DR)h+=monthCheckHtml();
   if(sc)h+=compareHtml(sc);
   const bk=bankCalc();
   h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus bankens faste udgifter. Banken regner ikke mad og husholdning, opsparing og gaver med, fordi de skal dækkes af rådighedsbeløbet.</span></div>
@@ -1882,8 +1891,29 @@ function render(){
    <div id="planChart">${planSvg(planAcct)}</div></section>`;
 
   app.innerHTML=page==='poster'?hPost:h;
-  bindMain();
+  bindMain();bindMonthCheck();
 }
+/* Månedstjek: once MC_DAYS have passed since the last one (settings.monthCheck; the first time once the budget has a few
+   posts), Overblik asks "Hvad har ændret sig siden sidst?" – the posts with a new amount or new since then (e.since,
+   e.history), plus the posts to check and the open tasks – and "Budgettet passer" confirms it with one press. */
+const MC_DAYS=30;
+const daysSince=d=>Math.floor((Date.parse(DAY())-Date.parse(d))/864e5);
+function monthCheckDue(){const sp=S.settings||{};return sp.monthCheck?daysSince(sp.monthCheck)>=MC_DAYS:S.entries.length>=5}
+function monthCheckHtml(){if(!monthCheckDue())return '';const last=S.settings.monthCheck||'';
+  const E=S.entries.filter(e=>e.active!==false&&!e.auto&&(e.type==='udgift'||e.type==='indtaegt')&&e.since&&e.since>last);
+  const changed=E.filter(e=>(e.history||[]).length),fresh=E.filter(e=>!(e.history||[]).length);
+  const prev=e=>e.history.slice().sort((a,b)=>a.date<b.date?-1:1).pop();
+  const rows=[...changed.map(e=>`<li><b>${esc(e.desc)}</b> ${kr(+prev(e).amount||0)} → ${kr(+e.amount||0)}</li>`),...fresh.map(e=>`<li><b>${esc(e.desc)}</b> ny post, ${kr(+e.amount||0)}</li>`)];
+  const checks=cur().filter(e=>e.check).length,todos=todoList().length;
+  const extra=[checks&&`${checks} ${checks===1?'post er':'poster er'} markeret til tjek`,todos&&todoCount(todos)+' venter under klokken'].filter(Boolean);
+  return `<div class="mcheck" role="region" aria-label="Månedstjek"><div class="mchead"><h2>Månedstjek</h2><span class="hint">${last?`Siden ${esc(fmtDate(last))}`:'Første gang'}</span></div>
+    <p>Hvad har ændret sig siden sidst? Se listen igennem. Passer resten stadig, så bekræft det med ét tryk.</p>
+    ${rows.length?`<ul>${rows.slice(0,6).join('')}${rows.length>6?`<li>og ${rows.length-6} mere</li>`:''}</ul>`:`<p class="muted">Ingen beløb er rettet${last?' siden sidst':''}.</p>`}
+    ${extra.length?`<p class="muted">${esc(extra.join(' · '))}.</p>`:''}
+    <div class="mcbtns"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button><button type="button" id="btnMcEdit">Ret posterne</button></div></div>`}
+function bindMonthCheck(){const ok=$('btnMcOk');if(!ok)return;
+  ok.onclick=()=>{S.settings.monthCheck=DAY();commit();toast('Tak. Vi spørger igen om en måned')};
+  $('btnMcEdit').onclick=()=>document.querySelector('[data-page="poster"]').click()}
 /* Phones: the key figures as one card at the top of Overblik (shown by CSS only below 760 px, in place of the
    sentence in .hero). Same numbers as the sentence, the person cards and the bank section. */
 function mobSumHtml(t){const bk=bankCalc(), c=v=>v>=0?'left':'neg';
@@ -2226,8 +2256,8 @@ function overfHtml(){
   const sc=curSc(), T=trAll(), all=cur().filter(e=>e.type==='overfoersel'), tot=T.reduce((a,e)=>a+mAvg(e),0);
   const fixes=all.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   let h=scBarHtml(false);
-  h+=`<div class="hero"><p>${T.length?`Der overføres fast <b>${disp(tot)}</b> ${per()} i ${T.length} ${T.length===1?'overførsel':'overførsler'} mellem jeres konti${sc?' i '+esc(sc.name||'scenariet'):''}.`:'Ingen faste overførsler endnu.'}</p>
-   <small>Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.${sc?' Ændringer her gælder kun scenariet.':''}</small></div>`;
+  h+=`<div class="hero"><p>${T.length?`Der overføres fast <b>${disp(tot)}</b> ${per()} i ${T.length} ${T.length===1?'overførsel':'overførsler'} mellem ${wI('dine','jeres')} konti${sc?' i '+esc(sc.name||'scenariet'):''}.`:'Ingen faste overførsler endnu.'}</p>
+   <small>Overførsler flytter penge mellem ${wI('dine','jeres')} egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.${sc?' Ændringer her gælder kun scenariet.':''}</small></div>`;
   if(fixes.length)h+=`<section><div class="sechead"><h2>Skal rettes i netbanken</h2><button type="button" class="primary" data-tfixall>Markér alle som rettet</button></div>
    <div class="verdict warn" style="margin:0 0 10px">Budgettet er ændret, fx af opsparingsmål eller nye poster. Disse faste overførsler passer ikke længere med det, der bør overføres${sc?' i '+esc(sc.name||'scenariet'):''}. Ret dem i netbanken, og markér dem derefter som rettet.</div>
    <div class="tablewrap"><table class="tstack"><thead><tr><th>Fra</th><th>Til</th><th>Beskrivelse</th><th class="r">Sat op nu</th><th class="r">Bør være</th><th class="r">Ændring</th><th></th></tr></thead><tbody>${fixes.map(({e,rec})=>{const d=rec-setupAmt(e);
@@ -2322,7 +2352,7 @@ function loansHtml(){
   const pct=v=>(+v||0).toLocaleString('da-DK',{minimumFractionDigits:2,maximumFractionDigits:2})+' %';
   const updD=S.loanUpdated?new Date(S.loanUpdated+'T00:00:00'):null, now=new Date();
   const updMonths=updD?(now.getFullYear()-updD.getFullYear())*12+now.getMonth()-updD.getMonth():0, updOld=updD&&updMonths>=6;
-  let h=`<div class="hero"><p>${IN.length===L.length?'I har':'De valgte lån har'} <b>${kr(tP)}</b> i samlet restgæld fordelt på ${selTxt}. Ydelserne er <b>${kr(tA)}</b> om måneden, og heraf er cirka <b>${kr(tI)}</b> renter.</p>
+  let h=`<div class="hero"><p>${IN.length===L.length?wI('Du har','I har'):'De valgte lån har'} <b>${kr(tP)}</b> i samlet restgæld fordelt på ${selTxt}. Ydelserne er <b>${kr(tA)}</b> om måneden, og heraf er cirka <b>${kr(tI)}</b> renter.</p>
    <small>${soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>esc(x.l.desc)+' ('+x.c.endTxt+', frigør '+kr(x.c.A)+'/md.)').join(', ')+'. ':''}Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.</small></div>
   <section><div class="sechead"><h2>Overblik over lån</h2><button type="button" id="btnNewLoan" class="primary">Nyt lån</button></div>
    <div class="upd ${updOld?'old':''}"><label for="loanUpd">Overblikket er opdateret</label><input type="date" id="loanUpd" value="${esc(S.loanUpdated||'')}">
@@ -2553,11 +2583,11 @@ function helpHtml(){
         `<b>Ud</b> = faste udgifter + overført ud + opsparing fra kontoen.`,
         `En <b>fælles konto</b> viser <b>Bør overføres</b> = udgifter + opsparingsmål + overført ud − indtægter direkte på kontoen, og om den er dækket af det, der overføres.`,
         `En <b>privat konto</b> viser, hvad der er tilbage på kontoen.`,
-        `En <b>fast overførsel</b> flytter penge mellem jeres egne konti. Den er ikke en udgift og tæller ikke med i faste udgifter, til rådighed eller bankens beregning. Betales fx mad fra en madkonto, så læg Mad som en udgift på madkontoen og vælg <b>Dækkes af fast overførsel fra</b> på posten. Så laves en overførsel af samme beløb til madkontoen, og den følger med, når beløbet ændres. Overførslen deles efter udgiftens betaler, så en fælles udgift deles efter nøglen.`,
+        `En <b>fast overførsel</b> flytter penge mellem ${wI('dine','jeres')} egne konti. Den er ikke en udgift og tæller ikke med i faste udgifter, til rådighed eller bankens beregning. Betales fx mad fra en madkonto, så læg Mad som en udgift på madkontoen og vælg <b>Dækkes af fast overførsel fra</b> på posten. Så laves en overførsel af samme beløb til madkontoen, og den følger med, når beløbet ændres. Overførslen deles efter udgiftens betaler, så en fælles udgift deles efter nøglen.`,
         `Kommer en indtægt ind på én konto og flyttes fast videre, fx børnepenge fra lønkontoen til budgetkontoen, så vælg <b>Flyttes videre til konto</b> på indtægten. Overførslen laves af sig selv, og den sænker din overførsel til budgetkontoen tilsvarende.`]))
   +sec('opsparing','Opsparing og opsparingsmål',panel('Fra mål til post',`<div class="hflow"><div class="hcard"><b>Opsparingsmål</b></div>${arrow}<div class="hcard"><b>Fast månedlig post</b></div>${arrow}<div class="hsplit"><div class="hcard"><b>Anden konto</b><span>Overførsel</span></div><div class="hcard"><b>Samme konto</b><span>Udgift på kontoen</span></div></div></div>`)
       +ul([`Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.`,
-        `I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så I kan se, hvad der er tilbage.`,
+        `I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så ${wI('du','I')} kan se, hvad der er tilbage.`,
         `Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.`,
         `Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.`,
         `<b>Skønnet opsparet</b> = det, der allerede var sparet op, + den månedlige indbetaling for hver måned siden startdatoen + ekstra indbetalinger, hvis dato er passeret. budgetpro kan ikke se netbanken, så tallet forudsætter, at indbetalingerne er gået ind som planlagt.`,
@@ -2591,13 +2621,19 @@ const TOUR=[
   {el:'#btnTodo',t:'Opgaver',x:'Her samler vi det, der skal gøres, fx en fast overførsel, der skal rettes i netbanken.'},
   {el:'.setbtn',t:'Indstillinger',x:'Husstand, konti, fordeling af de fælles udgifter, påmindelser og deling med andre.'},
   {el:'#btnUserMenu',t:'Menuen',x:'Import og eksport til PDF og Excel, Sådan regnes det, filmen om at komme i gang og denne rundtur.'}];
-let tourAt=0,tourSteps=[];
+let tourAt=0,tourSteps=[],tourOffer=false;
+// Right after a first budget is made: the same card, in the middle, offers the tour (or "Ikke nu").
+function offerTour(){tourOffer=true;$('tour').hidden=false;
+  Object.assign($('tourHole').style,{top:innerHeight/2+'px',left:innerWidth/2+'px',width:'0px',height:'0px'});
+  $('tourTitle').textContent='Budgettet er oprettet';$('tourTxt').textContent='Vil du se, hvor tingene findes? Rundturen peger på seks steder og tager et halvt minut. Du kan altid starte den igen fra menuen.';
+  $('tourN').textContent='';$('tourBack').hidden=false;$('tourBack').textContent='Ikke nu';$('tourNext').textContent='Tag rundturen';
+  const c=$('tourCard');Object.assign(c.style,{top:Math.max(16,innerHeight/2-c.offsetHeight/2)+'px',left:Math.max(16,innerWidth/2-c.offsetWidth/2)+'px'});c.focus()}
 const tourEl=sel=>[...document.querySelectorAll(sel)].find(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(e).visibility!=='hidden'});
 function openTour(){if(!S){toast('Opret først et budget');return}
   // The round + only shows on Overblik and Poster.
   if(page!=='budget'&&page!=='poster')document.querySelector('[data-page="budget"]').click();
   setTimeout(()=>{tourSteps=TOUR.filter(s=>tourEl(s.el));if(!tourSteps.length)return;tourAt=0;$('tour').hidden=false;showTour();$('tourCard').focus()},60)}
-function closeTour(){$('tour').hidden=true;const b=$('btnUserMenu');if(b)b.focus()}
+function closeTour(){tourOffer=false;$('tourBack').textContent='Tilbage';$('tour').hidden=true;const b=$('btnUserMenu');if(b)b.focus()}
 function showTour(){const s=tourSteps[tourAt],e=tourEl(s.el);if(!e){closeTour();return}
   $('tourTitle').textContent=s.t;$('tourTxt').textContent=s.x;$('tourN').textContent=`${tourAt+1} af ${tourSteps.length}`;
   $('tourBack').hidden=!tourAt;$('tourNext').textContent=tourAt===tourSteps.length-1?'Færdig':'Næste';
@@ -2610,8 +2646,9 @@ function placeTour(e){const r=e.getBoundingClientRect(),pad=6,h=$('tourHole'),c=
   const top=below+ch<=innerHeight-g?below:Math.max(g,r.top-pad-12-ch);
   const left=Math.min(Math.max(g,r.left+r.width/2-cw/2),innerWidth-cw-g);
   Object.assign(c.style,{top:top+'px',left:left+'px'})}
-$('tourNext').onclick=()=>{if(tourAt>=tourSteps.length-1){closeTour();return}tourAt++;showTour()};
-$('tourBack').onclick=()=>{if(tourAt){tourAt--;showTour()}};
+$('tourNext').onclick=()=>{if(tourOffer){closeTour();openTour();return}
+  if(tourAt>=tourSteps.length-1){closeTour();return}tourAt++;showTour()};
+$('tourBack').onclick=()=>{if(tourOffer){closeTour();return}if(tourAt){tourAt--;showTour()}};
 // A click on the dimmed page ends the tour; the card and the hole don't.
 $('tour').addEventListener('click',ev=>{if(!ev.target.closest('#tourCard'))closeTour()});
 $('tour').addEventListener('keydown',ev=>{if(ev.key==='Escape'){ev.preventDefault();closeTour()}
@@ -2619,8 +2656,8 @@ $('tour').addEventListener('keydown',ev=>{if(ev.key==='Escape'){ev.preventDefaul
   // Keep the focus in the card.
   else if(ev.key==='Tab'){const f=[...$('tourCard').querySelectorAll('button:not([hidden])')],i=f.indexOf(document.activeElement);
     if(ev.shiftKey&&i<=0){ev.preventDefault();f[f.length-1].focus()}else if(!ev.shiftKey&&i===f.length-1){ev.preventDefault();f[0].focus()}}});
-addEventListener('resize',()=>{if(!$('tour').hidden){const e=tourEl(tourSteps[tourAt].el);if(e)placeTour(e)}});
-addEventListener('scroll',()=>{if(!$('tour').hidden){const e=tourEl(tourSteps[tourAt].el);if(e)placeTour(e)}},{passive:true});
+addEventListener('resize',()=>{if(!$('tour').hidden&&!tourOffer){const e=tourEl(tourSteps[tourAt].el);if(e)placeTour(e)}});
+addEventListener('scroll',()=>{if(!$('tour').hidden&&!tourOffer){const e=tourEl(tourSteps[tourAt].el);if(e)placeTour(e)}},{passive:true});
 
 /* ---------- Kom i gang: the how-to film ---------- */
 // budgetr:quiet (smoke tests, screenshots) keeps it closed, like the login notes.
@@ -3285,7 +3322,7 @@ function buildPdf(opt){
   else{const IN=LL.filter(x=>x.l.include!==false), AC=IN.filter(x=>!x.l.paused), tO=IN.reduce((a,x)=>a+x.c.O,0), tP=IN.reduce((a,x)=>a+x.c.P,0), tA=AC.reduce((a,x)=>a+x.c.A,0), tI=AC.reduce((a,x)=>a+x.c.interest,0);
     const wr=tP>0?IN.reduce((a,x)=>a+x.c.P*(+x.l.rate||0),0)/tP:0, selTxt=IN.length===LL.length?`alle ${LL.length} lån`:`${IN.length} af ${LL.length} lån`, soon=IN.filter(x=>x.c.n!==null&&x.c.n>0&&x.c.n<=18);
     const pct=v=>(+v||0).toLocaleString('da-DK',{minimumFractionDigits:2,maximumFractionDigits:2})+' %';
-    hero([IN.length===LL.length?'I har ':'De valgte lån har ',[kr(tP),'b'],' i samlet restgæld fordelt på '+selTxt+'. Ydelserne er ',[kr(tA),'b'],' om måneden, og heraf er cirka ',[kr(tI),'b'],' renter.'],
+    hero([IN.length===LL.length?wI('Du har ','I har '):'De valgte lån har ',[kr(tP),'b'],' i samlet restgæld fordelt på '+selTxt+'. Ydelserne er ',[kr(tA),'b'],' om måneden, og heraf er cirka ',[kr(tI),'b'],' renter.'],
       (soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>x.l.desc+' ('+x.c.endTxt+', frigør '+kr(x.c.A)+'/md.)').join(', ')+'. ':'')+'Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.'+(S.loanUpdated?' Restgælden er senest opdateret '+fmtDate(S.loanUpdated)+'.':''));
     h2('Overblik over lån',null,40);
     kpis([{label:'Oprindeligt lånt',value:kr(tO),small:'alle lån'},{label:'Samlet restgæld'+(S.loanUpdated?' pr. '+fmtDate(S.loanUpdated):''),value:kr(tP),small:cap(selTxt)+'.'+(tO?' '+Math.round((1-tP/tO)*100)+' % af det oprindelige beløb er betalt af.':''),kind:'hero',bar:tO?1-tP/tO:0},{label:'Ydelse pr. måned',value:kr(tA),small:'uden lån på pause'},
@@ -3318,8 +3355,8 @@ function buildPdf(opt){
   /* ===== 3. Faste overførsler ===== */
   chapterStart('Faste overførsler',sub,tocGrp);
   const TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), totT=TR.reduce((a,e)=>a+mAvg(e),0), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
-  hero(TR.length?['Der overføres fast ',[kr(totT),'b'],` pr. måned i ${TR.length} ${TR.length===1?'overførsel':'overførsler'} mellem jeres konti${sc?' i '+(sc.name||'scenariet'):''}.`]:['Ingen faste overførsler endnu.'],
-    'Overførsler flytter penge mellem jeres egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.');
+  hero(TR.length?['Der overføres fast ',[kr(totT),'b'],` pr. måned i ${TR.length} ${TR.length===1?'overførsel':'overførsler'} mellem ${wI('dine','jeres')} konti${sc?' i '+(sc.name||'scenariet'):''}.`]:['Ingen faste overførsler endnu.'],
+    'Overførsler flytter penge mellem '+wI('dine','jeres')+' egne konti og ændrer ikke husstandens samlede indtægter eller udgifter. Auto-overførsler følger den anbefalede andel af de fælles udgifter.');
   if(fixes.length){h2('Skal rettes i netbanken',null,30);verdict('Budgettet er ændret, fx af opsparingsmål eller nye poster. Disse faste overførsler passer ikke længere med det, der bør overføres. Ret dem i netbanken, og markér dem derefter som rettet i budgetpro.','warn');
     table(['Fra','Til','Beskrivelse','Sat op nu','Bør være','Ændring'],fixes.map(({e,rec})=>{const d=rec-setupAmt(e);return [accName(e.from),accName(e.to),e.desc,kr(setupAmt(e)),{content:kr(rec),styles:{fontStyle:'bold'}},{content:(d>0?'+':'-')+kr(Math.abs(d)),styles:{textColor:d>0?PC.brick:PC.pine}}]}),{right:[3,4,5]})}
   if(TR.length){h2('Pengestrømme','Stregens tykkelse følger beløbet pr. måned.',50);flowPdf(TR)}
@@ -3560,7 +3597,7 @@ function buildXlsx(){
   /* Faste overførsler */
   const Ow=xlsxSheet([26,26,32,18,14,14,16,14]), TR=trAll(), allT=cur().filter(e=>e.type==='overfoersel'), fixes=allT.map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   Ow.title('Faste overførsler',title+' · '+stamp);
-  Ow.kpis([{label:'Overføres i alt pr. md.',value:r0(TR.reduce((a,e)=>a+mAvg(e),0)),small:'mellem jeres egne konti',kind:'hero'},{label:'Antal overførsler',value:TR.length,fmt:'0',small:'aktive'},{label:'Skal rettes i netbanken',value:fixes.length,fmt:'0',small:fixes.length?'se tabellen nedenfor':'alle passer',kind:fixes.length?'bad':'good'}]);
+  Ow.kpis([{label:'Overføres i alt pr. md.',value:r0(TR.reduce((a,e)=>a+mAvg(e),0)),small:'mellem '+wI('dine','jeres')+' egne konti',kind:'hero'},{label:'Antal overførsler',value:TR.length,fmt:'0',small:'aktive'},{label:'Skal rettes i netbanken',value:fixes.length,fmt:'0',small:fixes.length?'se tabellen nedenfor':'alle passer',kind:fixes.length?'bad':'good'}]);
   if(fixes.length){Ow.h2('Skal rettes i netbanken','Disse faste overførsler passer ikke længere med det, der bør overføres.');
     Ow.table(['Fra','Til','Beskrivelse','Sat op nu','Bør være','Ændring'],fixes.map(({e,rec})=>{const d=rec-setupAmt(e);return [accName(e.from),accName(e.to),e.desc||'',r0(setupAmt(e)),{v:rec,s:XF.bold},{v:r0(d),s:d>0?XF.brick:XF.pine}]}),{signed:[5]})}
   if(TR.length){const fr_=acctOrder().filter(a=>TR.some(e=>e.from===a.id)), to_=acctOrder().filter(a=>TR.some(e=>e.to===a.id)), sum=(f,tt)=>r0(TR.filter(e=>e.from===f&&e.to===tt).reduce((s,e)=>s+mAvg(e),0));
@@ -4099,7 +4136,18 @@ function draftData(mode,name){const R=rootS(),sp=R.settings||{};
   const d=blank();d.loans=[];d.scenarios=[];d.settings={split:sp.split||'indkomst',manualPct:sp.manualPct??50,title:name};
   ['bank','remind'].forEach(k=>{if(sp[k])d.settings[k]=JSON.parse(JSON.stringify(sp[k]))});if(sp.milestones!==undefined)d.settings.milestones=sp.milestones;
   return normalize(d)}
-function renderDraftBar(){const b=$('draftBar');if(!b)return;const d=curDraft();b.hidden=!d;if(!d){b.innerHTML='';return}const n=d.files.length;
+/* "Prøv med eksempeldata": the made-up family from /api/demo (lib/demo-customer.ts exampleBudget, no drafts, no
+   reminders), marked settings.example. A bar says it is an example; the guide replaces it instead of making a draft. */
+const isExample=()=>{const R=rootS();return !!(R&&R.settings&&R.settings.example)};
+async function loadExample(){try{const r=await fetch('/api/demo',{cache:'no-store'});const d=r.ok?normalize(await r.json()):null;if(!d)throw 0;
+    setPrimary(d);commit();toast('Eksemplet er hentet. Tallene er opdigtede')}
+  catch(e){toast('Eksemplet kunne ikke hentes lige nu')}}
+function renderDraftBar(){const b=$('draftBar');if(!b)return;const d=curDraft();
+  if(!d&&isExample()){b.hidden=false;
+    b.innerHTML=`<div class="dftin"><div class="dftt"><b>Eksempel</b><span>Du ser et budget for en opdigtet familie. Prøv dig frem – når du starter dit eget, forsvinder eksemplet.</span></div>
+    <div class="dfta"><button type="button" data-exb="blank">Opret tomt budget</button><button type="button" class="primary" data-exb="wiz">Start dit eget budget</button></div></div>`;
+    b.querySelectorAll('[data-exb]').forEach(x=>x.onclick=()=>{if(x.dataset.exb==='wiz')openWiz();else if(confirm('Ryd eksemplet og start med et tomt budget?')){setPrimary(blank());commit()}});return}
+  b.hidden=!d;if(!d){b.innerHTML='';return}const n=d.files.length;
   b.innerHTML=`<div class="dftin"><div class="dftt"><b>Kladde: ${esc(d.name)}</b><span>Du arbejder i en kladde. Det primære budget er ikke ændret${n?`. ${n} ${n===1?'fil':'filer'} lagt ind`:''}.</span></div>
     <div class="dfta"><button type="button" data-dfb="imp">Tilføj filer</button><button type="button" data-dfb="close">Luk kladden</button><button type="button" class="primary" data-dfb="use">Sæt som primært budget</button></div></div>`;
   b.querySelectorAll('[data-dfb]').forEach(x=>x.onclick=()=>{const a=x.dataset.dfb;a==='imp'?openDImp():a==='close'?leaveDraft():promoteDraft()})}
@@ -4280,6 +4328,17 @@ const WS_START=0,WS_NAME=1,WS_PERS=2,WS_ACC=3,WS_GRP=4,WS_SPLIT=5,WS_GOALS=6,WS_
 const WZ_SKIP={3:['acc'],4:['groups','extra'],5:['split','manualPct','auto'],6:['goals'],7:['bank','bankSet'],8:['rem']};
 const wzRemDef=()=>({every:0,mail:false,sms:false,milestones:true});
 // One person: the guide says "du" and leaves out Fordeling (there is nothing to share). wzT picks the text.
+// With a budget already there the guide makes a draft – unless that budget is only the example (isExample).
+const wzDraft=()=>!!S&&!isExample();
+// Inviting the others to log in (Indstillinger > Deling) works for real accounts (u-…), at most two besides oneself.
+const WZ_MAX_INVITES=2;
+const wzCanInvite=()=>/^u-/.test(window.BUDGETR_USER||'')&&!wzDraft();
+const wzInvites=()=>wzCanInvite()?W.persons.slice(1,1+WZ_MAX_INVITES).filter(p=>p.name&&p.email):[];
+async function wzSendInvites(L){const ok=[],bad=[];
+  for(const p of L){try{const r=await fetch(shareUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({firstName:p.name,email:p.email})});
+      (r.ok?ok:bad).push(p.email)}catch(e){bad.push(p.email)}}
+  if(ok.length)toast(`Invitationen er sendt til ${ok.join(' og ')}`);
+  if(bad.length)setTimeout(()=>toast(`${bad.join(' og ')} kunne ikke inviteres. Prøv under Indstillinger > Deling`),ok.length?2400:0)}
 const wzSolo=()=>W.persons.length<2, wzT=(du,i)=>wzSolo()?du:i;
 const wzOrder=()=>WSTEPS.map((_,i)=>i).filter(i=>!(i===WS_SPLIT&&wzSolo()));
 const wzMove=d=>{const o=wzOrder(),k=o.indexOf(WS);WS=k<0?WS+d:o[Math.max(0,Math.min(o.length-1,k+d))]};
@@ -4290,7 +4349,8 @@ function openWiz(){W=wzDefaults();WS=0;renderWiz();$('dlgWiz').showModal()}
 function wzCollect(){const b=$('wzBody'),v=id=>{const el=b.querySelector('#'+id);return el?el.value:''};
   if(WS===WS_START)W.start=(b.querySelector('[name=wzStart]:checked')||{}).value||'tom';
   if(WS===WS_NAME)W.title=v('wzName').trim();
-  if(WS===WS_PERS){W.persons=[...b.querySelectorAll('[data-wp]')].map(r=>({name:r.querySelector('[data-f=name]').value.trim(),salary:r.querySelector('[data-f=sal]').value}));
+  if(WS===WS_PERS){const mail=i=>{const x=b.querySelector(`[data-wpe="${i}"]`);return x?x.value.trim():(W.persons[i]||{}).email||''};
+    W.persons=[...b.querySelectorAll('[data-wp]')].map((r,i)=>({name:r.querySelector('[data-f=name]').value.trim(),salary:r.querySelector('[data-f=sal]').value,email:i?mail(i):''}));
     // The proposed savings account name follows the household, unless it was changed.
     const sn=W.acc.savingsName;if(sn==='Fælles opsparing'||sn==='Opsparing')W.acc.savingsName=wzSolo()?'Opsparing':'Fælles opsparing'}
   if(WS===WS_ACC){W.acc={saldo:v('wzSal'),saldoDate:v('wzSalD')||DAY(),budget:$('wzAB').checked,budgetName:v('wzABn').trim()||'Budgetkonto',personal:$('wzAP').checked,savings:$('wzAS').checked,savingsName:v('wzASn').trim()||'Fælles opsparing'}}
@@ -4302,7 +4362,8 @@ function wzCollect(){const b=$('wzBody'),v=id=>{const el=b.querySelector('#'+id)
 }
 function wzValidate(){const e=[];
   if(WS===WS_NAME&&!W.title)e.push('Giv budgettet et navn.');
-  if(WS===WS_PERS){const P=W.persons;if(P.some(p=>!p.name))e.push('Skriv et navn på hver person, eller fjern rækken.');if(new Set(P.filter(p=>p.name).map(p=>p.name.toLowerCase())).size!==P.filter(p=>p.name).length)e.push('To personer har samme navn.')}
+  if(WS===WS_PERS){const P=W.persons;if(P.some(p=>!p.name))e.push('Skriv et navn på hver person, eller fjern rækken.');
+    if(P.some(p=>p.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(p.email)))e.push('Skriv en gyldig e-mail, fx navn@eksempel.dk, eller lad feltet stå tomt.');if(new Set(P.filter(p=>p.name).map(p=>p.name.toLowerCase())).size!==P.filter(p=>p.name).length)e.push('To personer har samme navn.')}
   if(WS===WS_ACC&&!W.acc.budget&&!W.acc.personal)e.push('Vælg mindst én konto.');
   if(WS===WS_GOALS)W.goals.forEach(g=>{if(!g.name&&!g.amount)return;if(!g.name)e.push('Giv hvert opsparingsmål et navn.');if(!(parseAmt(g.amount)>0))e.push(`Skriv et beløb for "${g.name||'målet'}".`);if(g.mode==='target'&&!g.end)e.push(`Vælg en måldato for "${g.name||'målet'}".`)});
   return e}
@@ -4311,10 +4372,10 @@ const wzHint=()=>WS===WS_START?'Du kan altid hente flere filer ind senere under 
   :WS===WS_END?'Alt kan rettes bagefter.':'Du kan springe trinnet over og rette det senere.';
 function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').textContent=wzHint();
   $('wzSteps').innerHTML=wzOrder().map((i,k)=>`<span class="${i===WS?'on':i<WS?'done':''}" title="${WSTEPS[i]}">${k+1}</span>`).join('')+`<b style="margin-left:6px;color:var(--ink2)">${WSTEPS[WS]}</b>`;
-  $('wzBack').style.visibility=WS?'visible':'hidden';$('wzNext').textContent=WS===WS_END?(S?'Opret kladde':'Opret budget'):'Næste';$('wzSkip').hidden=!WZ_SKIP[WS];
+  $('wzBack').style.visibility=WS?'visible':'hidden';$('wzNext').textContent=WS===WS_END?(wzDraft()?'Opret kladde':'Opret budget'):'Næste';$('wzSkip').hidden=!WZ_SKIP[WS];
   const P=W.persons.filter(p=>p.name);
   if(WS===WS_START){const so=(v,name,hint)=>`<label class="wzopt"><input type="radio" name="wzStart" value="${v}" ${W.start===v?'checked':''}><span class="wzgn"><b>${name}</b><small>${hint}</small></span></label>`;
-    b.innerHTML=(S?'<div class="verdict ok" style="margin:0 0 12px">Du har allerede et budget. Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>':'')+`<p class="wzp">Hvordan vil du starte budgettet? Guiden spørger først om navn, personer og konti. Har du valgt filer, lægger du dem ind, når budgettet er oprettet. Selve filerne bliver ikke gemt, kun de poster, du vælger.</p>
+    b.innerHTML=(wzDraft()?'<div class="verdict ok" style="margin:0 0 12px">Du har allerede et budget. Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>':'')+`<p class="wzp">Hvordan vil du starte budgettet? Guiden spørger først om navn, personer og konti. Har du valgt filer, lægger du dem ind, når budgettet er oprettet. Selve filerne bliver ikke gemt, kun de poster, du vælger.</p>
     ${so('tom','Tomt budget','Du lægger selv posterne ind under hver overskrift på siden Budgetposter')}
     ${so('udskrifter','Ud fra kontoudskrifter','Læg kontoudskrifter fra netbanken ind som CSV, Excel eller PDF. budgetpro finder de faste poster og overførslerne mellem jeres konti')}
     ${so('budget','Ud fra eksisterende budgetter','Læg et eller flere budgetter fra Excel eller CSV ind. Posterne hentes ind, som de står, og kan suppleres med kontoudskrifter')}`}
@@ -4322,7 +4383,9 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
   if(WS===WS_PERS)b.innerHTML=`<p class="wzp">Hvem er med i budgettet? Skriv navnet på hver person og den løn, der udbetales efter skat hver måned. Navnet skal udfyldes, lønnen kan du tilføje senere.</p>
     <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 180px auto"><span class="hd">Navn</span><span class="hd">Udbetalt løn pr. md.</span><span></span>
     ${W.persons.map((p,i)=>`<div style="display:contents" data-wp="${i}"><input data-f="name" value="${esc(p.name)}" placeholder="Person ${i+1}" autocomplete="off"><input data-f="sal" inputmode="decimal" value="${esc(p.salary)}" placeholder="fx 32.000"><button type="button" class="ghost danger" data-wpx="${i}" ${W.persons.length<2?'disabled':''} aria-label="Fjern person">✕</button></div>`).join('')}</div>
-    ${W.persons.length<4?'<button type="button" id="wzAddP" style="margin-top:8px">Tilføj person</button>':''}`;
+    ${W.persons.length<4?'<button type="button" id="wzAddP" style="margin-top:8px">Tilføj person</button>':''}
+    ${wzCanInvite()&&W.persons.length>1?`<div class="wzinv"><p class="wzp" style="margin-top:16px">Skal de andre kunne logge ind i budgettet? Skriv deres e-mail, så får de en invitation, når budgettet er oprettet. Det kan også gøres senere under Indstillinger &gt; Deling.</p>
+      ${W.persons.slice(1,1+WZ_MAX_INVITES).map((p,j)=>`<label class="wzinvf"><span>${esc(p.name||'Person '+(j+2))}s e-mail (valgfri)</span><input data-wpe="${j+1}" type="email" inputmode="email" autocomplete="off" value="${esc(p.email||'')}" placeholder="navn@eksempel.dk"></label>`).join('')}</div>`:''}`;
   if(WS===WS_ACC)b.innerHTML=`<p class="wzp">Hvilke konti bruger ${wzT('du','I')}? Navne og kontonumre kan rettes senere under Indstillinger.</p>
     <label class="wzopt wzacc"><input type="checkbox" id="wzAB" ${W.acc.budget?'checked':''}> ${wzT('Budgetkonto','Fælles budgetkonto')} til de faste udgifter <input type="text" id="wzABn" value="${esc(W.acc.budgetName)}"></label>
     <div class="wzopt wzacc sub" style="margin-left:26px"><span>Saldo på budgetkontoen</span><input type="text" id="wzSal" inputmode="decimal" value="${esc(W.acc.saldo||'')}" placeholder="0" style="max-width:130px"><span>pr.</span><input type="date" id="wzSalD" value="${esc(W.acc.saldoDate||DAY())}" style="border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:5px 9px;font:inherit;color:var(--ink)"><span class="muted" style="font-size:12.5px">valgfri</span></div>
@@ -4364,6 +4427,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
     const accN=[W.acc.budget&&W.acc.budgetName,W.acc.personal&&(P.length===1?'1 lønkonto':P.length+' lønkonti'),W.acc.savings&&W.acc.savingsName].filter(Boolean);
     b.innerHTML=`<p class="wzp">Det bliver oprettet:</p><ul class="wzsum">
       <li><b>${esc(W.title)}</b></li><li>${P.length} ${P.length===1?'person':'personer'}: ${P.map(p=>esc(p.name)).join(', ')}${sal.length?` · løn for ${sal.map(p=>esc(p.name)).join(', ')}`:''}</li>
+      ${wzInvites().length?`<li>Invitation til at logge ind sendes til ${wzInvites().map(p=>esc(p.email)).join(' og ')}</li>`:''}
       <li>Konti: ${accN.map(esc).join(', ')}${W.acc.budget&&parseAmt(W.acc.saldo)?` · saldo ${kr(parseAmt(W.acc.saldo))} pr. ${esc(fmtDate(W.acc.saldoDate))}`:''}</li>
       <li>Start: ${{udskrifter:'ud fra kontoudskrifter, der lægges ind, når budgettet er oprettet',budget:'ud fra eksisterende budgetter, der lægges ind, når budgettet er oprettet'}[W.start]||'tomt budget, posterne lægges ind på siden Budgetposter'}</li>
       <li>Overskrifter: Indtægter${W.extra?', Ekstra indtægter':''}${grp.length?', '+grp.map(g=>esc(g.name)).join(', '):''}</li>
@@ -4371,7 +4435,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
       <li>${G.length?G.length+' opsparingsmål: '+G.map(g=>esc(g.name)).join(', '):'Ingen opsparingsmål'}</li>
       <li>Bankens krav til rådighedsbeløbet: ${W.bankSet?`${kr(req)} pr. md.`:'standardkrav'}</li>
       <li>${rTxt?`Påmindelse ${rTxt}${[r.mail&&'på mail',r.sms&&'på sms'].filter(Boolean).map(t=>' · også '+t).join('')}`:'Ingen påmindelser om opdatering'}${r.milestones?' · besked ved milepæle':''}</li></ul>
-      ${S?`<div class="verdict ok" style="margin-top:12px">Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>`:''}`}
+      ${wzDraft()?`<div class="verdict ok" style="margin-top:12px">Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>`:''}`}
   const on=(id,f)=>{const el=b.querySelector('#'+id);if(el)el.onclick=f};
   on('wzAddP',()=>{wzCollect();W.persons.push({name:'',salary:''});renderWiz()});
   b.querySelectorAll('[data-wpx]').forEach(x=>x.onclick=()=>{wzCollect();W.persons.splice(+x.dataset.wpx,1);renderWiz()});
@@ -4403,9 +4467,12 @@ $('wzNext').onclick=()=>{wzCollect();const e=wzValidate();if(e.length){$('wzErr'
   if(WS<WS_END){wzMove(1);renderWiz();return}
   const N=wzBuild();if(!N){toast('Budgettet kunne ikke oprettes');return}
   // With a budget already there, the new one becomes a draft; it only replaces the primary budget via "Sæt som primært budget".
-  if(S){const R=rootS(),id='d'+uid();delete N.drafts;R.drafts=R.drafts||[];R.drafts.push({id,name:W.title,created:DAY(),mode:'blank',files:[],data:N});
+  if(wzDraft()){const R=rootS(),id='d'+uid();delete N.drafts;R.drafts=R.drafts||[];R.drafts.push({id,name:W.title,created:DAY(),mode:'blank',files:[],data:N});
     $('dlgWiz').close();saveSoon();enterDraft(id);toast('Kladden er oprettet. Dit nuværende budget er uændret')}
-  else{setPrimary(N);$('dlgWiz').close();commit();toast('Nyt budget oprettet')}
+  else{const inv=wzInvites();setPrimary(N);$('dlgWiz').close();commit();toast('Nyt budget oprettet');
+    if(inv.length)setTimeout(()=>wzSendInvites(inv),1200);
+    // A first budget started empty: offer the tour (the file choices open the import instead).
+    if(W.start==='tom')setTimeout(offerTour,700)}
   const t=document.querySelector('[data-page="budget"]');if(t)t.click();
   // Start from files: the file import opens on the new budget (or the new draft) at once.
   if(W.start!=='tom'){const k=W.start;setTimeout(()=>openDImp(k),60)}};

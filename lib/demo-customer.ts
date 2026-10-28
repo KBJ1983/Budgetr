@@ -14,6 +14,19 @@ const MONTHS = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "a
 export const DEMO_USER = "demo";
 
 /**
+ * The demo family as an example to try in one's own budget ("Prøv med eksempeldata" in the app): the same made-up
+ * budget without drafts (they would stay behind when the user makes their own), without reminders (an example must
+ * never send mail) and marked `settings.example`, so the app shows it as an example and the guide replaces it.
+ */
+export function exampleBudget(now = new Date()) {
+  const b = demoCustomer(now) as Record<string, unknown> & { settings: Record<string, unknown> };
+  const { drafts: _drafts, ...rest } = b;
+  const settings: Record<string, unknown> = { ...b.settings, title: "Eksempel: Sofie og Mikkel", example: true };
+  delete settings.remind;
+  return { ...rest, settings };
+}
+
+/**
  * The demo family's seat from a (made-up) bank's agreement, as Indstillinger > Din bruger shows it
  * (/api/account/demo/adgang): 60 days left, counted from `now`. Nothing is stored.
  */

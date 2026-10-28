@@ -73,5 +73,7 @@ export const demoBudget = {
     withBound: true,
     bank: { adults: 12000, children: 2, childRate: 3000, withExtra: false },
     categories: ["Bolig", "Transport", "Børn", "Forsikring", "Abonnementer", "Husholdning", "Personligt", "Gaver"],
+    // The monthly check (Månedstjek) was just done, so it doesn't sit between the sentence and the bank in the shots.
+    monthCheck: new Date().toISOString().slice(0, 10),
   },
 };

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isBudget } from "./budget-file";
-import { DEMO_USER, demoCustomer, demoSeat } from "./demo-customer";
+import { DEMO_USER, demoCustomer, demoSeat, exampleBudget } from "./demo-customer";
 import { userById } from "./users";
 
 type Any = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -10,6 +10,14 @@ describe("demo customer", () => {
 
   it("is a test user, so it needs no session", () => {
     expect(userById(DEMO_USER)?.logins).toEqual(["DEMO"]);
+  });
+
+  it("gives an example to try without drafts or reminders, marked as an example", () => {
+    const x = exampleBudget(new Date(2026, 9, 5)) as Any;
+    expect(isBudget(x)).toBe(true);
+    expect(x.drafts).toBeUndefined();
+    expect(x.settings).toMatchObject({ example: true, title: "Eksempel: Sofie og Mikkel" });
+    expect(x.settings.remind).toBeUndefined();
   });
 
   it("has a seat from a made-up bank with 60 days left", () => {
