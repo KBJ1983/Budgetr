@@ -16,6 +16,7 @@ import {
   removeMember,
   requestLogin,
   RESEND_GAP_MS,
+  setPhone,
   signup,
   validateSignup,
   VERIFY_TTL_MS,
@@ -46,6 +47,10 @@ describe("validateSignup", () => {
     });
     expect(validateSignup({ ...input, phone: "0045 12345678" }).ok).toBe(true);
   });
+  it("takes the form without a mobile number", () => {
+    for (const phone of ["", "  ", undefined]) expect(validateSignup({ ...input, phone })).toMatchObject({ ok: true, value: { phone: "" } });
+    expect(validateSignup({ ...input, phone: 12345678 }).ok).toBe(false);
+  });
   it("names every missing or wrong field", () => {
     const v = validateSignup({ firstName: " ", email: "anna@", phone: "1234" });
     expect(v.ok).toBe(false);
@@ -68,6 +73,19 @@ describe("signup and confirm", () => {
     expect(a?.account.verifiedAt).toBe(later(1000).toISOString());
     expect(await readProfile(id, dir)).toEqual({ email: "anna@eksempel.dk", phone: "+4512345678" });
     expect(await redeem(l!.token, later(2000), dir)).toBeNull();
+  });
+
+  it("adds, changes and removes the mobile number later", async () => {
+    const l = (await signup({ ...input, phone: "" }, t0, dir))!;
+    const id = l.account.id;
+    await setPhone(id, "+4587654321", dir);
+    // Not confirmed yet: the account has it, the reminders' profile is written when the e-mail is confirmed.
+    expect(await readProfile(id, dir)).toEqual({});
+    await redeem(l.token, later(1000), dir);
+    expect(await readProfile(id, dir)).toEqual({ email: "anna@eksempel.dk", phone: "+4587654321" });
+    await setPhone(id, "", dir);
+    expect(await readProfile(id, dir)).toEqual({ email: "anna@eksempel.dk", phone: undefined });
+    expect(await setPhone("u-ukendt000", "", dir)).toBe(false);
   });
 
   it("rejects wrong, malformed and expired links", async () => {

@@ -31,7 +31,7 @@ const STEPS = [
   {
     icon: <PeopleIcon size={22} strokeWidth={1.7} />,
     title: "Start din gratis prøveperiode",
-    body: "Navn, e-mail og mobilnummer. Ingen adgangskode, du logger ind med en kode på mail. 30 dage gratis, og betalingskortet skal først bruges, når de er gået. Bor I flere sammen, kan du invitere dem til det samme budget.",
+    body: "Navn og e-mail er nok. Ingen adgangskode, du logger ind med en kode på mail. 30 dage gratis, og betalingskortet skal først bruges, når de er gået. Bor I flere sammen, kan du invitere dem til det samme budget.",
   },
   {
     icon: <WandIcon size={22} strokeWidth={1.7} />,

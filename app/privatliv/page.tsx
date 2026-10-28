@@ -44,7 +44,7 @@ export default function PrivacyPage() {
           </thead>
           <tbody>
             <tr>
-              <td>Fornavn, efternavn, e-mail og mobilnummer</td>
+              <td>Fornavn, efternavn, e-mail og mobilnummer, hvis du opgiver det</td>
               <td>Så du kan logge ind med en kode på mail og få de påmindelser på mail eller sms, du selv slår til</td>
               <td>Aftalen med dig (GDPR art. 6, stk. 1, b)</td>
             </tr>

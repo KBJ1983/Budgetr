@@ -266,7 +266,10 @@ try {
     await wiz.locator("[data-wp='0'] [data-f=sal]").fill("30000");
     await next(); // Personer
     check(await wiz.locator("#wzSkip").isVisible(), "guide: the accounts step can be skipped");
-    await next(); await next(); await next(); await next(); // Konti, Overskrifter, Fordeling, Opsparingsmål
+    // One person: the guide says "du" and leaves out Fordeling.
+    check((await wiz.getByText("Hvilke konti bruger du?", { exact: false }).count()) > 0, "guide: speaks to one person as du");
+    check((await wiz.locator("#wzSteps span").count()) === 9, "guide: one person has no Fordeling step");
+    await next(); await next(); await next(); // Konti, Overskrifter, Opsparingsmål
     check(await wiz.locator("#wzSkip").isVisible(), "guide: the bank step can be skipped");
     await wiz.locator("#wzBkC").fill("2");
     let over = await p3.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -277,7 +280,7 @@ try {
     // Mail and SMS go to the profile's contact details, so the guide only asks for the channel.
     check((await wiz.locator('input[type="email"], input[inputmode="email"], input[inputmode="tel"]').count()) === 0, "guide: no e-mail or phone field (they come from the profile)");
     await wiz.locator("#wzRmMail").check();
-    check((await wiz.getByText(/du opgav, da du oprettede din profil/).count()) > 0, "guide: says reminders go to the profile's e-mail and number");
+    check((await wiz.getByText(/det mobilnummer, du har opgivet/).count()) > 0, "guide: says reminders go to the profile's e-mail and number");
     await p3.screenshot({ path: `${OUT}/guide-remind.png` });
     await next();
     check((await wiz.getByText("Påmindelse hver 3. måned · også på mail").count()) > 0, "guide: summary shows the reminder");

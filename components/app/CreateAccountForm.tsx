@@ -11,8 +11,9 @@ const FIELDS: { key: SignupField; label: string; autoComplete: string; type?: st
   { key: "firstName", label: "Fornavn", autoComplete: "given-name" },
   { key: "lastName", label: "Efternavn", autoComplete: "family-name" },
   { key: "email", label: "E-mail", autoComplete: "email", type: "email", inputMode: "email" },
-  { key: "phone", label: "Mobilnummer", autoComplete: "tel-national", type: "tel", inputMode: "tel" },
+  { key: "phone", label: "Mobilnummer (valgfrit)", autoComplete: "tel-national", type: "tel", inputMode: "tel" },
 ];
+const PHONE_HINT = "Kun til påmindelser på sms, hvis du slår dem til. Du kan også tilføje det senere.";
 
 export interface SeatOffer {
   code: string;
@@ -119,7 +120,7 @@ export function CreateAccountForm({ email, seat }: { email?: string; seat?: Seat
                 placeholder={f.key === "email" ? "navn@eksempel.dk" : f.key === "phone" ? "12 34 56 78" : undefined}
                 value={values[f.key]}
                 aria-invalid={err ? true : undefined}
-                aria-describedby={err ? `${id}-err` : undefined}
+                aria-describedby={err ? `${id}-err` : f.key === "phone" ? `${id}-hint` : undefined}
                 onChange={(e) => {
                   const v = e.target.value;
                   setValues((s) => ({ ...s, [f.key]: v }));
@@ -129,6 +130,10 @@ export function CreateAccountForm({ email, seat }: { email?: string; seat?: Seat
               {err ? (
                 <p id={`${id}-err`} className="bx-error">
                   {err}
+                </p>
+              ) : f.key === "phone" ? (
+                <p id={`${id}-hint`} className="bx-help">
+                  {PHONE_HINT}
                 </p>
               ) : null}
             </div>
@@ -144,7 +149,7 @@ export function CreateAccountForm({ email, seat }: { email?: string; seat?: Seat
         </button>
       </form>
       <p className="bx-help" style={{ marginTop: 20 }}>
-        Vi bruger kun din e-mail og dit mobilnummer til login og til de påmindelser, du selv slår til. Når du opretter en
+        Din e-mail bruger vi til login og påmindelser, dit mobilnummer kun til påmindelser på sms, du selv slår til. Når du opretter en
         konto, accepterer du vores <Link href="/vilkaar">vilkår</Link>. Læs også vores{" "}
         <Link href="/privatliv">privatlivspolitik</Link>.
       </p>

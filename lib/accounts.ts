@@ -249,6 +249,19 @@ export async function setPendingSeat(id: string, seat: Account["pendingSeat"] | 
   await saveAccount(a, dir);
 }
 
+/**
+ * Changes (or with "" removes) the account's mobile number for SMS reminders, and the reminders' profile with it once
+ * the e-mail is confirmed. The number is already cleaned with cleanPhone. False for an unknown account.
+ */
+export async function setPhone(id: string, phone: string, dir?: string): Promise<boolean> {
+  const a = await readAccount(id, dir);
+  if (!a) return false;
+  a.phone = phone;
+  await saveAccount(a, dir);
+  if (a.verifiedAt) await writeProfile(a.id, { email: a.email, phone: phone || undefined }, dir);
+  return true;
+}
+
 // ---- Sharing a budget ------------------------------------------------------------------------------------------
 
 export type InviteError = "firstName" | "email" | "full" | "taken";
