@@ -29,8 +29,7 @@ const FOOTER_LINKS: readonly NavLink[] = [
 ];
 
 /**
- * The Erhverv page (erhverv.<domain>, /erhverv), kept short: what budgetpro is (hero + a placeholder for a small
- * explainer animation), then the sectors and the price calculator, which only sends a price request; after that the
+ * The Erhverv page (erhverv.<domain>, /erhverv), kept short: what budgetpro is (hero + the explainer film), then the sectors and the price calculator, which only sends a price request; after that the
  * landing page's feature band ("Det får kunderne med budgetpro"), other sectors, trust and FAQ. Uses the landing page's styles and header, its photos plus public/erhverv/.
  */
 export function ErhvervLanding() {
@@ -104,10 +103,7 @@ const BEATS = [
   { title: "I mødes forberedte", body: "Kunden kender sine tal og kan sende budgettet som PDF eller Excel før mødet." },
 ] as const;
 
-/**
- * What budgetpro Erhverv is, in short. The frame is a placeholder for a small animation; the three beats under it are
- * its script and stay as text when the animation comes.
- */
+/** What budgetpro Erhverv is, in short: the Erhverv film (components/Film.tsx) and its three beats as text under it. */
 function Explainer() {
   return (
     <section id="hvad" className={`${styles.section} ${styles.white}`} aria-labelledby="hvad-title">
