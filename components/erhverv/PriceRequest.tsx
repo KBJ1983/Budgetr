@@ -25,8 +25,9 @@ const kr = (n: number) => `${n.toLocaleString("da-DK")} kr`;
 const PRIVATE_MONTH = 29;
 
 /**
- * The price calculator and the price request in one form (lib/erhverv.ts, POST /api/erhverv/kontakt). The price is
- * shown a month at a time by default and can be switched to a year. Sending it is only a request: no agreement is
+ * The price calculator and the price request in one form (lib/erhverv.ts, POST /api/erhverv/kontakt). The pack's
+ * total price comes first, incl. moms; it can be switched to a month or, for 24 months, a year. Sending it is only a
+ * request: no agreement is
  * made – the owner sends an offer and makes the agreement by hand on /admin.
  */
 export function PriceRequest() {
@@ -34,7 +35,7 @@ export function PriceRequest() {
   const [months, setMonths] = useState<PackMonths>(DEFAULT_PACK.months);
   // Estate agents usually give short access, banks long; follow the sector until they pick the months themselves.
   const [monthsPicked, setMonthsPicked] = useState(false);
-  const [billing, setBilling] = useState<Billing>("maaned");
+  const [billing, setBilling] = useState<Billing>("samlet");
   const [talk, setTalk] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
@@ -44,7 +45,7 @@ export function PriceRequest() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const data = { ...Object.fromEntries(new FormData(form)), count: talk ? TALK_FIRST : String(count), months: String(months), billing };
+    const data = { ...Object.fromEntries(new FormData(form)), count: talk ? TALK_FIRST : String(count), months: String(months), billing: billing === "aar" && months <= 12 ? "samlet" : billing };
     const r = validateInquiry(data);
     setFailed(null);
     if (!r.ok) {
@@ -98,7 +99,9 @@ export function PriceRequest() {
   });
 
   const total = packPrice(count, months);
-  const shortPack = months < 12;
+  // A year at a time only means something for packs longer than a year; otherwise it is the same as "Samlet".
+  const yearly = months > 12;
+  const shown: Billing = billing === "aar" && !yearly ? "samlet" : billing;
 
   return (
     <form className={e.calc} onSubmit={submit} noValidate>
@@ -148,34 +151,39 @@ export function PriceRequest() {
           ) : (
             <>
               <div className={e.billing} role="group" aria-label="Vis prisen">
-                <button type="button" aria-pressed={billing === "maaned"} onClick={() => setBilling("maaned")}>
+                <button type="button" aria-pressed={shown === "samlet"} onClick={() => setBilling("samlet")}>
+                  Samlet
+                </button>
+                <button type="button" aria-pressed={shown === "maaned"} onClick={() => setBilling("maaned")}>
                   Pr. måned
                 </button>
-                <button type="button" aria-pressed={billing === "aar"} onClick={() => setBilling("aar")}>
-                  {shortPack ? "Samlet" : "Pr. år"}
-                </button>
+                {yearly ? (
+                  <button type="button" aria-pressed={shown === "aar"} onClick={() => setBilling("aar")}>
+                    Pr. år
+                  </button>
+                ) : null}
               </div>
               <p className={e.priceBig}>
-                {billing === "maaned" ? (
+                {shown === "maaned" ? (
                   <>
                     {kr(packMonthly(count, months))}
                     <span> /md.</span>
                   </>
-                ) : shortPack ? (
-                  kr(total)
-                ) : (
+                ) : shown === "aar" ? (
                   <>
                     {kr(packYearly(count, months))}
                     <span> /år</span>
                   </>
+                ) : (
+                  kr(total)
                 )}
               </p>
               <p className={e.priceSub}>
-                {billing === "maaned"
-                  ? `I ${months} måneder · ${kr(total)} i alt`
-                  : shortPack
-                    ? `Betalt på én gang for hele pakken på ${months} måneder`
-                    : `Betalt én gang om året${months > 12 ? ` i ${months / 12} år` : ""} · ${kr(total)} i alt`}
+                {shown === "maaned"
+                  ? `I ${months} måneder · ${kr(total)} i alt · inkl. moms`
+                  : shown === "aar"
+                    ? `Betalt én gang om året i ${months / 12} år · ${kr(total)} i alt · inkl. moms`
+                    : `For hele pakken, ${count} koder × ${months} måneder · inkl. moms`}
               </p>
               <p className={e.pricePer}>
                 Det er {kr(perCodeMonth(count, months))} pr. kunde om måneden. Privat koster budgetpro {PRIVATE_MONTH} kr om måneden.

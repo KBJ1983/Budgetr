@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Film } from "@/components/Film";
 import { BRAND, SkoleLogo } from "@/components/Logo";
 import { SiteSwitch } from "@/components/SiteSwitch";
+import { COMPANY } from "@/lib/company";
 import l from "./skoleLanding.module.css";
 
 /**
@@ -291,7 +292,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           <div className={l.priceCard}>
             <div className={l.priceRow}>
               <span className={l.priceAmt}>1.500 kr.</span>
-              <span className={l.priceUnit}>pr. skoleår</span>
+              <span className={l.priceUnit}>pr. skoleår inkl. moms</span>
             </div>
             <ul className={l.priceList}>
               {PRICE_LIST.map((p) => (
@@ -336,7 +337,11 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
         <span className={l.slogan}>Dit overblik. Dine drømme.</span>
         <a href={`${base}/privatliv`}>Privatlivspolitik</a>
         <a href={`${base}/vilkaar`}>Vilkår</a>
+        <a href={`mailto:${COMPANY.email}`}>Kontakt</a>
         <a href={mainSite}>budgetpro.dk</a>
+        <span>
+          {COMPANY.name} · CVR {COMPANY.cvr}
+        </span>
       </footer>
     </div>
   );

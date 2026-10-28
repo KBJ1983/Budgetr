@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import legal from "@/components/legal/legal.module.css";
 import { LegalShell } from "@/components/legal/LegalShell";
 import { MAX_BACKUPS } from "@/lib/budget-file";
-import { COMPANY, PRIVACY_UPDATED } from "@/lib/company";
+import { COMPANY, companyLine, PRIVACY_UPDATED } from "@/lib/company";
 import { AGREEMENT_MAX_AGE_S, SESSION_MAX_AGE_S, TEACHER_MAX_AGE_S } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
     >
       <h2 id="ansvarlig">Hvem er ansvarlig</h2>
       <p>
-        {COMPANY.name}, CVR {COMPANY.cvr}, {COMPANY.address}, er dataansvarlig for de oplysninger, du giver budgetpro. Har du
+        {companyLine}, er dataansvarlig for de oplysninger, du giver budgetpro. Har du
         spørgsmål, eller vil du bruge dine rettigheder, så skriv til {mail}.
       </p>
 

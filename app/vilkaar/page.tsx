@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalShell } from "@/components/legal/LegalShell";
-import { COMPANY, TERMS_UPDATED } from "@/lib/company";
+import { COMPANY, companyLine, TERMS_UPDATED } from "@/lib/company";
 import { MAX_LOGINS } from "@/lib/accounts";
 import { PRICES, TRIAL_DAYS } from "@/lib/owner";
 
@@ -26,7 +26,7 @@ export default function TermsPage() {
     >
       <h2 id="parter">Hvem aftalen er med</h2>
       <p>
-        Aftalen er mellem dig og {COMPANY.name}, CVR {COMPANY.cvr}, {COMPANY.address}. Du kan altid skrive til os på {mail}.
+        Aftalen er mellem dig og {companyLine}. Du kan altid skrive til os på {mail}.
       </p>
 
       <h2 id="tjenesten">Hvad budgetpro er</h2>
@@ -51,7 +51,7 @@ export default function TermsPage() {
       <p>
         De første {TRIAL_DAYS} dage er gratis og uden binding. Derefter koster budgetpro {PRICES.monthly.base} kr om måneden
         eller {PRICES.yearly.base} kr om året. En ekstra bruger på samme budget koster {PRICES.monthly.extra} kr om måneden
-        eller {PRICES.yearly.extra} kr om året. Alle priser er i danske kroner, og vi viser altid den samlede pris, før du
+        eller {PRICES.yearly.extra} kr om året. Alle priser er i danske kroner inkl. moms, og vi viser altid den samlede pris, før du
         betaler. Prøveperioden går ikke automatisk over i et betalt abonnement: du vælger selv, om du vil fortsætte.
       </p>
 

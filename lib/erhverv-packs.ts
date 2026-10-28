@@ -49,8 +49,12 @@ export const DEFAULT_PACK = { count: 50 as PackCount, months: 12 as PackMonths }
 
 export const packLabel = (p: { count: number; months: number }) => `${p.count} koder × ${p.months} måneder`;
 
-/** How the business would like to pay: month by month while the pack runs, or a year at a time. */
-export const BILLINGS = ["maaned", "aar"] as const;
+/**
+ * How the price was shown and how the business would like to pay: the whole pack at once (the form's default), month by
+ * month while the pack runs, or a year at a time (offered for packs over 12 months; "aar" on a shorter pack is from
+ * before "samlet" and means the same). All prices are incl. moms.
+ */
+export const BILLINGS = ["samlet", "maaned", "aar"] as const;
 export type Billing = (typeof BILLINGS)[number];
 export const isBilling = (v: unknown): v is Billing => BILLINGS.includes(v as Billing);
 
@@ -58,5 +62,6 @@ export const isBilling = (v: unknown): v is Billing => BILLINGS.includes(v as Bi
 export const packYearly = (count: PackCount, months: PackMonths) =>
   months >= 12 ? packMonthly(count, months) * 12 : packPrice(count, months);
 
-/** How they want to pay, as the form put it: "Samlet" instead of "Pr. år" for a pack under 12 months. */
-export const billingLabel = (b: Billing, months = 12) => (b === "aar" ? (months < 12 ? "samlet for hele pakken" : "årlig betaling") : "månedlig betaling");
+/** How they want to pay, as the form put it. */
+export const billingLabel = (b: Billing, months = 12) =>
+  b === "samlet" || (b === "aar" && months < 12) ? "samlet for hele pakken" : b === "aar" ? "årlig betaling" : "månedlig betaling";

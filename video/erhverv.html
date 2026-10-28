@@ -161,8 +161,8 @@
       <div class="legend">Varighed pr. kode</div>
       <div class="row"><span class="chip">3 md.</span><span class="chip">6 md.</span><span class="chip" id="m12">12 md.</span><span class="chip">24 md.</span></div>
       <div class="sum" id="sum">
-        <div class="big mono"><span id="perMonth">–</span> kr<small> /md.</small></div>
-        <div class="meta">50 koder × 12 måneder<br /><span id="total">7.200</span> kr i alt</div>
+        <div class="big mono"><span id="total">–</span> kr<small> i alt</small></div>
+        <div class="meta">50 koder × 12 måneder · inkl. moms<br /><span id="perMonth">600</span> kr om måneden</div>
       </div>
       <span class="btn" id="sendReq">Send prisforespørgsel <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       <div class="note">Det er kun en prisforespørgsel. I opretter ikke en aftale.</div>
@@ -340,8 +340,8 @@
     const priceK = out(p(u4, 2.9, 3.7));
     const sk = back(p(u4, 2.8, 3.3));
     put("#sum", { o: lerp(0.35, 1, out(p(u4, 2.8, 3.1))), s: lerp(0.96, 1, sk) });
+    $("#total").textContent = priceK ? kr(7200 * priceK) : "–";
     $("#perMonth").textContent = priceK ? kr(600 * priceK) : "–";
-    $("#total").textContent = kr(7200 * priceK);
     put("#sent", { o: out(p(u4, 4.75, 5.15)), y: (1 - out(p(u4, 4.75, 5.3))) * 16 });
     const ck = back(p(u4, 4.9, 5.5));
     put("#sentCheck", { s: lerp(0.3, 1, ck), o: out(p(u4, 4.9, 5.1)) });

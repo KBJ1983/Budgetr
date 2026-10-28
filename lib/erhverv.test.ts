@@ -19,7 +19,7 @@ describe("validateInquiry", () => {
         phone: "",
         sector: "bank",
         pack: { count: 50, months: 12 },
-        billing: "maaned",
+        billing: "samlet",
         message: "Vi vil gerne høre mere.\nTak.",
       },
     });
@@ -47,7 +47,7 @@ describe("validateInquiry", () => {
     expect(m.subject).toBe("Prisforespørgsel fra Eksempel Bank (Bank eller pengeinstitut) · 50 koder × 12 måneder");
     expect(m.text).toContain("navn@eksempel.dk");
     expect(m.text).toContain("Telefon:    ikke oplyst");
-    for (const line of ["Antal koder", "50 koder", "12 måneder", "månedlig betaling", "600 kr om måneden", "7.200 kr", "12 kr om måneden"])
+    for (const line of ["Antal koder", "50 koder", "12 måneder", "samlet for hele pakken", "7.200 kr samlet inkl. moms", "12 kr om måneden"])
       expect(m.text).toContain(line);
     expect(m.text).toContain("Vi vil gerne høre mere.\nTak.");
     expect(m.text).toContain("https://eksempel.dk/admin#henvendelser");
@@ -60,13 +60,17 @@ describe("validateInquiry", () => {
     const get = (x: Parameters<typeof inquiryChoices>[0]) => Object.fromEntries(inquiryChoices(x));
     expect(get({ sector: "bank", pack: { count: 50, months: 24 }, billing: "aar" })).toMatchObject({
       Betaling: "årlig betaling",
-      "Pris de så": "6.000 kr om året",
-      "I alt efter prislisten": "12.000 kr",
+      "Pris de så": "6.000 kr om året inkl. moms",
+      "I alt efter prislisten": "12.000 kr inkl. moms",
     });
     expect(get({ sector: "maegler", pack: { count: 10, months: 3 }, billing: "aar" })).toMatchObject({
       Branche: "Ejendomsmægler",
       Betaling: "samlet for hele pakken",
-      "Pris de så": "600 kr samlet",
+      "Pris de så": "600 kr samlet inkl. moms",
+    });
+    expect(get({ sector: "bank", pack: { count: 50, months: 12 }, billing: "maaned" })).toMatchObject({
+      Betaling: "månedlig betaling",
+      "Pris de så": "600 kr om måneden inkl. moms",
     });
     expect(get({ sector: "andet", pack: null })).toEqual({ Branche: "Andet", Pakke: "Vil tale om pakken først" });
     // An old henvendelse with a pack that's no longer on the list: no prices.

@@ -64,7 +64,7 @@ export function validateInquiry(x: unknown): { ok: true; value: Inquiry } | { ok
   const count = Number(o.count), months = Number(o.months);
   const talk = o.count === TALK_FIRST;
   const pack = !talk && isPackCount(count) && isPackMonths(months) ? { count, months } : null;
-  const billing: Billing = isBilling(o.billing) ? o.billing : "maaned";
+  const billing: Billing = isBilling(o.billing) ? o.billing : "samlet";
   const message = typeof o.message === "string" ? o.message.trim().replace(/\r\n?/g, "\n") : "";
   const errors: Partial<Record<InquiryField, string>> = {};
   if (!company || company.length > 120) errors.company = "Skriv navnet på virksomheden.";
@@ -84,7 +84,7 @@ export const sectorLabel = (id: string) => SECTORS.find((s) => s.id === id)?.lab
 
 /**
  * Everything they picked in the price calculator, as label/value lines – the same in the owner's mail and on /admin,
- * and the price shown the way the page showed it (a month, a year, or in all for a pack under 12 months). Takes a
+ * and the price shown the way the page showed it (in all, a month, or a year). Takes a
  * saved henvendelse too, so a pack or billing that is no longer on the list is shown without prices.
  */
 export function inquiryChoices(i: { sector: string; pack?: { count: number; months: number } | null; billing?: string }): [string, string][] {
@@ -96,9 +96,10 @@ export function inquiryChoices(i: { sector: string; pack?: { count: number; mont
   if (billing) lines.push(["Betaling", billingLabel(billing, p.months)]);
   if (!isPackCount(p.count) || !isPackMonths(p.months)) return lines;
   const total = packPrice(p.count, p.months);
-  if (billing === "aar") lines.push(["Pris de så", p.months < 12 ? `${kr(total)} samlet` : `${kr(packYearly(p.count, p.months))} om året`]);
-  else lines.push(["Pris de så", `${kr(packMonthly(p.count, p.months))} om måneden`]);
-  lines.push(["I alt efter prislisten", kr(total)], ["Pr. kunde", `${kr(perCodeMonth(p.count, p.months))} om måneden`]);
+  if (billing === "maaned") lines.push(["Pris de så", `${kr(packMonthly(p.count, p.months))} om måneden inkl. moms`]);
+  else if (billing === "aar" && p.months >= 12) lines.push(["Pris de så", `${kr(packYearly(p.count, p.months))} om året inkl. moms`]);
+  else lines.push(["Pris de så", `${kr(total)} samlet inkl. moms`]);
+  lines.push(["I alt efter prislisten", `${kr(total)} inkl. moms`], ["Pr. kunde", `${kr(perCodeMonth(p.count, p.months))} om måneden`]);
   return lines;
 }
 

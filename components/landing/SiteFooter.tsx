@@ -30,7 +30,7 @@ export function SiteFooter({ links = LINKS }: { links?: readonly NavLink[] }) {
           ))}
         </nav>
         <span className={styles.footerCompany}>
-          © 2026 budgetpro · {COMPANY.name} · CVR {COMPANY.cvr}
+          © 2026 {COMPANY.name} · CVR {COMPANY.cvr} · {COMPANY.email}
         </span>
       </div>
     </footer>
