@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { openStore } from "./kv";
 import { emptyFlow, isCode, type Flow } from "./skole";
 import {
-  adoptLegacyClasses, classOverview, classPupil, codeKey, createClass, deleteClass, emailHash, lookupCode, readClassFor, renameClass, saveProgress, teacherClasses,
+  adoptLegacyClasses, classAnswers, classOverview, classPupil, codeKey, createClass, deleteClass, emailHash, extendClass, lookupCode, readClassFor, renameClass, saveProgress, setOpenTo, shuffled, teacherClasses,
 } from "./skole-store";
 
 const now = new Date("2026-10-08T08:00:00Z");
@@ -102,6 +102,39 @@ describe("skole store", () => {
     expect(await lookupCode(b.codes[0]!, now, dir)).toBeNull();
     expect(await readClassFor(T1, b.id, now, dir)).toBeNull();
     expect(await teacherClasses(T1, now, dir)).toEqual([]);
+  });
+
+  it("extends a class and its codes by 30 days at a time, up to a year", async () => {
+    const cls = await createClass({ trin: 8, count: 2, days: 30, teacherId: T1 }, now, dir);
+    await saveProgress(cls.codes[0]!, { ...emptyFlow(), caseId: "sara" }, { 2: "Svar" }, now, dir);
+    const longer = (await extendClass(cls, dir))!;
+    expect(longer.days).toBe(60);
+    // Day 45: the class and the pupil's work are still there.
+    expect(await readClassFor(T1, cls.id, after(45), dir)).not.toBeNull();
+    expect(await lookupCode(cls.codes[0]!, after(45), dir)).toMatchObject({ answers: { 2: "Svar" }, expires: after(60).toISOString() });
+    let c = longer;
+    while (c.days! + 30 <= 365) c = (await extendClass(c, dir))!;
+    expect(c.days).toBe(360);
+    expect(await extendClass(c, dir)).toBeNull();
+  });
+
+  it("opens the steps lesson by lesson, and the pupils' code says how far", async () => {
+    const cls = await createClass({ trin: 8, count: 1, days: 30, teacherId: T1 }, now, dir);
+    expect((await lookupCode(cls.codes[0]!, now, dir))?.openTo).toBeUndefined();
+    const locked = await setOpenTo(cls, 5, dir);
+    expect((await classOverview(locked, dir)).openTo).toBe(5);
+    expect((await lookupCode(cls.codes[0]!, now, dir))?.openTo).toBe(5);
+    // 8 (the last step) or nonsense opens them all.
+    for (const v of [8, 0, "3", null]) expect((await setOpenTo(locked, v, dir)).openTo).toBeUndefined();
+  });
+
+  it("gives the board every answer to one question, without codes", async () => {
+    const cls = await createClass({ trin: 8, count: 3, days: 30, teacherId: T1 }, now, dir);
+    await saveProgress(cls.codes[0]!, { ...emptyFlow(), caseId: "sara" }, { 3: "Billigst", 4: "Streaming" }, now, dir);
+    await saveProgress(cls.codes[1]!, { ...emptyFlow(), caseId: "sara" }, { 3: "  Mere plads  " }, now, dir);
+    expect((await classAnswers(cls, 3, dir)).sort()).toEqual(["Billigst", "Mere plads"]);
+    expect(await classAnswers(cls, 5, dir)).toEqual([]);
+    expect(shuffled([1, 2, 3, 4, 5]).sort()).toEqual([1, 2, 3, 4, 5]);
   });
 
   it("sweeps old classes when a new one is made", async () => {

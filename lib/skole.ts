@@ -130,6 +130,16 @@ export function steps(c: Case): Step[] {
   ];
 }
 
+/**
+ * The reflection questions for the board (/skole/klasse/<id>/tavle), steps 2–8: the class works on different people,
+ * so the person's name becomes "din fremtidsperson".
+ */
+export function boardQuestions(): { step: number; short: string; q: string }[] {
+  return steps({ ...CASES[0]!, name: "din fremtidsperson" })
+    .slice(1)
+    .map((st, i) => ({ step: i + 2, short: st.short, q: st.refl ?? "" }));
+}
+
 // ---- The choices -------------------------------------------------------------------------------------------------
 // `info` is the text behind the small "i" next to each post (components/skole/Info.tsx).
 
@@ -454,6 +464,21 @@ export const LIFETIMES: readonly number[] = [30, 60, 90];
 export const DEFAULT_DAYS = 90;
 /** "Prøv gratis med én klasse": the free class of a teacher without a seat (lib/skole-seats.ts) lives this long. */
 export const TRIAL_DAYS = 30;
+/**
+ * The four lessons of the teaching material (lib/skole-materiale.ts) and the last step each opens. A teacher can open
+ * the steps lesson by lesson (`openTo` on the class); without it the pupils can go through all of them.
+ */
+export const LESSON_STEPS: { lesson: number; to: number; label: string }[] = [
+  { lesson: 1, to: 2, label: "Lektion 1 · trin 1–2" },
+  { lesson: 2, to: 5, label: "Lektion 2 · til og med trin 5" },
+  { lesson: 3, to: 7, label: "Lektion 3 · til og med trin 7" },
+];
+/** A valid `openTo` (1–7), or undefined for "all steps open". */
+export const cleanOpenTo = (v: unknown): number | undefined => (typeof v === "number" && Number.isInteger(v) && v >= 1 && v < STEP_COUNT ? v : undefined);
+/** "Forlæng" (lib/skole-store.ts extendClass): EXTEND_DAYS more each time, up to MAX_CLASS_DAYS from the day it was made. */
+export const EXTEND_DAYS = 30;
+export const MAX_CLASS_DAYS = 365;
+export const canExtend = (days: number) => days + EXTEND_DAYS <= MAX_CLASS_DAYS;
 /** Longest reflection answer. */
 export const MAX_ANSWER = 1000;
 
@@ -686,6 +711,8 @@ export interface ClassView {
   /** When the codes stop working and everything is deleted. */
   expires: string;
   days: number;
+  /** The last step the pupils may open (lesson by lesson); missing = all. */
+  openTo?: number;
   rows: PupilRow[];
   stats: ClassStats;
 }

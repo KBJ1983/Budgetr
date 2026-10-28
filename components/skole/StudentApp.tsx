@@ -18,6 +18,7 @@ type Screen = "start" | "flow" | "sum" | "budget";
  * leaves a shared Chromebook with an empty code field for the next pupil.
  */
 const OPEN_KEY = "budgetpro-skole:kode";
+const LOCK_POLL_MS = 20_000;
 const remember = (c: string | null) => {
   try {
     if (c) sessionStorage.setItem(OPEN_KEY, c);
@@ -39,6 +40,8 @@ export function StudentApp() {
   const [refl, setRefl] = useState<Answers>({});
   /** When the code stops working (ISO). */
   const [expires, setExpires] = useState<string | null>(null);
+  /** The last step the teacher has opened (lesson by lesson); null = all. */
+  const [openTo, setOpenTo] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, showToast] = useToast();
 
@@ -67,10 +70,26 @@ export function StudentApp() {
     return () => clearTimeout(timer);
   }, [opened, flow, refl]);
 
-  const open = (c: string, f: Flow, answers: Answers, until: string) => {
+  // While the teacher holds the next step back, ask now and then whether it is open yet.
+  useEffect(() => {
+    if (!opened || !openTo || screen !== "flow") return;
+    const timer = setInterval(async () => {
+      if (document.hidden) return;
+      try {
+        const r = await fetch("/api/skole/elev", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: opened }) });
+        if (r.ok) setOpenTo(((await r.json()) as { openTo?: number }).openTo ?? null);
+      } catch {}
+    }, LOCK_POLL_MS);
+    return () => clearInterval(timer);
+  }, [opened, openTo, screen]);
+
+  const open = (c: string, f: Flow, answers: Answers, until: string, lock?: number) => {
     remember(c);
     setCode(c);
     setOpened(c);
+    setOpenTo(lock ?? null);
+    // A step the teacher hasn't opened (any more) isn't shown; the work on it stays.
+    if (lock && f.step > lock && !f.done) f = { ...f, step: lock };
     setFlow(f);
     setReveal(f.maxStep > 2 ? 3 : 0);
     setRefl(answers);
@@ -90,8 +109,8 @@ export function StudentApp() {
         return setCodeErr("Den kode kender vi ikke, eller den er udløbet. Tjek, at den er skrevet rigtigt, ellers spørg din lærer om en ny.");
       }
       if (!r.ok) throw new Error(String(r.status));
-      const saved = (await r.json()) as { flow: Flow | null; answers: Answers; expires: string };
-      open(c, saved.flow ?? emptyFlow(), saved.answers ?? {}, saved.expires);
+      const saved = (await r.json()) as { flow: Flow | null; answers: Answers; expires: string; openTo?: number };
+      open(c, saved.flow ?? emptyFlow(), saved.answers ?? {}, saved.expires, saved.openTo);
     } catch {
       setCodeErr("Der er ingen forbindelse lige nu. Prøv igen om lidt.");
     } finally {
@@ -113,6 +132,7 @@ export function StudentApp() {
   }, []);
 
   const go = (n: number) => {
+    if (openTo && n > openTo) return;
     update((f) => ({ step: n, maxStep: Math.max(f.maxStep, n) }));
     setScreen("flow");
   };
@@ -162,6 +182,7 @@ export function StudentApp() {
           reveal={reveal}
           refl={refl}
           onRefl={answer}
+          openTo={openTo}
           onBack={() => (flow.step === 1 ? setScreen("start") : go(flow.step - 1))}
           onFinish={() => {
             update({ done: true });

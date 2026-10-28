@@ -56,6 +56,9 @@ const PUPILS: { code: string; flow: Flow | null; answers: Answers }[] = [
   { code: "SJOV-LAKS-35", flow: null, answers: {} },
 ];
 
+/** The demo pupils' answers to one step, for the board (made up, in a fixed order). */
+export const demoAnswers = (step: number) => PUPILS.map((p) => (p.answers[step] ?? "").trim()).filter(Boolean);
+
 /** The demo class as the class overview shows it, and each pupil's choices and answers. */
 export function demoClass(now = new Date()): { view: ClassView; pupils: Record<string, PupilDetail> } {
   const flows = PUPILS.map((p) => p.flow);

@@ -19,7 +19,7 @@ import { createHash, randomBytes, randomInt } from "node:crypto";
 import { openStore } from "./kv";
 import { normalizeEmail } from "./signup";
 import {
-  classStats, cleanClassName, DEFAULT_DAYS, isCode, LIFETIMES, MAX_PUPILS, pupilDetail, pupilRow, randomCode, TRIN,
+  canExtend, classStats, cleanClassName, cleanOpenTo, DEFAULT_DAYS, EXTEND_DAYS, isCode, LIFETIMES, MAX_PUPILS, pupilDetail, pupilRow, randomCode, TRIN,
   type Answers, type ClassSummary, type ClassView, type Flow, type PupilDetail,
 } from "./skole";
 
@@ -31,6 +31,8 @@ export interface SchoolClass {
   created: string;
   /** Lifetime in days (missing on the first classes, which got DEFAULT_DAYS). */
   days?: number;
+  /** The last step the pupils may open; missing = all (lesson by lesson, LESSON_STEPS in lib/skole.ts). */
+  openTo?: number;
   teacherId?: string;
   /** Left on classes made before teacher logins. */
   emailHash?: string;
@@ -137,6 +139,32 @@ export async function renameClass(cls: SchoolClass, name: unknown, dir?: string)
   return next;
 }
 
+/** Opens the steps up to `openTo` for the pupils (cleanOpenTo; anything else opens them all). */
+export async function setOpenTo(cls: SchoolClass, openTo: unknown, dir?: string): Promise<SchoolClass> {
+  const n = cleanOpenTo(openTo);
+  const next: SchoolClass = { ...cls };
+  if (n) next.openTo = n;
+  else delete next.openTo;
+  await openStore(dir).set(classKey(cls.id), JSON.stringify(next));
+  return next;
+}
+
+/** Gives the class and its codes EXTEND_DAYS more; null when it has reached MAX_CLASS_DAYS. The pupils' work stays. */
+export async function extendClass(cls: SchoolClass, dir?: string): Promise<SchoolClass | null> {
+  if (!canExtend(cls.days ?? DEFAULT_DAYS)) return null;
+  const store = openStore(dir);
+  const next: SchoolClass = { ...cls, days: (cls.days ?? DEFAULT_DAYS) + EXTEND_DAYS };
+  const expires = classExpires(next).toISOString();
+  await Promise.all(
+    cls.codes.map(async (c) => {
+      const r = parse<CodeRecord>(await store.get(codeKey(c)));
+      if (r?.classId === cls.id) await store.set(codeKey(c), JSON.stringify({ ...r, expires }));
+    }),
+  );
+  await store.set(classKey(cls.id), JSON.stringify(next));
+  return next;
+}
+
 /** Deletes a class with its codes and the pupils' work. */
 export async function deleteClass(cls: SchoolClass, dir?: string): Promise<void> {
   const store = openStore(dir);
@@ -201,10 +229,19 @@ async function readCode(code: string, now: Date, dir?: string): Promise<CodeReco
   return r && r.code === code && !past(codeExpires(r), now) ? r : null;
 }
 
-/** A pupil's code: null when unknown or expired; otherwise the saved work (flow null before the first save). */
-export async function lookupCode(code: string, now = new Date(), dir?: string): Promise<{ flow: Flow | null; answers: Answers; expires: string } | null> {
+/**
+ * A pupil's code: null when unknown or expired; otherwise the saved work (flow null before the first save) and, when
+ * the teacher opens the steps lesson by lesson, the last step open now (`openTo`).
+ */
+export async function lookupCode(
+  code: string,
+  now = new Date(),
+  dir?: string,
+): Promise<{ flow: Flow | null; answers: Answers; expires: string; openTo?: number } | null> {
   const r = await readCode(code, now, dir);
-  return r ? { flow: r.flow ?? null, answers: r.answers ?? {}, expires: codeExpires(r).toISOString() } : null;
+  if (!r) return null;
+  const openTo = parse<SchoolClass>(await openStore(dir).get(classKey(r.classId)))?.openTo;
+  return { flow: r.flow ?? null, answers: r.answers ?? {}, expires: codeExpires(r).toISOString(), ...(openTo ? { openTo } : {}) };
 }
 
 /** Saves a pupil's choices and answers (already checked with sanitizeFlow/sanitizeAnswers). False for an unknown code. */
@@ -233,9 +270,35 @@ export async function classOverview(cls: SchoolClass, dir?: string): Promise<Cla
     created: cls.created,
     expires: classExpires(cls).toISOString(),
     days: cls.days ?? DEFAULT_DAYS,
+    ...(cls.openTo ? { openTo: cls.openTo } : {}),
     rows: cls.codes.map((c, i) => pupilRow(c, flows[i] ?? null, records[i]?.flow ? records[i]?.updated : undefined)),
     stats: classStats(flows),
   };
+}
+
+/**
+ * Every pupil's answer to one step's reflection question, for the board: no codes, empty ones left out, in a random
+ * order each time, so nobody can tell whose answer is whose from the class list.
+ */
+export async function classAnswers(cls: SchoolClass, step: number, dir?: string): Promise<string[]> {
+  const store = openStore(dir);
+  const answers = await Promise.all(
+    cls.codes.map(async (c) => {
+      const r = parse<CodeRecord>(await store.get(codeKey(c)));
+      return r?.classId === cls.id ? (r.answers?.[step] ?? "").trim() : "";
+    }),
+  );
+  return shuffled(answers.filter(Boolean));
+}
+
+/** A copy in random order (Fisher–Yates). */
+export function shuffled<T>(list: T[]): T[] {
+  const a = [...list];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = randomInt(0, i + 1);
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
 }
 
 /** One pupil of the class, for the teacher; null when the code isn't in the class. */

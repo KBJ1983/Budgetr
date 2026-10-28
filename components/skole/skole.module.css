@@ -390,6 +390,36 @@
   .dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
 
+/* Class page: open the steps lesson by lesson. */
+.lessonPick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-weight: 600; font-size: 16px; }
+.lessonPick select { flex: 0 1 380px; }
+/* Pupil: the next step isn't open yet. */
+.waitNote { font-size: 15px; color: var(--sun-ink-2); background: var(--sun-bg); border-radius: 12px; padding: 10px 14px; margin: 0; }
+
+/* The board for the projector (Board.tsx): big type, a QR code to /elev, the count, and anonymous answers. */
+.board { gap: 22px; }
+.boardTop { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 18px; }
+.boardJoin { flex-direction: row; align-items: center; gap: 24px; }
+.boardQr { width: 200px; height: 200px; flex-shrink: 0; background: #fff; border-radius: 12px; }
+.boardQr svg { width: 100%; height: 100%; display: block; }
+.boardJoinText { display: flex; flex-direction: column; gap: 8px; font-size: 18px; color: var(--ink-2); min-width: 0; }
+.boardAddress { font-size: clamp(24px, 3.2vw, 40px); font-weight: 700; color: var(--ink); letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.boardCount { justify-content: center; background: var(--navy); color: var(--on-dark); border-color: var(--navy); }
+.boardCount b { font-size: clamp(40px, 6vw, 72px); line-height: 1; letter-spacing: -0.03em; color: var(--sun); }
+.boardCount span { font-size: 20px; }
+.boardCount small { font-size: 16px; color: var(--haze); }
+.boardAnswers { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.boardPick { display: flex; flex-wrap: wrap; gap: 8px; }
+.boardPick button[aria-pressed="true"] { border-color: var(--navy); background: var(--navy); color: #fff; }
+.boardQ { margin: 6px 0 0; font-size: clamp(24px, 3vw, 36px); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+.boardList { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.boardAnswer { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 16px 18px; font-size: 20px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .boardTop { grid-template-columns: minmax(0, 1fr); }
+  .boardJoin { flex-direction: column; align-items: flex-start; }
+  .boardQr { width: 160px; height: 160px; }
+}
+
 @media print {
   .header, .footer, .noPrint { display: none !important; }
   .page { background: #fff; min-height: 0; }

@@ -57,7 +57,11 @@ export const LESSONS: Lesson[] = [
       "Eleven kan regne ud, hvor stor en del af lønnen der går til skat og AM-bidrag, i procent.",
       "Eleven ved, at man kun kan bruge de penge, der faktisk kommer ind på kontoen.",
     ],
-    prep: ["Print elevkoderne eller elevarket til lektion 1 med koderne på.", "Prøv selv de første to trin på elevsiden, så du kender lønsedlen."],
+    prep: [
+      "Print elevkoderne eller elevarket til lektion 1 med koderne på.",
+      "Prøv selv de første to trin på elevsiden, så du kender lønsedlen.",
+      "Vil du styre tempoet, så vælg Lektion 1 under Åbne trin på klassesiden. Vis på tavlen giver en QR-kode til elevsiden og klassens svar uden navne.",
+    ],
     plan: [
       { min: "0–10", title: "Fælles start", text: "Spørg klassen: Hvad tror I, en tømrerlærling får udbetalt om måneden? Skriv gættene på tavlen." },
       { min: "10–15", title: "Log ind", text: "Eleverne går ind på elevsiden og skriver deres kode. Ingen navne i programmet." },

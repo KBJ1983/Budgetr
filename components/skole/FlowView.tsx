@@ -15,12 +15,14 @@ interface Props {
   /** The reflection answers by step; each step's question is answered right there. */
   refl: Record<number, string>;
   onRefl: (step: number, text: string) => void;
+  /** The last step the teacher has opened; null = all. */
+  openTo: number | null;
   onBack: () => void;
   onFinish: () => void;
   onBudget: () => void;
 }
 
-export function FlowView({ flow, update, go, reveal, refl, onRefl, onBack, onFinish, onBudget }: Props) {
+export function FlowView({ flow, update, go, reveal, refl, onRefl, openTo, onBack, onFinish, onBudget }: Props) {
   const [closed, setClosed] = useState<Record<number, boolean>>({});
   const all = steps(caseById(flow.caseId));
   const cur = all[flow.step - 1]!;
@@ -29,6 +31,8 @@ export function FlowView({ flow, update, go, reveal, refl, onRefl, onBack, onFin
   const last = flow.step === STEP_COUNT;
   const anyScen = Object.values(flow.scen).some(Boolean);
   const factOpen = !closed[flow.step];
+  // The teacher opens the steps lesson by lesson: the next one waits until it is open.
+  const held = !!openTo && !last && flow.step >= openTo;
 
   return (
     <div className={s.flow}>
@@ -43,7 +47,7 @@ export function FlowView({ flow, update, go, reveal, refl, onRefl, onBack, onFin
                 key={n}
                 type="button"
                 className={s.dotBtn}
-                disabled={n > flow.maxStep}
+                disabled={n > flow.maxStep || (!!openTo && n > openTo)}
                 aria-current={isCur ? "step" : undefined}
                 aria-label={`Trin ${n}: ${st.short}`}
                 onClick={() => go(n)}
@@ -104,12 +108,17 @@ export function FlowView({ flow, update, go, reveal, refl, onRefl, onBack, onFin
             </>
           )}
 
+          {held && (
+            <p className={s.waitNote} role="status">
+              Din lærer åbner trin {flow.step + 1}, når klassen er klar. Du kan godt gå tilbage og se dine valg igennem imens.
+            </p>
+          )}
           <div className={s.nav}>
             <button type="button" className={s.btn} onClick={onBack}>
               Tilbage
             </button>
-            <button type="button" className={`${s.btn} ${s.btnPrimary}`} disabled={!ok} onClick={() => (last ? onFinish() : go(flow.step + 1))}>
-              {last ? "Se opsummering" : "Næste"}
+            <button type="button" className={`${s.btn} ${s.btnPrimary}`} disabled={!ok || held} onClick={() => (last ? onFinish() : go(flow.step + 1))}>
+              {last ? "Se opsummering" : held ? "Venter på din lærer" : "Næste"}
             </button>
           </div>
         </div>

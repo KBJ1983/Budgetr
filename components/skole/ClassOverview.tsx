@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { classLabel, dayMonthYear, MAX_CLASS_NAME, seenAgo, type ClassView, type PupilDetail } from "@/lib/skole";
+import { canExtend, classLabel, dayMonthYear, EXTEND_DAYS, LESSON_STEPS, MAX_CLASS_DAYS, MAX_CLASS_NAME, seenAgo, type ClassView, type PupilDetail } from "@/lib/skole";
 import { CodeSheet } from "./CodeSheet";
 import { Shell } from "./Shell";
 import s from "./skole.module.css";
@@ -11,8 +11,11 @@ import { useToast } from "./useToast";
 const REFRESH_MS = 15_000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** `demo` = the made-up demo class (lib/skole-demo.ts) with its pupils: shown read-only, nothing is fetched. */
-export function ClassOverview({ teacher, initial, demo }: { teacher: string; initial: ClassView; demo?: Record<string, PupilDetail> }) {
+/**
+ * `demo` = the made-up demo class (lib/skole-demo.ts) with its pupils: shown read-only, nothing is fetched.
+ * `mayExtend`: the teacher has a seat, so the class can get EXTEND_DAYS more (not the free class).
+ */
+export function ClassOverview({ teacher, initial, demo, mayExtend }: { teacher: string; initial: ClassView; demo?: Record<string, PupilDetail>; mayExtend?: boolean }) {
   const [view, setView] = useState(initial);
   const [gone, setGone] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -61,6 +64,22 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
     const r = await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: typed.slice(0, MAX_CLASS_NAME) }) });
     if (r.ok) setView((await r.json()) as ClassView);
     else showToast("Navnet kunne ikke gemmes. Prøv igen.");
+  };
+
+  const extend = async () => {
+    const r = await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ extend: true }) });
+    if (r.ok) {
+      setView((await r.json()) as ClassView);
+      showToast(`Klassen er forlænget med ${EXTEND_DAYS} dage.`);
+    } else showToast(r.status === 409 ? `En klasse kan højst leve ${MAX_CLASS_DAYS} dage.` : "Klassen kunne ikke forlænges. Prøv igen.");
+  };
+
+  const setLesson = async (openTo: number | null) => {
+    const r = await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ openTo }) });
+    if (r.ok) {
+      setView((await r.json()) as ClassView);
+      showToast(openTo ? `Eleverne kan nu gå til og med trin ${openTo}.` : "Alle trin er åbne.");
+    } else showToast("Det kunne ikke gemmes. Prøv igen.");
   };
 
   const remove = async () => {
@@ -126,7 +145,28 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
         )}
         <p className={`${s.expiry} ${s.noPrint}`} suppressHydrationWarning hidden={!!demo}>
           Elevkoderne udløber den {dayMonthYear(expires)} (om {daysLeft} {daysLeft === 1 ? "dag" : "dage"}). Så slettes klassen, koderne og elevernes svar.
+          {mayExtend && canExtend(view.days) ? (
+            <>
+              {" "}
+              <button type="button" className={s.linkBtn} onClick={() => void extend()}>
+                Forlæng med {EXTEND_DAYS} dage
+              </button>
+            </>
+          ) : null}
         </p>
+        {!demo && (
+          <label className={`${s.lessonPick} ${s.noPrint}`}>
+            <span>Åbne trin for eleverne</span>
+            <select className={s.input} value={view.openTo ?? ""} onChange={(e) => void setLesson(e.target.value ? Number(e.target.value) : null)}>
+              <option value="">Alle trin (eleverne arbejder i deres eget tempo)</option>
+              {LESSON_STEPS.map((l) => (
+                <option key={l.to} value={l.to}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <div className={`${s.stats} ${s.noPrint}`}>
           {stats.map((x) => (
             <div key={x.l} className={s.stat}>
@@ -211,7 +251,10 @@ export function ClassOverview({ teacher, initial, demo }: { teacher: string; ini
           </>
         )}
         <div className={`${s.actions} ${s.noPrint}`}>
-          <Link className={`${s.btn} ${s.btnPrimary}`} href={`/skole/klasse/${initial.id}/materiale`}>
+          <Link className={`${s.btn} ${s.btnPrimary}`} href={`/skole/klasse/${initial.id}/tavle`}>
+            Vis på tavlen
+          </Link>
+          <Link className={s.btn} href={`/skole/klasse/${initial.id}/materiale`}>
             Undervisningsmateriale
           </Link>
           <Link className={s.btn} href="/skole/laerer">

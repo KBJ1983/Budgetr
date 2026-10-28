@@ -6,6 +6,7 @@ import { Shell } from "@/components/skole/Shell";
 import s from "@/components/skole/skole.module.css";
 import { TEACHER_COOKIE } from "@/lib/session";
 import { currentTeacher } from "@/lib/skole-auth";
+import { teacherSeat } from "@/lib/skole-seats";
 import { DEMO_CLASS_ID, demoClass } from "@/lib/skole-demo";
 import { classOverview, readClassFor } from "@/lib/skole-store";
 
@@ -38,5 +39,6 @@ export default async function ClassPage({ params }: PageProps<"/skole/klasse/[id
       </Shell>
     );
   }
-  return <ClassOverview teacher={t.name} initial={await classOverview(cls)} />;
+  // Only a teacher with a seat may extend a class (the free class keeps its 30 days).
+  return <ClassOverview teacher={t.name} initial={await classOverview(cls)} mayExtend={!!(await teacherSeat(t))} />;
 }
