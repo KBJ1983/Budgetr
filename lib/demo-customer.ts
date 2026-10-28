@@ -13,6 +13,15 @@ const MONTHS = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "a
 
 export const DEMO_USER = "demo";
 
+/**
+ * The demo family's seat from a (made-up) bank's agreement, as Indstillinger > Din bruger shows it
+ * (/api/account/demo/adgang): 60 days left, counted from `now`. Nothing is stored.
+ */
+export function demoSeat(now = new Date()) {
+  const d = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+  return { org: "Eksempel Bank", until: d.toISOString().slice(0, 10) };
+}
+
 export function demoCustomer(now = new Date()) {
   // "YYYY-MM-DD" n months from now (negative = back in time), on the given day.
   const iso = (n: number, day = 1) => {

@@ -4,7 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { readAccount, redeemCode, requestLogin, signup, type Login } from "./accounts";
 import { giveAccess, readGrant } from "./agreements";
-import { claimCustomerSeat, customerSeat, noteSeatCode, seatOffer, takeCustomerSeat } from "./customer-seats";
+import { claimCustomerSeat, customerSeat, noteSeatCode, remindEndingSeats, seatOffer, takeCustomerSeat } from "./customer-seats";
 import { buildOverview, emptyLedger, type Org } from "./owner";
 import { readLedger, writeLedger } from "./owner-store";
 
@@ -97,5 +97,32 @@ describe("customer seats", () => {
     const row = (at: Date) => buildOverview([(l.account)], ledger, {}, at).customers[0]!;
     expect(row(now)).toMatchObject({ status: "paying", seatUntil: "2027-02-02", org: { id: "o-bank", name: "Banken" } });
     expect(row(new Date("2027-02-03T12:00:00Z")).status).toBe("ended");
+  });
+
+  it("mails the customer once, a week before the seat ends", async () => {
+    const l = await confirmed("kunde@eksempel.dk");
+    await takeCustomerSeat(l.account.id, (await give(bank, "kunde@eksempel.dk")).code, now, dir); // until 2027-02-02
+    const mails: { to: string; subject: string; text: string }[] = [];
+    const send = async (to: string, m: { subject: string; text: string }) => (mails.push({ to, ...m }), true);
+    const at = (d: string) => new Date(`${d}T08:00:00Z`);
+    expect(await remindEndingSeats(send, "https://eksempel.dk/app", at("2027-01-25"), dir)).toBe(0);
+    expect(await remindEndingSeats(send, "https://eksempel.dk/app", at("2027-01-26"), dir)).toBe(1);
+    expect(mails[0]).toMatchObject({ to: "kunde@eksempel.dk", subject: "Din adgang til budgetpro fra Banken slutter den 1.2.2027" });
+    expect(mails[0]!.text).toContain("29 kr om måneden inkl. moms");
+    expect(mails[0]!.text).toContain("https://eksempel.dk/app");
+    expect((await readLedger(dir)).accounts[l.account.id]).toMatchObject({ until: "2027-02-02", reminded: "2027-02-02" });
+    // Once per seat; nothing after the seat has ended.
+    expect(await remindEndingSeats(send, "https://eksempel.dk/app", at("2027-01-30"), dir)).toBe(0);
+    expect(mails).toHaveLength(1);
+  });
+
+  it("keeps the reminder for later when no mail could go out", async () => {
+    const l = await confirmed("kunde@eksempel.dk");
+    await takeCustomerSeat(l.account.id, (await give(bank, "kunde@eksempel.dk")).code, now, dir);
+    const day = new Date("2027-01-28T08:00:00Z");
+    expect(await remindEndingSeats(async () => false, "https://eksempel.dk/app", day, dir)).toBe(0);
+    expect((await readLedger(dir)).accounts[l.account.id]?.reminded).toBeUndefined();
+    expect(await remindEndingSeats(async () => true, "https://eksempel.dk/app", day, dir)).toBe(1);
+    expect(await remindEndingSeats(async () => true, "https://eksempel.dk/app", new Date("2027-02-02T08:00:00Z"), dir)).toBe(0);
   });
 });

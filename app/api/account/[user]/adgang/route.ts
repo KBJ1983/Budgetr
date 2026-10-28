@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { customerSeat, takeCustomerSeat } from "@/lib/customer-seats";
+import { DEMO_USER, demoSeat } from "@/lib/demo-customer";
 import { canAccess, SESSION_COOKIE } from "@/lib/session";
 import { isAccountId } from "@/lib/users";
 
@@ -12,6 +13,8 @@ async function allowed(req: NextRequest, user: string) {
 
 export async function GET(req: NextRequest, ctx: RouteContext<"/api/account/[user]/adgang">) {
   const { user } = await ctx.params;
+  // The demo family shows a seat from a made-up bank, so the demo has every part of the app (lib/demo-customer.ts).
+  if (user === DEMO_USER) return Response.json({ seat: demoSeat() }, { headers: { "Cache-Control": "no-store" } });
   if (!(await allowed(req, user))) return new Response(null, { status: 401 });
   return Response.json({ seat: await customerSeat(user) }, { headers: { "Cache-Control": "no-store" } });
 }

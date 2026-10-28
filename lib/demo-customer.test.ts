@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isBudget } from "./budget-file";
-import { DEMO_USER, demoCustomer } from "./demo-customer";
+import { DEMO_USER, demoCustomer, demoSeat } from "./demo-customer";
 import { userById } from "./users";
 
 type Any = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -10,6 +10,10 @@ describe("demo customer", () => {
 
   it("is a test user, so it needs no session", () => {
     expect(userById(DEMO_USER)?.logins).toEqual(["DEMO"]);
+  });
+
+  it("has a seat from a made-up bank with 60 days left", () => {
+    expect(demoSeat(new Date("2026-10-05T10:00:00Z"))).toEqual({ org: "Eksempel Bank", until: "2026-12-04" });
   });
 
   it("is a valid budget, and so is every draft", () => {

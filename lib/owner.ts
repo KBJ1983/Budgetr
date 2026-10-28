@@ -97,6 +97,8 @@ export interface LedgerAccount {
   plan?: Plan;
   /** YYYY-MM-DD, the first day without the seat the account took from `org`'s agreement (lib/customer-seats.ts). */
   until?: string;
+  /** The `until` the "your seat ends soon" mail went out for (lib/customer-seats.ts), so it goes once per seat. */
+  reminded?: string;
 }
 
 /** Price list from the landing page (components/landing/PricePlans.tsx): base price + each extra login. */
@@ -480,7 +482,10 @@ export function applyChange(ledger: Ledger, change: unknown, accountIds: string[
         else if (typeof c.org === "string" && next.orgs.some((o) => o.id === c.org)) entry.org = c.org;
         else return { ok: false, error: "org" };
         // A seat belongs to the organisation it came from.
-        if (entry.org !== ledger.accounts[c.id]?.org) delete entry.until;
+        if (entry.org !== ledger.accounts[c.id]?.org) {
+          delete entry.until;
+          delete entry.reminded;
+        }
       }
       if (c.plan !== undefined) {
         if (c.plan === null) delete entry.plan;
@@ -555,6 +560,7 @@ export function applyChange(ledger: Ledger, change: unknown, accountIds: string[
         if (e.org !== c.id) continue;
         delete e.org;
         delete e.until;
+        delete e.reminded;
         if (!e.plan) delete next.accounts[id];
       }
       return { ok: true, ledger: next };

@@ -52,6 +52,8 @@ function siteGate(request: NextRequest): NextResponse | null {
   // The page-view beacon (components/Track.tsx): sendBeacon may go without the typed password, and the route only
   // counts and answers empty, so it shows nothing behind the gate.
   if (request.method === "POST" && request.nextUrl.pathname === "/api/besoeg") return null;
+  // Vercel Cron sends its own Bearer secret, which the route checks (app/api/cron/*); it answers 404 without it.
+  if (request.method === "GET" && request.nextUrl.pathname.startsWith("/api/cron/")) return null;
 
   const header = request.headers.get("authorization") ?? "";
   if (header.startsWith("Basic ")) {

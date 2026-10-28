@@ -83,6 +83,30 @@ export function grantMail(o: { orgName: string; category: OrgCategory; months: n
   };
 }
 
+/**
+ * To a bank or estate-agent customer a week before the seat ends. `lastDay` is the last day with the seat (YYYY-MM-DD),
+ * `monthly` the private price a month incl. moms (PRICES in lib/owner.ts), `appUrl` where the budget is.
+ */
+export function seatEndingMail(o: { firstName: string; orgName: string; lastDay: string; monthly: number; appUrl: string }) {
+  return {
+    subject: `Din adgang til budgetpro fra ${o.orgName} slutter den ${danishDate(o.lastDay)}`,
+    text: [
+      `Hej ${o.firstName}`,
+      "",
+      `Den adgang til budgetpro, du har fået fra ${o.orgName}, gælder til og med den ${danishDate(o.lastDay)}.`,
+      "",
+      `Dit budget bliver liggende, som det er. Vil du fortsætte bagefter, koster budgetpro ${o.monthly} kr om måneden inkl. moms. Vil du ikke det, kan du hente en sikkerhedskopi af budgettet under Indstillinger > Din bruger.`,
+      "",
+      "Dit budget:",
+      "",
+      o.appUrl,
+      "",
+      `${o.orgName} kan ikke se dit budget og får ikke besked om, hvad du vælger.`,
+      ...signOff,
+    ].join("\n"),
+  };
+}
+
 /** To a school's kundeadmins when a teacher asks for a seat. The link opens /aftale with the teacher's e-mail filled in. */
 export function seatRequestMail(o: { teacherName: string; teacherEmail: string; orgName: string; link: string }) {
   return {

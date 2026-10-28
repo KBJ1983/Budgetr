@@ -7,9 +7,10 @@
  *
  * There is no paywall yet: the seat decides who counts as an agreement customer and when the free period ends.
  */
-import { setPendingSeat, type Login } from "./accounts";
+import { readAccount, setPendingSeat, type Login } from "./accounts";
+import { seatEndingMail } from "./agreement-mail";
 import { findGrant, formatCode, grantCode, useCode, waitingGrant, type Grant } from "./agreements";
-import { orgActive, today, type Org } from "./owner";
+import { orgActive, PRICES, today, type Org } from "./owner";
 import { readLedger, writeLedger } from "./owner-store";
 
 export interface CustomerSeat {
@@ -69,6 +70,56 @@ export async function noteSeatCode(accountId: string, code: unknown, dir?: strin
   if (!grant || grant.usedBy) return;
   const org = (await readLedger(dir)).orgs.find((o) => o.id === grant.org);
   if (forCustomers(org)) await setPendingSeat(accountId, { org: grant.org, grant: grant.id }, dir);
+}
+
+/** How many days before a seat ends its customer gets a mail about it. */
+export const REMIND_DAYS = 7;
+
+const addDays = (day: string, n: number) => {
+  const d = new Date(`${day}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
+/**
+ * Mails each customer whose seat ends within REMIND_DAYS (once per seat: the ledger notes `reminded`). Run once a day
+ * (app/api/cron/aftaler, Vercel Cron). `send` returns false when no mail provider is set up; the seat is then not
+ * noted, so it goes out once mail works. Returns how many were sent.
+ */
+export async function remindEndingSeats(
+  send: (to: string, mail: { subject: string; text: string }) => Promise<boolean>,
+  appUrl: string,
+  now = new Date(),
+  dir?: string,
+): Promise<number> {
+  const ledger = await readLedger(dir);
+  const day = today(now), soon = addDays(day, REMIND_DAYS);
+  let sent = 0;
+  for (const [id, entry] of Object.entries(ledger.accounts)) {
+    if (!entry.until || entry.reminded === entry.until || day >= entry.until || entry.until > soon) continue;
+    const org = ledger.orgs.find((o) => o.id === entry.org);
+    const account = await readAccount(id, dir);
+    if (!forCustomers(org) || !account?.verifiedAt) continue;
+    const mail = seatEndingMail({ firstName: account.firstName, orgName: org.name, lastDay: addDays(entry.until, -1), monthly: PRICES.monthly.base, appUrl });
+    try {
+      if (!(await send(account.email, mail))) continue;
+    } catch (e) {
+      console.error("[budgetr] seat reminder failed", e);
+      continue;
+    }
+    entry.reminded = entry.until;
+    sent++;
+  }
+  // Read again before writing, so a change made meanwhile (e.g. on /admin) isn't lost; only `reminded` is added.
+  if (sent) {
+    const fresh = await readLedger(dir);
+    for (const [id, entry] of Object.entries(ledger.accounts)) {
+      const f = fresh.accounts[id];
+      if (entry.reminded && f && f.until === entry.reminded) f.reminded = entry.reminded;
+    }
+    await writeLedger(fresh, dir);
+  }
+  return sent;
 }
 
 /**
