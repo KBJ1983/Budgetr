@@ -1067,6 +1067,108 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   /* "Dækkes af fast overførsel fra" is for the experienced: behind Flere felter until a post has it set. */
   #frm:not(.mmore) .grid2>#wCover:has(#fCover option:checked[value=""]){display:none!important}
 }
+/* ---------- Phones: every section is one card with its heading inside, like the grouped lists in banking apps. What
+   was a card of its own inside a section becomes a grey tile (people, goals, key figures) or a row with a line under
+   it (accounts, transfers), so a card never sits on another card. The long explanations are cut to a few lines,
+   and the person cards show their result until "Vis indtægter, udgifter og opsparing" is pressed. ---------- */
+.pmore{display:none}
+@media (max-width:760px){
+  #app>section,#app>section.tflow{margin:12px 0 0;padding:0 16px 16px!important;background:var(--card);border:1px solid var(--rule);border-radius:16px}
+  #app>section>.sechead,#app>section>h2{margin:0 0 14px;padding:14px 0 12px!important;background:transparent;border:0;border-bottom:1px solid var(--rule);border-radius:0}
+  #app>section>.sechead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+  #app>section>.sechead h2,#app>section>h2{font-size:17px!important;line-height:1.3}
+  #app>section>.sechead h2 .helplink{font-size:13px;font-weight:400}
+  #app>section>.sechead .hint{display:none}
+  #app>section>.sechead>button,#app>section>.sechead .shtools .tbtn{min-height:36px;padding:6px 14px!important;font-size:14px!important}
+  #app>section>.sechead .shtools{display:flex;gap:8px;flex-wrap:wrap}
+  .sechead .split{margin:0}
+  /* Pages other than Overblik: the sentence in a card of its own, its explanation cut to three lines. */
+  body:not([data-page="budget"]) .hero{margin-top:12px;padding:16px!important;background:var(--card);border:1px solid var(--rule);border-radius:16px}
+  body:not([data-page="budget"]) .hero>p{display:block;font-size:19px;line-height:1.35;max-width:none}
+  .hero small:not(.hbar){font-size:13.5px;line-height:1.45;margin-top:10px;max-height:calc(3 * 1.45em);overflow:hidden;position:relative}
+  .hero small.open{max-height:none}
+  .hero small.clamp{cursor:pointer}
+  .hero small.clamp::after{content:"Vis mere";position:absolute;right:0;bottom:0;padding-left:28px;background:linear-gradient(to right,transparent,var(--card) 24px);color:var(--pine);font-weight:600;text-decoration:underline}
+  .hero small.hbar{display:block}
+  .mcheck{margin:12px 0 0;padding:16px;border-radius:16px}
+  /* Key figures: two tiles in a row, the main one across; grey tiles inside the card. */
+  #app>section .kpis{grid-template-columns:1fr 1fr;grid-auto-flow:dense;gap:8px}
+  #app>section .kpi{border-color:transparent;padding:12px;border-radius:12px;min-width:0}
+  #app>section .kpi:not(.hero2){background:var(--paper)}
+  #app>section .kpi.hero2{grid-column:1/-1}
+  #app>section .kpi.good{background:var(--pine-bg)}
+  #app>section .kpi.bad{background:var(--brick-bg)}
+  #app>section .kpi b{font-size:17px!important;overflow-wrap:anywhere}
+  #app>section .kpi.hero2 b{font-size:22px!important}
+  #app>section .kpi small{font-size:11.5px}
+  .setstat{margin:0 0 12px;font-size:13px}
+  /* Konti: a list with a line between the accounts. */
+  .accounts,.accounts:has(details.acctd){gap:0}
+  #app details.acctd{background:transparent;border:0;border-bottom:1px solid var(--rule);border-radius:0}
+  #app details.acctd:last-child{border-bottom:0}
+  #app details.acctd>summary{padding-left:0;padding-right:0}
+  /* Hvem betaler hvad: one grey tile per person, the result first. */
+  .people{gap:10px}
+  .person{background:var(--paper);border:0;border-radius:12px;padding:16px!important}
+  .person h3{margin-bottom:4px}
+  .person .big{margin-top:0}
+  .person:not(.open)>:is(.kv.calc,.psav,.kv:not(.pend)){display:none}
+  .person .kv.pend{display:flex;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
+  .pmore{display:block;width:100%;margin-top:12px;min-height:42px;background:var(--card)!important;font-size:14px!important}
+  /* Poster: search across, the three filters on one row, each category as its own block with a grey head. */
+  .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .filters .qbox{grid-column:1/-1;order:-1}
+  .filters .ptools{grid-column:1/-1}
+  .filters select{min-width:0;width:100%;padding:8px 6px;text-overflow:ellipsis}
+  .ptbl{margin:0 -16px;background:transparent!important;border:0!important;border-radius:0}
+  .ptbl tr.grp>td,.ptbl tr.cat>td{padding-top:12px;padding-bottom:12px}
+  .ptbl tr.cat{margin:14px 12px 4px;background:var(--paper);border-radius:10px}
+  .ptbl tr.grp{margin:0 12px 4px;border-radius:10px}
+  .ptbl tr.grp:not(:first-child){margin-top:18px}
+  .ptbl tr.grp>td:first-child{display:flex!important;flex-wrap:wrap;align-items:center;gap:6px 0;font-size:17px;min-width:0}
+  .filters .ptools .tbtn{white-space:nowrap;font-size:13.5px!important;padding-left:8px!important;padding-right:8px!important}
+  .ptbl tr.row,.ptbl tr.empty{margin:0 4px}
+  .ptbl tr.row:has(+tr.cat),.ptbl tr.row:has(+tr.grp),.ptbl tr.row:last-child{border-bottom:0}
+  /* Overførsler: the accounts as groups with a line between them, not cards inside the card. */
+  .tcards{gap:0}
+  .tcard{background:transparent;border:0;border-top:1px solid var(--rule);border-radius:0!important;padding:14px 0 0}
+  .tcard:first-child{border-top:0;padding-top:0}
+  .tcard .tablewrap,#app>section .tablewrap:has(.tstack){background:transparent;border:0;margin:0 -14px}
+  /* Mål: grey tiles; the table of goals repeats the cards above it, so it is left out here. */
+  .goals{gap:10px}
+  .goal{background:var(--paper);border:0;border-radius:12px;padding:16px!important}
+  .gsum>.tablewrap:first-child{display:none}
+  .goal:not(.open)>:is(.kv,.gscope){display:none}
+  /* Drawings that need a wide screen stay on bigger screens, like the 12-month graph. */
+  #app>section.tflow,#app>section.gchart{display:none}
+  .upd{margin:0 0 12px}
+  .sortbar>span{display:none}
+}
+/* Lån on a phone: each loan as a small card – description and restgæld on top, bank below, then the key numbers with
+   their labels. Oprindeligt, Betalt af, Renter/md. and Udløber are in the loan itself. */
+@media (max-width:560px){
+  .ltbl{overflow:visible;margin:0 -16px;background:transparent!important;border:0!important}
+  .ltbl table,.ltbl tbody{display:block;width:100%}
+  .ltbl thead{display:none}
+  .ltbl tr{display:grid;grid-template-columns:30px repeat(3,minmax(0,1fr));gap:6px 10px;padding:12px 16px;border-bottom:1px solid var(--rule)}
+  .ltbl td{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:0!important;border:0!important;text-align:left!important;min-width:0;background:transparent!important;font-size:14px}
+  .ltbl td[data-l]::before{content:attr(data-l);font-size:11.5px;color:var(--ink3)}
+  .ltbl td *{white-space:normal!important;overflow-wrap:anywhere}
+  .ltbl td.chk{grid-column:1;grid-row:1/span 2;padding-top:2px!important}
+  .ltbl td.desc{grid-column:2/4;grid-row:1;font-weight:600;font-size:15px}
+  .ltbl td.restcol{grid-column:4;grid-row:1;align-items:flex-end;text-align:right!important}
+  .ltbl td.restcol::before{content:none}
+  .ltbl tr.row>td:nth-child(2){grid-column:2/-1;grid-row:2;color:var(--ink2);font-size:13px}
+  .ltbl td:is([data-l="Oprindeligt"],[data-l="Renter/md."],[data-l="Udløber"]),.ltbl td.lpaid{display:none}
+  .ltbl td[data-l="Ydelse/md."]{grid-column:2}
+  .ltbl td[data-l="I budgettet"]{grid-column:2/-1;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 8px;color:var(--ink2);font-size:13px}
+  .ltbl td[data-l="I budgettet"]::before{content:"I budgettet:";font-size:13px}
+  .ltbl td[data-l="I budgettet"] .note{display:none}
+  .ltbl tr.cat{grid-template-columns:minmax(0,1fr) auto;background:var(--paper);margin:8px 12px 0;border-radius:10px;border:0}
+  .ltbl tr.cat>td{display:none}
+  .ltbl tr.cat>td:first-child,.ltbl tr.cat>td.restcol{display:flex;font-weight:600}
+  .ltbl tr.cat>td.restcol{grid-column:2;grid-row:1}
+}
 @media print{
   .mnav,.fab{display:none!important}
   .appbar,.navrow{display:none!important}
@@ -1749,9 +1851,9 @@ function render(){
     if(!filmSeen())setTimeout(()=>{if(!S&&!filmSeen()&&!document.querySelector('dialog[open]'))openFilm()},400);return}
   syncENT();
   INFO=[];closePop();
-  if(page==='laan'){$('exAll').checked=exOn();app.innerHTML=loansHtml();bindLoans();return}
-  if(page==='overf'){$('exAll').checked=exOn();app.innerHTML=overfHtml();bindOverf();return}
-  if(page==='maal'){$('exAll').checked=exOn();app.innerHTML=goalsHtml();bindGoals();return}
+  if(page==='laan'){$('exAll').checked=exOn();app.innerHTML=loansHtml();bindLoans();clampHero();return}
+  if(page==='overf'){$('exAll').checked=exOn();app.innerHTML=overfHtml();bindOverf();clampHero();return}
+  if(page==='maal'){$('exAll').checked=exOn();app.innerHTML=goalsHtml();bindGoals();clampHero();return}
   $('exAll').checked=exOn();
   const t=totals(), sh=shares();
   const unplaced=act().filter(e=>e.type==='udgift'&&!e.account);
@@ -1839,7 +1941,7 @@ function render(){
     const c=personCalc(p.id);
     // Til rådighed as a small sum: incomes (+, green), expenses (−, red), then the result below.
     const incT=c.own+c.extra+c.shInc, expT=c.ownExp+c.shExp, ln=(cls,label,v)=>`<span class="${cls}">${label}</span><span class="${cls} v">${disp(v)}</span>`;
-    h+=`<div class="person"><h3>${esc(p.name)}</h3><div class="kv calc">
+    h+=`<div class="person${PDET.has(p.id)?' open':''}"><h3>${esc(p.name)}</h3><div class="kv calc">
       <span class="ch in">Indtægter</span><span class="ch"></span>
       ${ln('in',`+ Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&!e.extra&&inFree(e)&&e.payer===p.id)))}`,c.own)}
       ${extraSum(p)?ln('in',`+ Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu.'} Fluebenet herunder gælder hele husstanden. Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}`,c.extra)
@@ -1863,8 +1965,9 @@ function render(){
       <div class="psav"><span class="ph">Ekstra indtjening</span>${exPosts(p.id).map(e=>`<div class="psrow click" data-open="${e.id}" tabindex="0" role="button" title="Ret posten"><span class="nm">${esc(e.desc)}<small>${esc(howOf(e))}${exOn()?'':' · ikke medregnet'}</small></span><span class="v">${disp(mAvg(e))}</span></div>`).join('')||'<span class="muted" style="font-size:13px">Ingen ekstra indtjening.</span>'}${extraSum(p)?`<div class="psum ex"><span>I alt</span><b>${disp(extraSum(p))}</b></div>`:''}
         <button type="button" class="ghost" data-exnew="${p.id}" style="align-self:flex-start">Tilføj ekstra indtjening</button></div>
       ${psavHtml(p,c)}
-      <div class="kv"><span>Tilbage efter opsparing</span><span style="color:${c.afterSav>=0?'var(--pine)':'var(--brick)'}">${disp(c.afterSav)}</span></div>
-      ${c.afterSav<0?`<div class="verdict bad">Opsparingen er ${disp(-c.afterSav)} højere end rådighedsbeløbet.</div>`:''}</div>`;
+      <div class="kv pend"><span>Tilbage efter opsparing</span><span style="color:${c.afterSav>=0?'var(--pine)':'var(--brick)'}">${disp(c.afterSav)}</span></div>
+      ${c.afterSav<0?`<div class="verdict bad">Opsparingen er ${disp(-c.afterSav)} højere end rådighedsbeløbet.</div>`:''}
+      ${moreBtn(p.id,'Vis indtægter, udgifter og opsparing')}</div>`;
   });
   h+=`</div></section>`;
 
@@ -1897,6 +2000,14 @@ function render(){
    posts), Overblik asks "Hvad har ændret sig siden sidst?" – the posts with a new amount or new since then (e.since,
    e.history), plus the posts to check and the open tasks – and "Budgettet passer" confirms it with one press. */
 const MC_DAYS=30;
+/* Phones: the person cards on Overblik show the result only; PDET holds the ones opened with "Vis indtægter, …" (until reload).
+   The long explanation under a page's sentence is cut to a few lines there, with "Vis mere" when there is more (clampHero). */
+const PDET=new Set();
+const moreBtn=(key,label)=>`<button type="button" class="pmore" data-pmore="${key}" data-l="${label}" aria-expanded="${PDET.has(key)}">${PDET.has(key)?'Skjul detaljer':label}</button>`;
+function bindMore(){document.querySelectorAll('[data-pmore]').forEach(b=>b.onclick=()=>{const k=b.dataset.pmore,on=!PDET.has(k);on?PDET.add(k):PDET.delete(k);
+  b.parentElement.classList.toggle('open',on);b.setAttribute('aria-expanded',String(on));b.textContent=on?'Skjul detaljer':b.dataset.l})}
+function clampHero(){const s=document.querySelector('#app .hero small:not(.hbar)');if(!s||s.classList.contains('open'))return;
+  s.classList.toggle('clamp',s.scrollHeight>s.clientHeight+2);s.onclick=()=>{if(s.classList.contains('clamp')){s.classList.remove('clamp');s.classList.add('open')}}}
 const daysSince=d=>Math.floor((Date.parse(DAY())-Date.parse(d))/864e5);
 function monthCheckDue(){const sp=S.settings||{};return sp.monthCheck?daysSince(sp.monthCheck)>=MC_DAYS:S.entries.length>=5}
 function monthCheckHtml(){if(!monthCheckDue())return '';const last=S.settings.monthCheck||'';
@@ -2062,12 +2173,12 @@ function goalsHtml(){
   if(!G.length)h+=`<div class="empty" style="padding:8px 0"><p>Opret et mål, fx udbetaling til hus. Angiv beløb, startdato og måldato, så beregnes det månedlige beløb. Vælg konto og betaler som på en almindelig post.</p></div>`;
   else{h+=`<div class="goals">`+G.map(g=>{const c=goalCalc(g),inCtx=goalIn(g,key),tr=g.to&&g.to!==g.from;
     const badge=g.active===false?'<span class="badge un">Inaktiv</span>':c.ended?`<span class="badge un">${c.mode==='monthly'?'Slutdato':'Måldato'} er passeret</span>`:c.future?`<span class="badge chk">Starter ${idxLbl(c.s).toLowerCase()}</span>`:'';
-    return `<div class="goal ${inCtx&&goalCounts(g)?'':'off'}"><div class="ghead"><h3><span class="gdot" style="background:${gColor(g)}"></span>${esc(g.name||'Mål')}${badge}</h3><button type="button" class="ghost" data-gedit="${g.id}">Ret</button></div>
+    return `<div class="goal ${inCtx&&goalCounts(g)?'':'off'}${PDET.has('g:'+g.id)?' open':''}"><div class="ghead"><h3><span class="gdot" style="background:${gColor(g)}"></span>${esc(g.name||'Mål')}${badge}</h3><button type="button" class="ghost" data-gedit="${g.id}">Ret</button></div>
      <div class="gamt">${kr(c.monthly)}<small>pr. md.${c.n?' i '+c.n+' md.':' · løbende'}</small></div>${c.xs?`<span class="note" style="margin-top:-6px">${c.mode==='monthly'?`Plus ${c.X.length} ekstra ${c.X.length===1?'indbetaling':'indbetalinger'} på i alt ${kr(c.xs)}.`:`Sænket fra ${kr(Math.ceil(c.rest0/c.n))} til ${kr(c.monthly)} pr. md. med ${c.X.length} ekstra ${c.X.length===1?'indbetaling':'indbetalinger'} på i alt ${kr(c.xs)}.`}</span>`:''}
      <div>${c.T?`<div class="loanbar"><div style="width:${Math.round(c.pct*100)}%;background:${gColor(g)}"></div></div><span class="note">Skønnet opsparet ${kr(c.est)} af ${kr(c.T)} (${Math.round(c.pct*100)} %) · ${c.left} md. tilbage</span>`:`<span class="note">Skønnet opsparet ${kr(c.est)} indtil nu · om et år ${kr(c.est+c.monthly*12)}</span>`}</div>
      <div class="kv">${c.mode==='monthly'?`<span>Type</span><span>Fast pr. md.</span><span>Forventet slutbeløb</span><span>${c.T?kr(c.T):'Løbende'}</span><span>Allerede opsparet</span><span>${kr(c.sv)}</span>`:`<span>Type</span><span>Fast beløb</span><span>Målbeløb</span><span>${kr(c.T)}</span><span>Allerede opsparet</span><span>${kr(c.sv)}</span><span>Mangler ved start</span><span>${kr(c.rest0)}</span>`}${c.X.length?`<span>Ekstra indbetalinger ${ib(`<b>Ekstra indbetalinger</b>${tbl(c.X.map(x=>[esc(fmtDate(x.date)),esc(x.desc),kr(x.amount)]))}<table class="itbl"><tbody><tr class="sum"><td>I alt</td><td class="r">${kr(c.xs)}</td></tr></tbody></table><p>${c.mode==='monthly'?'Lægges oven i de månedlige indbetalinger.':`Sænker den månedlige opsparing fra ${kr(Math.ceil(c.rest0/c.n))} til ${kr(c.monthly)}.`}</p>`)}</span><span>${kr(c.xs)}</span>`:''}
       <span>Periode</span><span>${esc(fmtDate(g.start))} – ${g.end?esc(fmtDate(g.end)):'løbende'}</span><span>Betales fra</span><span>${esc(accName(g.from))}</span><span>Sættes ind på</span><span>${tr?esc(accName(g.to)):'Bliver på kontoen'}</span><span>Betaler</span><span>${esc(perName(g.payer||FAELLES))}</span></div>
-     ${c.xOut?`<div class="verdict warn">${c.xOut} ekstra ${c.xOut===1?'indbetaling ligger':'indbetalinger ligger'} uden for perioden og tæller ikke med.</div>`:''}${g.note?`<span class="note">${esc(g.note)}</span>`:''}${scopeChips(g)}</div>`}).join('')+`</div>`}
+     ${c.xOut?`<div class="verdict warn">${c.xOut} ekstra ${c.xOut===1?'indbetaling ligger':'indbetalinger ligger'} uden for perioden og tæller ikke med.</div>`:''}${g.note?`<span class="note">${esc(g.note)}</span>`:''}${scopeChips(g)}${moreBtn('g:'+g.id,'Vis detaljer')}</div>`}).join('')+`</div>`}
   h+=`</section>`;
   if(L.length){
     const rowsG=L.map(g=>{const c=goalCalc(g),tr=g.to&&g.to!==g.from;return `<tr><td><span class="gdot" style="background:${gColor(g)}"></span>${esc(g.name||'Mål')}</td><td>${esc(accName(g.from))}${tr?' til '+esc(accName(g.to)):''}</td><td>${esc(perName(g.payer||FAELLES))}</td><td class="r">${c.xs?kr(c.xs):'<span class="muted">–</span>'}</td><td class="r">${disp(c.monthly)}</td></tr>`}).join('');
@@ -2093,6 +2204,7 @@ function goalsHtml(){
 }
 function bindScopes(){document.querySelectorAll('[data-gscope]').forEach(c=>c.onchange=()=>{const g=(S.goals||[]).find(x=>x.id===c.dataset.gscope);if(!g)return;const k=c.dataset.key;g.scopes=(g.scopes||[]).filter(x=>x!==k);if(c.checked)g.scopes.push(k);commit()})}
 function bindGoals(){
+  bindMore();
   document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{SC=b.dataset.sc||null;render()});
   document.querySelectorAll('[data-gnew]').forEach(b=>b.onclick=()=>openGoal(null));
   document.querySelectorAll('[data-gedit]').forEach(b=>b.onclick=()=>openGoal(b.dataset.gedit));
@@ -2369,11 +2481,11 @@ function loansHtml(){
    ${L.map(({l,c})=>{
      const diff=c.budget!==null&&Math.abs(c.budget-c.A)>=1&&!l.paused;
      return `<tr class="row ${l.paused?'paused':''} ${l.include===false?'excl':''}" data-loan="${l.id}" tabindex="0"><td class="chk"><input type="checkbox" data-linc="${l.id}" ${l.include!==false?'checked':''} aria-label="Medtag ${esc(l.desc)} i samlet restgæld"></td><td>${esc(l.bank)}</td><td class="desc">${esc(l.desc)}${l.paused?'<span class="badge mute">Pause</span>':''}${l.note?`<span class="note">${esc(l.note)}</span>`:''}</td>
-     <td class="r">${kr(c.O)}</td><td class="r restcol"><b>${kr(c.P)}</b>${l.restDate&&l.restDate!==(S.loanUpdated?fmtDate(S.loanUpdated,true):'')?`<span class="note">pr. ${esc(l.restDate)}</span>`:''}</td>
-     <td><div class="loanbar" title="${Math.round(c.paid*100)} % betalt"><div style="width:${Math.round(c.paid*100)}%"></div></div><span class="note">${Math.round(c.paid*100)} %</span></td>
-     <td class="r">${kr(c.A)}</td><td class="r">${l.rate!==''&&l.rate!==undefined&&l.rate!==null?pct(l.rate):'<span class="muted">–</span>'}</td><td class="r">${l.rate?kr(c.interest):'<span class="muted">–</span>'}</td>
-     <td>${esc(l.ends||'')}</td><td>${l.paused?'<span class="muted">På pause</span>':c.n===null?(l.rate?'<span class="badge un">Ydelsen dækker ikke renten</span>':'<span class="muted">Angiv rente</span>'):c.n>360?`${c.endTxt}<span class="note">Over 30 år. Er lånet afdragsfrit, eller indeholder ydelsen bidrag?</span>`:`${c.endTxt}${c.n>0?`<span class="lend">frigiver ${kr(c.budget!==null?c.budget:c.A)}/md.</span>`:''}`}</td>
-     <td class="r">${c.link?`${c.budget!==null?kr(c.budget):'<span class="muted">Inaktiv</span>'}${diff?`<span class="badge chk">${c.budget>c.A?'+':''}${kr(c.budget-c.A)}</span>`:''}<span class="note">${esc(c.link.desc)}</span>`:'<span class="muted">Ikke tilknyttet</span>'}</td></tr>`}).join('')}
+     <td class="r" data-l="Oprindeligt">${kr(c.O)}</td><td class="r restcol" data-l="Restgæld"><b>${kr(c.P)}</b>${l.restDate&&l.restDate!==(S.loanUpdated?fmtDate(S.loanUpdated,true):'')?`<span class="note">pr. ${esc(l.restDate)}</span>`:''}</td>
+     <td class="lpaid" data-l="Betalt af"><div class="loanbar" title="${Math.round(c.paid*100)} % betalt"><div style="width:${Math.round(c.paid*100)}%"></div></div><span class="note">${Math.round(c.paid*100)} %</span></td>
+     <td class="r" data-l="Ydelse/md.">${kr(c.A)}</td><td class="r" data-l="Rente">${l.rate!==''&&l.rate!==undefined&&l.rate!==null?pct(l.rate):'<span class="muted">–</span>'}</td><td class="r" data-l="Renter/md.">${l.rate?kr(c.interest):'<span class="muted">–</span>'}</td>
+     <td data-l="Udløber">${esc(l.ends||'')}</td><td data-l="Beregnet slut">${l.paused?'<span class="muted">På pause</span>':c.n===null?(l.rate?'<span class="badge un">Ydelsen dækker ikke renten</span>':'<span class="muted">Angiv rente</span>'):c.n>360?`${c.endTxt}<span class="note">Over 30 år. Er lånet afdragsfrit, eller indeholder ydelsen bidrag?</span>`:`${c.endTxt}${c.n>0?`<span class="lend">frigiver ${kr(c.budget!==null?c.budget:c.A)}/md.</span>`:''}`}</td>
+     <td class="r" data-l="I budgettet">${c.link?`${c.budget!==null?kr(c.budget):'<span class="muted">Inaktiv</span>'}${diff?`<span class="badge chk">${c.budget>c.A?'+':''}${kr(c.budget-c.A)}</span>`:''}<span class="note">${esc(c.link.desc)}</span>`:'<span class="muted">Ikke tilknyttet</span>'}</td></tr>`}).join('')}
    <tr class="cat"><td colspan="3">I alt, ${selTxt}</td><td class="r">${kr(tO)}</td><td class="r restcol">${kr(tP)}</td><td></td><td class="r">${kr(tA)}</td><td class="r">${pct(wr)}</td><td class="r">${kr(tI)}</td><td colspan="3"></td></tr>
    </tbody></table></div>
    <p class="muted" style="font-size:13px;margin-top:10px">"I budgettet" viser den tilknyttede budgetpost omregnet til pr. måned. Et gult tal viser forskellen til ydelsen her. Kvartalsvise ydelser, fx Totalkredit, kan afvige lidt, fordi banken opgør pr. måned.</p>
@@ -2851,6 +2963,7 @@ function startInfo(onPosts){
   return `<div class="startinfo" role="note"><div><b>Udfyld dine budgetposter for at få tal i dit budget</b><p>Læg løn og faste udgifter ind, fx husleje, el, forsikringer og abonnementer. Så viser overblikket, hvad der er tilbage hver måned.</p></div>
   <div class="btns">${onPosts?'':'<button type="button" data-goto="poster">Gå til Budgetposter</button>'}<button type="button" class="primary" data-newpost>Ny budgetpost</button></div></div>`}
 function bindMain(){
+  bindMore();
   document.querySelectorAll('details.acctd').forEach(d=>d.addEventListener('toggle',()=>{FOLD[d.dataset.acc]=!d.open;saveFold();const all=[...document.querySelectorAll('details.acctd')];const b=$('btnFoldAll');if(b)b.innerHTML=foldLbl(all.every(x=>!x.open))}));
   const bf=$('btnFoldAll');if(bf)bf.onclick=()=>{const all=[...document.querySelectorAll('details.acctd')],open=!all.every(x=>!x.open)?false:true;all.forEach(x=>{x.open=open;FOLD[x.dataset.acc]=!open});saveFold();bf.innerHTML=foldLbl(!open)};
   if($('btnAccts'))$('btnAccts').onclick=openAccts;
