@@ -1,6 +1,6 @@
 /**
- * Turns a plain-text mail (subject + text) into a simple branded HTML mail ("Midnat og lime", docs/design/MIDNAT.md;
- * with theme "skole" budgetpro Skole's "Midnat og solgul", docs/design/skole-21b.html).
+ * Turns a plain-text mail (subject + text) into a simple branded HTML mail ("Mynte og is", docs/design/MYNTE.md;
+ * with theme "skole" budgetpro Skole's "Is og solgul", docs/design/skole-21b.html).
  * The text part is sent unchanged next to it; this only reads it:
  * - blocks separated by blank lines become paragraphs (single line breaks stay),
  * - a line that is only a link to our own site becomes a midnight button (the first one) or an olive link (the rest),
@@ -22,16 +22,16 @@ export interface MailHtmlOptions {
 }
 
 const C = {
-  paper: "#F3F5F7",
+  paper: "#F0F3F2",
   card: "#FFFFFF",
-  rule: "#DFE4EA",
-  ink: "#0E1B2C",
-  text: "#3E4A5A",
-  muted: "#5A6472",
-  olive: "#3F6A0E",
-  limeTone: "#EEF6D2",
+  rule: "#DCE3E1",
+  ink: "#101415",
+  text: "#56615F",
+  muted: "#56615F",
+  olive: "#2E6E5B",
+  limeTone: "#E3F2EC",
 };
-const FONT = "Geist, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const FONT = "'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 const MONO = "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
 /** Per theme: footer, logo PNG in public/mail/ (made at double size, shown at half), code box and accent text on white. */
 const THEMES = {

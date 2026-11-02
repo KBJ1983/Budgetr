@@ -10,7 +10,7 @@ import { SiteHeader } from "@/components/landing/SiteHeader";
 
 /**
  * Landing page, layout from docs/design/forside-v2.html ("Forside v2"): it opens with the logo intro (LogoIntro, in the hero:
- * the logo glitches in on a lime panel and flies into the header); header and hero share a light rounded card (Midnat og lime)
+ * the logo glitches in on a lime panel and flies into the header); header and hero share a light rounded card (Mynte og is)
  * that stands still,
  * followed by a short explainer film (components/Film, made from video/privat.html),
  * a photo banner and Tryghed follow "Sådan virker det", and the product is shown with real screenshots (`pnpm shots`), not mock-ups.

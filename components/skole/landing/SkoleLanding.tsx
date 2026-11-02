@@ -3,10 +3,11 @@ import { Film } from "@/components/Film";
 import { BRAND, SkoleLogo } from "@/components/Logo";
 import { SiteSwitch } from "@/components/SiteSwitch";
 import { COMPANY } from "@/lib/company";
+import { media } from "@/lib/media-version";
 import l from "./skoleLanding.module.css";
 
 /**
- * budgetpro Skole's front page (skole.<domain>/; layout from design "Skole forside", Oct 2026, brand "Midnat og solgul"
+ * budgetpro Skole's front page (skole.<domain>/; layout from design "Skole forside", Oct 2026, brand "Is og solgul"
  * from docs/design/skole-21b.html). A server component: `base` is the
  * school pages' prefix as the visitor sees it ("" on the subdomain, "/skole" on the main site), `mainSite` the main
  * site's address. The laptop and phone show real screenshots (`pnpm shots:skole`); the hero card is a drawn miniature.
@@ -108,7 +109,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
             <div className={l.laptop}>
               <div className={l.laptopLid}>
                 <div className={l.laptopScreen}>
-                  <Image src="/skole/mit-budget.jpg" alt="Mit budget i budgetpro Skole på en bærbar" fill sizes="(max-width: 960px) 90vw, 860px" style={{ objectFit: "cover", objectPosition: "top" }} />
+                  <Image src={media("/skole/mit-budget.jpg")} alt="Mit budget i budgetpro Skole på en bærbar" fill sizes="(max-width: 960px) 90vw, 860px" style={{ objectFit: "cover", objectPosition: "top" }} />
                 </div>
               </div>
               <div className={l.laptopBase}>
@@ -117,7 +118,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
             </div>
             <div className={l.phone}>
               <div className={l.phoneScreen}>
-                <Image src="/skole/trin3-mobil.jpg" alt="Trin 3, Bolig, på en mobil" fill sizes="(max-width: 960px) 30vw, 230px" style={{ objectFit: "cover", objectPosition: "top" }} />
+                <Image src={media("/skole/trin3-mobil.jpg")} alt="Trin 3, Bolig, på en mobil" fill sizes="(max-width: 960px) 30vw, 230px" style={{ objectFit: "cover", objectPosition: "top" }} />
               </div>
             </div>
           </div>
@@ -187,14 +188,14 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           </div>
           <div className={l.matStage}>
             <div className={`${l.matSheet} ${l.matSheetBack}`}>
-              <Image src="/skole/materiale-vejledning.jpg" alt="Lærervejledning til lektion 1 med lektionen trin for trin og tal til tavlen" fill sizes="(max-width: 900px) 60vw, 380px" />
+              <Image src={media("/skole/materiale-vejledning.jpg")} alt="Lærervejledning til lektion 1 med lektionen trin for trin og tal til tavlen" fill sizes="(max-width: 900px) 60vw, 380px" />
             </div>
             <div className={l.matSheet}>
-              <Image src="/skole/materiale-elevark.jpg" alt="Elevark til lektion 1 med elevkoden BLÅ-ORM-47 og opgaver om lønsedlen" fill sizes="(max-width: 900px) 70vw, 420px" />
+              <Image src={media("/skole/materiale-elevark.jpg")} alt="Elevark til lektion 1 med elevkoden BLÅ-ORM-47 og opgaver om lønsedlen" fill sizes="(max-width: 900px) 70vw, 420px" />
             </div>
             <div className={`${l.phone} ${l.matPhone}`}>
               <div className={l.phoneScreen}>
-                <Image src="/skole/trin2-mobil.jpg" alt="Trin 2, lønsedlen, på en mobil med samme elevkode" fill sizes="(max-width: 900px) 34vw, 200px" style={{ objectFit: "cover", objectPosition: "top" }} />
+                <Image src={media("/skole/trin2-mobil.jpg")} alt="Trin 2, lønsedlen, på en mobil med samme elevkode" fill sizes="(max-width: 900px) 34vw, 200px" style={{ objectFit: "cover", objectPosition: "top" }} />
               </div>
             </div>
             <span className={l.matChip}>Trin 2 på skærmen · opgave 3 på arket</span>
@@ -213,7 +214,7 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           <div className={l.features}>
             {FEATURES.map((f, i) => (
               <div key={f.t} className={l.feature}>
-                <span className={l.featureIcon} style={{ background: i % 2 ? BRAND.sunTone : "#E6EAF0" }}>
+                <span className={l.featureIcon} style={{ background: i % 2 ? BRAND.sunTone : "#E6EBE9" }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={i % 2 ? BRAND.sunInk : BRAND.midnight} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d={f.icon} />
                   </svg>
@@ -446,7 +447,7 @@ function ClassMock() {
           <div key={code} className={l.tRow}>
             <span className={l.tCode}>{code}</span>
             <span>{step}</span>
-            <span className={l.tOk} style={{ color: ok == null ? "#5A6577" : ok ? BRAND.midnight : "#B4412C" }}>
+            <span className={l.tOk} style={{ color: ok == null ? "#5F6A68" : ok ? BRAND.midnight : "#A8473C" }}>
               {ok == null ? "–" : ok ? "✓" : "✗"}
             </span>
           </div>
@@ -487,11 +488,11 @@ const MOCK_LEGEND: [string, string, string][] = [
   ["Hverdag", "4.300 kr.", BRAND.sun],
 ];
 
-/** Lesson card colours ("Midnat og solgul"), as CSS variables read by .lesson. */
+/** Lesson card colours ("Is og solgul"), as CSS variables read by .lesson. */
 const TONES = {
-  light: { "--bg": BRAND.warm, "--fg": BRAND.midnight, "--kc": BRAND.sunInk, "--bc": "#4A5363", "--tb": "#E2DFD8" },
+  light: { "--bg": BRAND.warm, "--fg": BRAND.midnight, "--kc": BRAND.sunInk, "--bc": "#4E5856", "--tb": "#E2DFD8" },
   yellow: { "--bg": BRAND.sunTone, "--fg": BRAND.midnight, "--kc": BRAND.sunInk, "--bc": "#4A3A12", "--tb": "#EBD68C" },
-  dark: { "--bg": BRAND.midnight, "--fg": "#F7F7F2", "--kc": BRAND.sun, "--bc": BRAND.haze, "--tb": "#2E405A" },
+  dark: { "--bg": BRAND.midnight, "--fg": "#F7F7F2", "--kc": BRAND.sun, "--bc": BRAND.haze, "--tb": "#2E3738" },
 } as Record<string, React.CSSProperties>;
 
 const LESSONS = [

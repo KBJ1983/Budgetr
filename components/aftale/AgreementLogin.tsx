@@ -65,7 +65,7 @@ export function AgreementLogin({ email: initialEmail = "" }: { email?: string })
   return (
     <div className="bx af-login">
       <main className="bx-card af-login-card">
-        <Logo fontSize={20} dark bg="#1A2B42" />
+        <Logo fontSize={20} dark bg="#181D1E" />
         <h1>Aftale med budgetpro</h1>
         {step === "email" ? (
           <form className="bx-auth-form" onSubmit={askCode} noValidate>

@@ -1,3 +1,4 @@
+import { media } from "@/lib/media-version";
 import s from "./Film.module.css";
 
 export type FilmName = "privat" | "erhverv" | "skole";
@@ -14,8 +15,8 @@ export function Film({ name, label }: { name: FilmName; label: string }) {
     <figure className={s.frame} data-reveal="tilt">
       <video
         className={`${s.video} ${s.wide}`}
-        src={`/video/budgetpro-${name}.mp4`}
-        poster={`/video/budgetpro-${name}.jpg`}
+        src={media(`/video/budgetpro-${name}.mp4`)}
+        poster={media(`/video/budgetpro-${name}.jpg`)}
         aria-label={label}
         controls
         playsInline
@@ -23,8 +24,8 @@ export function Film({ name, label }: { name: FilmName; label: string }) {
       />
       <video
         className={`${s.video} ${s.reel}`}
-        src={`/video/budgetpro-${name}-reel.mp4`}
-        poster={`/video/budgetpro-${name}-reel.jpg`}
+        src={media(`/video/budgetpro-${name}-reel.mp4`)}
+        poster={media(`/video/budgetpro-${name}-reel.jpg`)}
         aria-label={label}
         controls
         playsInline

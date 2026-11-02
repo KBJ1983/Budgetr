@@ -1,36 +1,36 @@
-/* Account pages (login, /admin, /aftale), "Midnat og lime" (docs/design/MIDNAT.md).
+/* Account pages (login, /admin, /aftale), "Mynte og is" (docs/design/MYNTE.md).
    Dark theme = midnight surfaces with lime accents; light theme = the site palette (paper, white cards, olive accent,
    midnight buttons). */
 .bx {
-  --bg: #0e1b2c;
-  --bar: #0a1522;
-  --card: #1a2b42;
-  --card-2: #15243a;
-  --tx: #f3f5f7;
-  --tx-2: #b6c0cc;
-  --tx-3: #8a97a8;
-  --rule: #2a3d57;
-  --field: #15243a;
-  --pos: #d4f26b;
-  --pos-bg: #263620;
-  --pos-rule: #4a6326;
-  --neg: #f08a78;
-  --neg-bg: #3a2630;
-  --neg-rule: #5e3541;
+  --bg: #101415;
+  --bar: #0b0e0f;
+  --card: #181d1e;
+  --card-2: #141a1b;
+  --tx: #f0f3f2;
+  --tx-2: #99a5a3;
+  --tx-3: #7f8b89;
+  --rule: #283031;
+  --field: #141a1b;
+  --pos: #a9dccb;
+  --pos-bg: #1e3a32;
+  --pos-rule: #3d6b5d;
+  --neg: #e59a8e;
+  --neg-bg: #34211f;
+  --neg-rule: #5a3530;
   --warn: #e3b56a;
   --warn-bg: #2e2b25;
   --warn-rule: #4a3f2a;
   --blue: #7aa2d6;
-  --slate: #a7b4c8;
-  --slate-bg: #1f2d42;
-  --slate-rule: #34465f;
-  --accent: #d4f26b;
-  --accent-tx: #0e1b2c;
-  --accent-hover: #e1f78f;
-  --hi-bg: #f3f5f7;
-  --hi-tx: #0e1b2c;
-  --hi-tx-2: #3e4a5a;
-  --overlay: rgba(5, 11, 20, 0.72);
+  --slate: #a0aba9;
+  --slate-bg: #1c2223;
+  --slate-rule: #323b3c;
+  --accent: #a9dccb;
+  --accent-tx: #101415;
+  --accent-hover: #c4e8dc;
+  --hi-bg: #f0f3f2;
+  --hi-tx: #101415;
+  --hi-tx-2: #56615f;
+  --overlay: rgba(8, 10, 11, 0.72);
 
   min-height: 100vh;
   background: var(--bg);
@@ -41,35 +41,35 @@
 }
 
 .bx[data-theme="light"] {
-  --bg: #f3f5f7;
+  --bg: #f0f3f2;
   --bar: #ffffff;
   --card: #ffffff;
-  --card-2: #f7f9fa;
-  --tx: #0e1b2c;
-  --tx-2: #3e4a5a;
-  --tx-3: #5a6472;
-  --rule: #dfe4ea;
+  --card-2: #f7f9f8;
+  --tx: #101415;
+  --tx-2: #56615f;
+  --tx-3: #5f6a68;
+  --rule: #dce3e1;
   --field: #ffffff;
-  --pos: #3f6a0e;
-  --pos-bg: #eef6d2;
-  --pos-rule: #d3e6a2;
-  --neg: #a8382a;
-  --neg-bg: #f8e7e3;
+  --pos: #2e6e5b;
+  --pos-bg: #e3f2ec;
+  --pos-rule: #cde9df;
+  --neg: #a8473c;
+  --neg-bg: #f6e6e3;
   --neg-rule: #ebc6be;
   --warn: #7a5a10;
   --warn-bg: #f6eedb;
   --warn-rule: #e6d3a3;
   --blue: #2f6fb3;
-  --slate: #4f5d73;
-  --slate-bg: #e8ecf2;
-  --slate-rule: #cfd6e1;
-  --accent: #0e1b2c;
+  --slate: #4e5856;
+  --slate-bg: #e6ebe9;
+  --slate-rule: #cdd5d3;
+  --accent: #101415;
   --accent-tx: #ffffff;
-  --accent-hover: #1a2b42;
-  --hi-bg: #0e1b2c;
-  --hi-tx: #f3f5f7;
-  --hi-tx-2: #b6c0cc;
-  --overlay: rgba(14, 27, 44, 0.45);
+  --accent-hover: #181d1e;
+  --hi-bg: #101415;
+  --hi-tx: #f0f3f2;
+  --hi-tx-2: #99a5a3;
+  --overlay: rgba(16, 20, 21, 0.45);
   color-scheme: light;
 }
 
@@ -365,7 +365,7 @@
 .bx-chip.is-scenario[aria-pressed="true"] {
   background: var(--slate);
   border-color: var(--slate);
-  color: #0e1b2c;
+  color: #101415;
 }
 .bx-pill {
   display: inline-flex;
@@ -906,22 +906,22 @@
 }
 
 /* ---------- auth pages (/login, /opret, /login/bekraeft, components/app/AuthShell.tsx) ----------
-   A midnight rounded card on a white frame ("Midnat og lime", docs/design/MIDNAT.md), always dark: form on the right,
+   A midnight rounded card on a white frame ("Mynte og is", docs/design/MYNTE.md), always dark: form on the right,
    Tryghed on the left (below on phones). Lime is the accent and the primary button. */
 .bx-auth {
-  --bg: #0e1b2c;
-  --card: #1a2b42;
-  --card-2: #15243a;
-  --tx: #f3f5f7;
-  --tx-2: #b6c0cc;
-  --tx-3: #8a97a8;
-  --rule: #2a3d57;
-  --field: #15243a;
-  --accent: #d4f26b;
-  --accent-tx: #0e1b2c;
-  --accent-hover: #e1f78f;
-  --pos: #d4f26b;
-  --neg: #f08a78;
+  --bg: #101415;
+  --card: #181d1e;
+  --card-2: #141a1b;
+  --tx: #f0f3f2;
+  --tx-2: #99a5a3;
+  --tx-3: #7f8b89;
+  --rule: #283031;
+  --field: #141a1b;
+  --accent: #a9dccb;
+  --accent-tx: #101415;
+  --accent-hover: #c4e8dc;
+  --pos: #a9dccb;
+  --neg: #e59a8e;
   color-scheme: dark;
   background: #ffffff;
   padding: 14px;
@@ -947,7 +947,7 @@
   width: 640px;
   height: 640px;
   border-radius: 50%;
-  background: #16294a;
+  background: #1c2223;
   pointer-events: none;
 }
 .bx-auth-top {
@@ -1025,7 +1025,7 @@
   padding: 0 14px;
 }
 .bx-auth .bx-input:focus {
-  outline: 2px solid #d4f26b;
+  outline: 2px solid #a9dccb;
   outline-offset: 1px;
   border-color: var(--rule);
 }
@@ -1073,7 +1073,7 @@
   padding: 6px 14px 6px 10px;
 }
 .bx-auth-eyebrow svg {
-  color: #d4f26b;
+  color: #a9dccb;
 }
 .bx-auth-trust h2 {
   margin: 0;
@@ -1127,8 +1127,8 @@
   height: 38px;
   border-radius: 11px;
   background: var(--card);
-  border: 1px solid #1f3350;
-  color: #d4f26b;
+  border: 1px solid #20272a;
+  color: #a9dccb;
   align-items: center;
   justify-content: center;
 }
@@ -1224,8 +1224,8 @@
     --tx-2: #333;
     --tx-3: #555;
     --rule: #ccc;
-    --pos: #3f6a0e;
-    --neg: #a8382a;
+    --pos: #2e6e5b;
+    --neg: #a8473c;
     background: #fff;
     color: #000;
   }

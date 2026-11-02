@@ -186,7 +186,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
     <div className="bx af" data-theme={theme}>
       <header className="bx-top">
         <div className="bx-wrap bx-top-row">
-          <Logo fontSize={19} dark={theme === "dark"} bg={theme === "dark" ? "#0A1522" : "#FFFFFF"} />
+          <Logo fontSize={19} dark={theme === "dark"} bg={theme === "dark" ? "#0B0E0F" : "#FFFFFF"} />
           <div className="bx-top-right">
             <button
               type="button"

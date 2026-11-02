@@ -15,7 +15,7 @@
   display: inline-block;
   padding: 2px 10px;
   border-radius: 999px;
-  font: 500 13px/20px var(--font-geist), system-ui, sans-serif;
+  font: 500 13px/20px var(--font-text), system-ui, sans-serif;
   color: #565d59;
   text-decoration: none;
 }
@@ -32,16 +32,16 @@
   text-decoration: none;
 }
 
-/* Midnat og lime (Privat and Erhverv). */
+/* Mynte og is (Privat and Erhverv). */
 .midnat .link {
-  color: #5a6472;
+  color: #5f6a68;
 }
 .midnat .link:hover,
 .midnat .current {
-  color: #0e1b2c;
+  color: #101415;
 }
 .midnat .current {
-  background: #edf0f3;
+  background: #eef2f1;
 }
 
 @media (max-width: 767.98px) {

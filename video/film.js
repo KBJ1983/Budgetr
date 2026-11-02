@@ -6,7 +6,7 @@
  * Reusable scenes: F.startScene() (the guide's start step), F.importScene() (statement import into a draft budget)
  * and F.deck() (feature montage).
  * Solo layout (F.film({ solo: true }), F.timeline, F.title): a caption alone first, then its visual alone, centred.
- * Motion graphics ("Midnat og lime"; the accent comes from film.css, so a theme such as skole's solgul swaps it): the logo builds itself (F.buildLogo – the two cards drop into the pocket), headlines
+ * Motion graphics ("Mynte og is"; the accent comes from film.css, so a theme such as skole's solgul swaps it): the logo builds itself (F.buildLogo – the two cards drop into the pocket), headlines
  * come in word by word (F.split + F.words), key phrases get a lime underline (F.hl), the dark intro lifts like a curtain
  * with a lime band behind it and the end card drops the same way (F.curtain), floating cards drift on the dark cards
  * (F.darkBg), a lime orb travels between the light scenes (F.orb) and screenshots enter in 3D (F.enter).
@@ -222,9 +222,9 @@
   }
 
   const TONES = {
-    light: { ink: "#0E1B2C", front: "#D4F26B", bg: "#FFFFFF" },
-    dark: { ink: "#FFFFFF", front: "#D4F26B", bg: "#0E1B2C" },
-    lime: { ink: "#0E1B2C", front: "#FFFFFF", bg: "#D4F26B" },
+    light: { ink: "#101415", front: "#A9DCCB", bg: "#FFFFFF" },
+    dark: { ink: "#ECF1F0", front: "#A9DCCB", bg: "#101415" },
+    lime: { ink: "#101415", front: "#FFFFFF", bg: "#A9DCCB" },
   };
   /** Takes the logo's accent (--lime) and its ink on dark (--logo-dark) from film.css, so a theme can swap them. */
   function themeTones() {
@@ -236,7 +236,7 @@
   /** The pocket symbol (components/Logo.tsx LogoMark), with groups for the back card, the front card and the pocket. */
   function markSvg(tone = "light", bg) {
     const c = TONES[tone], cut = bg || c.bg;
-    return `<svg viewBox="0 -2 64 64" aria-hidden="true"><g class="lg-b"><g transform="rotate(-8 22 14)"><rect x="6" y="0" width="32" height="22" rx="4.5" fill="${c.ink}" stroke="${cut}" stroke-width="3"/></g></g><g class="lg-f"><g transform="rotate(6 42 14)"><rect x="25" y="2" width="32" height="22" rx="4.5" fill="${c.front}" stroke="${cut}" stroke-width="3"/></g></g><g class="lg-p"><rect x="2" y="20" width="60" height="40" rx="13" fill="${c.ink}" stroke="${cut}" stroke-width="3"/><rect x="40" y="35" width="15" height="8" rx="4" fill="${cut}"/></g></svg>`;
+    return `<svg viewBox="0.5 1.5 63 60" aria-hidden="true"><g class="lg-b"><g><rect x="9" y="3" width="34" height="22" rx="5" fill="${c.ink}" stroke="${cut}" stroke-width="3"/></g></g><g class="lg-f"><g><rect x="21" y="8" width="34" height="22" rx="5" fill="${c.front}" stroke="${cut}" stroke-width="3"/></g></g><g class="lg-p"><rect x="2" y="19" width="60" height="41" rx="13" fill="${c.ink}" stroke="${cut}" stroke-width="3"/><rect x="40" y="35" width="15" height="8" rx="4" fill="${cut}"/></g></svg>`;
   }
   /**
    * Fills <span data-logo="light|dark" data-bg="#…" data-sticker="Skole"> with the logo (data-sticker adds the pill
@@ -253,7 +253,7 @@
     });
     $$("[data-icon]").forEach((el) => {
       const n = Number(el.dataset.icon) || 64;
-      el.style.cssText += `;display:inline-grid;place-items:center;flex:none;width:${n}px;height:${n}px;border-radius:${n * 0.25}px;background:#0E1B2C`;
+      el.style.cssText += `;display:inline-grid;place-items:center;flex:none;width:${n}px;height:${n}px;border-radius:${n * 0.25}px;background:#101415`;
       el.innerHTML = markSvg("dark").replace("<svg ", `<svg width="${n * 0.66}" height="${n * 0.66}" style="overflow:visible" `);
     });
   }
@@ -499,7 +499,7 @@
     const c = document.createElement("div");
     c.id = "cursor";
     c.className = "abs";
-    c.innerHTML = '<div class="pulse" id="pulse"></div><svg width="40" height="40" viewBox="0 0 24 24" style="position:absolute;left:-4px;top:-2px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.28))"><path d="M4 2.5l15 9.2-6.6 1.4L9 19.6z" fill="#0E1B2C" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+    c.innerHTML = '<div class="pulse" id="pulse"></div><svg width="40" height="40" viewBox="0 0 24 24" style="position:absolute;left:-4px;top:-2px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.28))"><path d="M4 2.5l15 9.2-6.6 1.4L9 19.6z" fill="#101415" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>';
     stage.appendChild(c);
     window.seek = frame;
     window.DURATION = duration;

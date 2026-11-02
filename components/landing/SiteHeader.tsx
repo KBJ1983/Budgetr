@@ -21,7 +21,7 @@ type SiteHeaderProps = {
   cta?: NavLink;
 };
 
-/** Light header at the top of the rounded hero card (#F3F5F7), with the Privat · Erhverv · Skole switch above it. */
+/** Light header at the top of the rounded hero card (#F0F3F2), with the Privat · Erhverv · Skole switch above it. */
 export function SiteHeader({
   site = "privat",
   links = NAV_LINKS,

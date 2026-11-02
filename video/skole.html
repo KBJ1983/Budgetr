@@ -3,7 +3,7 @@
   Skole film (about 1 min 36 s): budgetpro Skole as a course over four lessons. The teacher makes a class in two minutes, then the
   film follows the four lessons and the features in each (the future persons, pay after tax, choices and the budget
   meter, savings with a date and the "Hvorfor?" box, the what-if scenarios and "Mit budget"), and ends with how the
-  teacher follows the class. Skole's own theme "Midnat og solgul" (docs/design/skole-21b.html, data-theme="skole" in
+  teacher follows the class. Skole's own theme "Is og solgul" (docs/design/skole-21b.html, data-theme="skole" in
   film.css: solgul replaces lime) with motion graphics; the logo carries the "Skole" sticker. Runtime and shared styles:
   film.js / film.css. Render: `pnpm video skole`. Lessons and numbers follow LESSONS in
   components/skole/landing/SkoleLanding.tsx and lib/skole.ts (Sara); codes and answers are made up; screenshots from
@@ -40,7 +40,7 @@
   .ls-h { display: flex; justify-content: space-between; font-size: 17px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin-bottom: 22px; }
   .ls h4 { font-size: 34px; line-height: 1.1; font-weight: 700; letter-spacing: -0.03em; margin-bottom: auto; }
   .ls .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-  .ls .tags span { font-size: 17px; padding: 8px 14px; border-radius: 999px; background: rgba(14, 27, 44, .07); }
+  .ls .tags span { font-size: 17px; padding: 8px 14px; border-radius: 999px; background: rgba(16, 20, 21, .07); }
   .ls.d .tags span { background: rgba(255, 255, 255, .1); }
 
   /* Lesson 1: the future persons and the pay */
@@ -225,7 +225,7 @@
     </div>
     <div class="abs" id="cases">
       <div class="pc" id="pcSara"><span class="av" style="background:#FCF1C8">S</span><b>Sara, 20</b><div class="job">Tømrerlærling</div><span class="dream">Drøm: Kørekort</span></div>
-      <div class="pc"><span class="av" style="background:#E8EBEF">J</span><b>Jonas, 22</b><div class="job">Social- og sundheds­assistent</div><span class="dream">Drøm: Rejse til Japan</span></div>
+      <div class="pc"><span class="av" style="background:#E6EBE9">J</span><b>Jonas, 22</b><div class="job">Social- og sundheds­assistent</div><span class="dream">Drøm: Rejse til Japan</span></div>
       <div class="pc"><span class="av" style="background:#EFEDE6">M</span><b>Mira, 21</b><div class="job">Studerende på SU + fritidsjob</div><span class="dream">Drøm: Ny computer</span></div>
     </div>
     <div class="abs card" id="pay">
@@ -257,7 +257,7 @@
       <div class="meter">
         <svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="118" fill="none" stroke="var(--stone)" stroke-width="40" /><g id="arcs"></g></svg>
         <div class="mid"><small>Tilbage</small><b id="left">15.200</b><small>kr. om måneden</small></div>
-        <div class="key"><span><i style="background:#0E1B2C"></i>Bolig</span><span><i style="background:#5E7FA8"></i>Faste udgifter</span><span><i style="background:#F6CF4A"></i>Hverdag</span></div>
+        <div class="key"><span><i style="background:#101415"></i>Bolig</span><span><i style="background:#5E7FA8"></i>Faste udgifter</span><span><i style="background:#F6CF4A"></i>Hverdag</span></div>
       </div>
     </div>
   </div>
@@ -270,7 +270,7 @@
       <p>En buffer og et mål med en dato. Går budgettet ikke op, går eleven tilbage og prioriterer.</p>
     </div>
     <div class="abs card" id="save">
-      <div class="goal"><span class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0E1B2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></svg></span><div><b>Kørekort · 18.000 kr.</b><span id="when">Klar om 24 måneder</span></div></div>
+      <div class="goal"><span class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#101415" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></svg></span><div><b>Kørekort · 18.000 kr.</b><span id="when">Klar om 24 måneder</span></div></div>
       <div class="legend">Hvor hurtigt?</div>
       <div class="slider"><div class="fill" id="fill"></div><div id="knob"></div></div>
       <div class="ticks"><span>3 mdr.</span><span>12 mdr.</span><span>24 mdr.</span></div>
@@ -365,7 +365,7 @@
 
   // Sara's month (lib/skole.ts): net 15.200, shared flat 4.800, all fixed costs 1.627, "Normalt" 2.800 + 1.500
   const NET = 15200, HOME = 4800, FIXED = 1627, DAILY = 4300, BUFFER = 500, DREAM = 18000;
-  const SEGS = [["#0E1B2C", HOME], ["#5E7FA8", FIXED], ["#F6CF4A", DAILY]];
+  const SEGS = [["#101415", HOME], ["#5E7FA8", FIXED], ["#F6CF4A", DAILY]];
   const R = 118, C = 2 * Math.PI * R;
   $("#arcs").innerHTML = SEGS.map(([c]) => `<circle cx="150" cy="150" r="${R}" fill="none" stroke="${c}" stroke-width="40" />`).join("");
   const ANSWER = "500 kr. mere, så 2.000 kr. om måneden i 9 måneder. Fra streaming og billigere mad.";

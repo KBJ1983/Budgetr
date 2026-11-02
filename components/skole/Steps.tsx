@@ -63,7 +63,7 @@ function CasePick({ flow, update, onBudget }: { flow: Flow; update: Update; onBu
             <button key={x.id} type="button" className={`${s.choice} ${s.caseCard}`} aria-pressed={on} onClick={() => update({ caseId: x.id })}>
               {on && (
                 <span className={s.badge}>
-                  <Check size={16} color="#0E1B2C" />
+                  <Check size={16} color="#101415" />
                 </span>
               )}
               <Avatar c={x} size={84} />
@@ -142,7 +142,7 @@ function Bolig({ flow, update }: { flow: Flow; update: Update }) {
             onClick={() => update({ bolig: b.amt })}
           >
             <span className={s.iconBox}>
-              <Icon name="house" size={24} color="#0E1B2C" width={2} />
+              <Icon name="house" size={24} color="#101415" width={2} />
             </span>
             <span className={s.optText}>
               <span className={s.optTitle}>
@@ -182,7 +182,7 @@ function Faste({ flow, update, t }: { flow: Flow; update: Update; t: Totals }) {
               <span className={`${s.tick} ${s.tickSquare}`}>
                 <Check />
               </span>
-              <Icon name={f.icon} color="#5A6577" />
+              <Icon name={f.icon} color="#5F6A68" />
               <span className={s.fasteLabel}>
                 {f.label}
                 <Info inline id={`${uid}-${f.key}`} text={f.info} about={f.label} />
@@ -249,7 +249,7 @@ function Hverdag({ flow, update }: { flow: Flow; update: Update }) {
       {HVERDAG.map((g) => (
         <div key={g.key} className={s.stack} role="radiogroup" aria-label={g.title}>
           <div className={s.groupHead}>
-            <Icon name={g.icon} color="#0E1B2C" />
+            <Icon name={g.icon} color="#101415" />
             <span>
               {g.title}
               <Info id={`${uid}-${g.key}`} text={g.info} about={g.title} />
@@ -264,7 +264,7 @@ function Hverdag({ flow, update }: { flow: Flow; update: Update }) {
                   <span className={s.levelAmt}>{kr(v)}</span>
                   {on && (
                     <span className={s.badge}>
-                      <Check size={13} color="#0E1B2C" />
+                      <Check size={13} color="#101415" />
                     </span>
                   )}
                 </button>

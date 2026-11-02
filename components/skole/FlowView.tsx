@@ -54,7 +54,7 @@ export function FlowView({ flow, update, go, reveal, refl, onRefl, openTo, onBac
               >
                 {n > 1 && <span className={s.dotLine} data-on={n <= flow.maxStep || undefined} />}
                 <span className={s.dot} data-state={isCur ? "cur" : done ? "done" : n <= flow.maxStep ? "seen" : undefined}>
-                  {done ? <Check size={14} color="#0E1B2C" /> : n}
+                  {done ? <Check size={14} color="#101415" /> : n}
                 </span>
                 <span className={s.dotLabel} data-cur={isCur || undefined}>
                   {st.short}
@@ -90,7 +90,7 @@ export function FlowView({ flow, update, go, reveal, refl, onRefl, openTo, onBac
                 {factOpen && <p className={s.factText}>{cur.fact}</p>}
               </div>
               <label className={s.refl}>
-                <Icon name="chat" color="#5A6577" />
+                <Icon name="chat" color="#5F6A68" />
                 <span className={s.reflBody}>
                   <b>{cur.refl}</b>
                   {cur.help && <span className={s.reflHelp}>{cur.help}</span>}

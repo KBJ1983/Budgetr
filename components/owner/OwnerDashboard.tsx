@@ -501,7 +501,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
       <header className="bx-top">
         <div className="bx-wrap bx-top-row">
           <Link href="/" className="bx-brand" aria-label="budgetpro – til forsiden">
-            <Logo fontSize={19} dark={theme === "dark"} bg={theme === "dark" ? "#0A1522" : "#FFFFFF"} />
+            <Logo fontSize={19} dark={theme === "dark"} bg={theme === "dark" ? "#0B0E0F" : "#FFFFFF"} />
           </Link>
           <div className="bx-top-right">
             <span className="bx-muted">Ejeroverblik · {date(data.today)}</span>

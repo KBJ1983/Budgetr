@@ -41,11 +41,11 @@ export async function summaryPdf(code: string, flow: Flow, refl: Record<number, 
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.setTextColor(14, 27, 44);
+  doc.setTextColor(16, 20, 21);
   doc.text(plain(`${c.gen} budget`), left, 22);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.setTextColor(90, 101, 119);
+  doc.setTextColor(86, 97, 95);
   doc.text(plain(`Elevkode ${code} · ${dayMonthYear(now)} · budgetpro Skole`), left, 29);
 
   doc.autoTable({
@@ -53,13 +53,13 @@ export async function summaryPdf(code: string, flow: Flow, refl: Record<number, 
     head: [["Pr. måned", "Beløb"]],
     body: [["Indtægt", kr(t.income)], ...segments(t).map((x) => [x.label, kr(x.amt)]), ["Tilbage", kr(t.left)]].map((r) => r.map(plain)),
     theme: "grid",
-    headStyles: { fillColor: [14, 27, 44], textColor: [247, 247, 242] },
+    headStyles: { fillColor: [16, 20, 21], textColor: [247, 247, 242] },
     columnStyles: { 1: { halign: "right" } },
     margin: { left, right: left },
   });
 
   let y = doc.lastAutoTable.finalY + 9;
-  doc.setTextColor(14, 27, 44);
+  doc.setTextColor(16, 20, 21);
   doc.setFontSize(11);
   doc.text(plain(`${c.dream} klar i ${monthYear(addMonths(now, flow.months))}`), left, y);
   y += 11;
@@ -79,12 +79,12 @@ export async function summaryPdf(code: string, flow: Flow, refl: Record<number, 
       }
       doc.setFont("helvetica", "italic");
       doc.setFontSize(10);
-      doc.setTextColor(90, 101, 119);
+      doc.setTextColor(86, 97, 95);
       doc.text(q, left, y);
       y += q.length * 5;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
-      doc.setTextColor(14, 27, 44);
+      doc.setTextColor(16, 20, 21);
       doc.text(a, left, y);
       y += a.length * 5 + 5;
     });
@@ -104,8 +104,8 @@ export async function budgetPdf(code: string, flow: Flow, posts: Post[], now = n
   const talk = parentTalk(c);
   const left = 18;
   const width = 174;
-  const ink = [14, 27, 44];
-  const grey = [90, 101, 119];
+  const ink = [16, 20, 21];
+  const grey = [86, 97, 95];
   const band = [238, 236, 230];
 
   doc.setFont("helvetica", "bold");

@@ -1,51 +1,54 @@
-/* Design tokens from docs/design/HANDOFF.md §3, recoloured to "Midnat og lime" (docs/design/MIDNAT.md; same values as the app's :root). Landing page is always light; the app has a light and a dark theme. */
+/* Design tokens from docs/design/HANDOFF.md §3, recoloured to "Mynte og is" (docs/design/MYNTE.md; same values as the app's :root). Landing page is always light; the app has a light and a dark theme. */
 :root {
-  /* Site (light), "Midnat og lime" (docs/design/MIDNAT.md). The names stay from the earlier design: --pine is the accent
-     (olive on light, lime on dark), --btn the primary button. */
-  --paper: #f3f5f7;
+  /* Site (light), "Mynte og is" (docs/design/MYNTE.md): blæk text and buttons, is page, white cards, mynte for the
+     positive (bars, key figures, goals), dyb mynte for accent text. The names stay from earlier designs: --pine is the
+     accent text (dyb mynte), --midnight blæk, --lime mynte, --btn the primary button. */
+  --paper: #f0f3f2;
   --card: #ffffff;
-  --stone: #e7ebef;
-  --ink: #0e1b2c;
-  --ink-2: #3e4a5a;
-  --ink-3: #5a6472;
-  --rule: #dfe4ea;
-  --field-border: #9aa6b5;
-  --pine: #3f6a0e;
-  --pine-hover: #2f500a;
-  --pine-bg: #eef6d2;
-  --pine-light: #d4f26b;
-  --midnight: #0e1b2c;
-  --midnight-2: #1a2b42;
-  --lime: #d4f26b;
-  --lime-dark: #9bc43a;
-  --btn: #0e1b2c;
-  --btn-hover: #1a2b42;
+  --stone: #e4eae8;
+  --ink: #101415;
+  --ink-2: #56615f;
+  --ink-3: #56615f;
+  --rule: #dce3e1;
+  --field-border: #9aa6a4;
+  --pine: #2e6e5b;
+  --pine-hover: #23574a;
+  --pine-bg: #e3f2ec;
+  --pine-light: #a9dccb;
+  --midnight: #101415;
+  --midnight-2: #181d1e;
+  --lime: #a9dccb;
+  --lime-dark: #7cc1aa;
+  --btn: #101415;
+  --btn-hover: #181d1e;
   --btn-ink: #ffffff;
   --focus: #2f6fb3;
 
   /* Product (dark app theme, used for cut-outs) */
-  --d-bg: #0e1b2c;
-  --d-bar: #0a1522;
-  --d-card: #1a2b42;
-  --d-text: #f3f5f7;
-  --d-text-2: #b6c0cc;
-  --d-text-3: #8a97a8;
-  --d-rule: #2a3d57;
-  --d-pos: #d4f26b;
-  --d-pos-bg: #26382f;
-  --d-pos-rule: #44602c;
-  --d-neg: #f08a78;
-  --d-neg-bg: #3a2630;
-  --d-warn: #e3b56a;
-  --d-warn-bg: #2e2b25;
-  --d-warn-rule: #4a3f2a;
+  --d-bg: #101415;
+  --d-bar: #0b0e0f;
+  --d-card: #181d1e;
+  --d-text: #ecf1f0;
+  --d-text-2: #99a5a3;
+  --d-text-3: #7f8b89;
+  --d-rule: #283031;
+  --d-pos: #a9dccb;
+  --d-pos-bg: #1e3a32;
+  --d-pos-rule: #3d6b5d;
+  --d-neg: #e59a8e;
+  --d-neg-bg: #34211f;
+  /* Warnings are neutral with a light outline; only errors that need action get a colour. */
+  --d-warn: #ecf1f0;
+  --d-warn-bg: #20272a;
+  --d-warn-rule: #ecf1f0;
   --d-blue: #7aa2d6;
-  --d-slate: #a7b4c8;
-  --d-slate-bg: #1f2d42;
-  --d-slate-rule: #34465f;
+  --d-slate: #a0aba9;
+  --d-slate-bg: #1c2223;
+  --d-slate-rule: #323b3c;
 
-  --shadow-product: 0 40px 80px -30px rgba(14, 27, 44, 0.45), 0 12px 24px -12px rgba(14, 27, 44, 0.35);
-  --font: var(--font-geist), "Geist", ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  --shadow-product: 0 40px 80px -30px rgba(16, 20, 21, 0.45), 0 12px 24px -12px rgba(16, 20, 21, 0.35);
+  --font: var(--font-text), "Hanken Grotesk", ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  --font-logo: var(--font-text), "Hanken Grotesk", sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 

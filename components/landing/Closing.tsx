@@ -75,7 +75,7 @@ const QUOTES = [
     name: "Anna",
     meta: "Deler budget med Jonas",
     initials: "A",
-    color: "#3f6a0e",
+    color: "#2e6e5b",
   },
   {
     text: "Jeg kunne se med det samme, at billånet udløber til marts. Det gjorde det meget nemmere at planlægge sommerferien.",
@@ -89,7 +89,7 @@ const QUOTES = [
     name: "Sara og Ali",
     meta: "To børn, fælles budgetkonto",
     initials: "SA",
-    color: "#0e1b2c",
+    color: "#101415",
   },
 ] as const;
 

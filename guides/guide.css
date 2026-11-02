@@ -1,19 +1,19 @@
 /*
  * "Kom godt i gang" guides (A4, printed to PDF by scripts/guides.mjs).
- * Palette from the brand ("Midnat og lime"); <html data-theme="skole"> swaps lime for solgul ("Midnat og solgul").
+ * Palette from the brand ("Mynte og is", docs/design/MYNTE.md); <html data-theme="skole"> swaps mynte for solgul ("Is og solgul").
  */
 @import url("../public/budgetr-app/fonts/fonts.css");
 
 :root {
-  --midnight: #0e1b2c;
-  --midnight2: #1a2b42;
-  --accent: #d4f26b;
-  --accent-ink: #3f6a0e;
-  --accent-tone: #eef6d2;
-  --page: #f3f5f7;
-  --line: #dde2e8;
-  --muted: #5b6878;
-  --haze: #b6c0cc;
+  --midnight: #101415;
+  --midnight2: #181d1e;
+  --accent: #a9dccb;
+  --accent-ink: #2e6e5b;
+  --accent-tone: #e3f2ec;
+  --page: #f0f3f2;
+  --line: #dce3e1;
+  --muted: #56615f;
+  --haze: #99a5a3;
 }
 html[data-theme="skole"] {
   --accent: #f6cf4a;
@@ -33,9 +33,9 @@ html[data-theme="skole"] {
 html,
 body {
   margin: 0;
-  background: #c9ced6;
+  background: #c7cfcd;
   color: var(--midnight);
-  font: 400 10pt/1.45 "Geist", system-ui, sans-serif;
+  font: 400 10pt/1.45 "Hanken Grotesk", system-ui, sans-serif;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -159,7 +159,7 @@ body {
 .cover .lead {
   font-size: 13pt;
   line-height: 1.45;
-  color: #d6dde6;
+  color: #d4dbd9;
   max-width: 140mm;
   margin: 0;
 }
@@ -213,7 +213,7 @@ body {
 .cover-foot {
   margin: auto 17mm 0;
   padding: 5mm 0 13mm;
-  border-top: 1px solid #2a3b52;
+  border-top: 1px solid #283031;
   display: flex;
   justify-content: space-between;
   color: var(--haze);
@@ -237,7 +237,7 @@ p {
 }
 .intro {
   font-size: 11pt;
-  color: #33404f;
+  color: #3a4446;
   max-width: 160mm;
   margin-bottom: 6mm;
 }
@@ -368,7 +368,7 @@ p {
   border-radius: 3mm;
   background: #fff;
   overflow: hidden;
-  box-shadow: 0 2mm 6mm rgba(14, 27, 44, 0.08);
+  box-shadow: 0 2mm 6mm rgba(16, 20, 21, 0.08);
   font-size: 8.5pt;
   line-height: 1.4;
 }
@@ -427,7 +427,7 @@ p {
 }
 .screen-body.dark .s-input {
   background: var(--midnight2);
-  border-color: #2a3b52;
+  border-color: #283031;
   color: var(--haze);
 }
 .s-btn {
@@ -552,7 +552,7 @@ p {
   font-size: 8.5pt;
   line-height: 1.45;
   overflow: hidden;
-  box-shadow: 0 2mm 6mm rgba(14, 27, 44, 0.08);
+  box-shadow: 0 2mm 6mm rgba(16, 20, 21, 0.08);
 }
 .mail-head {
   padding: 2.4mm 3.5mm;
@@ -586,7 +586,7 @@ p {
   border-radius: 3mm;
   border: 1px solid var(--line);
   overflow: hidden;
-  box-shadow: 0 2mm 6mm rgba(14, 27, 44, 0.08);
+  box-shadow: 0 2mm 6mm rgba(16, 20, 21, 0.08);
 }
 .shot img {
   display: block;
@@ -610,7 +610,7 @@ p {
 }
 .qa div p {
   font-size: 9.5pt;
-  color: #33404f;
+  color: #3a4446;
   margin: 0;
 }
 

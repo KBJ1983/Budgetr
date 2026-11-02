@@ -1,29 +1,29 @@
 /*
- * Shared styles for the films in video/ (erhverv, privat, skole). One 1920×1080 stage (1080×1920 in a reel, see the end); palette = "Midnat og lime"
- * (docs/design/MIDNAT.md, the landing `.page` block in components/landing/landing.module.css). Screenshots come from
+ * Shared styles for the films in video/ (erhverv, privat, skole). One 1920×1080 stage (1080×1920 in a reel, see the end); palette = "Mynte og is"
+ * (docs/design/MYNTE.md, the landing `.page` block in components/landing/landing.module.css). Screenshots come from
  * public/landing/ and public/skole/.
  * The accent is kept in --lime / --lime-rgb / --lime-dark / --lime-tone / --olive (accent text on light); a film can
- * swap it with a theme on <html data-theme="…"> (skole = "Midnat og solgul"). film.js reads --lime and --logo-dark
+ * swap it with a theme on <html data-theme="…"> (skole = "Is og solgul"). film.js reads --lime and --logo-dark
  * for the logo it draws.
  */
 :root {
-  --paper: #f3f5f7; --white: #ffffff; --stone: #edf0f3; --card: #f8f9fb;
-  --ink: #0e1b2c; --ink-2: #3e4a5a; --ink-3: #5a6472; --rule: #dfe4ea; --rule-2: #c9d2dc;
-  --midnight: #0e1b2c; --midnight-2: #1a2b42; --midnight-card: #15243a; --midnight-rule: #1f3350; --decor: #16294a;
-  --haze: #b6c0cc; --dark-text: #f3f5f7; --logo-dark: #ffffff;
-  --lime: #d4f26b; --lime-rgb: 212, 242, 107; --lime-dark: #9bc43a; --lime-tone: #eef6d2; --olive: #3f6a0e; --error: #a8382a;
-  --shadow: 0 30px 60px -24px rgba(14, 27, 44, 0.35);
-  --font: Geist, system-ui, sans-serif;
+  --paper: #f0f3f2; --white: #ffffff; --stone: #eef2f1; --card: #f7f9f8;
+  --ink: #101415; --ink-2: #56615f; --ink-3: #56615f; --rule: #dce3e1; --rule-2: #c9d2d0;
+  --midnight: #101415; --midnight-2: #181d1e; --midnight-card: #141a1b; --midnight-rule: #20272a; --decor: #1c2223;
+  --haze: #99a5a3; --dark-text: #ecf1f0; --logo-dark: #ecf1f0;
+  --lime: #a9dccb; --lime-rgb: 169, 220, 203; --lime-dark: #7cc1aa; --lime-tone: #e3f2ec; --olive: #2e6e5b; --error: #a8473c;
+  --shadow: 0 30px 60px -24px rgba(16, 20, 21, 0.35);
+  --font: "Hanken Grotesk", system-ui, sans-serif;
 }
-/* budgetpro Skole, "Midnat og solgul" (docs/design/skole-21b.html): solgul replaces lime, warm page and rules */
+/* budgetpro Skole, "Is og solgul" (docs/design/skole-21b.html): solgul replaces lime, warm page and rules */
 :root[data-theme="skole"] {
   --paper: #f5f5f0; --stone: #eeece6; --card: #faf9f6;
-  --ink-3: #5a6577; --rule: #e2dfd8; --rule-2: #cfcac0;
-  --haze: #b6c0cc; --dark-text: #f7f7f2; --logo-dark: #f7f7f2;
+  --ink-3: #5f6a68; --rule: #e2dfd8; --rule-2: #cfcac0;
+  --haze: #99a5a3; --dark-text: #f7f7f2; --logo-dark: #f7f7f2;
   --lime: #f6cf4a; --lime-rgb: 246, 207, 74; --lime-dark: #d49a1a; --lime-tone: #fcf1cc; --olive: #7a5300;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; background: #070d16; overflow: hidden; }
+html, body { width: 100%; height: 100%; background: #0b0e0f; overflow: hidden; }
 body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; }
 #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); transform-origin: 0 0; }
 .abs { position: absolute; }

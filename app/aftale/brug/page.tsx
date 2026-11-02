@@ -92,7 +92,7 @@ export default async function UseSeatPage({ searchParams }: { searchParams: Prom
   return (
     <div className="bx af-login">
       <main className="bx-card af-login-card">
-        <Logo fontSize={20} dark bg="#1A2B42" />
+        <Logo fontSize={20} dark bg="#181D1E" />
         <h1>{org && grant && !grant.usedBy ? `Din adgang fra ${org.name}` : "Din adgang til budgetpro"}</h1>
         {body}
       </main>

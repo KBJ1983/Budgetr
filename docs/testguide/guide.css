@@ -1,13 +1,13 @@
 @import url("../../public/budgetr-app/fonts/fonts.css");
 
 :root {
-  --ink: #0E1B2C;
-  --muted: #4A5868;
-  --line: #DCE1E7;
-  --page: #F3F5F7;
-  --accent: #D4F26B;      /* lime, only on dark */
-  --accent-text: #3F6A0E; /* olive, accent text on light */
-  --soft: #EEF7CF;
+  --ink: #101415;
+  --muted: #4E5856;
+  --line: #DCE3E1;
+  --page: #F0F3F2;
+  --accent: #A9DCCB;      /* lime, only on dark */
+  --accent-text: #2E6E5B; /* olive, accent text on light */
+  --soft: #E3F2EC;
 }
 html[data-theme="skole"] {
   --accent: #F6CF4A;
@@ -22,7 +22,7 @@ html[data-theme="skole"] {
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body {
   margin: 0;
-  font-family: "Geist", system-ui, sans-serif;
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
   font-size: 9.6pt;
   line-height: 1.5;
   color: var(--ink);
@@ -64,7 +64,7 @@ strong { font-weight: 600; }
 }
 .cover h1 { font-size: 34pt; font-weight: 600; position: relative; z-index: 1; max-width: 140mm; }
 .cover h1 .hl { color: var(--accent); }
-.cover .dark p { color: #C9D2DD; font-size: 12pt; margin-top: 5mm; max-width: 140mm; position: relative; z-index: 1; }
+.cover .dark p { color: #C9D2D0; font-size: 12pt; margin-top: 5mm; max-width: 140mm; position: relative; z-index: 1; }
 .cover .toc { margin-top: 12mm; columns: 2; column-gap: 10mm; font-size: 10.5pt; }
 .cover .toc div { break-inside: avoid; padding: 2mm 0; border-bottom: 1px solid var(--line); display: flex; gap: 3mm; }
 .cover .toc b { font-family: "Geist Mono", monospace; color: var(--accent-text); font-weight: 500; min-width: 7mm; }
@@ -75,7 +75,7 @@ strong { font-weight: 600; }
 .box.soft { background: var(--page); border-color: transparent; }
 .box.accent { background: var(--soft); border-color: transparent; }
 .box.dark { background: var(--ink); color: #fff; border-color: transparent; }
-.box.dark .muted, .box.dark p { color: #C9D2DD; }
+.box.dark .muted, .box.dark p { color: #C9D2D0; }
 .box.dark strong { color: var(--accent); }
 .box h3:first-child, .box h4:first-child { margin-top: 0; }
 .box h4 { font-size: 10.5pt; margin: 0 0 1.5mm; }
@@ -97,13 +97,13 @@ strong { font-weight: 600; }
 
 /* The browser's password box, drawn */
 .authbox {
-  width: 92mm; border: 1px solid #C8CED6; border-radius: 3mm; padding: 4mm 5mm; background: #fff;
-  box-shadow: 0 2mm 6mm rgba(14, 27, 44, 0.12); font-size: 9pt; margin: 1.5mm 0 2.5mm;
+  width: 92mm; border: 1px solid #C7CFCD; border-radius: 3mm; padding: 4mm 5mm; background: #fff;
+  box-shadow: 0 2mm 6mm rgba(16, 20, 21, 0.12); font-size: 9pt; margin: 1.5mm 0 2.5mm;
 }
 .authbox .t { font-weight: 600; font-size: 10pt; margin-bottom: 1mm; }
-.authbox .f { border: 1px solid #C8CED6; border-radius: 1.5mm; padding: 1.5mm 2.5mm; margin: 1mm 0 2.5mm; color: var(--muted); }
+.authbox .f { border: 1px solid #C7CFCD; border-radius: 1.5mm; padding: 1.5mm 2.5mm; margin: 1mm 0 2.5mm; color: var(--muted); }
 .authbox .b { display: flex; justify-content: flex-end; gap: 2mm; }
-.authbox .b span { border-radius: 1.5mm; padding: 1mm 3.5mm; border: 1px solid #C8CED6; }
+.authbox .b span { border-radius: 1.5mm; padding: 1mm 3.5mm; border: 1px solid #C7CFCD; }
 .authbox .b span.p { background: #1A73E8; color: #fff; border-color: #1A73E8; }
 
 .fill { display: inline-block; min-width: 55mm; border-bottom: 1.2px solid var(--ink); height: 5mm; vertical-align: bottom; }

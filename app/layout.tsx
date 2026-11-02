@@ -1,23 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Hanken_Grotesk } from "next/font/google";
+import { Geist_Mono, Hanken_Grotesk } from "next/font/google";
 import { Track } from "@/components/Track";
 import "./globals.css";
 
-const geist = Geist({
+// "Mynte og is" (docs/design/MYNTE.md): all text in Hanken Grotesk (also the logo: "budget" 700, "pro" 200, --font-logo
+// in globals.css), numbers and amounts in Geist Mono.
+const text = Hanken_Grotesk({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-geist",
+  weight: ["200", "300", "400", "500", "600", "700"],
+  variable: "--font-text",
   display: "swap",
 });
 const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: ["500"],
+  weight: ["400", "500"],
   variable: "--font-geist-mono",
   display: "swap",
 });
-
-// Logo font: "budget" in Hanken Grotesk 700, "pro" in Hanken Grotesk 200 (components/Logo.tsx). Only for the logo.
-const logo = Hanken_Grotesk({ subsets: ["latin"], weight: ["200", "700"], variable: "--font-logo", display: "swap" });
 
 export const metadata: Metadata = {
   title: "budgetpro – budget for dig, par og familier",
@@ -33,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="da" className={`${geist.variable} ${geistMono.variable} ${logo.variable}`}>
+    <html lang="da" className={`${text.variable} ${geistMono.variable}`}>
       <body>
         {children}
         <Track />

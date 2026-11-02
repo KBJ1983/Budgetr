@@ -1,20 +1,22 @@
 /**
- * budgetpro brand ("Midnat og lime", Oct 2026, designmanual in docs/design/midnat-designmanual.html):
- * the symbol is a pocket with two cards sticking up. The front card is always lime; the back card and the pocket take the
- * colour of the name – midnight on light backgrounds, white on dark ones (on lime the front card turns white).
- * The outlines and the slot in the pocket take the background colour, so pass `bg` when the logo sits on another surface.
- * "budget" is Hanken Grotesk 700 and "pro" Hanken Grotesk 200, same colour. Sizes follow `fontSize`.
+ * budgetpro brand ("Mynte og is", Nov 2026, docs/design/MYNTE.md): the symbol is a pocket with two upright cards. The
+ * front card is always mynte; the back card and the pocket take the colour of the name – blæk on light backgrounds,
+ * is-white on dark ones (on mynte the front card turns white). The outlines and the slot in the pocket take the
+ * background colour, so pass `bg` when the logo sits on another surface. "budget" is Hanken Grotesk 700 and "pro"
+ * Hanken Grotesk 200, same colour. Sizes follow `fontSize`. The keys keep their old names: midnight is now blæk, lime
+ * mynte and olive dyb mynte.
  */
 export const BRAND = {
-  midnight: "#0E1B2C",
-  midnight2: "#1A2B42",
-  lime: "#D4F26B",
-  limeDark: "#9BC43A",
-  olive: "#3F6A0E",
-  paper: "#F3F5F7",
-  limeTone: "#EEF6D2",
-  haze: "#B6C0CC",
-  // budgetpro Skole ("Midnat og solgul"): solgul takes lime's place; sunInk is its text colour on light backgrounds.
+  midnight: "#101415",
+  midnight2: "#181D1E",
+  lime: "#A9DCCB",
+  limeDark: "#7CC1AA",
+  olive: "#2E6E5B",
+  paper: "#F0F3F2",
+  limeTone: "#E3F2EC",
+  haze: "#99A5A3",
+  snow: "#ECF1F0",
+  // budgetpro Skole ("Mynte og is" with solgul): solgul takes mynte's place; sunInk is its text colour on light backgrounds.
   sun: "#F6CF4A",
   sunDark: "#D49A1A",
   sunInk: "#7A5300",
@@ -26,7 +28,7 @@ export type LogoTone = "light" | "dark" | "lime";
 
 const TONES: Record<LogoTone, { ink: string; front: string; bg: string }> = {
   light: { ink: BRAND.midnight, front: BRAND.lime, bg: "#FFFFFF" },
-  dark: { ink: "#FFFFFF", front: BRAND.lime, bg: BRAND.midnight },
+  dark: { ink: BRAND.snow, front: BRAND.lime, bg: BRAND.midnight },
   lime: { ink: BRAND.midnight, front: "#FFFFFF", bg: BRAND.lime },
 };
 
@@ -35,14 +37,10 @@ export function LogoMark({ size = 32, tone = "light", bg, front }: { size?: numb
   const t = TONES[tone];
   const cut = bg ?? t.bg;
   return (
-    <svg viewBox="0 -2 64 64" width={size} height={size} aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
-      <g transform="rotate(-8 22 14)">
-        <rect x="6" y="0" width="32" height="22" rx="4.5" fill={t.ink} stroke={cut} strokeWidth="3" />
-      </g>
-      <g transform="rotate(6 42 14)">
-        <rect x="25" y="2" width="32" height="22" rx="4.5" fill={front ?? t.front} stroke={cut} strokeWidth="3" />
-      </g>
-      <rect x="2" y="20" width="60" height="40" rx="13" fill={t.ink} stroke={cut} strokeWidth="3" />
+    <svg viewBox="0.5 1.5 63 60" width={(size * 63) / 60} height={size} aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+      <rect x="9" y="3" width="34" height="22" rx="5" fill={t.ink} stroke={cut} strokeWidth="3" />
+      <rect x="21" y="8" width="34" height="22" rx="5" fill={front ?? t.front} stroke={cut} strokeWidth="3" />
+      <rect x="2" y="19" width="60" height="41" rx="13" fill={t.ink} stroke={cut} strokeWidth="3" />
       <rect x="40" y="35" width="15" height="8" rx="4" fill={cut} />
     </svg>
   );
@@ -110,7 +108,7 @@ export function AppIcon({ size = 32 }: { size?: number }) {
 }
 
 /**
- * budgetpro Skole ("Midnat og solgul", docs/design/skole-21b.html): the budgetpro logo with a solgul front card and a
+ * budgetpro Skole ("Is og solgul", docs/design/skole-21b.html): the budgetpro logo with a solgul front card and a
  * solgul "Skole" sticker (Hanken Grotesk 700) whose bottom edge stands on the baseline of "pro" (the bottom of the "o"). In black/white (`mono`) the sticker takes the
  * name's colour with the background colour as text.
  */

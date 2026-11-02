@@ -15,19 +15,19 @@ import s from "./logoIntro.module.css";
 /** The symbol (components/Logo.tsx `LogoMark`), with each piece in its own group so the pieces can snap in one by one. */
 function Mark({ className, pieces }: { className?: string; pieces?: boolean }) {
   return (
-    <svg viewBox="0 -2 64 64" className={className} aria-hidden="true">
+    <svg viewBox="0.5 1.5 63 60" className={className} aria-hidden="true">
       <g className={pieces ? s.p1 : undefined}>
-        <g transform="rotate(-8 22 14)">
-          <rect className={`${s.ink} ${s.cut}`} x="6" y="0" width="32" height="22" rx="4.5" />
+        <g>
+          <rect className={`${s.ink} ${s.cut}`} x="9" y="3" width="34" height="22" rx="5" />
         </g>
       </g>
       <g className={pieces ? s.p2 : undefined}>
-        <g transform="rotate(6 42 14)">
-          <rect className={`${s.front} ${s.cut}`} x="25" y="2" width="32" height="22" rx="4.5" />
+        <g>
+          <rect className={`${s.front} ${s.cut}`} x="21" y="8" width="34" height="22" rx="5" />
         </g>
       </g>
       <g className={pieces ? s.p3 : undefined}>
-        <rect className={`${s.ink} ${s.cut}`} x="2" y="20" width="60" height="40" rx="13" />
+        <rect className={`${s.ink} ${s.cut}`} x="2" y="19" width="60" height="41" rx="13" />
         <rect className={s.slot} x="40" y="35" width="15" height="8" rx="4" />
       </g>
     </svg>

@@ -74,7 +74,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <div className="bx-auth-circle" aria-hidden="true" />
         <header className="bx-auth-top">
           <Link href="/" className="bx-auth-brand" aria-label="budgetpro – til forsiden">
-            <Logo fontSize={21} dark bg="#0E1B2C" />
+            <Logo fontSize={21} dark bg="#101415" />
           </Link>
           <Link href="/" className="bx-auth-back">
             Til forsiden

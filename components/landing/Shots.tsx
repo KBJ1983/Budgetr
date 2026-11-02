@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { media } from "@/lib/media-version";
 import styles from "./landing.module.css";
 import { scrollToSlide, useSlideIndex } from "./Swipe";
 
@@ -43,8 +44,8 @@ function useShotTheme(): [Theme, (t: Theme) => void] {
 export function ThemeShot({ name, alt, width, height, sizes, className }: { name: string; alt: string; width: number; height: number; sizes: string; className?: string }) {
   return (
     <>
-      <Image src={`/landing/${name}-light.jpg`} alt={alt} width={width} height={height} sizes={sizes} className={`${styles.shotLight} ${className ?? ""}`} />
-      <Image src={`/landing/${name}-dark.jpg`} alt={alt} width={width} height={height} sizes={sizes} className={`${styles.shotDark} ${className ?? ""}`} />
+      <Image src={media(`/landing/${name}-light.jpg`)} alt={alt} width={width} height={height} sizes={sizes} className={`${styles.shotLight} ${className ?? ""}`} />
+      <Image src={media(`/landing/${name}-dark.jpg`)} alt={alt} width={width} height={height} sizes={sizes} className={`${styles.shotDark} ${className ?? ""}`} />
     </>
   );
 }

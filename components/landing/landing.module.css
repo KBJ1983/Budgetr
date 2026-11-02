@@ -1,49 +1,50 @@
 /*
- * Landing page styles, layout from docs/design/forside-v2.html ("Forside v2"), colours from the "Midnat og lime" brand
- * (docs/design/MIDNAT.md, hero after docs/design/midnat-forside.html).
- * Header and hero share one light rounded card (#F3F5F7) on a white frame; sections below alternate paper, white, stone
+ * Landing page styles, layout from docs/design/forside-v2.html ("Forside v2"), colours from the "Mynte og is" brand
+ * (docs/design/MYNTE.md, hero after docs/design/midnat-forside.html).
+ * Header and hero share one light rounded card (#F0F3F2) on a white frame; sections below alternate paper, white, stone
  * and midnight. Content is at most 1136px wide (1200px incl. 32px gutters). Breakpoints: 1020px (two columns → one),
  * 768px (mobile). The app is shown with real screenshots (public/landing/, `pnpm shots`), in the light or the dark theme.
  */
 
 .page {
-  /* Midnat og lime palette (60 % light, 30 % midnight, 10 % lime). Dark values match the app's dark theme. */
-  --v-paper: #f3f5f7;
+  /* "Mynte og is" palette (docs/design/MYNTE.md): is page, white cards, blæk text and dark bands, mynte for the positive.
+     Dark values match the app's dark theme. The names stay from earlier designs: dark = blæk, lime = mynte, olive = dyb mynte. */
+  --v-paper: #f0f3f2;
   --v-white: #ffffff;
-  --v-stone: #edf0f3;
-  --v-card: #f8f9fb;
-  --v-ink: #0e1b2c;
-  --v-ink-2: #3e4a5a;
-  --v-ink-3: #5a6472;
-  --v-rule: #dfe4ea;
-  --v-rule-2: #e7ebef;
-  --v-dark: #0e1b2c;
-  --v-dark-2nd: #1a2b42;
-  --v-dark-card: #15243a;
-  --v-dark-rule: #1f3350;
-  --v-dark-text: #f3f5f7;
-  --v-dark-2: #b6c0cc;
-  --v-dark-3: #8a97a8;
+  --v-stone: #eef2f1;
+  --v-card: #ffffff;
+  --v-ink: #101415;
+  --v-ink-2: #56615f;
+  --v-ink-3: #56615f;
+  --v-rule: #dce3e1;
+  --v-rule-2: #e4eae8;
+  --v-dark: #101415;
+  --v-dark-2nd: #181d1e;
+  --v-dark-card: #181d1e;
+  --v-dark-rule: #283031;
+  --v-dark-text: #ecf1f0;
+  --v-dark-2: #99a5a3;
+  --v-dark-3: #7f8b89;
   /* Accent text and links on light. */
-  --v-olive: #3f6a0e;
-  --v-olive-hover: #2f500a;
-  /* Lime: accents on dark, badges and the primary button on dark; never text on light. */
-  --v-lime: #d4f26b;
-  --v-lime-hover: #e2f79a;
-  --v-lime-dark: #9bc43a;
-  --v-lime-tone: #eef6d2;
+  --v-olive: #2e6e5b;
+  --v-olive-hover: #23574a;
+  /* Mynte: bars, key figures and badges, the primary button on dark; text only on dark. */
+  --v-lime: #a9dccb;
+  --v-lime-hover: #c4e8dc;
+  --v-lime-dark: #7cc1aa;
+  --v-lime-tone: #e3f2ec;
   /* Big decorative circles on midnight bands. */
-  --v-circle: #16294a;
+  --v-circle: #1c2223;
 
   --content: 1136px;
   --gutter: 32px;
   --section-y: 120px;
   /* Side padding inside the 1400px card so its content lines up with the 1136px column below. */
   --card-pad: max(var(--gutter), calc((min(100%, 1400px) - var(--content)) / 2));
-  --error: #a8382a;
-  --error-on-dark: #f08a78;
-  --product-shadow: 0 30px 60px -24px rgba(14, 27, 44, 0.35);
-  --float-shadow: 0 18px 36px -10px rgba(14, 27, 44, 0.22);
+  --error: #a8473c;
+  --error-on-dark: #e59a8e;
+  --product-shadow: 0 30px 60px -24px rgba(16, 20, 21, 0.35);
+  --float-shadow: 0 18px 36px -10px rgba(16, 20, 21, 0.22);
 
   min-height: 100vh;
   display: flex;
@@ -159,7 +160,7 @@
   background: var(--v-white);
   border: 1px solid var(--v-rule);
   border-radius: 0 0 20px 20px;
-  box-shadow: 0 24px 40px -20px rgba(14, 27, 44, 0.35);
+  box-shadow: 0 24px 40px -20px rgba(16, 20, 21, 0.35);
   padding: 4px 20px 12px;
 }
 .menuPanel[hidden] {
@@ -206,9 +207,8 @@
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font: 400 12.5px var(--font-mono);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--v-olive);
 }
@@ -221,7 +221,7 @@
   font-size: 50px;
   line-height: 1.05;
   letter-spacing: -0.035em;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--v-ink);
   text-wrap: balance;
 }
@@ -249,7 +249,7 @@
   text-wrap: pretty;
 }
 .headBodyDark {
-  color: #dfe4ea;
+  color: #dce3e1;
 }
 
 .bodyLg {
@@ -420,27 +420,22 @@
 .h1 {
   margin: 0;
   font-size: 74px;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 600;
   text-wrap: balance;
 }
 .tagline {
   margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font: 400 13px var(--font-mono);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--v-olive);
 }
 /* Lime highlight under the accent part of the title (midnat-forside.html). */
+/* The accent part of the title in dyb mynte ("Dit overblik. Dine drømme." in docs/design/MYNTE.md). */
 .accent {
-  color: var(--v-ink);
-  /* A band from 82 % to 94 % of the line; its width is animated in the Motion block. */
-  background: linear-gradient(var(--v-lime), var(--v-lime)) no-repeat 0 92% / 100% 0.12em;
-  padding: 0 0.06em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  color: var(--v-olive);
 }
 .lead {
   margin: 0;
@@ -491,7 +486,7 @@
   position: absolute;
   inset: -40px -80px -20px;
   pointer-events: none;
-  background-image: radial-gradient(#d6dce3 1.2px, transparent 1.3px);
+  background-image: radial-gradient(#d4dbd9 1.2px, transparent 1.3px);
   background-size: 22px 22px;
   -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
   mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
@@ -614,7 +609,7 @@
   overflow: hidden;
   background: var(--chrome);
   border: 1px solid var(--chrome-rule);
-  box-shadow: 0 40px 80px -20px rgba(14, 27, 44, 0.35);
+  box-shadow: 0 40px 80px -20px rgba(16, 20, 21, 0.35);
   transition:
     background-color 0.3s,
     border-color 0.3s;
@@ -684,9 +679,9 @@
   margin: 0 auto;
   padding: 9px;
   border-radius: 44px;
-  background: #101c2b;
+  background: #121718;
   border: 1px solid var(--v-dark-rule);
-  box-shadow: 0 40px 80px -30px rgba(14, 27, 44, 0.5);
+  box-shadow: 0 40px 80px -30px rgba(16, 20, 21, 0.5);
 }
 /* The screen is a sideways swipe strip of pages (Shots.tsx HeroPhone); it shows the top of each page only. */
 .phoneScreen {
@@ -819,7 +814,7 @@
   margin: 0 auto;
   border-radius: 36px;
   overflow: hidden;
-  background: #1a2b42;
+  background: #181d1e;
 }
 .bannerImage {
   object-fit: cover;
@@ -828,7 +823,7 @@
 .bannerShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(14, 27, 44, 0.78) 0%, rgba(14, 27, 44, 0.35) 55%, rgba(14, 27, 44, 0) 100%);
+  background: linear-gradient(90deg, rgba(16, 20, 21, 0.78) 0%, rgba(16, 20, 21, 0.35) 55%, rgba(16, 20, 21, 0) 100%);
 }
 .bannerText {
   position: relative;
@@ -853,7 +848,7 @@
   margin: 0;
   font-size: 17px;
   line-height: 1.6;
-  color: #e3e8ee;
+  color: #e1e7e5;
   text-wrap: pretty;
 }
 
@@ -903,7 +898,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(212, 242, 107, 0.12);
+  background: rgba(169, 220, 203, 0.12);
   color: var(--v-lime);
   align-items: center;
   justify-content: center;
@@ -920,7 +915,7 @@
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
-  color: #a3aebd;
+  color: #9fa9a7;
   text-wrap: pretty;
 }
 
@@ -967,21 +962,21 @@
 }
 .devLid {
   width: 100%;
-  background: #101c2b;
+  background: #121718;
   border-radius: 16px 16px 0 0;
   padding: 10px 10px 14px;
-  box-shadow: 0 40px 80px -30px rgba(14, 27, 44, 0.45);
+  box-shadow: 0 40px 80px -30px rgba(16, 20, 21, 0.45);
 }
 .devScreen {
   width: 100%;
   border-radius: 4px;
   overflow: hidden;
-  background: #f3f5f7;
+  background: #f0f3f2;
 }
 .devBase {
   width: 112%;
   height: 13px;
-  background: linear-gradient(180deg, #dde2e8, #b8c0ca);
+  background: linear-gradient(180deg, #dce3e1, #a5afad);
   border-radius: 0 0 14px 14px;
   position: relative;
 }
@@ -992,7 +987,7 @@
   transform: translateX(-50%);
   width: 16%;
   height: 5px;
-  background: #a7b0ba;
+  background: #a0aaa8;
   border-radius: 0 0 6px 6px;
 }
 .devPhone {
@@ -1001,16 +996,16 @@
   bottom: 0;
   width: 26%;
   min-width: 96px;
-  background: #101c2b;
+  background: #121718;
   border-radius: 26px;
   padding: 6px;
-  box-shadow: 0 30px 60px -20px rgba(14, 27, 44, 0.55);
+  box-shadow: 0 30px 60px -20px rgba(16, 20, 21, 0.55);
 }
 .devPhoneScreen {
   aspect-ratio: 390 / 844;
   border-radius: 20px;
   overflow: hidden;
-  background: #f3f5f7;
+  background: #f0f3f2;
 }
 .devPhoneScreen img {
   display: block;
@@ -1028,7 +1023,7 @@
   height: 300px;
   border-radius: 24px;
   overflow: hidden;
-  background: #dfe4ea;
+  background: #dce3e1;
 }
 .sharePhoto .photoCover {
   object-position: center 24%;
@@ -1101,7 +1096,7 @@
   color: var(--v-ink);
   border-radius: 24px;
   padding: 30px;
-  box-shadow: 0 30px 60px -24px rgba(4, 10, 18, 0.55);
+  box-shadow: 0 30px 60px -24px rgba(8, 10, 11, 0.55);
 }
 .quoteText {
   margin: 0;
@@ -1235,7 +1230,7 @@
   width: 84px;
   height: 84px;
   border-radius: 24px;
-  background: rgba(212, 242, 107, 0.12);
+  background: rgba(169, 220, 203, 0.12);
   color: var(--v-lime);
 }
 .tourText {
@@ -1331,7 +1326,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  box-shadow: 0 30px 60px -30px rgba(14, 27, 44, 0.2);
+  box-shadow: 0 30px 60px -30px rgba(16, 20, 21, 0.2);
 }
 .priceHead {
   display: flex;
@@ -1350,7 +1345,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
-  background: #edf0f3;
+  background: #eef2f1;
   border-radius: 999px;
   padding: 4px;
 }
@@ -1373,7 +1368,7 @@
 .planButton[aria-pressed="true"] {
   background: var(--v-white);
   color: var(--v-ink);
-  box-shadow: 0 1px 3px rgba(14, 27, 44, 0.15);
+  box-shadow: 0 1px 3px rgba(16, 20, 21, 0.15);
 }
 .planTag {
   font-size: 11.5px;
@@ -1896,7 +1891,7 @@
     border-radius: 24px;
   }
   .bannerShade {
-    background: linear-gradient(180deg, rgba(14, 27, 44, 0) 25%, rgba(14, 27, 44, 0.8) 100%);
+    background: linear-gradient(180deg, rgba(16, 20, 21, 0) 25%, rgba(16, 20, 21, 0.8) 100%);
   }
   .bannerText {
     padding: 24px;
@@ -2139,7 +2134,7 @@
     width: 7px;
     height: 7px;
     border-radius: 999px;
-    background: #c9d2dc;
+    background: #c9d2d0;
     transition:
       width 0.25s,
       background-color 0.25s;
@@ -2149,7 +2144,7 @@
     background: var(--v-olive);
   }
   .swipeDark .swipeDots button::before {
-    background: #2a3d57;
+    background: #283031;
   }
   .swipeDark .swipeDots button[aria-current="true"]::before {
     background: var(--v-lime);
@@ -2202,9 +2197,6 @@
 @media (prefers-reduced-motion: no-preference) {
   .heroText > .h1 {
     animation: wipeUp 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s both;
-  }
-  .accent {
-    animation: drawLine 0.8s cubic-bezier(0.65, 0, 0.35, 1) 0.75s both;
   }
   .trustCircle,
   .quotesCircle {

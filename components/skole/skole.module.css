@@ -1,14 +1,14 @@
-/* budgetpro Skole, "Midnat og solgul" (docs/design/skole-21b.html; layout from docs/design/skole-skitse.html). Phone layout below 760 px. */
+/* budgetpro Skole, "Is og solgul" (docs/design/skole-21b.html; layout from docs/design/skole-skitse.html). Phone layout below 760 px. */
 .page {
-  --ink: #0e1b2c;
-  --ink-2: #5a6577;
-  --mute: #8a93a0;
+  --ink: #101415;
+  --ink-2: #5f6a68;
+  --mute: #838d8b;
   --rule: #e2dfd8;
   --rule-2: #eeece6;
   --paper: #f5f5f0;
-  --navy: #0e1b2c;
-  --navy-2: #1a2b42;
-  --navy-bg: #e8ebef;
+  --navy: #101415;
+  --navy-2: #181d1e;
+  --navy-bg: #e6ebe9;
   --navy-sel: #fdf8e6;
   --sun: #f6cf4a;
   --sun-bg: #fcf1c8;
@@ -16,8 +16,8 @@
   --sun-ink-2: #5c3e00;
   --sun-ink-3: #3a2800;
   --on-dark: #f7f7f2;
-  --haze: #b6c0cc;
-  --red: #b4412c;
+  --haze: #99a5a3;
+  --red: #a8473c;
   --red-bg: #f8e5df;
   --blue: #4c86e8;
   --tick: #cfcbc2;
@@ -26,7 +26,7 @@
   flex-direction: column;
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-geist), system-ui, sans-serif;
+  font-family: var(--font-text), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .page :where(input, button, textarea, select) { font-family: inherit; }
@@ -190,7 +190,7 @@
 .infoI:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; opacity: 1; }
 /* A taller tap area on touch screens, without moving the circle. */
 .infoI::before { content: ""; position: absolute; width: 40px; height: 40px; }
-.tip { position: fixed; z-index: 20; box-sizing: border-box; background: var(--ink); color: var(--on-dark); border-radius: 12px; padding: 12px 14px; font-weight: 400; font-size: 15px; font-style: normal; line-height: 1.45; letter-spacing: 0; text-align: left; white-space: normal; text-transform: none; cursor: auto; box-shadow: 0 8px 24px rgba(14, 27, 44, 0.18); }
+.tip { position: fixed; z-index: 20; box-sizing: border-box; background: var(--ink); color: var(--on-dark); border-radius: 12px; padding: 12px 14px; font-weight: 400; font-size: 15px; font-style: normal; line-height: 1.45; letter-spacing: 0; text-align: left; white-space: normal; text-transform: none; cursor: auto; box-shadow: 0 8px 24px rgba(16, 20, 21, 0.18); }
 .tip[hidden] { display: none; }
 
 /* Step 1: straight to Mit budget */

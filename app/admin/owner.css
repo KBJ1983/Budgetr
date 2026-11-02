@@ -1,16 +1,16 @@
 /* Owner overview (/admin). Builds on the app's .bx styles in app/login/app.css,
    with the budget app's look: a lead sentence, section heads on a tinted panel, mono amounts.
-   "Midnat og lime": the band is a midnight row on dark and stone grey on light; the month bars are lime + haze on dark
+   "Mynte og is": the band is a midnight row on dark and stone grey on light; the month bars are lime + haze on dark
    and lime-dark + midnight on light. */
 .ow {
-  --band: #15243a;
-  --bar-rev: #d4f26b;
+  --band: #141a1b;
+  --bar-rev: #a9dccb;
   --bar-exp: #7aa2d6;
 }
 .ow[data-theme="light"] {
-  --band: #e7ebef;
-  --bar-rev: #9bc43a;
-  --bar-exp: #0e1b2c;
+  --band: #e4eae8;
+  --bar-rev: #7cc1aa;
+  --bar-exp: #101415;
 }
 .ow .bx-main > .bx-note {
   margin-top: 8px;
@@ -51,14 +51,14 @@
 /* Henvendelser from the Erhverv form, in the brand's own colours: a lime count pill (lime only as a fill,
    with midnight text) and a midnight strip on light / a raised midnight strip on dark. */
 .ow {
-  --inq-bg: #15243a;
-  --inq-rule: #2a3d57;
-  --inq-tx: #f3f5f7;
-  --inq-sub: #a7b4c8;
+  --inq-bg: #141a1b;
+  --inq-rule: #283031;
+  --inq-tx: #f0f3f2;
+  --inq-sub: #a0aba9;
 }
 .ow[data-theme="light"] {
-  --inq-bg: #0e1b2c;
-  --inq-rule: #0e1b2c;
+  --inq-bg: #101415;
+  --inq-rule: #101415;
 }
 .ow-badge {
   display: inline-flex;
@@ -68,8 +68,8 @@
   height: 22px;
   padding: 0 7px;
   border-radius: 999px;
-  background: #d4f26b;
-  color: #0e1b2c;
+  background: #a9dccb;
+  color: #101415;
   font: 600 12px var(--font-mono);
   vertical-align: middle;
 }
@@ -115,7 +115,7 @@
 }
 .ow-alert-go {
   flex: none;
-  color: #d4f26b;
+  color: #a9dccb;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;

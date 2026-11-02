@@ -16,7 +16,7 @@ const browserLoc = () => `${window.location.protocol}//${window.location.host}`;
 /**
  * The small "Privat · Erhverv · Skole" row above the top card on the three front pages. The addresses depend on
  * the host (subdomains on the real domain, paths on localhost), so the server renders the paths and the browser
- * fills in the real ones. `tone="midnat"` gives the Midnat og lime greys (Privat and Erhverv); Skole keeps the Skov
+ * fills in the real ones. `tone="midnat"` gives the Mynte og is greys (Privat and Erhverv); Skole keeps the Skov
  * default until it is redesigned.
  */
 export function SiteSwitch({ current, tone = "skov" }: { current: Site; tone?: "skov" | "midnat" }) {

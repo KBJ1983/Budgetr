@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import { Film } from "@/components/Film";
+import { media } from "@/lib/media-version";
 import styles from "./landing.module.css";
 import { CheckList } from "./CheckList";
 import { ShotFrame, ThemeShot } from "./Shots";
@@ -185,7 +186,7 @@ function AvailabilityDevices() {
       </div>
       <div className={styles.devPhone}>
         <div className={styles.devPhoneScreen}>
-          <Image src="/landing/mobil-light.jpg" alt="Overblik og rådighedsbeløbet på en mobil" width={780} height={1560} sizes="160px" />
+          <Image src={media("/landing/mobil-light.jpg")} alt="Overblik og rådighedsbeløbet på en mobil" width={780} height={1560} sizes="160px" />
         </div>
       </div>
     </div>

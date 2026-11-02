@@ -5,7 +5,7 @@ const R = 80;
 const C = 2 * Math.PI * R;
 
 /** On the midnight meter the midnight part (Bolig) turns white, as in the design. */
-const onDark = (color: string) => (color === "#0E1B2C" ? "#F7F7F2" : color);
+const onDark = (color: string) => (color === "#101415" ? "#F7F7F2" : color);
 
 /** The donut with "Tilbage" in the middle. Each part is its share of the income (or of the spending, if larger). */
 export function Donut({ t, big = false, dark = false }: { t: Totals; big?: boolean; dark?: boolean }) {
@@ -20,7 +20,7 @@ export function Donut({ t, big = false, dark = false }: { t: Totals; big?: boole
   return (
     <div className={`${s.donut} ${big ? s.donutBig : ""}`}>
       <svg viewBox="0 0 200 200" aria-hidden="true">
-        <circle cx="100" cy="100" r={R} fill="none" stroke={dark ? "#1A2B42" : "#EEECE6"} strokeWidth="26" />
+        <circle cx="100" cy="100" r={R} fill="none" stroke={dark ? "#181D1E" : "#EEECE6"} strokeWidth="26" />
         {parts.map((p) => (
           <circle key={p.label} cx="100" cy="100" r={R} fill="none" stroke={dark ? onDark(p.color) : p.color} strokeWidth="26" strokeDasharray={`${p.len} ${C}`} strokeDashoffset={p.off} transform="rotate(-90 100 100)" />
         ))}
