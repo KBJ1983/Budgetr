@@ -89,6 +89,16 @@ export function DownloadIcon(props: IconProps) {
   );
 }
 
+/** A bank, struck through: no access to the netbank. */
+export function NoBankIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.8} {...props}>
+      <path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18M12 3l9 5H3z" />
+      <path d="M3 3l18 18" />
+    </Svg>
+  );
+}
+
 export function ShieldIcon(props: IconProps) {
   return (
     <Svg strokeWidth={1.9} {...props}>

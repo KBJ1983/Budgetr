@@ -1,17 +1,29 @@
 /*
- * Landing page styles, layout from docs/design/forside-v2.html ("Forside v2"), colours from the "Mynte og is" brand
- * (docs/design/MYNTE.md, hero after docs/design/midnat-forside.html).
- * Header and hero share one light rounded card (#F0F3F2) on a white frame; sections below alternate paper, white, stone
- * and midnight. Content is at most 1136px wide (1200px incl. 32px gutters). Breakpoints: 1020px (two columns → one),
- * 768px (mobile). The app is shown with real screenshots (public/landing/, `pnpm shots`), in the light or the dark theme.
+ * Landing page styles after the design "budgetpro – Mynte og is komplet" (Nov 2026, docs/design/MYNTE.md): header and
+ * hero share one rounded mynte-tint card with large calm shapes (a white circle, a mynte card, an outlined card) on a
+ * white frame; sections below alternate white, is (soft) and dark bands, with koral (#A8473C) as the second accent
+ * (the "29 min · 29 kr" badge, the closing call to action, the Erhverv pill). Content is at most 1136px wide (1200px
+ * incl. 32px gutters). Breakpoints: 1020px (two columns → one), 768px (mobile).
  */
 
 .page {
-  /* "Mynte og is" palette (docs/design/MYNTE.md): is page, white cards, blæk text and dark bands, mynte for the positive.
-     Dark values match the app's dark theme. The names stay from earlier designs: dark = blæk, lime = mynte, olive = dyb mynte. */
+  /* "Mynte og is" palette (docs/design/MYNTE.md). The names stay from earlier designs: dark = blæk, lime = mynte,
+     olive = dyb mynte, paper = is (soft sections). */
   --v-paper: #f0f3f2;
   --v-white: #ffffff;
-  --v-stone: #eef2f1;
+  --v-stone: #f0f3f2;
+  /* Mynte tint: the hero card and the "Alle funktioner" band. */
+  --v-tint: #ddf0e8;
+  /* Koral: the second accent (badge, closing band, Erhverv pill); light text on it is --v-coral-soft. */
+  --v-coral: #a8473c;
+  --v-coral-soft: #f6e3df;
+  --v-coral-on-dark: #e59a8e;
+  /* The Tryghed band: a slate a step lighter than blæk. */
+  --v-slate: #1e2326;
+  --v-slate-card: #272d30;
+  --v-slate-rule: #343b3e;
+  --v-slate-text: #a9b3b1;
+  --v-deep-text: #cfe3dc;
   --v-card: #ffffff;
   --v-ink: #101415;
   --v-ink-2: #56615f;
@@ -38,7 +50,7 @@
 
   --content: 1136px;
   --gutter: 32px;
-  --section-y: 120px;
+  --section-y: 112px;
   /* Side padding inside the 1400px card so its content lines up with the 1136px column below. */
   --card-pad: max(var(--gutter), calc((min(100%, 1400px) - var(--content)) / 2));
   --error: #a8473c;
@@ -49,7 +61,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--v-paper);
+  background: var(--v-white);
   color: var(--v-ink);
   /* Safety net for decorative circles and shadows; layouts themselves never exceed the viewport. */
   overflow-x: clip;
@@ -60,20 +72,20 @@
 .header {
   position: relative;
   z-index: 10;
-  background: var(--v-white);
   padding: 14px 14px 0;
+  /* The top card is a little wider inside than the sections below (1176px, as in the design). */
+  --card-pad: max(var(--gutter), calc((min(100%, 1400px) - 1176px) / 2));
 }
+/* Transparent: the hero card (.heroInner) is pulled up under it, so its shapes run behind the header too. */
 .headerInner {
   max-width: 1400px;
   margin: 0 auto;
-  height: 68px;
+  height: var(--header-h, 76px);
   padding: 0 var(--card-pad);
   display: flex;
   align-items: center;
   gap: 32px;
-  background: var(--v-paper);
   color: var(--v-ink);
-  border-radius: 32px 32px 0 0;
 }
 
 .brand {
@@ -96,6 +108,7 @@
 }
 .nav a {
   color: var(--v-ink-2);
+  font-weight: 500;
   text-decoration: none;
   padding: 8px 0;
   border-radius: 4px;
@@ -207,7 +220,7 @@
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  font: 400 12.5px var(--font-mono);
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--v-olive);
@@ -215,13 +228,16 @@
 .eyebrowDark {
   color: var(--v-lime);
 }
+.eyebrowCoral {
+  color: var(--v-coral-on-dark);
+}
 
 .h2 {
   margin: 0;
-  font-size: 50px;
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-  font-weight: 600;
+  font-size: 48px;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-weight: 700;
   color: var(--v-ink);
   text-wrap: balance;
 }
@@ -243,18 +259,20 @@
 }
 .headBody {
   margin: 0;
-  font-size: 17px;
+  max-width: 440px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--v-ink-2);
   text-wrap: pretty;
 }
 .headBodyDark {
-  color: #dce3e1;
+  color: var(--v-slate-text);
 }
 
 .bodyLg {
   margin: 0;
-  font-size: 17px;
+  max-width: 480px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--v-ink-2);
   text-wrap: pretty;
@@ -268,6 +286,7 @@
   flex-direction: column;
   gap: 12px;
 }
+/* The checkmarks stay as they were before the "komplet" design (user's wish, Nov 2026). */
 .checkList li {
   display: flex;
   gap: 12px;
@@ -394,81 +413,148 @@
 .hero {
   background: var(--v-white);
   padding: 0 14px;
+  /* Pulled up under the transparent header, so header and hero are one card. */
+  margin-top: calc(-1 * var(--header-h, 76px));
+  --card-pad: max(var(--gutter), calc((min(100%, 1400px) - 1176px) / 2));
 }
 .heroInner {
   position: relative;
+  isolation: isolate;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 88px var(--card-pad) 104px;
+  padding: calc(var(--header-h, 76px) + 64px) var(--card-pad) 96px;
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: 64px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
   align-items: center;
-  background: var(--v-paper);
+  background: var(--v-tint);
   color: var(--v-ink);
-  border-radius: 0 0 32px 32px;
+  border-radius: 32px;
   overflow: hidden;
+}
+/* The card's calm shapes (decorative, behind everything): a big white circle top right, a mynte card bottom right
+   and an outlined card at the right edge. */
+.heroShapes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.heroShapes span {
+  position: absolute;
+}
+.heroShapes span:nth-child(1) {
+  right: -14%;
+  top: -34%;
+  width: min(66vw, 880px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+}
+.heroShapes span:nth-child(2) {
+  right: 6%;
+  bottom: -140px;
+  width: min(34vw, 460px);
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(-9deg);
+  background: var(--v-lime);
+}
+.heroShapes span:nth-child(3) {
+  right: -60px;
+  bottom: 120px;
+  width: 200px;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(7deg);
+  border: 2px solid rgba(16, 20, 21, 0.18);
 }
 .heroText {
   position: relative;
-  z-index: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 .h1 {
   margin: 0;
-  font-size: 74px;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  font-weight: 600;
-  text-wrap: balance;
+  font-size: clamp(44px, 5.4vw, 78px);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+  font-weight: 700;
+}
+/* Second line of a big title: the same words in a thin cut ("Ét roligt overblik.", "Ro i livet."). */
+.thin {
+  font-weight: 200;
+  letter-spacing: -0.05em;
 }
 .tagline {
   margin: 0;
-  font: 400 13px var(--font-mono);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--v-olive);
 }
-/* Lime highlight under the accent part of the title (midnat-forside.html). */
-/* The accent part of the title in dyb mynte ("Dit overblik. Dine drømme." in docs/design/MYNTE.md). */
+/* "29 min · 29 kr": a koral pill after a short koral line. */
+.taglineRule {
+  width: 40px;
+  height: 1px;
+  background: var(--v-coral);
+}
+.badge {
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--v-coral);
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+/* The key word of the title, bold, with a mynte band drawn under it. */
 .accent {
-  color: var(--v-olive);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  padding: 0 0.04em;
+  background: linear-gradient(var(--v-lime), var(--v-lime)) no-repeat 0 88% / 100% 0.34em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 .lead {
   margin: 0;
-  font-size: 19px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--v-ink-2);
-  max-width: 520px;
+  max-width: 480px;
   text-wrap: pretty;
 }
 .heroActions {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 .heroNote {
   margin: 0;
-  max-width: 260px;
-  font-size: 13.5px;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.45;
   color: var(--v-ink-3);
-  text-wrap: balance;
 }
 .heroButton {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #fff;
   background: var(--v-ink);
+  border: 1px solid var(--v-ink);
   border-radius: 999px;
-  padding: 16px 26px;
+  padding: 14px 24px;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -476,23 +562,205 @@
   color: #fff;
   background: var(--v-dark-2nd);
 }
+/* Outlined pill next to the primary button. */
+.heroButtonGhost {
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--v-ink);
+  border: 1px solid rgba(16, 20, 21, 0.16);
+  border-radius: 999px;
+  padding: 14px 24px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.heroButtonGhost:hover {
+  color: var(--v-ink);
+  background: rgba(255, 255, 255, 0.6);
+}
 
 .heroVisual {
   position: relative;
   min-width: 0;
-  padding: 8px 0 0;
 }
-.heroDots {
+
+/* ================= Drawn app cards (hero, Rådighed) ================= */
+/* A compact picture of the overview with the demo family's numbers: the sentence, three key figures and the months.
+   .appDark is the hero's dark version; the light one sits in Rådighed. */
+.app {
+  --a-bg: #ecf1ef;
+  --a-surf: #ffffff;
+  --a-line: #dce3e1;
+  --a-text: #101415;
+  --a-mut: #56615f;
+  --a-hl: #2e6e5b;
+  --a-neu: #c9d2d0;
+  --a-err: #a8473c;
+  --a-shadow: rgba(16, 20, 21, 0.14);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  background: var(--a-bg);
+  border: 1px solid var(--a-line);
+  border-radius: 18px;
+  box-shadow: 0 40px 80px -30px var(--a-shadow);
+  color: var(--a-text);
+}
+.appDark {
+  --a-bg: #0a0d0e;
+  --a-surf: #1a2023;
+  --a-line: #343d40;
+  --a-text: #ecf1f0;
+  --a-mut: #a3aeac;
+  --a-hl: #a9dccb;
+  --a-neu: #4a5558;
+  --a-err: #e59a8e;
+  --a-shadow: rgba(10, 13, 14, 0.45);
+}
+.appBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.appTabs {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--a-mut);
+}
+.appTabs b {
+  font-weight: 600;
+  color: var(--a-text);
+}
+.appSentence {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+.appSentence b {
+  font-weight: 700;
+}
+.appSentence em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--a-hl);
+}
+.appFigures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.appFigure {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: var(--a-surf);
+  border: 1px solid var(--a-line);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--a-mut);
+}
+.appFigure b {
+  font: 500 18px/1 var(--font-mono);
+  letter-spacing: -0.03em;
+  color: var(--a-text);
+}
+.appFigureOn {
+  background: var(--v-lime);
+  border-color: var(--v-lime);
+  color: var(--v-ink);
+}
+.appFigureOn b {
+  color: var(--v-ink);
+}
+.appBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 86px;
+  padding: 12px;
+  background: var(--a-surf);
+  border: 1px solid var(--a-line);
+  border-radius: 16px;
+}
+.appBars > span {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+.appBars i {
+  width: 8px;
+  border-radius: 3px 3px 0 0;
+  background: var(--v-lime);
+}
+.appBars i + i {
+  background: var(--a-neu);
+}
+.appBars i[data-over] {
+  background: var(--a-err);
+}
+.heroApp {
+  transform: translateY(24px);
+}
+/* Rådighed: the light card with a small phone card on its corner. */
+.appPair {
+  position: relative;
+  padding: 0 40px 40px 0;
+}
+.appPhone {
   position: absolute;
-  inset: -40px -80px -20px;
-  pointer-events: none;
-  background-image: radial-gradient(#d4dbd9 1.2px, transparent 1.3px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
-  mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
+  right: 0;
+  bottom: 0;
+  width: 156px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 12px 14px;
+  background: #ecf1ef;
+  border: 1px solid var(--v-rule);
+  border-radius: 28px;
+  box-shadow: 0 30px 60px -20px rgba(16, 20, 21, 0.14);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--v-ink-3);
 }
-.heroMobile {
-  display: none;
+.appPhone > :first-child {
+  align-self: center;
+}
+.appPhone b {
+  font: 500 20px/1 var(--font-mono);
+  letter-spacing: -0.03em;
+  color: var(--v-olive);
+  white-space: nowrap;
+}
+.appPhone b small {
+  font-size: 0.55em;
+  color: var(--v-ink-3);
+}
+.appTrack {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--v-rule-2);
+}
+.appTrack span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--v-lime);
 }
 
 /* ================= Screenshots ================= */
@@ -522,207 +790,6 @@
   }
 }
 
-.shotFrame {
-  margin: 0;
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--v-rule);
-  background: var(--v-rule-2);
-  box-shadow: var(--product-shadow);
-}
-
-/* Hero tour: tabs above a browser window; the pages cross-fade, and a short note says what you are looking at. */
-.showcase {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  /* Window colours follow the shots' theme. */
-  --chrome: var(--v-white);
-  --chrome-rule: var(--v-rule);
-  --chrome-ink: var(--v-ink-3);
-  --note-bg: var(--v-ink);
-  --note-ink: #fff;
-}
-:global(html[data-shots="dark"]) .showcase {
-  --chrome: var(--v-dark);
-  --chrome-rule: var(--v-dark-rule);
-  --chrome-ink: var(--v-dark-3);
-  --note-bg: var(--v-dark-text);
-  --note-ink: var(--v-dark);
-}
-@media (prefers-color-scheme: dark) {
-  :global(html:not([data-shots="light"])) .showcase {
-    --chrome: var(--v-dark);
-    --chrome-rule: var(--v-dark-rule);
-    --chrome-ink: var(--v-dark-3);
-    --note-bg: var(--v-dark-text);
-    --note-ink: var(--v-dark);
-  }
-}
-.showBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.showTabs,
-.showTheme {
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--v-white);
-  border: 1px solid var(--v-rule);
-  border-radius: 999px;
-}
-.showTab,
-.showTheme button {
-  position: relative;
-  overflow: hidden;
-  border: 0;
-  background: transparent;
-  font: 500 13px var(--font);
-  color: var(--v-ink-3);
-  padding: 6px 13px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition:
-    color 0.2s,
-    background-color 0.2s;
-}
-.showTab:hover,
-.showTheme button:hover {
-  color: var(--v-ink);
-}
-.showTab[aria-selected="true"],
-.showTheme button[aria-pressed="true"] {
-  color: #fff;
-  background: var(--v-ink);
-}
-.showWindow {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  background: var(--chrome);
-  border: 1px solid var(--chrome-rule);
-  box-shadow: 0 40px 80px -20px rgba(16, 20, 21, 0.35);
-  transition:
-    background-color 0.3s,
-    border-color 0.3s;
-}
-.showChrome {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 16px;
-  border-bottom: 1px solid var(--chrome-rule);
-}
-.showChrome span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--chrome-rule);
-}
-.showChrome b {
-  margin: 0 auto;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font: 400 11px var(--font);
-  color: var(--chrome-ink);
-  background: color-mix(in srgb, var(--chrome-ink) 12%, transparent);
-}
-.showStage {
-  position: relative;
-  aspect-ratio: 2360 / 1474;
-  overflow: hidden;
-}
-/* The page that leaves stays put under the new one until that has faded in, so the window never shows through. */
-.showSlide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0s linear 1.1s;
-}
-.showSlide[data-on="true"] {
-  z-index: 1;
-  opacity: 1;
-  transition: none;
-}
-/* Caption below the window. */
-.showNote {
-  max-width: 520px;
-  min-height: 42px;
-  margin: -10px 0 0;
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  color: var(--v-ink-2);
-  font: 500 14px/1.45 var(--font);
-}
-.showDot {
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  margin-top: 5px;
-  border-radius: 50%;
-  background: var(--v-lime-dark);
-}
-
-/* Phone for small screens */
-.phone {
-  width: min(280px, 74vw);
-  margin: 0 auto;
-  padding: 9px;
-  border-radius: 44px;
-  background: #121718;
-  border: 1px solid var(--v-dark-rule);
-  box-shadow: 0 40px 80px -30px rgba(16, 20, 21, 0.5);
-}
-/* The screen is a sideways swipe strip of pages (Shots.tsx HeroPhone); it shows the top of each page only. */
-.phoneScreen {
-  display: flex;
-  aspect-ratio: 780 / 1000;
-  border-radius: 35px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  background: var(--v-white);
-}
-.phoneScreen::-webkit-scrollbar {
-  display: none;
-}
-.phoneSlide {
-  flex: 0 0 100%;
-  overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-.phoneTour {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 22px;
-}
-.phoneTabs {
-  max-width: 100%;
-}
-.phoneTabs .showTab[aria-current="true"] {
-  color: #fff;
-  background: var(--v-ink);
-}
-.phoneTour .showNote {
-  margin: -4px 0 0;
-  max-width: 340px;
-  min-height: 42px;
-}
-
 /* ================= Swipe strips (Swipe.tsx) ================= */
 /* Card lists keep their grid on wide screens; on phones they become a sideways strip with dots. */
 
@@ -741,61 +808,48 @@
 /* ================= Sådan virker det ================= */
 
 .steps {
-  background: var(--v-white);
-  --section-y: 80px;
+  background: var(--v-stone);
 }
 .sectionInner:has(.stepGrid) {
   gap: 40px;
 }
+/* White cards with a big thin number that stands up out of the card's top edge. */
 .stepGrid {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 56px 0 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 64px 14px;
 }
 .step {
-  background: var(--v-paper);
+  min-width: 0;
+  background: var(--v-white);
   border: 1px solid var(--v-rule);
-  border-radius: 24px;
-  padding: 28px 30px;
+  border-radius: 16px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-.stepTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 10px;
-}
-.stepIcon {
-  display: flex;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: var(--v-dark);
-  color: var(--v-lime);
-  align-items: center;
-  justify-content: center;
+  gap: 14px;
 }
 .stepNum {
-  font-size: 40px;
-  font-weight: 600;
+  display: block;
+  margin: -96px 0 -8px -6px;
+  font-size: 136px;
+  font-weight: 200;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.07em;
   color: var(--v-olive);
 }
 .stepTitle {
   margin: 0;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.015em;
+  font-size: 19px;
+  line-height: 1.25;
+  font-weight: 700;
 }
 .stepBody {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.55;
   color: var(--v-ink-2);
   text-wrap: pretty;
@@ -803,18 +857,19 @@
 
 /* ================= Photo banner ================= */
 
+/* Nearly edge to edge, straight under the soft "Sådan virker det" band. */
 .bannerWrap {
   background: var(--v-white);
-  padding: 0 var(--gutter) var(--gutter);
+  padding: 0 14px var(--section-y);
 }
 .banner {
   position: relative;
-  max-width: 1280px;
-  height: min(560px, 70vw);
+  max-width: 1400px;
+  height: min(600px, 70vw);
   margin: 0 auto;
-  border-radius: 36px;
+  border-radius: 32px;
   overflow: hidden;
-  background: #181d1e;
+  background: #101415;
 }
 .bannerImage {
   object-fit: cover;
@@ -823,12 +878,12 @@
 .bannerShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(16, 20, 21, 0.78) 0%, rgba(16, 20, 21, 0.35) 55%, rgba(16, 20, 21, 0) 100%);
+  background: linear-gradient(0deg, rgba(16, 20, 21, 0.82) 0%, rgba(16, 20, 21, 0.2) 60%, rgba(16, 20, 21, 0) 100%);
 }
 .bannerText {
   position: relative;
   height: 100%;
-  max-width: 620px;
+  max-width: 720px;
   padding: 56px;
   display: flex;
   flex-direction: column;
@@ -838,17 +893,16 @@
 }
 .bannerTitle {
   margin: 0;
-  font-size: 54px;
-  line-height: 1.03;
-  letter-spacing: -0.04em;
+  font-size: 80px;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
   font-weight: 700;
-  text-wrap: balance;
 }
 .bannerBody {
   margin: 0;
   font-size: 17px;
-  line-height: 1.6;
-  color: #e1e7e5;
+  line-height: 1.5;
+  color: #d6dedc;
   text-wrap: pretty;
 }
 
@@ -861,19 +915,43 @@
 
 .trustBand {
   overflow: hidden;
-  background: var(--v-dark);
+  isolation: isolate;
+  background: var(--v-slate);
   color: var(--v-dark-text);
-  --section-y: 112px;
 }
-/* Sits behind the cards, not behind the text: the cards cover its middle and it shows around them. */
+/* Shapes behind the cards: a slate circle bottom right, a koral card at the top edge, an outlined mynte card bottom left. */
 .trustCircle {
   position: absolute;
-  right: max(-120px, calc((100% - 1400px) / 2));
-  bottom: -260px;
-  width: 640px;
-  height: 640px;
+  z-index: -1;
+  right: -220px;
+  bottom: -320px;
+  width: 720px;
+  height: 720px;
   border-radius: 50%;
-  background: var(--v-circle);
+  background: #262c2f;
+}
+.trustShape,
+.trustOutline {
+  position: absolute;
+  z-index: -1;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  pointer-events: none;
+}
+.trustShape {
+  right: 140px;
+  top: -70px;
+  width: 260px;
+  transform: rotate(8deg);
+  background: var(--v-coral);
+  opacity: 0.9;
+}
+.trustOutline {
+  left: -80px;
+  bottom: -60px;
+  width: 300px;
+  transform: rotate(-6deg);
+  border: 2px solid rgba(169, 220, 203, 0.28);
 }
 .trustBandGrid {
   list-style: none;
@@ -881,41 +959,43 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 .trustBandCard {
   min-width: 0;
-  background: var(--v-dark-card);
-  border: 1px solid var(--v-dark-rule);
-  border-radius: 20px;
-  padding: 26px;
+  background: var(--v-slate-card);
+  border: 1px solid var(--v-slate-rule);
+  border-radius: 16px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 .trustBandIcon {
   display: flex;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(169, 220, 203, 0.12);
-  color: var(--v-lime);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--v-lime);
+  color: var(--v-ink);
   align-items: center;
   justify-content: center;
-  margin-bottom: 6px;
+}
+.trustBandIconCoral {
+  background: var(--v-coral);
+  color: #fff;
 }
 .trustBandCardTitle {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.3;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 700;
 }
 .trustBandCardBody {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.55;
-  color: #9fa9a7;
+  color: var(--v-slate-text);
   text-wrap: pretty;
 }
 
@@ -924,22 +1004,19 @@
 .split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 72px;
+  gap: 64px;
   align-items: center;
 }
 .splitText {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
 }
 .splitIntro {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-}
-.splitIntro .h2 {
-  font-size: 48px;
+  gap: 18px;
 }
 .splitVisual {
   min-width: 0;
@@ -948,112 +1025,123 @@
   order: -1;
 }
 
-/* Rådighed: laptop + phone with real screenshots (same drawing as the Skole front page). */
-.devices {
-  position: relative;
-  width: 100%;
-  padding-bottom: 28px;
-}
-.devLaptop {
-  width: 88%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.devLid {
-  width: 100%;
-  background: #121718;
-  border-radius: 16px 16px 0 0;
-  padding: 10px 10px 14px;
-  box-shadow: 0 40px 80px -30px rgba(16, 20, 21, 0.45);
-}
-.devScreen {
-  width: 100%;
-  border-radius: 4px;
-  overflow: hidden;
-  background: #f0f3f2;
-}
-.devBase {
-  width: 112%;
-  height: 13px;
-  background: linear-gradient(180deg, #dce3e1, #a5afad);
-  border-radius: 0 0 14px 14px;
-  position: relative;
-}
-.devBase span {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 16%;
-  height: 5px;
-  background: #a0aaa8;
-  border-radius: 0 0 6px 6px;
-}
-.devPhone {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 26%;
-  min-width: 96px;
-  background: #121718;
-  border-radius: 26px;
-  padding: 6px;
-  box-shadow: 0 30px 60px -20px rgba(16, 20, 21, 0.55);
-}
-.devPhoneScreen {
-  aspect-ratio: 390 / 844;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #f0f3f2;
-}
-.devPhoneScreen img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* Deler du økonomi: photo with the screenshot overlapping its lower edge. */
+/* Deler du økonomi: a tall photo with a drawn "Hvem betaler hvad" card over its lower edge. */
 .sharePhotoWrap {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  padding-bottom: 80px;
 }
 .sharePhoto {
   position: relative;
-  height: 300px;
+  height: 420px;
   border-radius: 24px;
   overflow: hidden;
   background: #dce3e1;
 }
 .sharePhoto .photoCover {
-  object-position: center 24%;
+  object-position: center 30%;
 }
-.shareShot {
-  position: relative;
-  margin: -80px 0 0 32px;
+.shareCard {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
+  border-radius: 18px;
+  box-shadow: 0 30px 60px -20px rgba(16, 20, 21, 0.14);
+}
+.shareCardLabel {
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--v-ink-3);
+}
+/* A bar split between two people (also in the Deling card of Alle funktioner). */
+.splitBar {
+  display: flex;
+  height: 34px;
+  border-radius: 8px;
+  overflow: hidden;
+  font: 500 12px var(--font-mono);
+}
+.splitBar > span {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  white-space: nowrap;
+  background: var(--v-lime);
+  color: var(--v-ink);
+}
+.splitBar > span:first-child {
+  flex: none;
+  background: var(--v-ink);
+  color: #fff;
+}
+.splitBar > span:last-child {
+  flex: 1;
+}
+.shareCardNums {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.shareCardNums > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--v-ink-3);
+}
+.shareCardNums b {
+  font: 500 20px/1 var(--font-mono);
+  letter-spacing: -0.03em;
+  color: var(--v-ink);
+  white-space: nowrap;
+}
+.shareCardNums small {
+  font-size: 0.55em;
+  color: var(--v-ink-3);
 }
 
 /* ================= Citater ================= */
 
 .quotes {
   overflow: hidden;
+  isolation: isolate;
   background: var(--v-dark);
   color: var(--v-dark-text);
 }
 .quotesCircle {
   position: absolute;
-  bottom: -260px;
-  left: 50%;
-  width: 760px;
-  height: 760px;
-  margin-left: -60px;
+  z-index: -1;
+  left: -240px;
+  top: -280px;
+  width: 660px;
+  height: 660px;
   border-radius: 50%;
-  background: var(--v-circle);
+  background: var(--v-dark-2nd);
+}
+.quotesShape {
+  position: absolute;
+  z-index: -1;
+  right: -70px;
+  bottom: -90px;
+  width: 340px;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(-8deg);
+  background: var(--v-lime);
+  opacity: 0.9;
 }
 .quotesHead {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 14px;
 }
 .quotesFrom {
   display: flex;
@@ -1081,7 +1169,7 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 .quoteGrid li {
   display: flex;
@@ -1091,58 +1179,64 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  background: var(--v-white);
-  color: var(--v-ink);
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 30px 60px -24px rgba(8, 10, 11, 0.55);
+  gap: 22px;
+  background: var(--v-dark-2nd);
+  color: var(--v-dark-text);
+  border: 1px solid var(--v-dark-rule);
+  border-radius: 18px;
+  padding: 26px;
+}
+/* The opening quote mark, big and mynte, above the text. */
+.quoteOpen {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 0.6;
+  height: 18px;
+  color: var(--v-lime);
 }
 .quoteText {
   margin: 0;
-  font-size: 19px;
-  line-height: 1.55;
-  letter-spacing: -0.005em;
+  flex: 1;
+  font-size: 17px;
+  line-height: 1.5;
   text-wrap: pretty;
 }
 .quoteWho {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: auto;
-  padding-top: 18px;
-  border-top: 1px solid var(--v-rule-2);
+  padding-top: 16px;
+  border-top: 1px solid var(--v-dark-rule);
 }
 .quoteWho > span:last-child {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: 13.5px;
-  color: var(--v-ink-3);
+  font-size: 13px;
+  color: var(--v-dark-2);
 }
 .quoteWho b {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--v-ink);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--v-dark-text);
 }
 .quoteAvatar {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 44px;
+  background: var(--v-lime);
+  color: var(--v-ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 36px;
   text-align: center;
 }
 
 /* ================= Funktioner: light band (the hero's paper) with a sideways tour of white cards ================= */
 
 .featureBand {
-  background: var(--v-paper);
+  background: var(--v-white);
   color: var(--v-ink);
-  --section-y: 112px;
 }
 .tour {
   display: flex;
@@ -1196,22 +1290,21 @@
   display: none;
 }
 .tourCard {
-  flex: 0 0 calc((100% - 32px) / 3);
+  flex: 0 0 calc((100% - 28px) / 3);
   min-width: 0;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   background: var(--v-white);
   border: 1px solid var(--v-rule);
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
 }
 .tourVisual {
   position: relative;
-  height: 210px;
+  height: 220px;
   overflow: hidden;
   background: var(--v-stone);
-  border-bottom: 1px solid var(--v-rule);
 }
 .tourVisual .tourShot {
   width: 100%;
@@ -1219,94 +1312,296 @@
   object-fit: cover;
   object-position: left top;
 }
-.tourVisualIcon {
-  display: grid;
-  place-items: center;
-  background: var(--v-dark);
+.tourVisualSoft {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .tourIcon {
   display: grid;
   place-items: center;
-  width: 84px;
-  height: 84px;
-  border-radius: 24px;
-  background: rgba(169, 220, 203, 0.12);
-  color: var(--v-lime);
-}
-.tourText {
-  padding: 22px 24px 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.tourLabel {
-  font-size: 12px;
-}
-.tourText .trustBandCardBody {
-  color: var(--v-ink-2);
-}
-
-/* "Se alle funktioner": the classic list, folded away. */
-.allFeatures {
-  border-top: 1px solid var(--v-rule);
-  padding-top: 8px;
-}
-.allFeaturesToggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  cursor: pointer;
-  list-style: none;
-  font-size: 16px;
-  font-weight: 600;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: var(--v-lime);
   color: var(--v-ink);
-  border-radius: 8px;
 }
-.allFeaturesToggle::-webkit-details-marker {
-  display: none;
-}
-.allFeaturesToggle .faqPlus {
-  background: var(--v-white);
-  border: 1px solid var(--v-rule);
-}
-.allFeatures[open] .faqPlus {
-  transform: rotate(45deg);
-}
-.allHide,
-.allFeatures[open] .allShow {
-  display: none;
-}
-.allFeatures[open] .allHide {
-  display: inline;
-}
-.allGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 32px 28px;
-  padding: 20px 0 8px;
-}
-.allGroup {
-  min-width: 0;
+/* Drawn loans: a name, the end month and a mynte bar for how far it is paid. */
+.tourLoans {
+  width: 100%;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-.allTitle {
-  margin: 0;
+.tourLoans > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tourLoans > div > span {
+  display: flex;
+  justify-content: space-between;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+.tourLoans i {
+  font: 400 12px var(--font-mono);
+  font-style: normal;
+  color: var(--v-ink-3);
+}
+.tourLoans b {
+  display: block;
+  height: 6px;
+  border-radius: 6px;
+  background: var(--v-rule-2);
+}
+.tourLoans b span {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--v-lime);
+}
+.tourText {
+  padding: 18px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tourTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.tourBody {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--v-ink-2);
+  text-wrap: pretty;
+}
+
+/* ================= Alle funktioner: a mosaic of coloured cards on the mynte tint ================= */
+
+.allBand {
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--v-tint);
+}
+.allCircle {
+  position: absolute;
+  z-index: -1;
+  right: -180px;
+  top: -200px;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+}
+.allShape {
+  position: absolute;
+  z-index: -1;
+  left: -60px;
+  bottom: -80px;
+  width: 280px;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(9deg);
+  background: var(--v-coral);
+  opacity: 0.9;
+}
+.bento {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+/* Each card: overline, title, a line of text and a small picture at the bottom. Tones set the colours. */
+.bentoCard {
+  --b-bg: var(--v-white);
+  --b-text: var(--v-ink);
+  --b-mut: var(--v-ink-2);
+  --b-over: var(--v-ink-3);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 26px;
+  border-radius: 20px;
+  background: var(--b-bg);
+  color: var(--b-text);
+}
+.bentoWide {
+  grid-column: span 2;
+}
+.bentoWhite {
+  border: 1px solid var(--v-rule);
+}
+.bentoMint {
+  --b-bg: var(--v-lime);
+  --b-mut: #2b3836;
+  --b-over: #2b3836;
+}
+.bentoDeep {
+  --b-bg: var(--v-olive);
+  --b-text: #fff;
+  --b-mut: var(--v-deep-text);
+  --b-over: var(--v-deep-text);
+}
+.bentoInk {
+  --b-bg: var(--v-dark);
+  --b-text: var(--v-dark-text);
+  --b-mut: var(--v-dark-2);
+  --b-over: var(--v-dark-2);
+}
+.bentoCoral {
+  --b-bg: var(--v-coral);
+  --b-text: #fff;
+  --b-mut: var(--v-coral-soft);
+  --b-over: var(--v-coral-soft);
+}
+.bentoOver {
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--b-over);
+}
+.bentoTitle {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+.bentoBody {
+  margin: 0;
+  max-width: 460px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--b-mut);
+  text-wrap: pretty;
+}
+.bentoPic {
+  margin-top: auto;
+  padding-top: 10px;
+}
+/* Budgetposter: twelve months, the ones with a payment filled. */
+.bentoMonths {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 4px;
+}
+.bentoMonths > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font: 400 10px var(--font-mono);
+  color: #2b3836;
+}
+.bentoMonths i {
+  width: 100%;
+  height: 38px;
+  border-radius: 6px;
+  background: rgba(16, 20, 21, 0.12);
+}
+.bentoMonths i[data-pay="ink"] {
+  background: var(--v-ink);
+}
+.bentoMonths i[data-pay="deep"] {
+  background: var(--v-olive);
+}
+.bentoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bentoChips span {
+  font: 500 12px var(--font-mono);
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.bentoBig {
+  font: 500 30px/1 var(--font-mono);
+  letter-spacing: -0.03em;
   color: var(--v-olive);
 }
-.allList {
-  gap: 10px;
+.bentoRows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
 }
-.allList li {
-  font-size: 15px;
-  line-height: 1.45;
-  color: var(--v-ink-2);
+.bentoRows > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.bentoRows i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  color: var(--v-olive);
+}
+.bentoRows i[data-neg] {
+  color: var(--error);
+}
+.bentoPill {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 10px;
+  border: 1px solid currentColor;
+}
+.bentoPillFill {
+  border-color: var(--v-lime);
+  background: var(--v-lime);
+  color: var(--v-ink);
+  padding: 6px 12px;
+}
+.bentoScen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bentoScen span {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--v-ink);
+}
+.bentoScen span[data-on] {
+  background: var(--v-ink);
+  color: #fff;
+}
+.bentoTrack {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--v-rule-2);
+}
+.bentoTrack span {
+  display: block;
+  width: 72%;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--v-olive);
+}
+.bentoInk .splitBar {
+  height: 36px;
+  border-radius: 10px;
+}
+.bentoInk .splitBar > span:first-child {
+  background: var(--v-dark-text);
+  color: var(--v-ink);
 }
 
 /* ================= Pris og spørgsmål ================= */
@@ -1321,12 +1616,12 @@
   min-width: 0;
   background: var(--v-white);
   border: 1px solid var(--v-rule);
-  border-radius: 28px;
-  padding: 36px;
+  border-radius: 16px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  box-shadow: 0 30px 60px -30px rgba(16, 20, 21, 0.2);
+  gap: 16px;
+  box-shadow: 0 30px 60px -30px rgba(16, 20, 21, 0.14);
 }
 .priceHead {
   display: flex;
@@ -1334,12 +1629,13 @@
   align-items: center;
 }
 .priceTag {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--v-olive);
-  background: var(--v-lime-tone);
+  color: var(--v-ink-3);
+  background: #eef2f1;
   border-radius: 999px;
-  padding: 5px 12px;
+  padding: 3px 9px;
+  white-space: nowrap;
 }
 .planSwitch {
   display: grid;
@@ -1436,22 +1732,19 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 .faqTitle {
-  font-size: 44px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
+/* Every question is an outlined card; the open one is white. */
 .faqItem {
-  border: 1px solid transparent;
-  border-radius: 18px;
-  transition:
-    background-color 0.15s,
-    border-color 0.15s;
+  border: 1px solid var(--v-rule);
+  border-radius: 16px;
+  transition: background-color 0.15s;
 }
 .faqItem[open] {
   background: var(--v-white);
-  border-color: var(--v-rule);
 }
 .faqQ {
   display: flex;
@@ -1460,10 +1753,9 @@
   padding: 20px 22px;
   cursor: pointer;
   list-style: none;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 16px;
 }
 .faqQ::-webkit-details-marker {
   display: none;
@@ -1499,90 +1791,181 @@
 /* ================= Afsluttende opfordring ================= */
 
 .ctaWrap {
-  padding: var(--gutter) var(--gutter) 0;
+  padding: 0 14px;
 }
-/* A full lime band (the complementary colour, like Skole's solgul closing) with midnight text; it stands still – no cards,
-   circles or reveal. */
+/* A koral band with white text and calm shapes (a light circle, a mynte card, two outlines). It stands still – no
+   motion and no reveal (user's wish). */
 .cta {
-  max-width: 1280px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 1200px;
   margin: 0 auto;
+  background: var(--v-coral);
+  color: #fff;
+  border-radius: 32px;
+}
+.ctaShapes span {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+.ctaShapes span:nth-child(1) {
+  left: -160px;
+  top: -220px;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+.ctaShapes span:nth-child(2) {
+  right: -40px;
+  bottom: -70px;
+  width: 300px;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(-10deg);
   background: var(--v-lime);
-  color: var(--v-ink);
-  border-radius: 36px;
+}
+.ctaShapes span:nth-child(3) {
+  right: 150px;
+  bottom: 40px;
+  width: 150px;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(12deg);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+}
+.ctaShapes span:nth-child(4) {
+  left: 12%;
+  bottom: -50px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
 }
 .ctaInner {
   position: relative;
-  padding: 112px var(--gutter);
+  padding: 80px var(--gutter);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
   text-align: center;
 }
 .ctaTitle {
   margin: 0;
   max-width: 820px;
   font-size: 58px;
-  line-height: 1.03;
-  letter-spacing: -0.04em;
+  line-height: 1;
+  letter-spacing: -0.045em;
   font-weight: 700;
   text-wrap: balance;
 }
 .ctaLead {
-  margin: -8px 0 0;
-  font-size: 26px;
-  line-height: 1.25;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.3;
   font-weight: 600;
-  letter-spacing: -0.02em;
 }
 .ctaBody {
   margin: 0;
-  max-width: 560px;
-  font-size: 18px;
-  line-height: 1.6;
-  color: var(--v-ink-2);
+  max-width: 640px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--v-coral-soft);
 }
 .cta .label {
-  color: var(--v-ink-2);
+  color: var(--v-coral-soft);
 }
 .cta .input {
-  border-color: var(--v-ink);
+  border-color: #fff;
+}
+.cta .error {
+  color: #fff;
+}
+.cta :focus-visible {
+  outline-color: #fff;
 }
 .ctaForm {
   width: 100%;
   max-width: 560px;
-  padding-top: 12px;
+  padding-top: 8px;
   text-align: left;
 }
 
 /* ================= Erhverv teaser (ContentSections.tsx BusinessTeaser) ================= */
 
 .bizWrap {
-  padding: 0 var(--gutter) 64px;
+  padding: 0 14px;
 }
 .biz {
-  max-width: var(--content);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 36px 40px;
+  padding: 56px 44px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 40px;
   align-items: center;
   background: var(--v-dark);
   color: var(--v-dark-text);
-  border-radius: 28px;
+  border-radius: 32px;
+}
+.bizShapes,
+.ctaShapes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.bizShapes span {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+.bizShapes span:nth-child(1) {
+  left: -140px;
+  bottom: -220px;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  background: var(--v-dark-2nd);
+}
+.bizShapes span:nth-child(2) {
+  right: -50px;
+  top: -60px;
+  width: 220px;
+  aspect-ratio: 1.55;
+  border-radius: 18% / 26%;
+  transform: rotate(10deg);
+  background: var(--v-lime);
+  opacity: 0.85;
 }
 .bizText {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
+}
+/* Koral pill above a title (the Erhverv teaser). */
+.pill {
+  align-self: flex-start;
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--v-coral);
+  border-radius: 999px;
+  padding: 5px 12px;
 }
 .bizTitle {
   margin: 0;
-  font-size: 30px;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
+  font-size: 48px;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
   font-weight: 700;
   text-wrap: balance;
 }
@@ -1612,24 +1995,24 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 .bizList li {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 14px 18px;
+  gap: 4px;
+  padding: 16px 18px;
   background: var(--v-dark-card);
   border: 1px solid var(--v-dark-rule);
-  border-radius: 16px;
-  font-size: 14.5px;
+  border-radius: 14px;
+  font-size: 14px;
   line-height: 1.45;
   color: var(--v-dark-2);
 }
 .bizList b {
-  font-size: 15.5px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--v-dark-text);
 }
 @media (max-width: 1019.98px) {
@@ -1643,18 +2026,18 @@
     padding-bottom: 40px;
   }
   .biz {
-    padding: 24px 20px;
-    border-radius: 22px;
+    padding: 32px 20px;
+    border-radius: 24px;
   }
   .bizTitle {
-    font-size: 26px;
+    font-size: 32px;
   }
 }
 
 /* ================= Footer ================= */
 
 .footer {
-  padding: 56px var(--gutter) 64px;
+  padding: 40px var(--gutter) 40px;
 }
 .footerInner {
   max-width: var(--content);
@@ -1662,13 +2045,20 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px 32px;
+  gap: 14px 28px;
+}
+.footerTagline {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--v-ink);
 }
 .footerNav {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 24px;
+  margin-left: auto;
   font-size: 14px;
+  font-weight: 500;
 }
 .footerNav a {
   color: var(--v-ink-3);
@@ -1681,8 +2071,8 @@
   text-underline-offset: 4px;
 }
 .footerCompany {
-  margin-left: auto;
-  font-size: 14px;
+  flex-basis: 100%;
+  font-size: 13px;
   color: var(--v-ink-3);
 }
 
@@ -1708,17 +2098,17 @@
 /* ================= Tablet: one column below 1020px ================= */
 
 @media (max-width: 1279.98px) {
-  .h1 {
-    font-size: 62px;
-  }
   .h2,
-  .splitIntro .h2 {
+  .bizTitle {
     font-size: 40px;
+  }
+  .bannerTitle {
+    font-size: 64px;
   }
   .trustBandGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .allGrid {
+  .bento {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -1729,12 +2119,23 @@
   }
   .heroInner {
     grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-    padding-top: 56px;
-    padding-bottom: 72px;
+    gap: 48px;
+    padding-top: calc(var(--header-h, 76px) + 48px);
+    padding-bottom: 0;
   }
   .heroText {
     max-width: 640px;
+  }
+  /* Stacked, the card sits at the bottom of the hero and runs out of it. */
+  .heroVisual {
+    max-width: 620px;
+    margin-bottom: -40px;
+  }
+  .heroApp {
+    transform: none;
+  }
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .sectionHead,
   .split,
@@ -1746,10 +2147,7 @@
     gap: 16px;
   }
   .tourCard {
-    flex-basis: calc((100% - 16px) / 2);
-  }
-  .allGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex-basis: calc((100% - 14px) / 2);
   }
   .headBody {
     max-width: 620px;
@@ -1768,10 +2166,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .bannerTitle {
-    font-size: 44px;
+    font-size: 52px;
   }
   .bannerText {
     padding: 44px;
+  }
+  .appPair {
+    max-width: 620px;
   }
   .priceCard {
     max-width: 560px;
@@ -1786,16 +2187,15 @@
 @media (max-width: 767.98px) {
   .page {
     --gutter: 20px;
-    --section-y: 64px;
+    --section-y: 72px;
+    --header-h: 64px;
   }
 
   .header {
     padding: 8px 8px 0;
   }
   .headerInner {
-    height: 64px;
     padding: 0 12px 0 20px;
-    border-radius: 24px 24px 0 0;
     gap: 12px;
   }
   .menuPanel {
@@ -1813,44 +2213,54 @@
     padding: 0 8px;
   }
   .heroInner {
-    padding: 36px 20px 48px;
-    gap: 36px;
-    border-radius: 0 0 24px 24px;
+    padding: calc(var(--header-h) + 32px) 20px 0;
+    gap: 40px;
+    border-radius: 24px;
   }
   .heroText {
-    gap: 22px;
+    gap: 20px;
   }
   .h1 {
-    font-size: 44px;
-    line-height: 1.02;
-  }
-  .lead {
-    font-size: 17px;
+    font-size: 46px;
   }
   .heroActions {
     flex-direction: column;
     align-items: stretch;
-    gap: 6px;
+    gap: 8px;
   }
-  .heroButton {
+  .heroButton,
+  .heroButtonGhost {
     justify-content: center;
   }
-  .heroNote {
-    max-width: none;
-    margin-top: 6px;
-    text-align: center;
-  }
   .heroVisual {
-    display: none;
+    margin-bottom: -60px;
   }
-  .heroMobile {
-    display: block;
+  .appSentence {
+    font-size: 17px;
+  }
+  .appFigures {
+    gap: 6px;
+  }
+  .appFigure {
+    padding: 8px;
+  }
+  .appFigure b {
+    font-size: 15px;
+  }
+  .appTabs {
+    gap: 8px;
+  }
+  .appPair {
+    padding: 0 16px 48px 0;
+  }
+  .appPhone {
+    width: 132px;
   }
 
   .h2,
-  .splitIntro .h2 {
-    font-size: 34px;
-    line-height: 1.08;
+  .bizTitle {
+    font-size: 32px;
+    line-height: 1.06;
   }
   .sectionInner {
     gap: 32px;
@@ -1866,51 +2276,51 @@
 
   .step {
     padding: 22px;
-    border-radius: 20px;
-  }
-  .stepIcon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
   }
   .stepNum {
-    font-size: 32px;
-  }
-  .stepTitle {
-    font-size: 19px;
-  }
-  .stepBody {
-    font-size: 15px;
+    margin-top: -80px;
+    font-size: 112px;
   }
 
   .bannerWrap {
-    padding: 0 8px 8px;
+    padding: 0 8px var(--section-y);
   }
   .banner {
-    height: 440px;
+    height: 460px;
     border-radius: 24px;
-  }
-  .bannerShade {
-    background: linear-gradient(180deg, rgba(16, 20, 21, 0) 25%, rgba(16, 20, 21, 0.8) 100%);
   }
   .bannerText {
     padding: 24px;
     gap: 10px;
   }
   .bannerTitle {
-    font-size: 34px;
-    line-height: 1.08;
+    font-size: 44px;
   }
   .bannerBody {
     font-size: 16px;
   }
 
   .sharePhoto {
-    height: 200px;
-    border-radius: 16px;
+    height: 280px;
+    border-radius: 18px;
   }
-  .shareShot {
-    margin: -48px 0 0 16px;
+  .shareCard {
+    left: 14px;
+    right: 14px;
+    padding: 16px;
+  }
+  .bento {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bentoWide {
+    grid-column: auto;
+  }
+  .bentoCard {
+    padding: 22px;
+  }
+  .trustShape {
+    right: -60px;
+    width: 180px;
   }
 
   /* The tour runs edge to edge on a phone; swipe instead of the arrows. */
@@ -1933,11 +2343,6 @@
   }
   .tourText {
     padding: 18px 20px 22px;
-    gap: 8px;
-  }
-  .allGrid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
   }
 
   .trustCircle {
@@ -1981,19 +2386,12 @@
   .splitList {
     order: 2;
   }
-  .shotFrame {
-    border-radius: 14px;
-  }
 
   .quotesCircle {
     width: 460px;
     height: 460px;
     bottom: -200px;
     margin-left: -100px;
-  }
-  .quoteMark {
-    font-size: 72px;
-    height: 34px;
   }
   .quoteCard {
     padding: 24px;
@@ -2194,9 +2592,22 @@
   }
 }
 
+@keyframes sweep {
+  from {
+    background-size: 0% 0.34em;
+  }
+  to {
+    background-size: 100% 0.34em;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .heroText > .h1 {
     animation: wipeUp 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s both;
+  }
+  /* The mynte band under "overblik." is drawn from the left once the title is up. */
+  .accent {
+    animation: sweep 1.1s cubic-bezier(0.6, 0, 0.2, 1) 0.6s both;
   }
   .trustCircle,
   .quotesCircle {
@@ -2217,16 +2628,6 @@
   .page :global([data-reveal-state="pending"]) :is(.h2, .bannerTitle) {
     clip-path: inset(0 -6% 100% -6%);
     transform: translateY(0.35em);
-  }
-  /* Step icons pop in after their card. */
-  .page :global([data-reveal-state]) .stepIcon {
-    transition:
-      transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--reveal-delay, 0ms) + 260ms),
-      opacity 0.3s ease-out calc(var(--reveal-delay, 0ms) + 260ms);
-  }
-  .page :global([data-reveal-state="pending"]) .stepIcon {
-    opacity: 0;
-    transform: scale(0.4) rotate(-14deg);
   }
   @supports (animation-timeline: view()) {
     .bannerImage {
@@ -2254,27 +2655,6 @@
     opacity: 1;
   }
 }
-/* The next page fades in over the last one and settles from a hair larger. */
-@keyframes shotIn {
-  from {
-    opacity: 0;
-    transform: scale(1.02);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes noteIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 
 @media (prefers-reduced-motion: no-preference) {
   .heroText > * {
@@ -2297,15 +2677,6 @@
   }
   .heroVisual {
     animation: fadeIn 0.9s ease-out 0.2s both;
-  }
-  .heroMobile {
-    animation: riseIn 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
-  }
-  .showSlide[data-on="true"] {
-    animation: shotIn 1.1s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-  }
-  .showNote {
-    animation: noteIn 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) 0.3s both;
   }
   .page :global([data-reveal-state]) {
     transition:
@@ -2341,7 +2712,7 @@
 .page:has(:global(#bp-intro:is([data-state="shrink"], [data-state="land"]))) .brand {
   visibility: hidden;
 }
-.page:has(:global(#bp-intro[data-state="play"])) :is(.heroText > *, .accent, .heroVisual, .heroMobile) {
+.page:has(:global(#bp-intro[data-state="play"])) :is(.heroText > *, .accent, .heroVisual) {
   animation-play-state: paused;
 }
 @keyframes introBrandBack {

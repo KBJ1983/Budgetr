@@ -1,44 +1,61 @@
 import Link from "next/link";
 import styles from "./landing.module.css";
-import { HeroPhone, HeroShowcase } from "./Shots";
-import { ArrowRightIcon } from "./icons";
+import { AppCard } from "./AppCard";
 import { LogoIntro } from "./LogoIntro";
 
 /**
- * Light hero inside the rounded top card (layout "Forside v2", light treatment from docs/design/midnat-forside.html);
- * the header sits in the same card, above it. The accent part of the title gets the lime highlight underline.
+ * The hero at the bottom of the mynte-tint top card (design "Mynte og is komplet"); the header sits in the same card,
+ * above it. The title's second line is thin, with a mynte band under "overblik."; the "29 min · 29 kr" badge is koral.
+ * On the right a drawn, dark picture of the Overblik (AppCard).
  */
 export function Hero() {
   return (
     <section id="top" className={styles.hero} aria-labelledby="hero-title">
       <div className={styles.heroInner}>
+        <HeroShapes />
         <LogoIntro />
         <div className={styles.heroText}>
-          <p className={styles.tagline}>Dit overblik. Dine drømme.</p>
+          <p className={styles.tagline}>
+            Dit overblik. Dine drømme.
+            <span className={styles.taglineRule} aria-hidden="true" />
+            <span className={styles.badge}>29 min · 29 kr</span>
+          </p>
           <h1 id="hero-title" className={styles.h1}>
-            Hele din økonomi. <span className={styles.accent}>Ét roligt overblik.</span>
+            Hele din økonomi.
+            <br />
+            <span className={styles.thin}>Ét roligt </span>
+            <span className={styles.accent}>overblik.</span>
           </h1>
           <p className={styles.lead}>
             Saml løn, faste udgifter, lån og opsparing ét sted. Se hvad du har til rådighed, hvad du kan spare op, og
-            hvad der sker, hvis du flytter, skifter job eller betaler et lån ud. Bor I flere sammen, deler I budgettet og
-            fordeler udgifterne fair.
+            hvad der sker, hvis du flytter, skifter job eller låner. Bor I flere sammen, deler I budgettet og fordeler
+            udgifterne fair.
           </p>
           <div id="opret" className={styles.heroActions}>
             <Link href="/opret" className={styles.heroButton}>
-              Prøv gratis i 30 dage <ArrowRightIcon size={16} />
+              Prøv gratis i 30 dage
             </Link>
-            <p className={styles.heroNote}>Intet betalingskort nu. Det skal først bruges, når de 30 dage er gået.</p>
+            <a href="#film" className={styles.heroButtonGhost}>
+              Se hvordan
+            </a>
           </div>
+          <p className={styles.heroNote}>Intet betalingskort, før de 30 dage er gået.</p>
         </div>
         <div className={styles.heroVisual}>
-          <div className={styles.heroDots} aria-hidden="true" />
-          {/* Nothing moves in the hero (the logo intro is the only motion); no floating cards or pills around the window. */}
-          <HeroShowcase />
-        </div>
-        <div className={styles.heroMobile}>
-          <HeroPhone />
+          <AppCard dark className={styles.heroApp} />
         </div>
       </div>
     </section>
+  );
+}
+
+/** The top card's decorative shapes (CSS in .heroShapes). Also used by the Erhverv hero. */
+export function HeroShapes() {
+  return (
+    <div className={styles.heroShapes} aria-hidden="true">
+      <span />
+      <span />
+      <span />
+    </div>
   );
 }

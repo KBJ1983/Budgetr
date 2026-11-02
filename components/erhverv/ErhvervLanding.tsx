@@ -5,6 +5,7 @@ import styles from "@/components/landing/landing.module.css";
 import { Film } from "@/components/Film";
 import { CheckList } from "@/components/landing/CheckList";
 import { Features } from "@/components/landing/Features";
+import { HeroShapes } from "@/components/landing/Hero";
 import { InPageLinks } from "@/components/landing/InPageLinks";
 import { ScrollReveal } from "@/components/landing/ScrollReveal";
 import { SiteFooter } from "@/components/landing/SiteFooter";
@@ -61,6 +62,7 @@ function Hero() {
   return (
     <section id="top" className={styles.hero} aria-labelledby="hero-title">
       <div className={styles.heroInner}>
+        <HeroShapes />
         <div className={styles.heroText}>
           <p className={styles.tagline}>budgetpro Erhverv</p>
           <h1 id="hero-title" className={`${styles.h1} ${e.heroTitle}`}>
@@ -227,15 +229,16 @@ function Others() {
   );
 }
 
-const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string }[] = [
+const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; coral?: boolean }[] = [
   {
     icon: <LockIcon size={20} strokeWidth={1.8} />,
     title: "I ser aldrig kundens budget",
     body: "Som virksomhed ser I kun de e-mails, I har sendt til, og om adgangen er i brug. Ingen tal og ingen budgetter.",
   },
   {
-    icon: <ShieldIcon size={20} strokeWidth={1.8} />,
+    icon: <ShieldIcon size={18} strokeWidth={1.8} />,
     title: "Ingen kan se koderne",
+    coral: true,
     body: "Koden står kun i mailen til kunden. Hverken jeres administratorer eller budgetpro kan se den.",
   },
   {
@@ -254,12 +257,12 @@ function Trust() {
   return (
     <section id="tryghed" className={`${styles.section} ${styles.trustBand}`} aria-labelledby="tryghed-title">
       <div className={styles.trustCircle} aria-hidden="true" />
+      <div className={styles.trustShape} aria-hidden="true" />
+      <div className={styles.trustOutline} aria-hidden="true" />
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>
-              <ShieldIcon size={15} strokeWidth={2} /> Tryghed
-            </span>
+            <span className={`${styles.eyebrow} ${styles.eyebrowCoral}`}>Tryghed</span>
             <h2 id="tryghed-title" className={`${styles.h2} ${styles.h2Light}`}>
               I giver adgangen. Kunden bestemmer over tallene.
             </h2>
@@ -271,7 +274,7 @@ function Trust() {
         <SwipeList className={styles.trustBandGrid} label="Tryghed" tone="dark">
           {TRUST_CARDS.map((card) => (
             <li key={card.title} className={styles.trustBandCard}>
-              <span className={styles.trustBandIcon} aria-hidden="true">
+              <span className={`${styles.trustBandIcon} ${card.coral ? styles.trustBandIconCoral : ""}`} aria-hidden="true">
                 {card.icon}
               </span>
               <h3 className={styles.trustBandCardTitle}>{card.title}</h3>

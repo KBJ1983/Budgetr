@@ -10,7 +10,9 @@ import { ArrowRightIcon } from "./icons";
 export type TourVisual =
   | { kind: "photo"; src: string; alt: string; position: string }
   | { kind: "shot"; name: string; alt: string; width: number; height: number }
-  | { kind: "icon"; icon: ReactNode };
+  | { kind: "icon"; icon: ReactNode }
+  /** Drawn loan bars: name, end month and how far it is paid down. */
+  | { kind: "loans"; loans: readonly { name: string; end: string; paid: number }[] };
 
 export type TourSlide = { label: string; title: string; body: string; visual: TourVisual };
 
@@ -19,6 +21,21 @@ function Visual({ v }: { v: TourVisual }) {
     return <Image src={v.src} alt={v.alt} fill sizes="(max-width: 767px) 85vw, 380px" className={styles.photoCover} style={{ objectPosition: v.position }} />;
   if (v.kind === "shot")
     return <ThemeShot name={v.name} alt={v.alt} width={v.width} height={v.height} sizes="(max-width: 767px) 85vw, 380px" className={styles.tourShot} />;
+  if (v.kind === "loans")
+    return (
+      <div className={styles.tourLoans} aria-hidden="true">
+        {v.loans.map((l) => (
+          <div key={l.name}>
+            <span>
+              {l.name} <i>{l.end}</i>
+            </span>
+            <b>
+              <span style={{ width: `${l.paid}%` }} />
+            </b>
+          </div>
+        ))}
+      </div>
+    );
   return (
     <span className={styles.tourIcon} aria-hidden="true">
       {v.icon}
@@ -79,13 +96,13 @@ export function FeatureTour({ slides }: { slides: readonly TourSlide[] }) {
       <ul ref={track} className={styles.tourTrack} aria-label="Funktioner" tabIndex={0}>
         {slides.map((s) => (
           <li key={s.title} className={styles.tourCard}>
-            <div className={`${styles.tourVisual} ${s.visual.kind === "icon" ? styles.tourVisualIcon : ""}`}>
+            <div className={`${styles.tourVisual} ${s.visual.kind === "icon" || s.visual.kind === "loans" ? styles.tourVisualSoft : ""}`}>
               <Visual v={s.visual} />
             </div>
             <div className={styles.tourText}>
               <span className={`${styles.eyebrow} ${styles.tourLabel}`}>{s.label}</span>
-              <h3 className={styles.trustBandCardTitle}>{s.title}</h3>
-              <p className={styles.trustBandCardBody}>{s.body}</p>
+              <h3 className={styles.tourTitle}>{s.title}</h3>
+              <p className={styles.tourBody}>{s.body}</p>
             </div>
           </li>
         ))}

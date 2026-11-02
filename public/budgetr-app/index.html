@@ -44,11 +44,14 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* budgetpro palette ("Mynte og is", Oct 2026, docs/design/MYNTE.md): light grey surfaces, midnight ink and buttons,
-     olive accent (--pine keeps its old name), lime for bars and badges. Keep in step with the landing palette. */
-  --paper:#F0F3F2; --card:#FFFFFF; --ink:#101415; --ink2:#56615F; --ink3:#56615F; --rule:#DCE3E1; --rule2:#C9D2D0; --band:#E4EAE8;
+  /* budgetpro palette ("Mynte og is", Nov 2026, docs/design/MYNTE.md + the design "Mynte og is komplet"): a light
+     mint-grey page, white cards, blæk ink and buttons, dyb mynte accent (--pine keeps its old name), mynte for bars and
+     badges, a red underline for the open page (--red). --deep is the main key-figure tile, --grp the group bands on
+     Poster. Keep in step with the landing palette. */
+  --paper:#ECF1EF; --card:#FFFFFF; --ink:#101415; --ink2:#56615F; --ink3:#56615F; --rule:#DCE3E1; --rule2:#C9D2D0; --band:#EEF2F1;
   --pine:#2E6E5B; --pine-bg:#E3F2EC; --pine-ink:#275C4C; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#101415; --ochre-bg:#EEF2F1; --ochre-rule:#101415; --warnline:#101415;
-  --hero-sub:#99A5A3; --on-pine:#FFFFFF; --btn:#101415; --btn-ink:#FFFFFF; --barud:#99A5A3; --lime:#A9DCCB; --lime-bar:#A9DCCB;
+  --hero-sub:#99A5A3; --on-pine:#FFFFFF; --btn:#101415; --btn-ink:#FFFFFF; --barud:#C9D2D0; --lime:#A9DCCB; --lime-bar:#A9DCCB;
+  --red:#A8473C; --deep:#2E6E5B; --deepm:#CFE3DC; --grp:#DDF0E8; --track:#E4EAE8;
   --mk1:#4F8F7A; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --font:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
   --bar:#C9D2D0; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4A5A70; --plum-bg:#E9ECF1;
@@ -56,11 +59,11 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#101415; --card:#181D1E; --ink:#ECF1F0; --ink2:#99A5A3; --ink3:#7F8B89; --rule:#283031; --rule2:#3A4446; --band:#20272A;
-  --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5553; --bar:#3A4446; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
+  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --red:#D9705F; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
+  --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#101415; --card:#181D1E; --ink:#ECF1F0; --ink2:#99A5A3; --ink3:#7F8B89; --rule:#283031; --rule2:#3A4446; --band:#20272A;
-  --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5553; --bar:#3A4446; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
+  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --red:#D9705F; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
+  --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--font)}
@@ -964,6 +967,110 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .hfreq .avg{position:absolute;left:0;right:0;border-top:2px dashed var(--pine)}
 .hfreq .avgl{position:absolute;right:0;font:500 12px var(--font);color:var(--pine);background:var(--band);padding:0 4px}
 .hfreqm{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;font-size:12px;color:var(--ink2);text-align:center}
+/* ---------- Design "Mynte og is komplet" (Nov 2026): the app bar on the page colour with round icon buttons, the
+   pages as underline tabs (the open one in red), section heads as a line with the heading and its hint, pill buttons,
+   key figures as tiles (the main one in dyb mynte, the next in mynte), amounts in Geist Mono. The phone rules below
+   still win on small screens. ---------- */
+.appbar-in,.wrap{max-width:1180px}
+.appbar{background:var(--paper)}
+.appbar .logo .lk-cut{stroke:var(--paper)} .appbar .logo .lk-slot{fill:var(--paper)}
+.appbar-in{height:64px}
+.appbar .status{font:500 13px var(--font)}
+.appbar .status::before{width:7px;height:7px;background:var(--lime)}
+.tdbtn{width:34px;height:34px;border-radius:50%!important}
+.tdbtn .tdn{top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--red);color:#FFFFFF;font:700 10px/16px var(--font)}
+.uchip{padding:0!important;border:0!important}
+.uchip .av{min-width:34px;height:34px;border-radius:17px}
+.uchip .caret{display:none}
+.navrow{min-height:0;gap:8px 12px!important}
+.navrow .tabs{align-self:stretch;gap:24px;margin:0!important;padding:0;background:transparent;border:0!important;border-radius:0}
+.navrow .tabs button{min-height:0;padding:16px 0 14px!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0;background:transparent;font:600 14px var(--font)!important;color:var(--ink2)}
+.navrow .tabs button:hover{color:var(--ink);background:transparent}
+.navrow .tabs button[aria-selected="true"]{background:transparent;color:var(--ink);border-bottom-color:var(--red)!important}
+.navrow .tools{align-self:center;padding:10px 0!important;gap:8px}
+.scnbtn{font:500 13px var(--font)!important;padding:8px 12px!important;border-radius:10px!important}
+.scnbtn #scnName{font-weight:700}
+#btnNew{padding:9px 16px!important;font:600 13px var(--font)!important;border-radius:999px}
+button{border-radius:999px}
+button.primary,button.danger,.dlgfoot button{font-weight:600}
+.psrow button,.catrow button,.acctedit button,.gxrow button{border-radius:8px}
+.tbtn{border-radius:999px!important;padding:8px 15px!important;font:600 13px var(--font)!important;color:var(--ink)!important;background:transparent!important}
+.hero{padding:44px 0 0}
+.hero p{font:400 clamp(28px,3.2vw,40px)/1.22 var(--font);letter-spacing:-.03em;max-width:900px}
+.hero b{font-weight:700}
+.hero small{font-size:13px}
+.hero small.hbar{margin-top:14px;padding:4px 12px 4px 26px;border:0;border-radius:999px;background:var(--band);color:var(--ink2);font:500 12.5px/1.5 var(--font)}
+.hero small.hbar::before{left:11px;top:calc(4px + .75em - 3px);width:6px;height:6px}
+.mcheck{margin:14px 0 0;padding:16px 18px;border:1px solid var(--rule);border-radius:14px;background:var(--band)}
+.mcheck h2{font-size:15px;font-weight:700}
+.mcheck p,.mcheck ul{font-size:14px}
+#app>section,#app>.tflow{padding:36px 0 0}
+#app>section>.sechead,#app>section>h2{margin-bottom:14px;padding:28px 0 0;background:transparent;border:0;border-top:1px solid var(--rule);border-radius:0;align-items:flex-end}
+#app>section:first-child>.sechead,#app>section:first-child>h2{border-top:0;padding-top:8px}
+#app>section>.sechead h2,#app>section>h2{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.plan svg{background:var(--card);border:1px solid var(--rule);border-radius:16px}
+.verdict{border-radius:12px}
+.verdict.bad{background:var(--card);border:1px solid var(--brick);padding:12px 16px;font-weight:700}
+.psrow button{color:var(--ink2);border-color:var(--rule)}
+#app>section>.sechead .hint{font-size:14px;line-height:1.5}
+.helplink{font-size:14px!important}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.kpi{border-radius:14px;padding:16px;gap:8px}
+.kpi span{font-size:13px}
+.kpi b{font:500 24px var(--mono);letter-spacing:-.03em}
+.kpi small{font-size:12px;line-height:1.4}
+.kpi.hero2{background:var(--deep);border-color:var(--deep)}
+.kpi.hero2 span,.kpi.hero2 small{color:var(--deepm)}
+.kpi.hero2 b{color:#FFFFFF;font-weight:500}
+.kpi.hero2+.kpi:not(.bad){background:var(--lime);border-color:var(--lime)}
+.kpi.hero2+.kpi:not(.bad) span,.kpi.hero2+.kpi:not(.bad) b{color:#101415}
+.kpi.hero2+.kpi:not(.bad) small{color:#2B3836}
+.kpi.good{background:var(--card);border-color:var(--rule)}
+.kpi.good b,.kpi.good span{color:var(--ink)} .kpi.good small{color:var(--ink2)}
+.kpi.bad{background:var(--card);border-color:var(--brick)}
+details.acctd,.tcard,.acct{border-radius:12px}
+details.acctd>summary{min-height:52px;padding:0 18px}
+details.acctd>summary h3{font-size:15px!important;font-weight:700}
+details.acctd>summary .num{font-size:13px!important}
+details.acctd>summary:hover{background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.asum{font-size:13px;font-weight:600}
+.asum .io{font:500 13px var(--mono);color:var(--ink2)}
+.asum .bad{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--brick);color:var(--btn-ink);font-size:12px}
+.people{gap:12px}
+.person{border-radius:16px;padding:20px}
+.person h3{font-size:17px;font-weight:700}
+.person .big{color:var(--pine)}
+.psrow{padding:10px 12px;border-radius:10px;background:transparent}
+.goal{border-radius:16px}
+.ghead h3{font-weight:700}
+.tablewrap{border-radius:16px}
+th{background:var(--band);font-size:13px;padding:12px}
+td.r{font-family:var(--mono);font-size:14px}
+tr.grp td{background:var(--grp)!important}
+tr.grp.out td{color:var(--ink)}
+tbody tr.grp:not(:first-child) td{border-top-color:var(--card)}
+.badge:not(.chk){border-radius:999px;padding:2px 9px}
+.badge.mute{background:var(--band)}
+.dev{border-radius:999px;padding:2px 9px}
+.filters select,.filters input,.sortbar select{border-radius:10px;padding:10px 12px;font-size:14px;background:var(--card)}
+.chip{border-radius:999px}
+.loanbar{background:var(--track)}
+dialog{border-radius:22px;box-shadow:0 40px 100px -20px rgba(0,0,0,.5)}
+dialog form{padding:24px 28px}
+.field label{font-size:12.5px;font-weight:500}
+.field input,.field select,.field textarea{border-color:transparent;background:var(--paper);border-radius:10px;padding:10px 12px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink2)}
+.preview{border-radius:10px;font-family:var(--mono)}
+.dlgfoot{border-top:1px solid var(--rule);padding-top:18px}
+dialog h2,.sethead h2{font-weight:700}
+.personedit input{background:var(--paper);border-color:transparent;border-radius:10px}
+.setnav{background:transparent}
+.setnav button{border-radius:10px}
+.setnav button[aria-current="page"]{background:var(--band)}
+.setnav button b{font-weight:700;font-size:14px}
+.setsec h3{font-weight:700;letter-spacing:-.02em}
+.expmenu{border-radius:14px}
+.dftbar{border-radius:14px}
 @media (max-width:760px){dialog.howdlg{width:100vw;height:100vh;max-height:100vh;border-radius:0}.howwrap{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.hownav{border-right:0;border-bottom:1px solid var(--rule);padding:12px 12px 8px}.hownav h2{padding:0 6px 8px;font-size:18px}#helpNav{flex-direction:row;overflow-x:auto;scrollbar-width:none}#helpNav a{white-space:nowrap;padding:6px 10px}.howtop{position:absolute;top:8px;right:8px;padding:0}.howbody{padding:16px 16px 60px;gap:28px}.hsec h3{font-size:21px}.hudl{grid-template-columns:minmax(0,1fr)}.hwf>div{grid-template-columns:minmax(0,1fr) 90px}.hwf .tr{grid-column:1/-1;grid-row:2}.hpanel{padding:16px}}
 @media (max-width:760px){.appbar .status{font-size:0;gap:0}.tabs button{min-height:52px;font-size:14px!important;padding:0 10px!important}.navrow{min-height:0}.hero{padding-top:32px}#app>section{padding-top:40px}#app>section>.sechead,#app>section>h2{padding:16px 18px}#app>section>.sechead h2,#app>section>h2{font-size:19px}.person{padding:20px}.person .big{font-size:30px}.kpi b{font-size:21px}#userMenu{width:min(320px,calc(100vw - 24px))}}
 /* Phones. Inputs at 16px, so iOS doesn't zoom in on focus. A table that is wider than the screen shows a shadow
@@ -1103,6 +1210,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   #app>section .kpi.hero2{grid-column:1/-1}
   #app>section .kpi.good{background:var(--pine-bg)}
   #app>section .kpi.bad{background:var(--brick-bg)}
+  #app>section .kpi.hero2+.kpi:not(.bad){background:var(--lime)}
   #app>section .kpi b{font-size:17px!important;overflow-wrap:anywhere}
   #app>section .kpi.hero2 b{font-size:22px!important}
   #app>section .kpi small{font-size:11.5px}

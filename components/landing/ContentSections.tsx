@@ -1,14 +1,13 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import { Film } from "@/components/Film";
-import { media } from "@/lib/media-version";
 import styles from "./landing.module.css";
+import { AppPair } from "./AppCard";
 import { CheckList } from "./CheckList";
-import { ShotFrame, ThemeShot } from "./Shots";
 import { SwipeList } from "./Swipe";
-import { ArrowRightIcon, PeopleIcon, UploadIcon, WandIcon } from "./icons";
+import { ArrowRightIcon } from "./icons";
 
-/** Right under the hero: a short animation about budgetpro (a placeholder until it is made). */
+/** Right under the hero: the explainer film about budgetpro (components/Film.tsx). */
 export function Explainer() {
   return (
     <section id="film" className={`${styles.section} ${styles.white}`} aria-labelledby="film-title">
@@ -30,19 +29,16 @@ export function Explainer() {
 
 const STEPS = [
   {
-    icon: <PeopleIcon size={22} strokeWidth={1.7} />,
     title: "Start din gratis prøveperiode",
-    body: "Navn og e-mail er nok. Ingen adgangskode, du logger ind med en kode på mail. 30 dage gratis, og betalingskortet skal først bruges, når de er gået. Bor I flere sammen, kan du invitere dem til det samme budget.",
+    body: "Navn og e-mail er nok. Ingen adgangskode, du logger ind med en kode på mail. 30 dage gratis, og betalingskortet skal først bruges, når de er gået.",
   },
   {
-    icon: <WandIcon size={22} strokeWidth={1.7} />,
     title: "Følg guiden i 9 trin",
     body: "Dig og dem, du deler økonomi med, konti, faste udgifter og opsparingsmål. Korte svar, som kan rettes bagefter.",
   },
   {
-    icon: <UploadIcon size={22} strokeWidth={1.7} />,
     title: "Importér en kontoudskrift",
-    body: "Upload CSV, Excel eller PDF fra netbanken. Ydelser opdateres, og stigninger bliver markeret.",
+    body: "Upload CSV, Excel eller PDF fra netbanken, og lav en budgetkladde ud fra den. Ydelser opdateres, og stigninger bliver markeret.",
   },
 ] as const;
 
@@ -65,14 +61,9 @@ export function HowItWorks() {
         <SwipeList as="ol" className={styles.stepGrid} label="Trin">
           {STEPS.map((step, index) => (
             <li key={step.title} className={styles.step}>
-              <div className={styles.stepTop}>
-                <span className={styles.stepIcon} aria-hidden="true">
-                  {step.icon}
-                </span>
-                <span className={styles.stepNum} aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </div>
+              <span className={styles.stepNum} aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <h3 className={styles.stepTitle}>{step.title}</h3>
               <p className={styles.stepBody}>{step.body}</p>
             </li>
@@ -97,9 +88,11 @@ export function PhotoBanner() {
         />
         <div className={styles.bannerShade} aria-hidden="true" />
         <div className={styles.bannerText}>
-          <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Invester 29 minutter</span>
+          <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Investér 29 minutter</span>
           <h2 id="banner-title" className={styles.bannerTitle}>
-            Ro i økonomien. Ro i livet.
+            Ro i økonomien.
+            <br />
+            <span className={styles.thin}>Ro i livet.</span>
           </h2>
           <p className={styles.bannerBody}>Når I kender tallene, bliver der mere tid til det, der betyder noget.</p>
         </div>
@@ -150,46 +143,14 @@ export function Availability() {
       id="funktioner"
       eyebrow="Rådighed"
       title="Se, hvad du har til rådighed. Som banken ser det."
-      body="Rådighedsbeløbet regnes efter samme princip, som bankerne bruger, når I søger lån. Mad, opsparing og gaver holdes ude, så du kan se, om du ligger over eller under kravet."
+      body="Rådighedsbeløbet regnes efter samme princip, som bankerne bruger, når I søger lån. Med opsparing og gaver holdt ude, så du kan se, om du ligger over eller under kravet."
       bullets={[
         "Nettoindtægt minus bankens faste udgifter, måned for måned",
         "Se hvornår et lån udløber og giver luft i budgettet",
-        "Klik på en post for at rette den med det samme",
+        "Kan tilpasses din banks retningslinjer",
       ]}
-      visual={<AvailabilityDevices />}
+      visual={<AppPair />}
     />
-  );
-}
-
-/**
- * A laptop and a phone with the overview (bank's rådighedsbeløb), like the devices on the Skole front page. The phone
- * always shows the light theme (user's wish); the laptop follows the visitor's theme.
- */
-function AvailabilityDevices() {
-  return (
-    <div className={styles.devices}>
-      <div className={styles.devLaptop}>
-        <div className={styles.devLid}>
-          <div className={styles.devScreen}>
-            <ThemeShot
-              name="overblik"
-              alt="Overblik på en bærbar: hvad der er tilbage hver måned, og rådighedsbeløbet som banken regner det, med nettoindtægt, bankens faste udgifter og vejledende krav"
-              width={2360}
-              height={1474}
-              sizes="(max-width: 1019px) 90vw, 560px"
-            />
-          </div>
-        </div>
-        <div className={styles.devBase}>
-          <span />
-        </div>
-      </div>
-      <div className={styles.devPhone}>
-        <div className={styles.devPhoneScreen}>
-          <Image src={media("/landing/mobil-light.jpg")} alt="Overblik og rådighedsbeløbet på en mobil" width={780} height={1560} sizes="160px" />
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -210,8 +171,27 @@ export function Sharing() {
           <div className={styles.sharePhoto}>
             <Image src="/landing/foto-flytning.jpg" alt="Et par, der flytter sammen, med flyttekasser" fill sizes="(max-width: 1019px) 100vw, 560px" className={styles.photoCover} />
           </div>
-          <div className={styles.shareShot}>
-            <ShotFrame name="hvem" alt="Hvem betaler hvad: to personkort med indtægter, udgifter og det, der er til rådighed hver måned" width={1808} height={1262} />
+          {/* Drawn with the demo family's numbers (Sofie 55 %, Mikkel 45 %), like the cards in the hero and Rådighed. */}
+          <div className={styles.shareCard} aria-hidden="true">
+            <span className={styles.shareCardLabel}>Hvem betaler hvad</span>
+            <span className={styles.splitBar}>
+              <span style={{ width: "55%" }}>Sofie 55 %</span>
+              <span>Mikkel 45 %</span>
+            </span>
+            <span className={styles.shareCardNums}>
+              <span>
+                Sofie til rådighed
+                <b>
+                  10.105<small> kr</small>
+                </b>
+              </span>
+              <span>
+                Mikkel til rådighed
+                <b>
+                  5.818<small> kr</small>
+                </b>
+              </span>
+            </span>
           </div>
         </div>
       }
@@ -227,13 +207,17 @@ const BUSINESS = [
   { title: "Skoler", body: "Privatøkonomi i udskolingen med budgetpro Skole." },
 ] as const;
 
-/** A short teaser for budgetpro Erhverv (erhverv.<domain>, /erhverv), after Pris, on midnight; it closes the page. */
+/** A short teaser for budgetpro Erhverv (erhverv.<domain>, /erhverv), after Pris, on blæk with a koral pill; it closes the page. */
 export function BusinessTeaser() {
   return (
     <section className={styles.bizWrap} aria-labelledby="erhverv-title">
       <div className={styles.biz} data-reveal>
+        <div className={styles.bizShapes} aria-hidden="true">
+          <span />
+          <span />
+        </div>
         <div className={styles.bizText}>
-          <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Erhverv</span>
+          <span className={styles.pill}>Erhverv</span>
           <h2 id="erhverv-title" className={styles.bizTitle}>
             Giv budgetpro videre til jeres kunder.
           </h2>
