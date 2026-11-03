@@ -289,16 +289,18 @@ function Trust() {
 
 function Pricing() {
   return (
-    <section id="pris" className={styles.section} aria-labelledby="pris-title">
+    <section id="pris" className={`${styles.section} ${e.priceBand}`} aria-labelledby="pris-title">
+      <div className={styles.quotesCircle} aria-hidden="true" />
+      <div className={styles.quotesShape} aria-hidden="true" />
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={styles.eyebrow}>Pris</span>
-            <h2 id="pris-title" className={styles.h2}>
+            <span className={`${styles.eyebrow} ${styles.eyebrowDark}`}>Pris</span>
+            <h2 id="pris-title" className={`${styles.h2} ${styles.h2Light}`}>
               Beregn jeres pris.
             </h2>
           </div>
-          <p className={styles.headBody}>
+          <p className={`${styles.headBody} ${styles.headBodyDark}`}>
             Vælg antal koder og hvor længe de gælder. Prisen vises pr. måned, og I kan se den pr. år. Send en forespørgsel,
             så får I et tilbud. Det binder jer ikke til noget.
           </p>

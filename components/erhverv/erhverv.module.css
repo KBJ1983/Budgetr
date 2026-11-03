@@ -28,6 +28,19 @@
   object-position: 50% 62%;
 }
 
+/* ================= Beregn jeres pris: a blæk band (shapes from the landing's quotes band), the form stays white ================= */
+
+.priceBand {
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--v-dark);
+  color: var(--v-dark-text);
+}
+/* The white form (and its thank-you card) keeps dark text on the band. */
+.priceBand :is(.calc, .sentCard) {
+  color: var(--v-ink);
+}
+
 /* ================= Hvad er budgetpro: the three beats under the animation (components/AnimationPlaceholder) ================= */
 
 .beats {
