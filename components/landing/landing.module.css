@@ -1382,6 +1382,69 @@
   text-wrap: pretty;
 }
 
+/* "Se alle funktioner": the classic list under the tour, folded away behind a plus. */
+.allFeatures {
+  border-top: 1px solid var(--v-rule);
+  padding-top: 8px;
+}
+.allFeaturesToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--v-ink);
+  border-radius: 8px;
+}
+.allFeaturesToggle::-webkit-details-marker {
+  display: none;
+}
+.allFeaturesToggle .faqPlus {
+  background: var(--v-white);
+  border: 1px solid var(--v-rule);
+}
+.allFeatures[open] .faqPlus {
+  transform: rotate(45deg);
+}
+.allHide,
+.allFeatures[open] .allShow {
+  display: none;
+}
+.allFeatures[open] .allHide {
+  display: inline;
+}
+.allGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 28px;
+  padding: 20px 0 8px;
+}
+.allGroup {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.allTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--v-olive);
+}
+.allList {
+  gap: 10px;
+}
+.allList li {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--v-ink-2);
+}
+
 /* ================= Alle funktioner: a mosaic of coloured cards on the mynte tint ================= */
 
 .allBand {
@@ -2111,6 +2174,9 @@
   .bento {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+  .allGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 1019.98px) {
@@ -2148,6 +2214,9 @@
   }
   .tourCard {
     flex-basis: calc((100% - 14px) / 2);
+  }
+  .allGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .headBody {
     max-width: 620px;
@@ -2343,6 +2412,10 @@
   }
   .tourText {
     padding: 18px 20px 22px;
+  }
+  .allGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
   }
 
   .trustCircle {

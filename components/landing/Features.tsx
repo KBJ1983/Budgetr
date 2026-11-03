@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import styles from "./landing.module.css";
+import { CheckList } from "./CheckList";
 import { FeatureTour, type TourSlide } from "./FeatureTour";
-import { BellIcon, BranchIcon, CalendarIcon, DownloadIcon, LoanIcon, TransferIcon, UploadIcon } from "./icons";
+import { BellIcon, BranchIcon, CalendarIcon, DownloadIcon, LoanIcon, PlusIcon, TransferIcon, UploadIcon } from "./icons";
 
 const icon = (node: ReactNode) => ({ kind: "icon", icon: node }) as const;
 
@@ -94,11 +95,43 @@ const SLIDES: readonly TourSlide[] = [
   },
 ];
 
+// The classic list behind "Se alle funktioner". Only what the app does today.
+const ALL: readonly { title: string; items: readonly string[] }[] = [
+  {
+    title: "Overblik",
+    items: ["Tilbage pr. måned efter faste udgifter og opsparing", "Rådighedsbeløbet, som banken regner det", "Saldo på hver konto måned for måned", "Lyst og mørkt tema"],
+  },
+  {
+    title: "Poster og konti",
+    items: ["Ubegrænset antal poster, konti og lån", "Beløb omregnet til pr. måned", "Import af kontoudskrifter som CSV, Excel eller PDF", "Stigninger markeres, og det gamle beløb gemmes"],
+  },
+  {
+    title: "Sammen",
+    items: ["Del budgettet med op til to andre", "Fordeling efter indkomst, ligeligt eller med en fast procent", "Automatiske overførsler til budgetkontoen", "Egne udgifter og egen opsparing holdes for sig"],
+  },
+  {
+    title: "Lån og opsparing",
+    items: ["Restgæld, rente og beregnet slutdato for hvert lån", "Fremskriv restgælden til en dato, du vælger", "Tidslinje over det, der frigives", "Opsparingsmål med dato eller fast beløb pr. måned", "Feriepenge og bonus som ekstra indbetalinger"],
+  },
+  {
+    title: "Planlægning",
+    items: ["Opret scenarier og hold dem op mod det nuværende budget", "Kladder med nye budgetter ved siden af det, du har", "Guide i 9 trin til et nyt budget"],
+  },
+  {
+    title: "Beskeder",
+    items: ["Besked ved 10, 25, 50, 75 og 100 % af et mål", "Påmindelse om at se budgettet igennem", "Opgaver på poster og konti", "Også på mail eller sms, hvis du vil"],
+  },
+  {
+    title: "Dine data",
+    items: ["Eksport til PDF og Excel", "Sikkerhedskopi, du kan gendanne", "Ingen adgang til netbanken", "Log ind med en kode på mail"],
+  },
+];
+
 type FeaturesHead = { eyebrow?: string; title?: string; body?: string };
 
 /**
- * The features as a sideways tour of cards (photos, drawn loans, real screenshots, icons) on white. The Erhverv page
- * passes its own head ("Det får kunderne med budgetpro"). The whole list follows in AllFeatures.
+ * The features as a sideways tour of cards (photos, drawn loans, real screenshots, icons) on white, and the full list
+ * to unfold under it ("Se alle funktioner"). The Erhverv page passes its own head ("Det får kunderne med budgetpro").
  */
 export function Features({
   eyebrow = "Funktioner",
@@ -120,6 +153,23 @@ export function Features({
         <div data-reveal>
           <FeatureTour slides={SLIDES} />
         </div>
+        <details className={styles.allFeatures}>
+          <summary className={styles.allFeaturesToggle}>
+            <span className={styles.allShow}>Se alle funktioner</span>
+            <span className={styles.allHide}>Skjul listen</span>
+            <span className={styles.faqPlus} aria-hidden="true">
+              <PlusIcon size={14} strokeWidth={2.2} />
+            </span>
+          </summary>
+          <div className={styles.allGrid}>
+            {ALL.map((g) => (
+              <div key={g.title} className={styles.allGroup}>
+                <h3 className={styles.allTitle}>{g.title}</h3>
+                <CheckList items={g.items} className={styles.allList} />
+              </div>
+            ))}
+          </div>
+        </details>
       </div>
     </section>
   );
