@@ -5,12 +5,9 @@
 .heroTitle {
   font-size: 64px;
 }
-/* Koral underline: a small detail of the second accent in the hero (with the badge). */
 .heroLink {
   color: var(--v-ink);
   text-decoration: underline;
-  text-decoration-color: var(--v-coral);
-  text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
 .heroLink:hover {

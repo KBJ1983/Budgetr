@@ -53,6 +53,7 @@ try {
   // Hero: a button to the login, no e-mail field
   await page.goto(`${BASE}/`);
   check((await page.locator('#top input[type="email"]').count()) === 0, "hero has no e-mail field");
+  check((await page.locator("#top").getByRole("link", { name: "Prøv demoen" }).getAttribute("href")) === "/demobruger", "hero links to the demo");
   await page.locator("#top").getByRole("link", { name: /Prøv gratis i 30 dage/ }).click();
   await page.waitForURL(/\/opret/);
   check(true, "hero button opens the signup");

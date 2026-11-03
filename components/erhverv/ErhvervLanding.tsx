@@ -82,13 +82,17 @@ function Hero() {
             <a href="#pris" className={styles.heroButton}>
               Beregn jeres pris <ArrowRightIcon size={16} />
             </a>
-            <p className={styles.heroNote}>
-              Har I allerede en aftale?{" "}
-              <Link href="/aftale" className={e.heroLink}>
-                Log ind og giv adgang
-              </Link>
-            </p>
+            {/* The demo family (lib/demo-customer.ts): what the customers get. */}
+            <Link href="/demobruger" className={styles.heroButtonGhost}>
+              Prøv demoen
+            </Link>
           </div>
+          <p className={styles.heroNote}>
+            Demoen viser en opdigtet familie. Har I allerede en aftale?{" "}
+            <Link href="/aftale" className={e.heroLink}>
+              Log ind og giv adgang
+            </Link>
+          </p>
         </div>
         <div className={e.heroPhoto}>
           <Image

@@ -19,7 +19,42 @@ const MONTHS: readonly [number, number, boolean?][] = [
   [56, 42],
 ];
 
-export function AppCard({ dark = false, className }: { dark?: boolean; className?: string }) {
+/*
+ * Every number on a card must follow from the others on it, or the picture looks like a sum that is wrong (user's
+ * wish). "budget": 64.050 − 48.127 − 12.818 = 3.105 (the app's sentence, incl. savings). "bank": the bank's
+ * rådighedsbeløb 28.557 − the guiding requirement 18.000 (12.000 for two adults + 2 × 3.000 for children) = 10.557.
+ */
+const VIEWS = {
+  budget: {
+    sentence: (
+      <>
+        Husstanden har <b>64.050 kr</b> i indtægter, <b>48.127 kr</b> i faste udgifter og <b>12.818 kr</b> i opsparing.
+        Tilbage pr. måned: <em>3.105 kr</em>
+      </>
+    ),
+    figures: [
+      ["Faste udgifter", "48.127"],
+      ["Opsparing", "12.818"],
+      ["Tilbage", "3.105"],
+    ],
+  },
+  bank: {
+    sentence: (
+      <>
+        Rådighedsbeløbet, som banken regner det, er <b>28.557 kr</b>. Kravet er <b>18.000 kr</b>, så der er{" "}
+        <em>10.557 kr</em> i luft.
+      </>
+    ),
+    figures: [
+      ["Rådighedsbeløb", "28.557"],
+      ["Vejledende krav", "18.000"],
+      ["Luft over kravet", "10.557"],
+    ],
+  },
+} as const;
+
+export function AppCard({ dark = false, view = "budget", className }: { dark?: boolean; view?: keyof typeof VIEWS; className?: string }) {
+  const v = VIEWS[view];
   return (
     <div className={[styles.app, dark ? styles.appDark : "", className].filter(Boolean).join(" ")} aria-hidden="true">
       <div className={styles.appBar}>
@@ -31,20 +66,13 @@ export function AppCard({ dark = false, className }: { dark?: boolean; className
           <span>Mål</span>
         </span>
       </div>
-      <p className={styles.appSentence}>
-        {/* Must add up: 64.050 − 48.127 − 12.818 = 3.105 (the app's own sentence, incl. savings). */}
-        Husstanden har <b>64.050 kr</b> i indtægter, <b>48.127 kr</b> i faste udgifter og <b>12.818 kr</b> i opsparing. Tilbage pr. måned: <em>3.105 kr</em>
-      </p>
+      <p className={styles.appSentence}>{v.sentence}</p>
       <div className={styles.appFigures}>
-        <span className={styles.appFigure}>
-          Rådighed <b>28.557</b>
-        </span>
-        <span className={`${styles.appFigure} ${styles.appFigureOn}`}>
-          Luft over kravet <b>10.557</b>
-        </span>
-        <span className={styles.appFigure}>
-          Fra jul 2027 <b>13.857</b>
-        </span>
+        {v.figures.map(([label, value], i) => (
+          <span key={label} className={`${styles.appFigure} ${i === v.figures.length - 1 ? styles.appFigureOn : ""}`}>
+            {label} <b>{value}</b>
+          </span>
+        ))}
       </div>
       <div className={styles.appBars}>
         {MONTHS.map(([inc, exp, over], i) => (
@@ -58,16 +86,19 @@ export function AppCard({ dark = false, className }: { dark?: boolean; className
   );
 }
 
-/** Rådighed: the light card with a small phone card ("Tilbage i marts") on its lower right corner. */
+/**
+ * Rådighed: the light card with the bank's numbers, and a small phone card on its corner: the luft once the car loan
+ * is paid in July 2027 (10.557 + the loan's 3.300 = 13.857, as the app shows it).
+ */
 export function AppPair() {
   return (
     <div className={styles.appPair}>
-      <AppCard />
+      <AppCard view="bank" />
       <div className={styles.appPhone} aria-hidden="true">
         <Logo fontSize={11} bg="#ECF1EF" />
-        <span>Tilbage i marts</span>
+        <span>Luft fra jul 2027</span>
         <b>
-          3.105<small> kr</small>
+          13.857<small> kr</small>
         </b>
         <span className={styles.appTrack}>
           <span style={{ width: "62%" }} />

@@ -35,11 +35,12 @@ export function Hero() {
             <Link href="/opret" className={styles.heroButton}>
               Prøv gratis i 30 dage
             </Link>
-            <a href="#film" className={styles.heroButtonGhost}>
-              Se hvordan
-            </a>
+            {/* The demo family (lib/demo-customer.ts), as the Erhverv page links it. */}
+            <Link href="/demobruger" className={styles.heroButtonGhost}>
+              Prøv demoen
+            </Link>
           </div>
-          <p className={styles.heroNote}>Intet betalingskort, før de 30 dage er gået.</p>
+          <p className={styles.heroNote}>Intet betalingskort, før de 30 dage er gået. Demoen viser en opdigtet familie.</p>
         </div>
         <div className={styles.heroVisual}>
           <AppCard dark className={styles.heroApp} />
