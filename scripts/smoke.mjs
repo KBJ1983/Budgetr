@@ -78,6 +78,19 @@ try {
   // KBJ: the original app with the real budget
   await loginAs("KBJ");
   check((await page.locator("#bxUser").textContent()) === "KBJ", "app shows the logged-in test user");
+  // A click anywhere on the page must not act as a page button (<body data-page> once did: it re-rendered and jumped to the top).
+  {
+    const acct = page.locator("details.acctd").last();
+    if ((await acct.count()) > 0) {
+      await acct.evaluate((n) => n.scrollIntoView({ block: "center" }));
+      const was = await acct.evaluate((n) => n.open);
+      const y0 = await page.evaluate(() => scrollY);
+      await acct.locator("summary h3").click();
+      await page.waitForTimeout(200);
+      check((await acct.evaluate((n) => n.open)) === !was && (await page.evaluate(() => scrollY)) === y0, "an account folds where it is clicked, without jumping to the top");
+      await acct.locator("summary h3").click();
+    }
+  }
   if (HAS_PRIVATE) {
     await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
     for (const t of ["Måned for måned", "Rådighedsbeløb som banken regner det", "Ekstra indtjening"]) {

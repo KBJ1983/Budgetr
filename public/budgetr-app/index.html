@@ -1225,7 +1225,12 @@ dialog h2,.sethead h2{font-weight:700}
   .accounts,.accounts:has(details.acctd){gap:0}
   #app details.acctd{background:transparent;border:0;border-bottom:1px solid var(--rule);border-radius:0}
   #app details.acctd:last-child{border-bottom:0}
-  #app details.acctd>summary{padding-left:0;padding-right:0}
+  /* Name on the first line, the status under it, with room above and below, so it never runs over the line to the
+     next account. The whole row folds it out. */
+  #app details.acctd>summary{min-height:0;padding:12px 0;row-gap:4px;align-items:center}
+  #app details.acctd>summary .asum{grid-column:2;line-height:1.3}
+  #app details.acctd>summary .asum .bad{display:inline-block}
+  #app details.acctd>summary:hover{background:transparent}
   /* Hvem betaler hvad: one grey tile per person, the result first. */
   .people{gap:10px}
   .person{background:var(--paper);border:0;border-radius:12px;padding:16px!important}
@@ -2145,7 +2150,7 @@ function monthCheckHtml(){if(!monthCheckDue())return '';const last=S.settings.mo
     <div class="mcbtns"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button><button type="button" id="btnMcEdit">Ret posterne</button></div></div>`}
 function bindMonthCheck(){const ok=$('btnMcOk');if(!ok)return;
   ok.onclick=()=>{S.settings.monthCheck=DAY();commit();toast('Tak. Vi spørger igen om en måned')};
-  $('btnMcEdit').onclick=()=>document.querySelector('[data-page="poster"]').click()}
+  $('btnMcEdit').onclick=()=>document.querySelector('button[data-page="poster"]').click()}
 /* Phones: the key figures as one card at the top of Overblik (shown by CSS only below 760 px, in place of the
    sentence in .hero). Same numbers as the sentence, the person cards and the bank section. */
 function mobSumHtml(t){const bk=bankCalc(), c=v=>v>=0?'left':'neg';
@@ -2743,7 +2748,7 @@ $('frmLoan').addEventListener('submit',ev=>{ev.preventDefault();
   if(loanEdit)Object.assign(S.loans.find(x=>x.id===loanEdit),d);else S.loans.push(Object.assign({id:'l'+uid()},d));
   $('dlgLoan').close();commit();toast(loanEdit?'Lån gemt':'Lån oprettet');
 });
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;document.body.dataset.page=page;document.querySelectorAll('[data-page]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.page===page)));$('btnNew').style.display=page==='budget'||page==='poster'?'':'none';render();window.scrollTo(0,0)});
+document.querySelectorAll('button[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;document.body.dataset.page=page;document.querySelectorAll('button[data-page]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.page===page)));$('btnNew').style.display=page==='budget'||page==='poster'?'':'none';render();window.scrollTo(0,0)});
 function filtered(){
   const q=F.q.trim().toLowerCase();
   if(F.type==='overfoersel')F.type='alle';
@@ -2864,7 +2869,7 @@ function offerTour(){tourOffer=true;$('tour').hidden=false;
 const tourEl=sel=>[...document.querySelectorAll(sel)].find(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(e).visibility!=='hidden'});
 function openTour(){if(!S){toast('Opret først et budget');return}
   // The round + only shows on Overblik and Poster.
-  if(page!=='budget'&&page!=='poster')document.querySelector('[data-page="budget"]').click();
+  if(page!=='budget'&&page!=='poster')document.querySelector('button[data-page="budget"]').click();
   setTimeout(()=>{tourSteps=TOUR.filter(s=>tourEl(s.el));if(!tourSteps.length)return;tourAt=0;$('tour').hidden=false;showTour();$('tourCard').focus()},60)}
 function closeTour(){tourOffer=false;$('tourBack').textContent='Tilbage';$('tour').hidden=true;const b=$('btnUserMenu');if(b)b.focus()}
 function showTour(){const s=tourSteps[tourAt],e=tourEl(s.el);if(!e){closeTour();return}
@@ -3094,7 +3099,7 @@ function bindMain(){
   document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{SC=b.dataset.sc||null;render();window.scrollTo(0,0)});
   bindScopes();bindPsav();
   {const a=$('scSaldo'),d=$('scSaldoD');if(a&&d){const sv=()=>{setSaldo(a.dataset.acc,parseAmt(a.value)||0,d.value||(curSc()&&curSc().from&&parseDateX('01.'+curSc().from))||DAY(),true);commit()};a.onchange=sv;d.onchange=sv}}
-  document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{const t=document.querySelector(`[data-page="${b.dataset.goto}"]`);if(t)t.click()});
+  document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{const t=document.querySelector(`button[data-page="${b.dataset.goto}"]`);if(t)t.click()});
   document.querySelectorAll('[data-newpost]').forEach(b=>b.onclick=()=>openEntry(null));
   if($('btnNewSc'))$('btnNewSc').onclick=newScenario;
   if($('scName')){const sc=curSc();
@@ -3936,7 +3941,7 @@ $('btnDataClose').onclick=()=>$('dlgData').close();
 $('dlgData').addEventListener('click',ev=>{if(ev.target===$('dlgData'))$('dlgData').close()});
 /* Scenario picker in the tab row (replaces the Nuværende/scenario buttons on each page). Items change, so it binds by delegation. */
 function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
-  if(page!=='budget'){document.querySelector('[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
+  if(page!=='budget'){document.querySelector('button[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
 function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!b)return;b.hidden=!S;const bn=(R&&R.settings&&R.settings.title)||'Mit budget';
   b.querySelector('.lbl').textContent=dr?'Kladde':sc?'Scenarie':'Budget';
   $('scnName').textContent=dr?(dr.name||'Kladde'):sc?(sc.name||'Scenarie'):bn;b.classList.toggle('on',!!sc||!!dr);
@@ -3961,7 +3966,7 @@ function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!
     if(DR)leaveDraft();
     if(b.hasAttribute('data-scdots')){const id=b.dataset.scdots;if(!id){openSet();setTimeout(()=>{$('setName').focus();$('setName').select()},50);return}
       // A scenario's settings (name, from, saldo, delete) are the panel at the top of the Budget tab.
-      SC=id;if(page!=='budget')document.querySelector('[data-page="budget"]').click();else render();window.scrollTo(0,0);setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0);return}
+      SC=id;if(page!=='budget')document.querySelector('button[data-page="budget"]').click();else render();window.scrollTo(0,0);setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0);return}
     SC=b.dataset.scn||null;render();window.scrollTo(0,0)};
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnScn')&&!ev.target.closest('#scnMenu'))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}})}
@@ -4708,7 +4713,7 @@ $('wzNext').onclick=()=>{wzCollect();const e=wzValidate();if(e.length){$('wzErr'
     if(inv.length)setTimeout(()=>wzSendInvites(inv),1200);
     // A first budget started empty: offer the tour (the file choices open the import instead).
     if(W.start==='tom')setTimeout(offerTour,700)}
-  const t=document.querySelector('[data-page="budget"]');if(t)t.click();
+  const t=document.querySelector('button[data-page="budget"]');if(t)t.click();
   // Start from files: the file import opens on the new budget (or the new draft) at once.
   if(W.start!=='tom'){const k=W.start;setTimeout(()=>openDImp(k),60)}};
 
@@ -4737,7 +4742,7 @@ document.addEventListener('click',ev=>{const o=ev.target.closest('[data-open]');
   if(id.startsWith('g_'))openGoal(id.slice(2));else if(cur().some(e=>e.id===id))openEntry(id)});
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-cmp]');if(!b)return;
   const go=()=>{const c=$('cmp');if(c){c.scrollIntoView({behavior:'smooth',block:'start'});c.animate&&c.animate([{background:'var(--plum-bg)'},{background:'transparent'}],{duration:1400})}};
-  if(page!=='budget'){document.querySelector('[data-page="budget"]').click();setTimeout(go,50)}else go()});
+  if(page!=='budget'){document.querySelector('button[data-page="budget"]').click();setTimeout(go,50)}else go()});
 document.addEventListener('click',ev=>{if(ev.target.closest('[data-cmpall]'))openCmp()});
 $('btnCmpClose').onclick=()=>$('dlgCmp').close();
 $('dlgCmp').addEventListener('click',ev=>{if(ev.target===$('dlgCmp'))$('dlgCmp').close()});
@@ -4814,7 +4819,7 @@ function showNotes(){if(!S)return;
 $('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem,td}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)rootS().settings.remindSeen=DAY();
   if(rem&&todoList().length||td.length)rootS().settings.todoSeen=DAY();saveSoon()});
 $('btnNoteClose').onclick=()=>$('dlgNote').close();
-$('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close();if(p==='todo'){setTimeout(()=>$('btnTodo').click(),0);return}const t=document.querySelector(`[data-page="${p}"]`);if(t)t.click()};
+$('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close();if(p==='todo'){setTimeout(()=>$('btnTodo').click(),0);return}const t=document.querySelector(`button[data-page="${p}"]`);if(t)t.click()};
 
 /* ---------- opstart ---------- */
 function loadLocal(){try{const v=localStorage.getItem(window.BUDGETR_KEY);if(v)return JSON.parse(v)}catch(e){}try{return window.BUDGETR_SEED?JSON.parse(window.BUDGETR_SEED):null}catch(e){return null}}
