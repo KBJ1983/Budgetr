@@ -12,6 +12,7 @@ import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader, type NavLink } from "@/components/landing/SiteHeader";
 import { SwipeList } from "@/components/landing/Swipe";
 import { ArrowRightIcon, DownloadIcon, GlobeIcon, LockIcon, PlusIcon, ShieldIcon } from "@/components/landing/icons";
+import { PACK_COUNTS } from "@/lib/erhverv-packs";
 import { PriceRequest } from "./PriceRequest";
 import e from "./erhverv.module.css";
 
@@ -64,7 +65,12 @@ function Hero() {
       <div className={styles.heroInner}>
         <HeroShapes />
         <div className={styles.heroText}>
-          <p className={styles.tagline}>budgetpro Erhverv</p>
+          <p className={styles.tagline}>
+            budgetpro Erhverv
+            <span className={styles.taglineRule} aria-hidden="true" />
+            {/* The smallest pack in lib/erhverv-packs.ts (PACK_COUNTS). */}
+            <span className={styles.badge}>Fra {PACK_COUNTS[0]} koder</span>
+          </p>
           <h1 id="hero-title" className={`${styles.h1} ${e.heroTitle}`}>
             Giv jeres kunder et budgetværktøj som en <span className={styles.accent}>kundefordel</span>.
           </h1>
