@@ -130,18 +130,20 @@ const ALL: readonly { title: string; items: readonly string[] }[] = [
 type FeaturesHead = { eyebrow?: string; title?: string; body?: string };
 
 /**
- * The features as a sideways tour of cards (photos, drawn loans, real screenshots, icons) on white, and the full list
- * to unfold under it ("Se alle funktioner") unless `list` is false – the front page shows that list under AllFeatures
- * instead. The Erhverv page passes its own head ("Det får kunderne med budgetpro").
+ * All the features in one section on the mynte tint: a sideways tour of cards (photos, drawn loans, real screenshots,
+ * icons), then – with `mosaic` (the front page) – the coloured mosaic, and at the bottom the full list behind the plus
+ * ("Se alle funktioner"). The Erhverv page passes its own head ("Det får kunderne med budgetpro") and no mosaic.
  */
 export function Features({
   eyebrow = "Funktioner",
   title = "Alt det, budgettet holder styr på.",
   body = "Opsparing, lån, påmindelser og det, der ellers kræver et regneark. Bladr i funktionerne, eller se dem alle.",
-  list = true,
-}: FeaturesHead & { list?: boolean } = {}) {
+  mosaic = false,
+}: FeaturesHead & { mosaic?: boolean } = {}) {
   return (
     <section id="mere" className={`${styles.section} ${styles.featureBand}`} aria-labelledby="mere-title">
+      <div className={styles.allCircle} aria-hidden="true" />
+      <div className={styles.allShape} aria-hidden="true" />
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
@@ -155,7 +157,8 @@ export function Features({
         <div data-reveal>
           <FeatureTour slides={SLIDES} />
         </div>
-        {list && <AllList />}
+        {mosaic && <Mosaic />}
+        <AllList />
       </div>
     </section>
   );
@@ -312,41 +315,22 @@ const TONE: Record<Tone, string | undefined> = {
   coral: styles.bentoCoral,
 };
 
-/** "Alle funktioner": every main feature as a mosaic of coloured cards on the mynte tint, each with a small drawing. */
-export function AllFeatures() {
+/** Every main feature as a mosaic of coloured cards, each with a small drawing (design "Mynte og is komplet"). */
+function Mosaic() {
   return (
-    <section id="alle" className={`${styles.section} ${styles.allBand}`} aria-labelledby="alle-title">
-      <div className={styles.allCircle} aria-hidden="true" />
-      <div className={styles.allShape} aria-hidden="true" />
-      <div className={styles.sectionInner}>
-        <div className={styles.sectionHead} data-reveal>
-          <div className={styles.sectionHeadTitle}>
-            <span className={styles.eyebrow}>Alle funktioner</span>
-            <h2 id="alle-title" className={styles.h2}>
-              Ét budget. Alt det, der hører til.
-            </h2>
-          </div>
-          <p className={styles.headBody}>
-            Fra den første budgetpost til situationen om to år. Funktionerne bygger på hinanden, så du kun skal skrive
-            tallene ind ét sted.
-          </p>
-        </div>
-        <ul className={styles.bento} data-reveal-group>
-          {CELLS.map((c) => (
-            <li key={c.over} className={[styles.bentoCard, TONE[c.tone], c.wide ? styles.bentoWide : ""].join(" ")}>
-              <span className={styles.bentoOver}>{c.over}</span>
-              <h3 className={styles.bentoTitle}>{c.title}</h3>
-              <p className={styles.bentoBody}>{c.body}</p>
-              {c.pic && (
-                <div className={styles.bentoPic} aria-hidden="true">
-                  {c.pic}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-        <AllList />
-      </div>
-    </section>
+    <ul className={styles.bento} data-reveal-group>
+      {CELLS.map((c) => (
+        <li key={c.over} className={[styles.bentoCard, TONE[c.tone], c.wide ? styles.bentoWide : ""].join(" ")}>
+          <span className={styles.bentoOver}>{c.over}</span>
+          <h3 className={styles.bentoTitle}>{c.title}</h3>
+          <p className={styles.bentoBody}>{c.body}</p>
+          {c.pic && (
+            <div className={styles.bentoPic} aria-hidden="true">
+              {c.pic}
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }

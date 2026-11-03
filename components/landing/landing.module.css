@@ -1234,8 +1234,11 @@
 
 /* ================= Funktioner: light band (the hero's paper) with a sideways tour of white cards ================= */
 
+/* Funktioner: tour, mosaic and the full list in one band on the mynte tint (shapes: .allCircle, .allShape). */
 .featureBand {
-  background: var(--v-white);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--v-tint);
   color: var(--v-ink);
 }
 .tour {
@@ -1445,13 +1448,8 @@
   color: var(--v-ink-2);
 }
 
-/* ================= Alle funktioner: a mosaic of coloured cards on the mynte tint ================= */
+/* ================= The feature mosaic: coloured cards in the Funktioner band ================= */
 
-.allBand {
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--v-tint);
-}
 .allCircle {
   position: absolute;
   z-index: -1;

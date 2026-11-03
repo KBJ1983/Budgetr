@@ -35,8 +35,9 @@ app on the same palette:
   shapes (a white circle, a mynte card, an outlined card). Big titles are 700 with a second line in 200 ("Ét roligt
   overblik.", "Ro i livet."), the key word with a mynte band under it. Koral `#A8473C` is the second accent: the
   "29 min · 29 kr" badge, the closing call to action band (white text, `#F6E3DF` for secondary text), a koral card shape
-  in the Tryghed and Alle funktioner bands, the Erhverv pill. Tryghed sits on slate `#1E2326` with cards `#272D30`.
-  "Alle funktioner" is a mosaic of mynte, dyb mynte, blæk, koral and white cards. The product is shown as small drawn
+  in the Tryghed and Funktioner bands, the Erhverv pill. Tryghed sits on slate `#1E2326` with cards `#272D30`.
+  Funktioner is one band on the tint: the feature tour (photos), a mosaic of mynte, dyb mynte, blæk, koral and white
+  cards, and the full list behind a plus at the bottom. The product is shown as small drawn
   cards with the demo family's numbers (hero, Rådighed, Hvem betaler hvad); real screenshots stay in the feature tour.
 - App: the pages are underline tabs (the open page in blæk with a 2 px koral line), the first key figure tile is dyb
   mynte and the next one mynte, section heads sit on a thin line instead of a grey band.
