@@ -25,6 +25,8 @@ export function OpenDemo() {
         for (const k of Object.keys(localStorage)) if (k === KEY || k.startsWith(KEY + ":")) localStorage.removeItem(k);
         sessionStorage.removeItem(KEY + ":draft");
         sessionStorage.removeItem("budgetr:quiet");
+        // The demo always opens in the light theme (user's wish); the visitor can switch in the menu.
+        localStorage.setItem("hb-theme", "light");
       } catch {}
       login("DEMO");
       window.location.replace("/app");

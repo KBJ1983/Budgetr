@@ -23,7 +23,8 @@ get a colour.
 | Spor | `#E4EAE8` | `#283031` | progress tracks |
 | Blød flade | `#EEF2F1` | `#20272A` | warnings, chips, status pills |
 | Fejl / koral | `#A8473C` | `#E59A8E` | errors; on the website also the second accent (see below) |
-| Mynte-tint | `#DDF0E8` | – | website: hero card and the "Alle funktioner" band |
+| Mynte-tint | `#DDF0E8` | – | website: the Funktioner band |
+| Hero-grå | `#EEF1F0` | – | website: the hero card (header + hero), a faint grey instead of mynte (user's wish) |
 | App-flade | `#ECF1EF` | page `#0A0D0E`, card `#1A2023`, line `#343D40`, muted `#A3AEAC` | the app's page (light) and dark theme |
 
 ## "Komplet" (Nov 2026)
@@ -31,7 +32,7 @@ get a colour.
 The design "budgetpro – Mynte og is komplet" (Claude Design, unpacked from the user's HTML) updates the website and the
 app on the same palette:
 
-- Website: white page with is (`#F0F3F2`) sections; header and hero share one rounded mynte-tint card with calm big
+- Website: white page with is (`#F0F3F2`) sections; header and hero share one rounded faint grey card with calm big
   shapes (a white circle, a mynte card, an outlined card). Big titles are 700 with a second line in 200 ("Ét roligt
   overblik.", "Ro i livet."), the key word with a mynte band under it. Koral `#A8473C` is the second accent: the
   "29 min · 29 kr" badge, the closing call to action band (white text, `#F6E3DF` for secondary text), a koral card shape

@@ -1019,6 +1019,12 @@ button.primary,button.danger,.dlgfoot button{font-weight:600}
 .kpi span{font-size:13px}
 .kpi b{font:500 24px var(--mono);letter-spacing:-.03em}
 .kpi small{font-size:12px;line-height:1.4}
+/* The post editor's close cross, top right (it also takes the dialog's first focus). */
+#dlg .dlgx{position:absolute;top:14px;right:14px;z-index:2;width:36px;height:36px;padding:0;border-radius:50%;border:1px solid var(--rule);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+#dlg .dlgx svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+#dlg .dlgx:hover{background:var(--band)}
+#dlg .dlgx:focus:not(:focus-visible){outline:none}
+#dlg #dlgTitle{padding-right:48px}
 .kpi.hero2{background:var(--deep);border-color:var(--deep)}
 .kpi.hero2 span,.kpi.hero2 small{color:var(--deepm)}
 .kpi.hero2 b{color:#FFFFFF;font-weight:500}
@@ -1290,7 +1296,7 @@ dialog h2,.sethead h2{font-weight:700}
   section{break-inside:avoid-page}
 }
 </style>
-<script>try{const t=localStorage.getItem('hb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script>/* Light unless the user picked dark (user's wish, Nov 2026: not the system theme). */{let t='light';try{if(localStorage.getItem('hb-theme')==='dark')t='dark'}catch(e){}document.documentElement.setAttribute('data-theme',t)}</script>
 </head>
 <body data-page="budget">
 <header class="appbar">
@@ -1345,6 +1351,8 @@ dialog h2,.sethead h2{font-weight:700}
 
 <dialog id="dlg" class="wideform">
   <form id="frm" method="dialog" novalidate>
+    <!-- Closes like Annullér. Gets the first focus, so the type field does not open by itself. -->
+    <button type="button" class="dlgx" id="dlgX" aria-label="Luk posten" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <h2 id="dlgTitle">Ny post</h2>
     <div class="grid2">
       <div class="field full">
@@ -3204,6 +3212,7 @@ $('fType').onchange=syncType;$('fExtra').onchange=syncType;$('fAuto').onchange=s
 $('fDesc').oninput=()=>$('eDesc').textContent='';$('fTo').onchange=()=>{$('eTo').textContent='';syncType()};$('fFrom').onchange=()=>{$('eTo').textContent='';syncType()};
 $('fCover').onchange=$('fAccount').onchange=()=>$('eCover').textContent='';
 $('btnCancel').onclick=()=>$('dlg').close();
+$('dlgX').onclick=()=>$('dlg').close();
 $('btnDel').onclick=()=>{
   const sc=curSc();
   if(sc){const isBase=S.entries.some(x=>x.id===editingId);

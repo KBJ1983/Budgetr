@@ -13,8 +13,10 @@ export const BRAND = {
   limeDark: "#7CC1AA",
   olive: "#2E6E5B",
   paper: "#F0F3F2",
-  // Mynte tint: the website's hero card.
+  // Mynte tint: the website's Funktioner band.
   tint: "#DDF0E8",
+  // Faint grey: the website's hero card (header + hero).
+  mist: "#EEF1F0",
   limeTone: "#E3F2EC",
   haze: "#99A5A3",
   snow: "#ECF1F0",

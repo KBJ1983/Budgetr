@@ -21,7 +21,7 @@ type SiteHeaderProps = {
   cta?: NavLink;
 };
 
-/** Transparent header at the top of the rounded mynte-tint hero card, with the Privat · Erhverv · Skole switch above it. */
+/** Transparent header at the top of the rounded, faint grey hero card, with the Privat · Erhverv · Skole switch above it. */
 export function SiteHeader({
   site = "privat",
   links = NAV_LINKS,
@@ -33,7 +33,7 @@ export function SiteHeader({
       <SiteSwitch current={site} tone="midnat" />
       <div className={styles.headerInner}>
         <a href="#top" className={styles.brand} data-intro-target="">
-          <Logo fontSize={24} bg={BRAND.tint} />
+          <Logo fontSize={24} bg={BRAND.mist} />
         </a>
         <nav aria-label="Hovedmenu" className={styles.nav}>
           {links.map((link) => (

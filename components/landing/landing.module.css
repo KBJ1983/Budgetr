@@ -14,6 +14,8 @@
   --v-stone: #f0f3f2;
   /* Mynte tint: the hero card and the "Alle funktioner" band. */
   --v-tint: #ddf0e8;
+  /* The hero card (header + hero, privat and Erhverv): a faint grey, not mynte (user's wish, Nov 2026). */
+  --v-hero: #eef1f0;
   /* Koral: the second accent (badge, closing band, Erhverv pill); light text on it is --v-coral-soft. */
   --v-coral: #a8473c;
   --v-coral-soft: #f6e3df;
@@ -65,6 +67,9 @@
   color: var(--v-ink);
   /* Safety net for decorative circles and shadows; layouts themselves never exceed the viewport. */
   overflow-x: clip;
+  /* No scroll anchoring: on phones it kept a section further down in place when "Se alle funktioner" opened, so the
+     list seemed to open upwards. */
+  overflow-anchor: none;
 }
 
 /* ================= Header (top of the light card) ================= */
@@ -427,7 +432,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 56px;
   align-items: center;
-  background: var(--v-tint);
+  background: var(--v-hero);
   color: var(--v-ink);
   border-radius: 32px;
   overflow: hidden;
@@ -2578,6 +2583,13 @@
     flex: 0 0 min(84%, 340px);
     min-width: 0;
     scroll-snap-align: start;
+  }
+  /* Room above the step cards for their big numbers, which stand up out of the card (the strip clips the rest). */
+  .swipe > .stepGrid {
+    padding-top: 84px;
+  }
+  .sectionInner:has(.stepGrid) {
+    gap: 0;
   }
   /* Room for the quote cards' shadow inside the strip. */
   .swipe > .quoteGrid {
