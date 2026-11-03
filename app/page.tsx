@@ -29,7 +29,7 @@ export default function HomePage() {
         <Trust />
         <Availability />
         <FinalCta />
-        <Features />
+        <Features list={false} />
         <AllFeatures />
         <Sharing />
         <Quotes />

@@ -131,13 +131,15 @@ type FeaturesHead = { eyebrow?: string; title?: string; body?: string };
 
 /**
  * The features as a sideways tour of cards (photos, drawn loans, real screenshots, icons) on white, and the full list
- * to unfold under it ("Se alle funktioner"). The Erhverv page passes its own head ("Det får kunderne med budgetpro").
+ * to unfold under it ("Se alle funktioner") unless `list` is false – the front page shows that list under AllFeatures
+ * instead. The Erhverv page passes its own head ("Det får kunderne med budgetpro").
  */
 export function Features({
   eyebrow = "Funktioner",
   title = "Alt det, budgettet holder styr på.",
   body = "Opsparing, lån, påmindelser og det, der ellers kræver et regneark. Bladr i funktionerne, eller se dem alle.",
-}: FeaturesHead = {}) {
+  list = true,
+}: FeaturesHead & { list?: boolean } = {}) {
   return (
     <section id="mere" className={`${styles.section} ${styles.featureBand}`} aria-labelledby="mere-title">
       <div className={styles.sectionInner}>
@@ -153,25 +155,32 @@ export function Features({
         <div data-reveal>
           <FeatureTour slides={SLIDES} />
         </div>
-        <details className={styles.allFeatures}>
-          <summary className={styles.allFeaturesToggle}>
-            <span className={styles.allShow}>Se alle funktioner</span>
-            <span className={styles.allHide}>Skjul listen</span>
-            <span className={styles.faqPlus} aria-hidden="true">
-              <PlusIcon size={14} strokeWidth={2.2} />
-            </span>
-          </summary>
-          <div className={styles.allGrid}>
-            {ALL.map((g) => (
-              <div key={g.title} className={styles.allGroup}>
-                <h3 className={styles.allTitle}>{g.title}</h3>
-                <CheckList items={g.items} className={styles.allList} />
-              </div>
-            ))}
-          </div>
-        </details>
+        {list && <AllList />}
       </div>
     </section>
+  );
+}
+
+/** "Se alle funktioner": the full list, folded away behind a plus. */
+function AllList() {
+  return (
+    <details className={styles.allFeatures}>
+      <summary className={styles.allFeaturesToggle}>
+        <span className={styles.allShow}>Se alle funktioner</span>
+        <span className={styles.allHide}>Skjul listen</span>
+        <span className={styles.faqPlus} aria-hidden="true">
+          <PlusIcon size={14} strokeWidth={2.2} />
+        </span>
+      </summary>
+      <div className={styles.allGrid}>
+        {ALL.map((g) => (
+          <div key={g.title} className={styles.allGroup}>
+            <h3 className={styles.allTitle}>{g.title}</h3>
+            <CheckList items={g.items} className={styles.allList} />
+          </div>
+        ))}
+      </div>
+    </details>
   );
 }
 
@@ -336,6 +345,7 @@ export function AllFeatures() {
             </li>
           ))}
         </ul>
+        <AllList />
       </div>
     </section>
   );
