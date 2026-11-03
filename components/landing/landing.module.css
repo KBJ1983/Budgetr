@@ -1469,8 +1469,8 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(9deg);
-  background: var(--v-coral);
-  opacity: 0.9;
+  /* Mynte, not koral (user's wish, Nov 2026). */
+  background: var(--v-lime);
 }
 .bento {
   list-style: none;

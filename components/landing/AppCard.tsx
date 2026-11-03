@@ -32,7 +32,8 @@ export function AppCard({ dark = false, className }: { dark?: boolean; className
         </span>
       </div>
       <p className={styles.appSentence}>
-        Husstanden har <b>64.050 kr</b> i indtægter og <b>48.127 kr</b> i faste udgifter. Tilbage pr. måned: <em>3.105 kr</em>
+        {/* Must add up: 64.050 − 48.127 − 12.818 = 3.105 (the app's own sentence, incl. savings). */}
+        Husstanden har <b>64.050 kr</b> i indtægter, <b>48.127 kr</b> i faste udgifter og <b>12.818 kr</b> i opsparing. Tilbage pr. måned: <em>3.105 kr</em>
       </p>
       <div className={styles.appFigures}>
         <span className={styles.appFigure}>
@@ -42,7 +43,7 @@ export function AppCard({ dark = false, className }: { dark?: boolean; className
           Luft over kravet <b>10.557</b>
         </span>
         <span className={styles.appFigure}>
-          Fra jun 2027 <b>13.857</b>
+          Fra jul 2027 <b>13.857</b>
         </span>
       </div>
       <div className={styles.appBars}>

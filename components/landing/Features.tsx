@@ -27,7 +27,7 @@ const SLIDES: readonly TourSlide[] = [
     visual: {
       kind: "loans",
       loans: [
-        { name: "Billån", end: "jun 2027", paid: 72 },
+        { name: "Billån", end: "jul 2027", paid: 72 },
         { name: "Studielån", end: "mar 2032", paid: 47 },
         { name: "Realkredit", end: "aug 2044", paid: 22 },
       ],
