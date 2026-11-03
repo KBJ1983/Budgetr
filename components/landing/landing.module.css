@@ -1851,8 +1851,9 @@
 
 /* ================= Afsluttende opfordring ================= */
 
+/* White room under the band, so it does not run into the tinted Funktioner section. */
 .ctaWrap {
-  padding: 0 14px;
+  padding: 0 14px var(--section-y);
 }
 /* A koral band with white text and calm shapes (a light circle, a mynte card, two outlines). It stands still – no
    motion and no reveal (user's wish). */
@@ -2495,7 +2496,7 @@
   }
 
   .ctaWrap {
-    padding: 8px 8px 0;
+    padding: 8px 8px var(--section-y);
   }
   .cta {
     border-radius: 24px;
