@@ -41,7 +41,7 @@ function TrustPanel() {
       <span className="bx-auth-eyebrow">
         <ShieldIcon size={15} strokeWidth={2} /> Tryghed
       </span>
-      <h2 id={titleId}>Et gratis budget, hvor du bestemmer over dine tal.</h2>
+      <h2 id={titleId}>Et budget, hvor du bestemmer over dine tal.</h2>
       <p className="bx-auth-check">
         Tjek at der står <b>budgetpro.dk</b> i adresselinjen, før du skriver din e-mail. Mails fra os kommer altid fra
         en adresse, der slutter på @budgetpro.dk.
