@@ -1,11 +1,12 @@
 <!doctype html>
 <!--
-  Kom i gang (94 s): the two ways to a first budget. Way 1 is the guide "Start nyt budget" from an empty budget (first
+  Kom i gang (103 s): the two ways to a first budget, then a scenario. Way 1 is the guide "Start nyt budget" from an empty budget (first
   the start step: empty, from statements or from existing budgets – the film picks empty – then name, people, accounts, expense headings, split, goals, the bank step skipped, reminders, then the summary; the guide makes
   no expense posts, they go in afterwards under the headings). Way 2 is a draft
   (Ny kladde) filled from statements (CSV/PDF) and a budget made in Excel (months as columns, the total row skipped),
-  then "Sæt som primært budget". Texts, labels and numbers follow the app (public/budgetr-app/index.html: openWiz,
-  renderWiz, openDft, renderDImp, budgetRows). "Mynte og is"; runtime and shared styles in film.js / film.css.
+  then "Sæt som primært budget". Last, a scenario: "+ Nyt scenarie" in the budget menu, its name and "Gælder fra", a
+  changed post, and the comparison with the current budget. Texts, labels and numbers follow the app
+  (public/budgetr-app/index.html: openWiz, renderWiz, openDft, renderDImp, budgetRows, renderScn, compareHtml). "Mynte og is"; runtime and shared styles in film.js / film.css.
   Render: `pnpm video kom-i-gang` (and `--reel`). Made-up people (Anna and Jonas, as in the demo budget) and amounts.
 -->
 <html lang="da">
@@ -178,6 +179,28 @@
   #primImg { transition: none; }
   #pToast { left: 1150px; top: 120px; }
 
+  /* 12 · A scenario: the budget menu, then the scenario's name, a changed post and the comparison (compareHtml) */
+  #sMenu { left: 900px; top: 170px; width: 640px; }
+  #sMenuCard { margin-top: 12px; padding: 12px; }
+  #sPanel { left: 820px; top: 120px; width: 1010px; padding: 26px 32px 24px; }
+  #sPanel .top { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  #sPanel .scnbtn { background: var(--lime-tone); border-color: var(--lime-dark); }
+  .sced { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .sced label, .spost label { display: flex; flex-direction: column; gap: 6px; font-size: 16px; font-weight: 500; color: var(--ink-2); }
+  .spost { display: grid; grid-template-columns: 1fr 200px 220px; gap: 14px; align-items: end; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 14px; margin-bottom: 18px; }
+  .spost .ds { font-size: 20px; font-weight: 600; padding-bottom: 12px; }
+  .spost .ds small { display: block; font-size: 15px; font-weight: 400; color: var(--ink-3); margin-top: 2px; }
+  .spost .badge { display: inline-block; margin-left: 10px; padding: 2px 10px; border-radius: 999px; background: var(--lime-tone); color: var(--olive); font-size: 14px; font-weight: 600; vertical-align: 3px; }
+  #sCmp h4 { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; }
+  #sCmp .hint { font-size: 15px; color: var(--ink-3); margin: 4px 0 10px; }
+  .crow { display: grid; grid-template-columns: 1fr 150px 150px 150px; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 18px; }
+  .crow.h { border-top: 0; font-size: 15px; font-weight: 600; color: var(--ink-3); padding: 4px 0 6px; }
+  .crow em { font: 500 18px/1 "Geist Mono", monospace; font-style: normal; text-align: right; }
+  .crow.h em { font: 600 15px/1 var(--font); }
+  .crow .pill { justify-self: end; padding: 5px 10px; border-radius: 999px; font: 500 16px/1 "Geist Mono", monospace; background: var(--stone); color: var(--ink-3); }
+  .crow .pill.up { background: var(--lime-tone); color: var(--olive); }
+  .crow.key { font-weight: 600; }
+
   /* Reel (1080×1920): the visuals under the captions */
   [data-format="reel"] #empty { left: 70px; top: 830px; width: 940px; }
   [data-format="reel"] #hint { left: 170px; top: 1340px; }
@@ -192,6 +215,8 @@
   [data-format="reel"] #rdlg { left: 50px; top: 770px; }
   [data-format="reel"] #prim { left: 60px; top: 860px; }
   [data-format="reel"] #pToast { left: 260px; top: 770px; }
+  [data-format="reel"] #sMenu { left: 220px; top: 830px; }
+  [data-format="reel"] #sPanel { left: 35px; top: 760px; }
 </style>
 </head>
 <body>
@@ -496,6 +521,49 @@
     <div class="toast" id="pToast">Kladde 1 er nu det primære budget</div>
   </div>
 
+  <!-- 12 · A scenario: "what if…" next to the current budget -->
+  <div class="layer" id="s12">
+    <div class="cap" id="c12">
+      <div class="tag"><i></i>Scenarier</div>
+      <h2>Hvad hvis…? Prøv det i et <span class="hl">scenarie</span></h2>
+      <p>Opret et scenarie i budgetmenuen, og ret de poster, der ændrer sig. Overblikket holder scenariet op mod det nuværende budget, som er uændret.</p>
+    </div>
+    <div class="abs" id="sMenu">
+      <span class="scnbtn"><span>Budget</span><b>Vores budget</b>▾</span>
+      <div class="card" id="sMenuCard">
+        <div class="mh">Budget</div>
+        <div class="mi on"><b>Vores budget</b><span>Nuværende · det budget, I lever efter i dag</span></div>
+        <div class="msep"></div>
+        <div class="mh">Scenarier · ændringer af budgettet</div>
+        <div class="mi" id="sNew"><b>+ Nyt scenarie</b><span>Prøv en ændring, fx ny bolig, uden at røre det nuværende budget</span></div>
+        <div class="msep"></div>
+        <div class="mh">Kladder · hele budgetter ved siden af</div>
+        <div class="mi"><b>+ Ny kladde</b><span>Byg et nyt budget ud fra kontoudskrifter fra flere konti</span></div>
+      </div>
+    </div>
+    <div class="abs card" id="sPanel">
+      <div class="top"><span class="scnbtn"><span>Scenarie</span><b id="sBtnName">Scenarie 1</b>▾</span></div>
+      <div class="sced">
+        <label>Navn<span class="in" id="sName"></span></label>
+        <label>Gælder fra<span class="in" id="sFrom"></span></label>
+      </div>
+      <div class="spost" id="sPost">
+        <div class="ds">Løn Anna<span class="badge" id="sBadge">Ændret</span><small>Hver måned · Lønkonto Anna</small></div>
+        <label>Før<span class="in" style="color:var(--ink-3)">32.000</span></label>
+        <label>Beløb pr. betaling (kr.)<span class="in" id="sAmt"></span></label>
+      </div>
+      <div id="sCmp">
+        <h4 id="sCmpTitle">Nuværende og Nyt job fra januar 2027</h4>
+        <p class="hint">Grøn er en forbedring, rød en forværring. Beløb pr. måned.</p>
+        <div class="crow h"><span></span><em>Nuværende</em><em>Scenarie</em><em>Forskel</em></div>
+        <div class="crow"><span>Indtægter</span><em>60.500</em><em>63.100</em><span class="pill up">+2.600</span></div>
+        <div class="crow"><span>Faste udgifter</span><em>45.255</em><em>45.255</em><span class="pill">0 kr</span></div>
+        <div class="crow key"><span>Tilbage efter al opsparing</span><em>8.701</em><em>11.301</em><span class="pill up">+2.600</span></div>
+        <div class="crow"><span>Rådighedsbeløb (bankens beregning)</span><em>26.845</em><em>29.445</em><span class="pill up">+2.600</span></div>
+      </div>
+    </div>
+  </div>
+
   <div id="steps"></div>
 
   <!-- End card -->
@@ -518,11 +586,13 @@
 <script>
   const { $, $$, p, out, back, inOut, lerp, put, rise, slide, scene, enter, words, caption, cursor, press, bars } = F;
   const S1 = [0, 6.0], S2 = [5.6, 12.6], S3 = [12.2, 21.0], S4 = [20.6, 30.2], S5 = [29.8, 39.4], S6 = [39.0, 47.6],
-    S7 = [47.2, 54.0], S8 = [53.6, 62.6], S9 = [62.2, 69.4], S10 = [69.0, 77.4], S11 = [77.0, 84.0], END = 83.2;
+    S7 = [47.2, 54.0], S8 = [53.6, 62.6], S9 = [62.2, 69.4], S10 = [69.0, 77.4], S11 = [77.0, 84.0], S12 = [83.6, 93.0], END = 92.4;
   // The guide's start step (empty / statements / budgets) takes D seconds from 12.5; every time after it below is
   // written as before and played D seconds later (u = t - D in frame()).
   const D = 4, START = [12.5, 12.5 + D];
-  const DURATION = 90 + D;
+  const DURATION = 99 + D;
+  // 12 · The scenario: "+ Nyt scenarie" is clicked at SNEW, the post's amount is typed at SAMT, the comparison from SCMP
+  const SNEW = 85.9, SAMT = 89.0, SCMP = 90.0;
   const GW = [12.2, 43.4];
 
   const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -587,7 +657,7 @@
     [0, { x: 1500, y: 560, d: 560 }], [S2[0], { x: 1700, y: 300, d: 560 }], [S3[0] + 0.4, { x: 1000, y: 860, d: 620 }],
     [S5[0] + 0.4, { x: 1760, y: 820, d: 520 }], [S6[0] + 0.4, { x: 960, y: 900, d: 560 }], [S7[0] + 0.4, { x: 1700, y: 300, d: 600 }],
     [S8[0] + 0.4, { x: 900, y: 820, d: 640 }], [S9[0] + 0.4, { x: 1720, y: 860, d: 560 }], [S10[0] + 0.4, { x: 1000, y: 260, d: 600 }],
-    [S11[0] + 0.4, { x: 1500, y: 880, d: 700 }],
+    [S11[0] + 0.4, { x: 1500, y: 880, d: 700 }], [S12[0] + 0.4, { x: 980, y: 240, d: 600, reel: { x: 820, y: 1500, d: 640 } }],
   ].map(([a, k]) => [a > S3[0] + 0.4 ? a + D : a, k]);
 
   function frame(t) {
@@ -752,8 +822,32 @@
     const pk = back(p(u, USE + 0.2, USE + 0.7));
     put("#pToast", { o: Math.min(out(p(u, USE + 0.2, USE + 0.5)), 1 - inOut(p(u, S11[1] - 0.6, S11[1]))), y: (1 - pk) * 24 });
 
+    // 12 · A scenario: the budget menu → "+ Nyt scenarie" → its name and start, a changed post, the comparison
+    scene("#s12", u, S12[0], S12[1]);
+    caption("#c12", u, S12[0] + 0.2);
+    const smOut = inOut(p(u, SNEW + 0.2, SNEW + 0.6));
+    put("#sMenu", { o: Math.min(out(p(u, S12[0] + 0.5, S12[0] + 0.9)), 1 - smOut), y: (1 - out(p(u, S12[0] + 0.5, S12[0] + 1.1))) * 30 - smOut * 20 });
+    put("#sMenuCard", { o: out(p(u, S12[0] + 1.0, S12[0] + 1.3)), y: (1 - back(p(u, S12[0] + 1.0, S12[0] + 1.5))) * -14 });
+    $("#sNew").classList.toggle("hov", u >= SNEW - 0.8 && u < SNEW + 0.2);
+    press("#sNew", u, SNEW);
+    const sk = back(p(u, SNEW + 0.3, SNEW + 0.9));
+    put("#sPanel", { o: Math.min(out(p(u, SNEW + 0.3, SNEW + 0.6)), 1 - inOut(p(u, S12[1] - 0.5, S12[1]))), y: (1 - sk) * 40, s: lerp(0.94, 1, sk) });
+    type("#sName", u, "Nyt job", SNEW + 1.0, SNEW + 1.6, SNEW + 0.9, SNEW + 1.8, "Scenarie 1");
+    $("#sBtnName").textContent = u >= SNEW + 1.8 ? "Nyt job" : "Scenarie 1";
+    type("#sFrom", u, "januar 2027", SNEW + 2.0, SNEW + 2.6, SNEW + 1.9, SNEW + 2.8, '<span class="ph">fx januar 2027</span>');
+    slide("#sPost", u, SAMT - 0.4, 1e9, { x: 0, y: 24 });
+    type("#sAmt", u, "34.600", SAMT, SAMT + 0.5, SAMT - 0.15, SAMT + 0.8, "32.000");
+    put("#sBadge", { o: out(p(u, SAMT + 0.7, SAMT + 1.0)), s: lerp(0.6, 1, back(p(u, SAMT + 0.7, SAMT + 1.1))) });
+    put("#sCmp", { o: out(p(u, SCMP - 0.2, SCMP + 0.2)) });
+    $$("#sCmp .crow").forEach((el, i) => {
+      const a = SCMP + i * 0.25, k = out(p(u, a, a + 0.4));
+      put(el, { o: k, x: (1 - k) * 30 });
+      const pill = $(".pill", el);
+      if (pill) put(pill, { o: out(p(u, a + 0.5, a + 0.8)), s: lerp(0.5, 1, back(p(u, a + 0.5, a + 0.95))) });
+    });
+
     const sh = ([a, b]) => [a + D, b + D];
-    bars(t, [S2, [S3[0], S6[1] + D], ...[S7, S8, S9, S10, S11].map(sh)].map(([a, b]) => [a + 0.3, b - 0.2]), [S1[1], END + D + 0.3]);
+    bars(t, [S2, [S3[0], S6[1] + D], ...[S7, S8, S9, S10, S11, S12].map(sh)].map(([a, b]) => [a + 0.3, b - 0.2]), [S1[1], END + D + 0.3]);
 
     // Curtains: the intro lifts away, the end card drops in
     F.curtain(t, ["#s1", S2[0] - 0.1], ["#end", END + D]);
@@ -776,6 +870,7 @@
       { keys: [[53.6, "#mNew"], [56.6, "#kOk"], [58.7, "#fP1"], [64.4, "#fNext"]], clicks: [53.6, 56.6, 58.7, 64.4] },
       { keys: [[ADD + D, "#rAdd"]], clicks: [ADD + D] },
       { keys: [[USE + D, "#dbUse"]], clicks: [USE + D] },
+      { keys: [[SNEW + D, "#sNew"], [SNEW + 0.9 + D, "#sName"], [SNEW + 1.9 + D, "#sFrom"], [SAMT - 0.15 + D, "#sAmt"]], clicks: [SNEW + D, SNEW + 0.9 + D, SNEW + 1.9 + D, SAMT - 0.15 + D] },
     ]);
   }
 

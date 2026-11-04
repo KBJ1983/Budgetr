@@ -173,8 +173,17 @@ export function redisStore(redis: Redis): Store {
       return { value: (await redis.hget<string>(k(key), field)) ?? value, fresh: false };
     },
     async fields(key) {
-      const all = await redis.hgetall<Record<string, unknown>>(k(key));
-      return Object.fromEntries(Object.entries(all ?? {}).map(([f, v]) => [f, String(v)]));
+      // With automaticDeserialization off, the client skips HGETALL's own decoding too, so the answer comes back as
+      // the raw flat list [field, value, field, value, …] – not an object. Read both shapes (the traffic overview
+      // showed no visitors at all on Redis because the list's indexes were read as field names).
+      const all: unknown = await redis.hgetall(k(key));
+      const out: Record<string, string> = {};
+      if (Array.isArray(all)) {
+        for (let i = 0; i + 1 < all.length; i += 2) out[String(all[i])] = String(all[i + 1]);
+      } else if (all && typeof all === "object") {
+        for (const [f, v] of Object.entries(all)) out[f] = String(v);
+      }
+      return out;
     },
   };
 }

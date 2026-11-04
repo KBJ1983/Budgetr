@@ -220,6 +220,49 @@ body {
   font-size: 8.5pt;
 }
 
+/* Cover in the website's look (Erhverv, Nov 2026): warm paper white, blæk text, white step cards, an umbra badge. */
+.cover-paper {
+  background: #f2f0ea;
+  color: var(--midnight);
+}
+.cover-paper .kicker {
+  color: var(--accent-ink);
+}
+.cover-paper .lead {
+  color: var(--muted);
+}
+.cover-paper .cover-step {
+  background: #fff;
+  border: 1px solid #e3ded4;
+}
+.cover-paper .cover-step small {
+  color: var(--muted);
+}
+.cover-paper .cover-foot {
+  border-top-color: #e3ded4;
+  color: var(--muted);
+}
+.cover-rule {
+  display: inline-block;
+  width: 10mm;
+  height: 1px;
+  margin: 0 3mm;
+  vertical-align: middle;
+  background: #4e3b30;
+}
+.cover-badge {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 8pt;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #4e3b30;
+  border-radius: 999px;
+  padding: 1mm 3mm;
+}
+
 /* Text */
 h2 {
   font-size: 19pt;

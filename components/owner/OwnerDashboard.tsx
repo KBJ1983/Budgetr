@@ -54,6 +54,9 @@ const ERRORS: Record<string, string> = {
   fewer: "Pakken kan ikke blive mindre end det antal pladser, der allerede er sendt.",
   inUse: "Der er allerede sendt pladser herfra, så det kan ikke slettes.",
   inquiry: "Henvendelsen findes ikke længere.",
+  reply: "Skriv både en emnelinje og et svar.",
+  // MAX_REPLIES_PER_DAY in lib/erhverv-inbox.ts (a server module, so only its number is repeated here).
+  replyLimit: "Henvendelsen har allerede fået 5 svar det seneste døgn. Prøv igen i morgen.",
 };
 
 /** The agreement category a henvendelse starts as; "andet" starts as a bank and is changed in the dialog. */
@@ -68,8 +71,36 @@ const unfoldInquiries = () => {
 };
 const time = (iso: string) => `${date(iso)} kl. ${new Date(iso).toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Copenhagen" })}`;
 
-/** One henvendelse from the Erhverv form, with what the owner can do about it. */
-function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => void; onDone: (done: boolean) => void }) {
+const replySubject = (q: InquiryRow) => (q.pack || q.billing ? "Sv: Prisforespørgsel – budgetpro" : "Sv: Din henvendelse – budgetpro");
+
+/**
+ * One henvendelse from the Erhverv form, with what the owner can do about it: make an agreement, answer it by mail
+ * (the answer is kept on it), mark it as done, or delete it for good (after a confirm).
+ */
+function InquiryCard({
+  q,
+  onAgree,
+  onDone,
+  onReply,
+  onDelete,
+}: {
+  q: InquiryRow;
+  onAgree?: () => void;
+  onDone: (done: boolean) => void;
+  onReply: (subject: string, text: string) => Promise<boolean>;
+  onDelete: () => void;
+}) {
+  const [mode, setMode] = useState<"" | "reply" | "delete">("");
+  const [busy, setBusy] = useState(false);
+  const first = q.name.split(" ")[0] || q.name;
+  const submitReply = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    setBusy(true);
+    const ok = await onReply(String(f.get("subject") ?? ""), String(f.get("text") ?? ""));
+    setBusy(false);
+    if (ok) setMode("");
+  };
   return (
     <div className="bx-card ow-inq">
       <div className="ow-inq-head">
@@ -98,31 +129,85 @@ function InquiryCard({ q, onAgree, onDone }: { q: InquiryRow; onAgree?: () => vo
         ) : null}
       </p>
       {q.message ? <p className="ow-inq-msg">{q.message}</p> : null}
-      <div className="ow-inq-act">
-        {q.doneAt ? (
-          <>
-            <span className="bx-muted">
-              Klaret {date(q.doneAt)}
-              {q.org ? " · aftale oprettet" : ""}
-            </span>
-            <button type="button" className="bx-btn-link" onClick={() => onDone(false)}>
-              Åbn igen
+      {q.replies.length ? (
+        <ul className="ow-inq-replies" aria-label="Dine svar">
+          {q.replies.map((r) => (
+            <li key={r.at}>
+              <span className="bx-muted">
+                Dit svar {time(r.at)}
+                {r.sent ? "" : " · ikke sendt (mail er ikke sat op)"}
+              </span>
+              <b>{r.subject}</b>
+              <p>{r.text}</p>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {mode === "reply" ? (
+        <form className="ow-inq-reply" onSubmit={submitReply}>
+          <label className="bx-field">
+            <span>Emne</span>
+            <input className="bx-input" name="subject" defaultValue={replySubject(q)} maxLength={150} required />
+          </label>
+          <label className="bx-field">
+            <span>Svar til {q.email}</span>
+            <textarea className="bx-input" name="text" rows={6} maxLength={5000} required defaultValue={`Hej ${first}\n\n`} autoFocus />
+          </label>
+          <p className="bx-muted">Henvendelsen citeres under dit svar. Svar fra kunden kommer til din egen mail.</p>
+          <div className="ow-inq-act">
+            <button type="submit" className="bx-btn bx-btn-primary" disabled={busy}>
+              {busy ? "Sender …" : "Send svar"}
             </button>
-          </>
-        ) : (
-          <>
-            <button type="button" className="bx-btn bx-btn-primary" onClick={onAgree}>
-              Opret som kunde
+            <button type="button" className="bx-btn" onClick={() => setMode("")}>
+              Annullér
             </button>
-            <a className="bx-btn" href={`mailto:${q.email}?subject=${encodeURIComponent("Din henvendelse til budgetpro")}`}>
-              Skriv til {q.name.split(" ")[0]}
-            </a>
-            <button type="button" className="bx-btn" onClick={() => onDone(true)}>
-              Marker som klaret
+          </div>
+        </form>
+      ) : mode === "delete" ? (
+        <div className="ow-inq-act ow-inq-confirm" role="group" aria-label="Slet henvendelsen">
+          <span>Slet henvendelsen fra {q.company} for altid?</span>
+          <button type="button" className="bx-btn ow-danger" onClick={onDelete}>
+            Ja, slet
+          </button>
+          <button type="button" className="bx-btn" onClick={() => setMode("")}>
+            Behold den
+          </button>
+        </div>
+      ) : (
+        <div className="ow-inq-act">
+          {q.doneAt ? (
+            <>
+              <span className="bx-muted">
+                Klaret {date(q.doneAt)}
+                {q.org ? " · aftale oprettet" : ""}
+              </span>
+              <button type="button" className="bx-btn-link" onClick={() => onDone(false)}>
+                Åbn igen
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="bx-btn bx-btn-primary" onClick={onAgree}>
+                Opret som kunde
+              </button>
+              <button type="button" className="bx-btn" onClick={() => setMode("reply")}>
+                Svar {first}
+              </button>
+              <button type="button" className="bx-btn" onClick={() => onDone(true)}>
+                Marker som klaret
+              </button>
+            </>
+          )}
+          {q.doneAt ? (
+            <button type="button" className="bx-btn" onClick={() => setMode("reply")}>
+              Svar {first}
             </button>
-          </>
-        )}
-      </div>
+          ) : null}
+          <button type="button" className="bx-btn-link ow-danger-link" onClick={() => setMode("delete")}>
+            Slet
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -604,6 +689,8 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                     q={x}
                     onAgree={() => setEditing({ kind: "org", from: x })}
                     onDone={(done) => void send({ type: "inquiry", id: x.id, done })}
+                    onReply={async (subject, text) => !!(await send({ type: "inquiryReply", id: x.id, subject, text }))}
+                    onDelete={() => void send({ type: "inquiryDelete", id: x.id })}
                   />
                 ))}
               </div>
@@ -617,7 +704,13 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                 </summary>
                 <div className="ow-inqs">
                   {handled.map((x) => (
-                    <InquiryCard key={x.id} q={x} onDone={(done) => void send({ type: "inquiry", id: x.id, done })} />
+                    <InquiryCard
+                      key={x.id}
+                      q={x}
+                      onDone={(done) => void send({ type: "inquiry", id: x.id, done })}
+                      onReply={async (subject, text) => !!(await send({ type: "inquiryReply", id: x.id, subject, text }))}
+                      onDelete={() => void send({ type: "inquiryDelete", id: x.id })}
+                    />
                   ))}
                 </div>
               </details>

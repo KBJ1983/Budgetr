@@ -54,6 +54,14 @@ try {
   await page.goto(`${BASE}/`);
   check((await page.locator('#top input[type="email"]').count()) === 0, "hero has no e-mail field");
   check((await page.locator("#top").getByRole("link", { name: "Prøv demoen" }).getAttribute("href")) === "/demobruger", "hero links to the demo");
+  // The demo waits on its own screen until "Start demoen" is pressed.
+  await page.goto(`${BASE}/demobruger`);
+  await page.getByRole("button", { name: "Start demoen" }).waitFor();
+  check(page.url().endsWith("/demobruger"), "the demo waits for Start demoen");
+  await page.getByRole("button", { name: "Start demoen" }).click();
+  await page.waitForURL(/\/app$/);
+  check(true, "Start demoen opens the app");
+  await page.goto(`${BASE}/`);
   await page.locator("#top").getByRole("link", { name: /Prøv gratis i 30 dage/ }).click();
   await page.waitForURL(/\/opret/);
   check(true, "hero button opens the signup");
@@ -80,6 +88,12 @@ try {
   check((await page.locator("#bxUser").textContent()) === "KBJ", "app shows the logged-in test user");
   // A click anywhere on the page must not act as a page button (<body data-page> once did: it re-rendered and jumped to the top).
   {
+    // Konti is folded until its head is pressed (Overblik: Rådighedsbeløb first, then Konti and Hvem betaler hvad).
+    const konti = page.locator('section[data-sfold="konti"]');
+    if ((await konti.count()) > 0 && !(await konti.evaluate((n) => n.classList.contains("open")))) {
+      await konti.locator(".sftog").click();
+      check(await konti.evaluate((n) => n.classList.contains("open")), "Konti folds out from its head");
+    }
     const acct = page.locator("details.acctd").last();
     if ((await acct.count()) > 0) {
       await acct.evaluate((n) => n.scrollIntoView({ block: "center" }));
@@ -93,7 +107,7 @@ try {
   }
   if (HAS_PRIVATE) {
     await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
-    for (const t of ["Måned for måned", "Rådighedsbeløb som banken regner det", "Ekstra indtjening"]) {
+    for (const t of ["Måned for måned", "Hvad er der tilbage", "Ekstra indtjening"]) {
       check((await page.getByText(t).count()) > 0, `KBJ budget shows “${t}”`);
     }
   }

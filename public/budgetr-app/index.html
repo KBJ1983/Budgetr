@@ -46,12 +46,13 @@
 :root{
   /* budgetpro palette ("Mynte og is", Nov 2026, docs/design/MYNTE.md + the design "Mynte og is komplet"): a light
      mint-grey page, white cards, blæk ink and buttons, dyb mynte accent (--pine keeps its old name), mynte for bars and
-     badges, a red underline for the open page (--red). --deep is the main key-figure tile, --grp the group bands on
-     Poster. Keep in step with the landing palette. */
+     badges, an umbra underline for the open page and the task count (--umbra, the complementary colour; red is for
+     errors only, so they are never mixed up). --deep is the main key-figure tile, --grp the group bands on Poster.
+     Keep in step with the landing palette. */
   --paper:#ECF1EF; --card:#FFFFFF; --ink:#101415; --ink2:#56615F; --ink3:#56615F; --rule:#DCE3E1; --rule2:#C9D2D0; --band:#EEF2F1;
   --pine:#2E6E5B; --pine-bg:#E3F2EC; --pine-ink:#275C4C; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#101415; --ochre-bg:#EEF2F1; --ochre-rule:#101415; --warnline:#101415;
   --hero-sub:#99A5A3; --on-pine:#FFFFFF; --btn:#101415; --btn-ink:#FFFFFF; --barud:#C9D2D0; --lime:#A9DCCB; --lime-bar:#A9DCCB;
-  --red:#A8473C; --deep:#2E6E5B; --deepm:#CFE3DC; --grp:#DDF0E8; --track:#E4EAE8;
+  --umbra:#4E3B30; --umbra-on:#FFFFFF; --deep:#2E6E5B; --deepm:#CFE3DC; --grp:#DDF0E8; --track:#E4EAE8;
   --mk1:#4F8F7A; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --font:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
   --bar:#C9D2D0; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4A5A70; --plum-bg:#E9ECF1;
@@ -59,10 +60,10 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --red:#D9705F; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
+  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --umbra:#B49C8C; --umbra-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
   --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --red:#D9705F; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
+  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --umbra:#B49C8C; --umbra-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
   --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -978,7 +979,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .appbar .status{font:500 13px var(--font)}
 .appbar .status::before{width:7px;height:7px;background:var(--lime)}
 .tdbtn{width:34px;height:34px;border-radius:50%!important}
-.tdbtn .tdn{top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--red);color:#FFFFFF;font:700 10px/16px var(--font)}
+.tdbtn .tdn{top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--umbra);color:var(--umbra-on);font:700 10px/16px var(--font)}
 .uchip{padding:0!important;border:0!important}
 .uchip .av{min-width:34px;height:34px;border-radius:17px}
 .uchip .caret{display:none}
@@ -986,7 +987,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .navrow .tabs{align-self:stretch;gap:24px;margin:0!important;padding:0;background:transparent;border:0!important;border-radius:0}
 .navrow .tabs button{min-height:0;padding:16px 0 14px!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0;background:transparent;font:600 14px var(--font)!important;color:var(--ink2)}
 .navrow .tabs button:hover{color:var(--ink);background:transparent}
-.navrow .tabs button[aria-selected="true"]{background:transparent;color:var(--ink);border-bottom-color:var(--red)!important}
+.navrow .tabs button[aria-selected="true"]{background:transparent;color:var(--ink);border-bottom-color:var(--umbra)!important}
 .navrow .tools{align-self:center;padding:10px 0!important;gap:8px}
 .scnbtn{font:500 13px var(--font)!important;padding:8px 12px!important;border-radius:10px!important}
 .scnbtn #scnName{font-weight:700}
@@ -1025,6 +1026,21 @@ button.primary,button.danger,.dlgfoot button{font-weight:600}
 #dlg .dlgx:hover{background:var(--band)}
 #dlg .dlgx:focus:not(:focus-visible){outline:none}
 #dlg #dlgTitle{padding-right:48px}
+/* Overblik: Konti and Hvem betaler hvad fold out from their head (sfoldHtml); "Hvad er der tilbage" comes last. */
+#app>section.sfold>.sechead{cursor:pointer}
+.sftog{all:unset;display:inline-flex;align-items:center;gap:12px;cursor:pointer;color:inherit;border-radius:6px}
+.sftog:focus-visible{outline:2px solid var(--pine);outline-offset:3px}
+.sfchev{flex:none;width:9px;height:9px;margin-top:-4px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:rotate(45deg);transition:transform .15s}
+#app>section.sfold.open .sfchev{margin-top:4px;transform:rotate(-135deg)}
+#app>section.sfold:not(.open)>.sfbody{display:none}
+#app>section.sfold:not(.open)>.sechead{margin-bottom:0}
+.sfbody>.shtools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin:0 0 12px}
+#app>section.leftsec .hero{padding:0;border:0}
+#app>section.leftsec .hero p{font-size:clamp(20px,2.2vw,28px);max-width:900px}
+.leftppl{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;margin-top:16px;font-size:14px;color:var(--ink2)}
+.leftppl .msh{flex-basis:100%;font-size:13px}
+.leftppl .lp{display:inline-flex;gap:10px;align-items:baseline;color:var(--ink)}
+.leftppl b{font:600 17px var(--mono);letter-spacing:-.02em}.leftppl .left{color:var(--pine)}.leftppl .neg{color:var(--brick)}
 .kpi.hero2{background:var(--deep);border-color:var(--deep)}
 .kpi.hero2 span,.kpi.hero2 small{color:var(--deepm)}
 .kpi.hero2 b{color:#FFFFFF;font-weight:500}
@@ -1148,6 +1164,11 @@ dialog h2,.sethead h2{font-weight:700}
   .msp{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:baseline}
   .msp>span{font-size:14px!important;color:var(--ink)!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .msp small{grid-column:1/-1;font-size:12px}
+  /* The card sits inside "Hvad er der tilbage" (one card per section), so it needs no frame of its own. */
+  .leftsec .msum{margin:0;padding:0;border:0;background:transparent}
+  .msgrid .mswide{grid-column:1/-1}
+  .leftppl{display:none}
+  #app>section.sfold:not(.open)>.sechead{margin-bottom:0;border-bottom-color:transparent}
   .hero{padding:8px 0 4px;border-bottom:0}
   .hero>p{display:none}
   .hero .hbar{margin-top:6px;font-size:13.5px;padding:8px 12px 8px 30px}
@@ -1988,16 +2009,13 @@ function render(){
   let h=scBarHtml(true)+startInfo(false);
   if(sc){h+=`<div class="scedit">${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
     <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}</div>`}
-  h+=mobSumHtml(t);
-  // One main number: what is left after the fixed expenses and, when there is any, the savings.
-  const main=t.sav?t.afterSav:t.left, fixInfo=ib(catInfo('Alle faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal)));
-  h+=`<div class="hero"><p>${S.persons.length===1?'Du har':'Husstanden har'} <b>${disp(t.inc)}</b> i indtægter${t.sav?`, <b>${disp(t.exp)}</b> i faste udgifter${fixInfo} og <b>${disp(t.sav)}</b> i opsparing${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''}`:` og <b>${disp(t.exp)}</b> i faste udgifter${fixInfo}`}. Tilbage ${per()}: <b class="${main>=0?'left':'neg'}">${disp(main)}</b>.</p>
-  <small class="hbar">${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} ${checks===1?'post er':'poster er'} markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>`;
-
+  /* Overblik, top to bottom (user's wish, Nov 2026: not too much in the first view): Månedstjek when it is due,
+     Rådighedsbeløb, Konti and Hvem betaler hvad folded (sfoldHtml), and last "Hvad er der tilbage" with the sentence
+     (the key-figure card on phones) and Måned for måned. */
   if(!sc&&!DR)h+=monthCheckHtml();
   if(sc)h+=compareHtml(sc);
   const bk=bankCalc();
-  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb som banken regner det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus bankens faste udgifter. Banken regner ikke mad og husholdning, opsparing og gaver med, fordi de skal dækkes af rådighedsbeløbet.</span></div>
+  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus bankens faste udgifter. Banken regner ikke mad og husholdning, opsparing og gaver med, fordi de skal dækkes af rådighedsbeløbet.</span></div>
    <div class="kpis">
     <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Bankens faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>${(()=>{const d=bk.rad-t.left;return Math.abs(d)<1?'pr. måned, det samme som der er tilbage efter faste udgifter':`pr. måned. ${kr(Math.abs(d))} ${d>0?'mere':'mindre'} end der er tilbage efter faste udgifter${exclList(bk)&&d>0?', fordi banken ikke regner alle faste udgifter med':''}`})()}</small></div>
     <div class="kpi ${bk.buf>=0?'good':'bad'}"><span>${bk.buf>=0?'Luft over kravet':'Under kravet'}</span><b>${kr(Math.abs(bk.buf))}</b><small>pr. måned</small></div>
@@ -2022,7 +2040,7 @@ function render(){
   // konti
   const ids=S.accounts.map(a=>a.id); if(unplaced.length)ids.push('');
   const maxv=Math.max(1,...ids.map(id=>{const c=accountCalc(id);return Math.max(c.in,c.out)}));
-  h+=`<section><div class="sechead"><h2>Konti</h2><div class="shtools"><span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti</span></button></div></div><div class="accounts">`;
+  h+=`<section ${sfAttr('konti')}><div class="sechead">${sfHead('konti','Konti')}<span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span></div><div class="sfbody"><div class="shtools"><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti</span></button></div><div class="accounts">`;
   ids.forEach(id=>{
     const a=S.accounts.find(x=>x.id===id)||{id:'',name:'Ikke placeret',type:'',number:''};
     const c=accountCalc(id);
@@ -2056,12 +2074,12 @@ function render(){
         <div class="barrow"><span>Ud</span><div class="track"><div class="fill out" style="width:${w(c.out)}%"></div></div><span class="v">${disp(c.out)}</span></div>
         ${verdict}</div></div></details>`;
   });
-  h+=`</div></section>`;
+  h+=`</div></div></section>`;
 
   // personer
   const sp=S.settings||{};
-  h+=`<section><div class="sechead"><h2>Hvem betaler hvad</h2>
-    <div class="split"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button></div></div>
+  h+=`<section ${sfAttr('hvem')}><div class="sechead">${sfHead('hvem','Hvem betaler hvad')}<span class="hint">Hvad hver person har til rådighed efter sin del af de faste udgifter.</span></div><div class="sfbody">
+    <div class="shtools"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button></div>
     <p class="setstat">${splitTxt()}${S.persons.some(p=>extraSum(p))?(exOn()?' · Ekstra indtjening medregnet':' · Ekstra indtjening ikke medregnet'):''}${boundTxt()?(boundOn()?' · Bundne indtægter medregnet':' · Bundne indtægter holdt ude'):''}<button type="button" data-set="fordeling">Ret</button></p><div class="people${S.persons.length===1?' solo':''}">`;
   S.persons.forEach(p=>{
     const c=personCalc(p.id);
@@ -2074,7 +2092,7 @@ function render(){
         +`<label class="ptog" title="Gælder hele husstanden"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening (${disp(extraSum(p))})</label>`:''}
       ${c.shInc?ln('in','+ Andel af fælles indtægter',c.shInc):''}
       ${(()=>{const B=act().filter(e=>isBound(e)&&e.payer===p.id);if(!B.length)return '';const sum=B.reduce((a,e)=>a+mAvg(e),0),nm=esc([...new Set(B.map(e=>e.desc.endsWith(' '+p.name)?e.desc.slice(0,-(p.name.length+1)):e.desc))].join(', '));
-        return `<label class="ptog" title="Gælder hele husstanden"><input type="checkbox" data-bndtog ${boundOn()?'checked':''}> Medregn bundne indtægter (${nm} ${disp(sum)})${ib(listInfo('Bundne indtægter',B.slice(),null,'Bundne indtægter er fx børnefamilieydelse, der går til bestemte udgifter. Fluebenet styrer, om de tæller med i personkortene, og gælder hele husstanden. De tæller altid med i tallene øverst på siden og i bankens beregning, og de går stadig ind på kontoen og sænker overførslen dertil.'))}</label>`+(boundOn()?'':`<span class="note held">Holdt ude af Faste indtægter, fordi pengene er bundet.</span>`)})()}
+        return `<label class="ptog" title="Gælder hele husstanden"><input type="checkbox" data-bndtog ${boundOn()?'checked':''}> Medregn bundne indtægter (${nm} ${disp(sum)})${ib(listInfo('Bundne indtægter',B.slice(),null,'Bundne indtægter er fx børnefamilieydelse, der går til bestemte udgifter. Fluebenet styrer, om de tæller med i personkortene, og gælder hele husstanden. De tæller altid med under Hvad er der tilbage og i bankens beregning, og de går stadig ind på kontoen og sænker overførslen dertil.'))}</label>`+(boundOn()?'':`<span class="note held">Holdt ude af Faste indtægter, fordi pengene er bundet.</span>`)})()}
       ${ln('in tot','= Indtægter i alt',incT)}
       <span class="ch out">Udgifter</span><span class="ch"></span>
       ${ln('out',`− Egne faste udgifter ${ib(catInfo('Egne faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal&&e.payer===p.id)))}`,c.ownExp)}
@@ -2095,7 +2113,15 @@ function render(){
       ${c.afterSav<0?`<div class="verdict bad">Opsparingen er ${disp(-c.afterSav)} højere end rådighedsbeløbet.</div>`:''}
       ${moreBtn(p.id,'Vis indtægter, udgifter og opsparing')}</div>`;
   });
-  h+=`</div></section>`;
+  h+=`</div></div></section>`;
+
+  // Hvad er der tilbage: the main number in a sentence (the key-figure card on phones), last on the page.
+  const main=t.sav?t.afterSav:t.left, fixInfo=ib(catInfo('Alle faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal)));
+  h+=`<section class="leftsec"><div class="sechead"><h2>Hvad er der tilbage</h2><span class="hint">Indtægter minus faste udgifter${t.sav?' og opsparing':''} ${per()}.</span></div>
+  ${mobSumHtml(t)}
+  <div class="hero"><p>${S.persons.length===1?'Du har':'Husstanden har'} <b>${disp(t.inc)}</b> i indtægter${t.sav?`, <b>${disp(t.exp)}</b> i faste udgifter${fixInfo} og <b>${disp(t.sav)}</b> i opsparing${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''}`:` og <b>${disp(t.exp)}</b> i faste udgifter${fixInfo}`}. Tilbage ${per()}: <b class="${main>=0?'left':'neg'}">${disp(main)}</b>.</p>
+  <small class="hbar">${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} ${checks===1?'post er':'poster er'} markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>
+  ${S.persons.length>1?`<div class="leftppl"><span class="msh">${t.sav?'Tilbage pr. person efter opsparing':'Til rådighed pr. person'}</span>${S.persons.map(p=>{const pc=personCalc(p.id),v=t.sav?pc.afterSav:pc.left;return `<span class="lp"><span>${esc(p.name)}</span><b class="${v>=0?'left':'neg'}">${disp(v)}</b></span>`}).join('')}</div>`:''}</section>`;
 
   // poster (own tab). hTop is the overview so far; the posts page starts with the scenario bar only.
   const hTop=h; h=scBarHtml(true)+startInfo(true);
@@ -2120,7 +2146,7 @@ function render(){
    <div id="planChart">${planSvg(planAcct)}</div></section>`;
 
   app.innerHTML=page==='poster'?hPost:h;
-  bindMain();bindMonthCheck();
+  bindMain();bindMonthCheck();bindSfold();
 }
 /* Månedstjek: once MC_DAYS have passed since the last one (settings.monthCheck; the first time once the budget has a few
    posts), Overblik asks "Hvad har ændret sig siden sidst?" – the posts with a new amount or new since then (e.since,
@@ -2129,6 +2155,15 @@ const MC_DAYS=30;
 /* Phones: the person cards on Overblik show the result only; PDET holds the ones opened with "Vis indtægter, …" (until reload).
    The long explanation under a page's sentence is cut to a few lines there, with "Vis mere" when there is more (clampHero). */
 const PDET=new Set();
+/* Overblik's foldable sections (Konti, Hvem betaler hvad): folded until opened; what is open is kept per browser. The
+   whole head folds the section, except the buttons in it. */
+let SFOLD={};try{SFOLD=JSON.parse(localStorage.getItem('hb-secopen')||'{}')||{}}catch(e){}
+const sfOpen=k=>!!SFOLD[k];
+const sfAttr=k=>`class="sfold${sfOpen(k)?' open':''}" data-sfold="${k}"`;
+const sfHead=(k,title)=>`<h2><button type="button" class="sftog" aria-expanded="${sfOpen(k)}" aria-controls="sf-${k}"><span>${title}</span><span class="sfchev" aria-hidden="true"></span></button></h2>`;
+function bindSfold(){document.querySelectorAll('section.sfold').forEach(s=>{const k=s.dataset.sfold,b=s.querySelector('.sftog'),body=s.querySelector('.sfbody');if(body)body.id='sf-'+k;
+  const set=on=>{SFOLD[k]=on;if(!on)delete SFOLD[k];try{localStorage.setItem('hb-secopen',JSON.stringify(SFOLD))}catch(e){}s.classList.toggle('open',on);b.setAttribute('aria-expanded',String(on))};
+  s.querySelector('.sechead').onclick=ev=>{if(ev.target.closest('button,a,input,select,label')&&!ev.target.closest('.sftog'))return;set(!s.classList.contains('open'))}})}
 const moreBtn=(key,label)=>`<button type="button" class="pmore" data-pmore="${key}" data-l="${label}" aria-expanded="${PDET.has(key)}">${PDET.has(key)?'Skjul detaljer':label}</button>`;
 function bindMore(){document.querySelectorAll('[data-pmore]').forEach(b=>b.onclick=()=>{const k=b.dataset.pmore,on=!PDET.has(k);on?PDET.add(k):PDET.delete(k);
   b.parentElement.classList.toggle('open',on);b.setAttribute('aria-expanded',String(on));b.textContent=on?'Skjul detaljer':b.dataset.l})}
@@ -2143,22 +2178,24 @@ function monthCheckHtml(){if(!monthCheckDue())return '';const last=S.settings.mo
   const rows=[...changed.map(e=>`<li><b>${esc(e.desc)}</b> ${kr(+prev(e).amount||0)} → ${kr(+e.amount||0)}</li>`),...fresh.map(e=>`<li><b>${esc(e.desc)}</b> ny post, ${kr(+e.amount||0)}</li>`)];
   const checks=cur().filter(e=>e.check).length,todos=todoList().length;
   const extra=[checks&&`${checks} ${checks===1?'post er':'poster er'} markeret til tjek`,todos&&todoCount(todos)+' venter under klokken'].filter(Boolean);
-  return `<div class="mcheck" role="region" aria-label="Månedstjek"><div class="mchead"><h2>Månedstjek</h2><span class="hint">${last?`Siden ${esc(fmtDate(last))}`:'Første gang'}</span></div>
-    <p>Hvad har ændret sig siden sidst? Se listen igennem. Passer resten stadig, så bekræft det med ét tryk.</p>
-    ${rows.length?`<ul>${rows.slice(0,6).join('')}${rows.length>6?`<li>og ${rows.length-6} mere</li>`:''}</ul>`:`<p class="muted">Ingen beløb er rettet${last?' siden sidst':''}.</p>`}
+  // No "første gang" label (it confused people); the first check just asks to look the posts through.
+  return `<div class="mcheck" role="region" aria-label="Månedstjek"><div class="mchead"><h2>Månedstjek</h2>${last?`<span class="hint">Siden ${esc(fmtDate(last))}</span>`:''}</div>
+    <p>${last?'Hvad har ændret sig siden sidst? Se listen igennem. Passer resten stadig, så bekræft det med ét tryk.':'Se budgettet igennem én gang om måneden. Passer det stadig, så bekræft det med ét tryk.'}</p>
+    ${rows.length?`<ul>${rows.slice(0,6).join('')}${rows.length>6?`<li>og ${rows.length-6} mere</li>`:''}</ul>`:last?`<p class="muted">Ingen beløb er rettet siden sidst.</p>`:''}
     ${extra.length?`<p class="muted">${esc(extra.join(' · '))}.</p>`:''}
     <div class="mcbtns"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button><button type="button" id="btnMcEdit">Ret posterne</button></div></div>`}
 function bindMonthCheck(){const ok=$('btnMcOk');if(!ok)return;
   ok.onclick=()=>{S.settings.monthCheck=DAY();commit();toast('Tak. Vi spørger igen om en måned')};
   $('btnMcEdit').onclick=()=>document.querySelector('button[data-page="poster"]').click()}
-/* Phones: the key figures as one card at the top of Overblik (shown by CSS only below 760 px, in place of the
-   sentence in .hero). Same numbers as the sentence, the person cards and the bank section. */
-function mobSumHtml(t){const bk=bankCalc(), c=v=>v>=0?'left':'neg';
+/* Phones: the key figures as one card in "Hvad er der tilbage", last on Overblik (shown by CSS only below 760 px, in
+   place of the sentence in .hero). Same numbers as the sentence and the person cards; Rådighedsbeløb has its own
+   section at the top. */
+function mobSumHtml(t){const c=v=>v>=0?'left':'neg';
   // One number at the top and per person, the same as the main number in the sentence on larger screens.
   const ppl=S.persons.length<2?'':S.persons.map(p=>{const pc=personCalc(p.id),v=t.sav?pc.afterSav:pc.left;return `<div class="msp"><span>${esc(p.name)}</span><b class="${c(v)}">${disp(v)}</b></div>`}).join(''), main=t.sav?t.afterSav:t.left;
   return `<div class="msum"><div class="mstop"><span>Tilbage ${per()} efter faste udgifter${t.sav?' og opsparing':''}</span><b class="${c(main)}">${disp(main)}</b></div>
     <div class="msgrid"><div><span>Indtægter</span><b>${disp(t.inc)}</b></div><div><span>Faste udgifter</span><b>${disp(t.exp)}</b></div>
-      <div><span>Opsparing</span><b>${disp(t.sav)}</b></div><div><span>Rådighedsbeløb</span><b>${kr(bk.rad)}</b><small class="${bk.buf>=0?'left':'neg'}">${kr(Math.abs(bk.buf))} ${bk.buf>=0?'over':'under'} kravet</small></div></div>
+      ${t.sav?`<div class="mswide"><span>Opsparing</span><b>${disp(t.sav)}</b></div>`:''}</div>
     ${ppl?`<div class="msppl"><span class="msh">${t.sav?'Tilbage pr. person efter opsparing':'Til rådighed pr. person'}</span>${ppl}</div>`:''}</div>`}
 function metrics(){
   const t=totals(), b=bankCalc(), r=[['Indtægter',t.inc],['Faste udgifter',t.exp],['Tilbage efter faste udgifter',t.left],['Opsparingsmål',t.gsav],['Tilbage efter al opsparing',t.afterSav],['Rådighedsbeløb (bankens beregning)',b.rad]];
@@ -2825,14 +2862,14 @@ function helpHtml(){
         `Kommer en indtægt ind på én konto og flyttes fast videre, fx børnepenge fra lønkontoen til budgetkontoen, så vælg <b>Flyttes videre til konto</b> på indtægten. Overførslen laves af sig selv, og den sænker din overførsel til budgetkontoen tilsvarende.`]))
   +sec('opsparing','Opsparing og opsparingsmål',panel('Fra mål til post',`<div class="hflow"><div class="hcard"><b>Opsparingsmål</b></div>${arrow}<div class="hcard"><b>Fast månedlig post</b></div>${arrow}<div class="hsplit"><div class="hcard"><b>Anden konto</b><span>Overførsel</span></div><div class="hcard"><b>Samme konto</b><span>Udgift på kontoen</span></div></div></div>`)
       +ul([`Et opsparingsmål bliver til en fast månedlig post. Sættes pengene ind på en anden konto, er det en overførsel; ellers en udgift på kontoen.`,
-        `I sætningen øverst og under Hvem betaler hvad trækkes opsparingen fra, så ${wI('du','I')} kan se, hvad der er tilbage.`,
+        `Under Hvad er der tilbage og Hvem betaler hvad trækkes opsparingen fra, så ${wI('du','I')} kan se, hvad der er tilbage.`,
         `Opsparing er <b>ikke</b> en fast udgift i bankens beregning. Den betales af rådighedsbeløbet.`,
         `Ekstra indbetalinger på et mål, fx feriepenge, ligger uden for budgettet og sænker kun det månedlige beløb.`,
         `<b>Skønnet opsparet</b> = det, der allerede var sparet op, + den månedlige indbetaling for hver måned siden startdatoen + ekstra indbetalinger, hvis dato er passeret. budgetpro kan ikke se netbanken, så tallet forudsætter, at indbetalingerne er gået ind som planlagt.`,
         `Når skønnet når 10, 25, 50, 75 og 100 % af målbeløbet, får du en besked, næste gang du logger ind. Hver milepæl vises én gang. Mål med fast månedlig indbetaling og uden måldato har intet målbeløb og giver ingen besked. Beskederne kan slås fra under Indstillinger, Påmindelser.`]))
   +sec('bank','Rådighedsbeløb som banken regner det',steps([['','Nettoindtægt (alle indtægter, ekstra indtjening kun hvis den er slået til)'],['m','Bankens faste udgifter: de faste udgifter, der er markeret "Medregnes i bankens faste udgifter"'],['t','Rådighedsbeløb'],['m','Vejledende krav: voksne + antal børn × sats pr. barn'],['t','Luft over kravet (eller under kravet)']])
       +panel('Jeres tal lige nu',wfB)
-      +`<p>Bankens faste udgifter er de faste udgifter i sætningen øverst, minus mad og husholdning, opsparing og gaver. Dem regner banken ikke med, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Bankens faste udgifter viser, hvad der er holdt ude. Derfor er rådighedsbeløbet som regel højere end det, der er tilbage efter de faste udgifter.</p>
+      +`<p>Bankens faste udgifter er de faste udgifter under Hvad er der tilbage, minus mad og husholdning, opsparing og gaver. Dem regner banken ikke med, fordi de skal dækkes af rådighedsbeløbet. Du kan ændre det på den enkelte post. Kortet Bankens faste udgifter viser, hvad der er holdt ude. Derfor er rådighedsbeløbet som regel højere end det, der er tilbage efter de faste udgifter.</p>
       <p>Kravet er en tommelfingerregel, ikke bankens egne satser. Luft fra en senere måned lægger ydelsen fra lån, der udløber inden for 12 måneder, til igen.</p>`)
   +sec('ovrigt','Øvrigt',panel(`Eksempel: ${qName} · ${kr(qAmt)} kvartalsvis = ${kr(qAvg)} pr. måned`,`<div class="hfreq">${qBars}<div class="avg" style="bottom:33.3%"></div><span class="avgl" style="bottom:calc(33.3% + 6px)">Gennemsnit ${kr(qAvg)}/md.</span></div><div class="hfreqm">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`)
       +ul([`Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.`,

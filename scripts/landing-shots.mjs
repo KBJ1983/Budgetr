@@ -74,6 +74,8 @@ for (const theme of ["light", "dark"]) {
       ([t, notes]) => {
         localStorage.setItem("budgetr:session", "test5");
         localStorage.setItem("hb-theme", t);
+        // Overblik folds Konti and Hvem betaler hvad until opened; the shots show them open.
+        localStorage.setItem("hb-secopen", JSON.stringify({ konti: true, hvem: true }));
         if (!notes) sessionStorage.setItem("budgetr:quiet", "1"); // no login note over the screenshot
       },
       [theme, !!s.notes],

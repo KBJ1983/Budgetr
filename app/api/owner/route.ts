@@ -1,9 +1,10 @@
 import type { NextRequest } from "next/server";
 import { inviteAdmins } from "@/lib/agreement-auth";
 import { loadPackUse } from "@/lib/agreements";
-import { markInquiry } from "@/lib/erhverv-inbox";
+import { sendMail } from "@/lib/auth-mail";
+import { deleteInquiry, markInquiry, replyToInquiry, type InquiryRow } from "@/lib/erhverv-inbox";
 import { applyChange } from "@/lib/owner";
-import { isOwner, listAccounts, loadOwnerData, readLedger, writeLedger } from "@/lib/owner-store";
+import { isOwner, listAccounts, loadOwnerData, ownerEmails, readLedger, writeLedger } from "@/lib/owner-store";
 import { ADMIN_COOKIE, SESSION_COOKIE } from "@/lib/session";
 import { deleteBudget } from "@/lib/budget-file";
 import { USERS } from "@/lib/users";
@@ -14,9 +15,18 @@ const TEST_USER_IDS = USERS.map((u) => u.id).filter((id) => /^test\d+$/.test(id)
 // Owner overview (lib/owner.ts): GET the numbers, POST one change to the ledger (plans, organisations, seat packs, expenses)
 // or to a henvendelse from the Erhverv form ({ type: "inquiry", id, done }; an org change may carry "inquiry" too, which
 // marks that henvendelse as done with the agreement it became, and "pack" for the new agreement's first pack).
+// { type: "inquiryReply", id, subject, text } mails an answer to the henvendelse (kept on it); { type: "inquiryDelete", id }
+// deletes it for good.
 // { type: "resetTestUsers" } deletes the saved budgets of TEST1–TEST5 before a round of tests.
 // Anyone but the owner gets a plain 404, so the route doesn't give itself away.
 const noStore = { "Cache-Control": "no-store" };
+
+/** The owner's answer, with their own henvendelse quoted under it (so the customer sees what it answers). */
+const replyText = (text: string, q: InquiryRow) => {
+  const when = new Date(q.at).toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Copenhagen" });
+  const quoted = q.message ? ["", `Din henvendelse fra ${when}:`, ...q.message.split("\n").map((l) => `> ${l}`)] : [];
+  return [text, ...quoted].join("\n");
+};
 const denied = async (req: NextRequest) =>
   !(await isOwner({ session: req.cookies.get(SESSION_COOKIE)?.value, admin: req.cookies.get(ADMIN_COOKIE)?.value }));
 
@@ -40,6 +50,19 @@ export async function POST(req: NextRequest) {
   }
   if (change.type === "inquiry") {
     if (!(await markInquiry(change.id, change.done === true))) return Response.json({ error: "inquiry" }, { status: 400, headers: noStore });
+    return Response.json(await loadOwnerData(), { headers: noStore });
+  }
+  if (change.type === "inquiryDelete") {
+    if (!(await deleteInquiry(change.id))) return Response.json({ error: "inquiry" }, { status: 400, headers: noStore });
+    return Response.json(await loadOwnerData(), { headers: noStore });
+  }
+  if (change.type === "inquiryReply") {
+    // A reply goes back to the owner (the first OWNER_EMAILS address), not to the no-reply sender.
+    const replyTo = ownerEmails()[0];
+    const r = await replyToInquiry(change.id, { subject: change.subject, text: change.text }, (to, subject, text, q) =>
+      sendMail(to, { subject, text: replyText(text, q) }, { replyTo, origin: req.nextUrl.origin }, ` Svar på henvendelse ${q.id}.`),
+    );
+    if (!r.ok) return Response.json({ error: r.error }, { status: 400, headers: noStore });
     return Response.json(await loadOwnerData(), { headers: noStore });
   }
   const ids = (await listAccounts()).map((a) => a.id);

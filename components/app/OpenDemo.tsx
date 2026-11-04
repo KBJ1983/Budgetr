@@ -6,9 +6,12 @@ import { login } from "@/lib/store";
 
 const KEY = "budgetr-app:demo";
 
-/** /demobruger: resets the demo budget, logs in as the demo customer and opens the app. */
+/**
+ * /demobruger: resets the demo budget and logs in as the demo customer, then waits on this screen until the visitor
+ * presses "Start demoen" (user's wish: a calm "being prepared" screen, no jump straight into the app).
+ */
 export function OpenDemo() {
-  const [failed, setFailed] = useState(false);
+  const [state, setState] = useState<"prep" | "ready" | "failed">("prep");
 
   useEffect(() => {
     let gone = false;
@@ -17,7 +20,7 @@ export function OpenDemo() {
         const r = await fetch("/api/demo", { method: "POST", cache: "no-store" });
         if (!r.ok) throw new Error(String(r.status));
       } catch {
-        if (!gone) setFailed(true);
+        if (!gone) setState("failed");
         return;
       }
       // Drop this browser's copy (and an open draft), so the app loads the fresh demo from the server.
@@ -29,7 +32,7 @@ export function OpenDemo() {
         localStorage.setItem("hb-theme", "light");
       } catch {}
       login("DEMO");
-      window.location.replace("/app");
+      if (!gone) setState("ready");
     })();
     return () => {
       gone = true;
@@ -39,12 +42,29 @@ export function OpenDemo() {
   return (
     <AuthShell>
       <h1>Demo</h1>
-      {failed ? (
+      {state === "failed" ? (
         <p className="bx-guide-lead" role="alert">
           Demoen kunne ikke åbnes lige nu. Prøv igen om lidt.
         </p>
       ) : (
-        <p className="bx-guide-lead">Vi gør demo-budgettet klar. Det tager et øjeblik.</p>
+        <>
+          <p className="bx-guide-lead" role="status">
+            {state === "prep"
+              ? "Demoen gøres klar. Den viser en opdigtet familie med alle funktioner i brug."
+              : "Demoen er klar. Den viser en opdigtet familie med alle funktioner i brug."}
+          </p>
+          <p>
+            <button
+              type="button"
+              className="bx-btn bx-btn-primary bx-btn-lg"
+              disabled={state !== "ready"}
+              aria-busy={state === "prep"}
+              onClick={() => window.location.assign("/app")}
+            >
+              {state === "prep" ? "Gør demoen klar …" : "Start demoen"}
+            </button>
+          </p>
+        </>
       )}
     </AuthShell>
   );

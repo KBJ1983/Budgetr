@@ -5,8 +5,11 @@ import type { Redis } from "@upstash/redis";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { openStore, redisStore, type Store } from "./kv";
 
-/** Just the Redis calls lib/kv.ts makes, kept in memory. */
-function fakeRedis() {
+/**
+ * Just the Redis calls lib/kv.ts makes, kept in memory. `raw` answers HGETALL the way the real client does with
+ * automaticDeserialization off (lib/kv.ts' setting): a flat list [field, value, …], not an object.
+ */
+function fakeRedis(raw = false) {
   const strings = new Map<string, string>(), sets = new Map<string, Set<string>>(), hashes = new Map<string, Map<string, string>>();
   const set = (k: string) => sets.get(k) ?? sets.set(k, new Set()).get(k)!;
   const hash = (k: string) => hashes.get(k) ?? hashes.set(k, new Map()).get(k)!;
@@ -21,7 +24,7 @@ function fakeRedis() {
     },
     hsetnx: async (k: string, f: string, v: string) => (hash(k).has(f) ? 0 : (hash(k).set(f, v), 1)),
     hget: async (k: string, f: string) => hash(k).get(f) ?? null,
-    hgetall: async (k: string) => (hashes.has(k) ? Object.fromEntries(hash(k)) : null),
+    hgetall: async (k: string) => (!hashes.has(k) ? null : raw ? [...hash(k)].flat() : Object.fromEntries(hash(k))),
     sadd: async (k: string, m: string) => (set(k).add(m), 1),
     srem: async (k: string, m: string) => Number(set(k).delete(m)),
     smembers: async (k: string) => [...set(k)],
@@ -53,6 +56,8 @@ afterEach(async () => {
 describe.each<[string, () => Store]>([
   ["disk", () => openStore(dir)],
   ["redis", () => redisStore(fakeRedis())],
+  // The traffic overview showed no visitors on Vercel: the raw HGETALL list was read as an object.
+  ["redis (raw replies, as in production)", () => redisStore(fakeRedis(true))],
 ])("%s store", (_, make) => {
   it("gets, sets, adds, lists and deletes", async () => {
     const s = make();

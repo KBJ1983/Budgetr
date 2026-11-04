@@ -8,7 +8,7 @@ import { PricePlans } from "./PricePlans";
 import { SignupForm } from "./SignupForm";
 import { SwipeList } from "./Swipe";
 
-const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; coral?: boolean }[] = [
+const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; umbra?: boolean }[] = [
   {
     icon: <NoBankIcon size={18} />,
     title: "Ingen adgang til netbanken",
@@ -18,7 +18,7 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; cora
     icon: <LockIcon size={18} strokeWidth={1.8} />,
     title: "Login med engangskode",
     body: "Ingen adgangskode, der kan lække. Du får en ny kode på mail, hver gang du logger ind.",
-    coral: true,
+    umbra: true,
   },
   {
     icon: <DownloadIcon size={18} strokeWidth={1.8} />,
@@ -42,7 +42,7 @@ export function Trust() {
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={`${styles.eyebrow} ${styles.eyebrowCoral}`}>Tryghed</span>
+            <span className={`${styles.eyebrow} ${styles.eyebrowUmbra}`}>Tryghed</span>
             <h2 id="tryghed-title" className={`${styles.h2} ${styles.h2Light}`}>
               Bygget til de tal, man ikke deler med hvem som helst.
             </h2>
@@ -55,7 +55,7 @@ export function Trust() {
         <SwipeList className={styles.trustBandGrid} label="Tryghed" tone="dark">
           {TRUST_CARDS.map((card) => (
             <li key={card.title} className={styles.trustBandCard}>
-              <span className={`${styles.trustBandIcon} ${card.coral ? styles.trustBandIconCoral : ""}`} aria-hidden="true">
+              <span className={`${styles.trustBandIcon} ${card.umbra ? styles.trustBandIconUmbra : ""}`} aria-hidden="true">
                 {card.icon}
               </span>
               <h3 className={styles.trustBandCardTitle}>{card.title}</h3>
@@ -210,7 +210,8 @@ export function FinalCta() {
           <span />
         </div>
         <div className={styles.ctaInner}>
-          <Logo fontSize={26} dark bg="#A8473C" />
+          {/* No mynte on the umbra band (user's wish): the logo's front card takes umbra's soft tone. */}
+          <Logo fontSize={26} dark bg="#4E3B30" front="#E7DFD9" />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Slip for de mange versioner af Excel-budgettet.
           </h2>

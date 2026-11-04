@@ -1,8 +1,8 @@
 /*
  * Landing page styles after the design "budgetpro – Mynte og is komplet" (Nov 2026, docs/design/MYNTE.md): header and
- * hero share one rounded mynte-tint card with large calm shapes (a white circle, a mynte card, an outlined card) on a
- * white frame; sections below alternate white, is (soft) and dark bands, with koral (#A8473C) as the second accent
- * (the "29 min · 29 kr" badge, the closing call to action, the Erhverv pill). Content is at most 1136px wide (1200px
+ * hero share one rounded warm paper-white card (#F2F0EA) with large calm shapes (a white circle, a mynte card, an outlined card) on a
+ * white frame; sections below alternate white, is (soft) and dark bands, with umbra (#4E3B30) as the second,
+ * complementary accent (the "29 min · 29 kr" badge, the closing call to action, the Erhverv pill). Red is for errors only. Content is at most 1136px wide (1200px
  * incl. 32px gutters). Breakpoints: 1020px (two columns → one), 768px (mobile).
  */
 
@@ -14,12 +14,13 @@
   --v-stone: #f0f3f2;
   /* Mynte tint: the hero card and the "Alle funktioner" band. */
   --v-tint: #ddf0e8;
-  /* The hero card (header + hero, privat and Erhverv): a faint grey, not mynte (user's wish, Nov 2026). */
-  --v-hero: #eef1f0;
-  /* Koral: the second accent (badge, closing band, Erhverv pill); light text on it is --v-coral-soft. */
-  --v-coral: #a8473c;
-  --v-coral-soft: #f6e3df;
-  --v-coral-on-dark: #e59a8e;
+  /* The hero card (header + hero, privat and Erhverv): a warm paper white (user's wish, Nov 2026). */
+  --v-hero: #f2f0ea;
+  /* Umbra: the complementary accent (badge, closing band, Overførsler card, Erhverv pill, the login icon). Muted text
+     on it is --v-umbra-soft; --v-umbra-light is its light cut on dark (e.g. "Tryghed"). Red is for errors only. */
+  --v-umbra: #4e3b30;
+  --v-umbra-soft: #e7dfd9;
+  --v-umbra-light: #b49c8c;
   /* The Tryghed band: a slate a step lighter than blæk. */
   --v-slate: #1e2326;
   --v-slate-card: #272d30;
@@ -233,8 +234,8 @@
 .eyebrowDark {
   color: var(--v-lime);
 }
-.eyebrowCoral {
-  color: var(--v-coral-on-dark);
+.eyebrowUmbra {
+  color: var(--v-umbra-light);
 }
 
 .h2 {
@@ -504,17 +505,17 @@
   text-transform: uppercase;
   color: var(--v-olive);
 }
-/* "29 min · 29 kr": a koral pill after a short koral line. */
+/* "29 min · 29 kr": an umbra pill after a short umbra line. */
 .taglineRule {
   width: 40px;
   height: 1px;
-  background: var(--v-coral);
+  background: var(--v-umbra);
 }
 .badge {
   font: 500 12px var(--font-mono);
   letter-spacing: 0.04em;
   color: #fff;
-  background: var(--v-coral);
+  background: var(--v-umbra);
   border-radius: 999px;
   padding: 4px 10px;
   white-space: nowrap;
@@ -924,7 +925,7 @@
   background: var(--v-slate);
   color: var(--v-dark-text);
 }
-/* Shapes behind the cards: a slate circle bottom right, a koral card at the top edge, an outlined mynte card bottom left. */
+/* Shapes behind the cards: a slate circle bottom right, an umbra card at the top edge, an outlined mynte card bottom left. */
 .trustCircle {
   position: absolute;
   z-index: -1;
@@ -948,7 +949,7 @@
   top: -70px;
   width: 260px;
   transform: rotate(8deg);
-  background: var(--v-coral);
+  background: var(--v-umbra);
   opacity: 0.9;
 }
 .trustOutline {
@@ -986,8 +987,8 @@
   align-items: center;
   justify-content: center;
 }
-.trustBandIconCoral {
-  background: var(--v-coral);
+.trustBandIconUmbra {
+  background: var(--v-umbra);
   color: #fff;
 }
 .trustBandCardTitle {
@@ -1438,8 +1439,7 @@
 }
 .allTitle {
   margin: 0;
-  font-size: 13px;
-  font-weight: 600;
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--v-olive);
@@ -1474,7 +1474,7 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(9deg);
-  /* Mynte, not koral (user's wish, Nov 2026). */
+  /* Mynte, not the accent colour (user's wish, Nov 2026). */
   background: var(--v-lime);
 }
 .bento {
@@ -1523,11 +1523,11 @@
   --b-mut: var(--v-dark-2);
   --b-over: var(--v-dark-2);
 }
-.bentoCoral {
-  --b-bg: var(--v-coral);
+.bentoUmbra {
+  --b-bg: var(--v-umbra);
   --b-text: #fff;
-  --b-mut: var(--v-coral-soft);
-  --b-over: var(--v-coral-soft);
+  --b-mut: var(--v-umbra-soft);
+  --b-over: var(--v-umbra-soft);
 }
 .bentoOver {
   font: 500 12px var(--font-mono);
@@ -1733,7 +1733,7 @@
   box-shadow: 0 1px 3px rgba(16, 20, 21, 0.15);
 }
 .planTag {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--v-ink);
   background: var(--v-lime);
@@ -1789,7 +1789,7 @@
 .priceCardNote {
   margin: -12px 0 0;
   text-align: center;
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.45;
   color: var(--v-ink-3);
   text-wrap: balance;
@@ -1860,7 +1860,7 @@
 .ctaWrap {
   padding: 0 14px var(--section-y);
 }
-/* A koral band with white text and calm shapes (a light circle, a mynte card, two outlines). It stands still – no
+/* An umbra band with white text and calm shapes (a light circle, a light umbra card, two outlines; no mynte). It stands still – no
    motion and no reveal (user's wish). */
 .cta {
   position: relative;
@@ -1868,7 +1868,7 @@
   overflow: hidden;
   max-width: 1200px;
   margin: 0 auto;
-  background: var(--v-coral);
+  background: var(--v-umbra);
   color: #fff;
   border-radius: 32px;
 }
@@ -1892,7 +1892,9 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(-10deg);
-  background: var(--v-lime);
+  /* No mynte on the umbra band (user's wish): its own light cut instead. */
+  background: var(--v-umbra-light);
+  opacity: 0.35;
 }
 .ctaShapes span:nth-child(3) {
   right: 150px;
@@ -1940,10 +1942,10 @@
   max-width: 640px;
   font-size: 15px;
   line-height: 1.5;
-  color: var(--v-coral-soft);
+  color: var(--v-umbra-soft);
 }
 .cta .label {
-  color: var(--v-coral-soft);
+  color: var(--v-umbra-soft);
 }
 .cta .input {
   border-color: #fff;
@@ -2017,14 +2019,14 @@
   gap: 14px;
   min-width: 0;
 }
-/* Koral pill above a title (the Erhverv teaser). */
+/* Umbra pill above a title (the Erhverv teaser). */
 .pill {
   align-self: flex-start;
   font: 500 12px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #fff;
-  background: var(--v-coral);
+  background: var(--v-umbra);
   border-radius: 999px;
   padding: 5px 12px;
 }
@@ -2557,6 +2559,9 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 16px;
+    /* Left, like the rest of the stacked footer (the desktop row pushes it right with auto). */
+    margin-left: 0;
+    width: 100%;
   }
   .footerCompany {
     margin-left: 0;

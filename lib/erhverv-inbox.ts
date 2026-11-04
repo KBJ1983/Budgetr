@@ -2,10 +2,24 @@
  * The owner's inbox for henvendelser from the Erhverv form (saved by lib/erhverv-store.ts as
  * "erhverv/henvendelser/<id>.json"). A new one is waiting ("venter") until the owner makes an agreement from it on
  * /admin or marks it as done; both keep the henvendelse, with when and – for an agreement – which organisation.
+ * The owner can also answer it by mail from /admin (each answer is kept on it, `replies`) or delete it for good.
  */
 import { openStore } from "./kv";
 
 const FOLDER = "erhverv/henvendelser";
+
+/** One answer the owner wrote from /admin. `sent` is false when no mail provider is set up (the text is kept). */
+export interface InquiryReply {
+  at: string;
+  subject: string;
+  text: string;
+  sent: boolean;
+}
+
+/** Answers per henvendelse within a day, so a double click or a loop never mails a customer again and again. */
+export const MAX_REPLIES_PER_DAY = 5;
+export const MAX_REPLY_SUBJECT = 150;
+export const MAX_REPLY_TEXT = 5_000;
 
 export interface InquiryRow {
   id: string;
@@ -27,7 +41,17 @@ export interface InquiryRow {
   org?: string;
   /** Where the visit that sent it came from (lib/traffic.ts). */
   source?: string;
+  /** The owner's answers from /admin, oldest first. */
+  replies: InquiryReply[];
 }
+
+const toReply = (x: unknown): InquiryReply | null => {
+  if (!x || typeof x !== "object") return null;
+  const o = x as Record<string, unknown>;
+  return typeof o.at === "string" && typeof o.text === "string"
+    ? { at: o.at, subject: typeof o.subject === "string" ? o.subject : "", text: o.text, sent: o.sent === true }
+    : null;
+};
 
 const str = (v: unknown) => (typeof v === "string" ? v : "");
 const ID = /^[\w-]{1,80}$/;
@@ -51,6 +75,7 @@ function toRow(x: unknown): InquiryRow | null {
     doneAt: str(o.doneAt) || undefined,
     org: str(o.org) || undefined,
     source: str(o.source) || undefined,
+    replies: Array.isArray(o.replies) ? o.replies.map(toReply).filter((r): r is InquiryReply => !!r) : [],
   };
 }
 
@@ -70,17 +95,58 @@ export async function listInquiries(dir?: string): Promise<InquiryRow[]> {
   return rows.filter((r): r is InquiryRow => !!r).sort((a, b) => b.at.localeCompare(a.at));
 }
 
+/** The stored henvendelse (as saved, all fields) and its key, or null when the id is bad or it isn't there. */
+async function readRaw(id: unknown, dir?: string): Promise<{ key: string; o: Record<string, unknown> } | null> {
+  if (typeof id !== "string" || !ID.test(id)) return null;
+  const key = `${FOLDER}/${id}.json`;
+  try {
+    const o = JSON.parse((await openStore(dir).get(key)) ?? "null");
+    return o && typeof o === "object" ? { key, o } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Deletes one henvendelse for good. False when it isn't there. */
+export async function deleteInquiry(id: unknown, dir?: string): Promise<boolean> {
+  const r = await readRaw(id, dir);
+  if (!r) return false;
+  await openStore(dir).del(r.key);
+  return true;
+}
+
+export type ReplyResult = { ok: true; sent: boolean } | { ok: false; error: "inquiry" | "reply" | "replyLimit" };
+
+/**
+ * Answers a henvendelse: `mail` sends it (lib/auth-mail.ts' sendMail in the route; false = no mail provider) and the
+ * answer is kept on the henvendelse either way, so it shows on /admin. At most MAX_REPLIES_PER_DAY a day per henvendelse.
+ */
+export async function replyToInquiry(
+  id: unknown,
+  input: { subject?: unknown; text?: unknown },
+  mail: (to: string, subject: string, text: string, q: InquiryRow) => Promise<boolean>,
+  now = new Date(),
+  dir?: string,
+): Promise<ReplyResult> {
+  const r = await readRaw(id, dir);
+  const q = r && toRow(r.o);
+  if (!r || !q || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(q.email)) return { ok: false, error: "inquiry" };
+  const subject = str(input.subject).replace(/[\r\n]+/g, " ").trim().slice(0, MAX_REPLY_SUBJECT);
+  const text = str(input.text).replace(/\r\n/g, "\n").trim();
+  if (!subject || !text || text.length > MAX_REPLY_TEXT) return { ok: false, error: "reply" };
+  const dayAgo = now.getTime() - 24 * 3600_000;
+  if (q.replies.filter((x) => Date.parse(x.at) > dayAgo).length >= MAX_REPLIES_PER_DAY) return { ok: false, error: "replyLimit" };
+  const sent = await mail(q.email, subject, text, q);
+  r.o.replies = [...q.replies, { at: now.toISOString(), subject, text, sent }];
+  await openStore(dir).set(r.key, JSON.stringify(r.o, null, 2));
+  return { ok: true, sent };
+}
+
 /** Marks one as done (optionally with the agreement made from it), or opens it again. False when it isn't there. */
 export async function markInquiry(id: unknown, done: boolean, org?: string, now = new Date(), dir?: string): Promise<boolean> {
-  if (typeof id !== "string" || !ID.test(id)) return false;
-  const store = openStore(dir), key = `${FOLDER}/${id}.json`;
-  let o: Record<string, unknown>;
-  try {
-    o = JSON.parse((await store.get(key)) ?? "null");
-  } catch {
-    return false;
-  }
-  if (!o || typeof o !== "object") return false;
+  const r = await readRaw(id, dir);
+  if (!r) return false;
+  const store = openStore(dir), key = r.key, o = r.o;
   if (done) {
     o.doneAt = now.toISOString();
     if (org) o.org = org;

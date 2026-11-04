@@ -1,14 +1,31 @@
 /* Owner overview (/admin). Builds on the app's .bx styles in app/login/app.css,
-   with the budget app's look: a lead sentence, section heads on a tinted panel, mono amounts.
-   "Mynte og is": the band is a midnight row on dark and stone grey on light; the month bars are lime + haze on dark
-   and lime-dark + midnight on light. */
-.ow {
-  --band: #141a1b;
+   with the budget app's look: a lead sentence, section heads on a thin line, mono amounts.
+   Dark uses the budget app's dark palette (page #0A0D0E, cards #1A2023, lines #343D40), so cards stand out from the
+   page and headings never sit in a box of the cards' colour. The band (table rows, map land) is a step off the cards;
+   the month bars are mynte + blue on dark and mynte-dark + blæk on light. (.bx.ow, so these win over .bx.) */
+.bx.ow {
+  --bg: #0a0d0e;
+  --bar: #0a0d0e;
+  --card: #1a2023;
+  --card-2: #151a1c;
+  --field: #0f1314;
+  --rule: #343d40;
+  --tx-2: #a3aeac;
+  --tx-3: #8a9694;
+  --band: #242b2e;
   --bar-rev: #a9dccb;
   --bar-exp: #7aa2d6;
 }
-.ow[data-theme="light"] {
-  --band: #e4eae8;
+.bx.ow[data-theme="light"] {
+  --bg: #f0f3f2;
+  --bar: #ffffff;
+  --card: #ffffff;
+  --card-2: #f6f8f7;
+  --field: #ffffff;
+  --rule: #dce3e1;
+  --tx-2: #56615f;
+  --tx-3: #5f6a68;
+  --band: #eef2f1;
   --bar-rev: #7cc1aa;
   --bar-exp: #101415;
 }
@@ -178,21 +195,23 @@
   margin-top: 16px;
 }
 
-/* Section heads: a tinted panel with the explanation beside the heading. */
+/* Section heads: on the page itself with a thin line under them (as in the budget app), never in a box – a box in
+   the cards' colour made heading and cards run together, especially in the dark theme. */
 .ow .bx-section {
   margin-top: 44px;
 }
 .ow .bx-section-head {
   align-items: center;
-  margin-bottom: 14px;
-  padding: 18px 22px;
-  background: var(--band);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
+  margin-bottom: 16px;
+  padding: 0 0 12px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
 }
 .ow .bx-section-head h2 {
-  font-size: 21px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 .ow .bx-section-head > .bx-muted {
@@ -401,10 +420,10 @@
     margin-top: 32px;
   }
   .ow .bx-section-head {
-    padding: 14px 16px;
+    padding: 0 0 10px;
   }
   .ow .bx-section-head h2 {
-    font-size: 19px;
+    font-size: 18px;
   }
 }
 
@@ -458,6 +477,74 @@
 }
 .ow-inq-summary {
   margin-bottom: 14px;
+}
+
+/* Answering and deleting a henvendelse (InquiryCard). */
+.ow-inq-replies {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.ow-inq-replies li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--accent);
+  background: var(--band);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+}
+.ow-inq-replies p {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  color: var(--tx-2);
+}
+.ow-inq-reply {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+}
+.ow-inq-reply .bx-field {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--tx-2);
+}
+.ow-inq-reply textarea {
+  height: auto;
+  min-height: 140px;
+  padding: 10px 12px;
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.ow-inq-reply > p {
+  margin: 0;
+  font-size: 12.5px;
+}
+.ow-inq-confirm {
+  align-items: center;
+}
+.ow-inq-confirm > span {
+  flex-basis: 100%;
+  font-weight: 600;
+}
+.ow .ow-danger {
+  border-color: var(--neg);
+  color: var(--neg);
+}
+.ow .ow-danger:hover {
+  background: var(--neg-bg);
+}
+.ow .ow-danger-link {
+  margin-left: auto;
+  color: var(--tx-2);
+}
+.ow .ow-danger-link:hover {
+  color: var(--neg);
 }
 
 /* ---------- Trafik (components/owner/TrafficPanel.tsx) ---------- */

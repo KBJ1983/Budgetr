@@ -63,8 +63,7 @@
 }
 .beatNum {
   align-self: flex-start;
-  font-size: 12.5px;
-  font-weight: 600;
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--v-olive);
@@ -72,7 +71,7 @@
 .beatTitle {
   margin: 0;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.015em;
 }
 .beatBody {
@@ -132,7 +131,7 @@
 }
 .sectorBody {
   margin: 0;
-  font-size: 15.5px;
+  font-size: 15px;
   line-height: 1.6;
   color: var(--v-ink-2);
 }
@@ -161,7 +160,7 @@
 .otherTitle {
   margin: 0;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 .otherBody {
@@ -201,7 +200,7 @@
 .calcHead h3 {
   margin: 0;
   font-size: 19px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.015em;
 }
 .step {
@@ -235,7 +234,7 @@
 }
 .choiceHint {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--v-ink-3);
 }
 .pills {
@@ -302,7 +301,7 @@
   background: transparent;
   color: var(--v-ink-3);
   font: inherit;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
 }
@@ -315,7 +314,7 @@
   margin: 0;
   font-size: 32px;
   line-height: 1.1;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.025em;
   font-variant-numeric: tabular-nums;
   color: var(--v-ink);
@@ -328,12 +327,12 @@
 }
 .priceSub {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 14px;
   color: var(--v-ink-2);
 }
 .pricePer {
   margin: 4px 0 0;
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.5;
   color: var(--v-ink-3);
 }
@@ -363,7 +362,7 @@
 }
 .notice {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--v-ink-3);
 }
@@ -408,7 +407,7 @@
 }
 .fieldError {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--error);
 }
 .trap {
@@ -536,7 +535,7 @@
 .faqA {
   margin: 0;
   padding: 0 52px 24px 0;
-  font-size: 15.5px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--v-ink-2);
   text-wrap: pretty;

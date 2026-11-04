@@ -17,5 +17,5 @@ export const companyIsDraft = Object.values(COMPANY).some((v) => v.startsWith("[
 export const companyLine = [COMPANY.name, `CVR ${COMPANY.cvr}`, COMPANY.address].filter(Boolean).join(", ");
 
 /** When the privacy policy and the terms last changed in substance (shown at the top of each page). */
-export const PRIVACY_UPDATED = "18. oktober 2026";
+export const PRIVACY_UPDATED = "4. november 2026";
 export const TERMS_UPDATED = "18. oktober 2026";
