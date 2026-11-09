@@ -258,8 +258,9 @@ try {
     await p5.evaluate(() => localStorage.removeItem("hb-film"));
     await p5.reload();
     await p5.locator("#dlgFilm[open]").waitFor({ timeout: 5000 });
-    check((await p5.locator("#filmVid").getAttribute("src"))?.endsWith("budgetpro-kom-i-gang-reel.mp4"), "the film opens on a first visit, as the reel on a phone");
+    check((await p5.locator("#filmVid").getAttribute("src"))?.includes("budgetpro-kom-i-gang-reel.mp4"), "the film opens on a first visit, as the reel on a phone");
     await p5.locator("#filmClose").click();
+    await p5.waitForTimeout(300); // closing a dialog steps back in the history (the phone's back gesture closes dialogs)
     await p5.reload();
     await p5.waitForTimeout(1200);
     check(!(await p5.locator("#dlgFilm").evaluate((d) => d.open)), "the film does not open again");

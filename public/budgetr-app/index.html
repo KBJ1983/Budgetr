@@ -394,6 +394,7 @@ tr.grp.out td{background:var(--plum-bg)}
 .pfold{display:inline-flex!important;align-items:center;justify-content:center;width:22px;height:22px;margin:0 8px 0 -2px;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;vertical-align:-3px;cursor:pointer}
 .pfold::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:translateY(-2px) rotate(45deg);transition:transform .15s}
 .pfold[aria-expanded="false"]::before{transform:rotate(-45deg)}
+tr.grp,tr.cat{cursor:pointer}
 .pfold:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)!important}
 tr.grp.in .pfold::before{border-color:var(--pine-ink)}
 tr.cat .gcount{margin-left:8px}
@@ -991,6 +992,20 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .navrow .tools{align-self:center;padding:10px 0!important;gap:8px}
 .scnbtn{font:500 13px var(--font)!important;padding:8px 12px!important;border-radius:10px!important}
 .scnbtn #scnName{font-weight:700}
+/* "Nuværende budget" is a small, quiet label; "+ Nyt scenarie" a light pill next to the budget button, on Overblik only. */
+.scnbtn .lbl{font-size:12px;font-weight:400;color:var(--ink2)}
+.scncta{padding:8px 14px!important;font:600 13px var(--font)!important;border-radius:999px!important;background:var(--card)!important;color:var(--ink)!important;border:1px solid var(--ink)!important}
+.scncta:hover{background:var(--band)!important}
+body:not([data-page="budget"]) #btnNewScn{display:none}
+/* Phones: the label sits above the name, so the button and "+ Nyt scenarie" share one row. */
+@media (max-width:760px){
+  .navrow .tools{flex-wrap:nowrap}
+  .navrow .expwrap{min-width:0}
+  .scnbtn{display:inline-grid!important;grid-template-columns:minmax(0,auto) auto;column-gap:8px;row-gap:1px;max-width:100%;text-align:left;padding:7px 12px!important}
+  .scnbtn .lbl{grid-column:1/-1;font-size:11px;line-height:1.2}
+  .scnbtn #scnName{min-width:0;max-width:none}
+  .scncta{flex-shrink:0;align-self:stretch}
+}
 #btnNew{padding:9px 16px!important;font:600 13px var(--font)!important;border-radius:999px}
 button{border-radius:999px}
 button.primary,button.danger,.dlgfoot button{font-weight:600}
@@ -1093,7 +1108,7 @@ dialog h2,.sethead h2{font-weight:700}
 .setsec h3{font-weight:700;letter-spacing:-.02em}
 .expmenu{border-radius:14px}
 .dftbar{border-radius:14px}
-@media (max-width:760px){dialog.howdlg{width:100vw;height:100vh;max-height:100vh;border-radius:0}.howwrap{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.hownav{border-right:0;border-bottom:1px solid var(--rule);padding:12px 12px 8px}.hownav h2{padding:0 6px 8px;font-size:18px}#helpNav{flex-direction:row;overflow-x:auto;scrollbar-width:none}#helpNav a{white-space:nowrap;padding:6px 10px}.howtop{position:absolute;top:8px;right:8px;padding:0}.howbody{padding:16px 16px 60px;gap:28px}.hsec h3{font-size:21px}.hudl{grid-template-columns:minmax(0,1fr)}.hwf>div{grid-template-columns:minmax(0,1fr) 90px}.hwf .tr{grid-column:1/-1;grid-row:2}.hpanel{padding:16px}}
+@media (max-width:760px){dialog.howdlg{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;inset:0;border:0;border-radius:0}.howwrap{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.hownav{border-right:0;border-bottom:1px solid var(--rule);padding:12px 12px 8px}.hownav h2{padding:0 6px 8px;font-size:18px}#helpNav{flex-direction:row;overflow-x:auto;scrollbar-width:none}#helpNav a{white-space:nowrap;padding:6px 10px}.howtop{position:absolute;top:8px;right:8px;padding:0}.howbody{padding:16px 16px 60px;gap:28px}.hsec h3{font-size:21px}.hudl{grid-template-columns:minmax(0,1fr)}.hwf>div{grid-template-columns:minmax(0,1fr) 90px}.hwf .tr{grid-column:1/-1;grid-row:2}.hpanel{padding:16px}}
 @media (max-width:760px){.appbar .status{font-size:0;gap:0}.tabs button{min-height:52px;font-size:14px!important;padding:0 10px!important}.navrow{min-height:0}.hero{padding-top:32px}#app>section{padding-top:40px}#app>section>.sechead,#app>section>h2{padding:16px 18px}#app>section>.sechead h2,#app>section>h2{font-size:19px}.person{padding:20px}.person .big{font-size:30px}.kpi b{font-size:21px}#userMenu{width:min(320px,calc(100vw - 24px))}}
 /* Phones. Inputs at 16px, so iOS doesn't zoom in on focus. A table that is wider than the screen shows a shadow
    at the edge that has more (the covers scroll with the content, the shadows stay). */
@@ -1354,8 +1369,9 @@ dialog h2,.sethead h2{font-weight:700}
   <div class="navrow">
     <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Overblik</button><button type="button" role="tab" data-page="poster" aria-selected="false">Budgetposter</button><button type="button" role="tab" data-page="laan" aria-selected="false">Overblik over lån</button><button type="button" role="tab" data-page="overf" aria-selected="false">Faste overførsler</button><button type="button" role="tab" data-page="maal" aria-selected="false">Opsparingsmål</button></nav>
     <div class="tools">
-      <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Budget</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
+      <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Nuværende budget</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="scnMenu" role="menu" hidden></div></div>
+      <button type="button" id="btnNewScn" class="scncta" hidden>+ Nyt scenarie</button>
       <button type="button" id="btnNew" class="primary">+ Ny budgetpost</button>
     </div>
   </div>
@@ -2886,6 +2902,14 @@ function openHelp(section){
   const b=$('helpBody');b.scrollTop=0;const id=HELPSEC.some(x=>x[0]===section)?section:'fordeling';helpNavOn(id);
   if(id!=='fordeling')setTimeout(()=>{const t=$('help-'+id);if(t)b.scrollTop=t.offsetTop-12},0)}
 $('btnHelpClose').onclick=()=>$('dlgHelp').close();
+/* The phone's back gesture (and the browser's back button) closes the open dialog instead of leaving the app: every
+   modal dialog adds a history entry, closing it takes that entry away again. */
+// The step back waits a moment and is left out when the page is on its way elsewhere (log out, a link), so it never
+// cancels that navigation.
+(()=>{const show=HTMLDialogElement.prototype.showModal;let skip=0,leaving=false;addEventListener('beforeunload',()=>{leaving=true});
+  HTMLDialogElement.prototype.showModal=function(){show.call(this);if(this._hbBack)return;this._hbBack=true;history.pushState({hbDlg:1},'');
+    if(!this._hbBound){this._hbBound=true;this.addEventListener('close',()=>{if(!this._hbBack)return;this._hbBack=false;setTimeout(()=>{if(leaving)return;skip++;history.back()},0)})}};
+  addEventListener('popstate',()=>{if(skip){skip--;return}const d=[...document.querySelectorAll('dialog[open]')].filter(x=>x._hbBack).pop();if(d){d._hbBack=false;d.close()}})})();
 /* ---------- Rundtur: where things are, in six stops ---------- */
 // Started from the profile menu. Each stop points at what the user sees: the top tabs and buttons on a wide screen,
 // the bottom bar, the round + and the gear on a phone. A stop whose button isn't shown is skipped.
@@ -2939,7 +2963,8 @@ addEventListener('scroll',()=>{if(!$('tour').hidden&&!tourOffer){const e=tourEl(
 function filmSeen(){try{return sessionStorage.getItem('budgetr:quiet')==='1'||localStorage.getItem('hb-film')==='1'}catch(e){return true}}
 // The visitor starts the film (it has sound); the dialog only explains it and offers to skip it.
 function openFilm(){const v=$('filmVid'),n='/video/budgetpro-kom-i-gang'+(matchMedia('(max-width:767px)').matches?'-reel':'');
-  if(v.dataset.src!==n){v.dataset.src=n;v.poster=n+'.jpg';v.src=n+'.mp4'}
+  // ?v= like media() on the website: raise it when the film is rendered again, or browsers keep the old one.
+  if(v.dataset.src!==n){v.dataset.src=n;v.poster=n+'.jpg?v=8';v.src=n+'.mp4?v=8'}
   $('filmWiz').hidden=!!S;$('filmClose').textContent=S?'Luk':'Spring over';try{localStorage.setItem('hb-film','1')}catch(e){}
   $('dlgFilm').showModal();$('filmClose').focus()}
 $('dlgFilm').addEventListener('close',()=>{try{$('filmVid').pause()}catch(e){}});
@@ -2955,9 +2980,13 @@ document.addEventListener('click',ev=>{const h=ev.target.closest('[data-help]');
 /* ---------- kategorier og rækkefølge i Poster ---------- */
 let PFOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-post-fold')||'{}')||{}}catch(e){return {}}})();
 const foldLbl=f=>`<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${f?'M5 5.2 8 2.2l3 3M5 10.8l3 3 3-3M3 8h10':'M5 2.2 8 5.2l3-3M5 13.8l3-3 3 3M3 8h10'}"/></svg><span>${f?'Fold alle ud':'Fold alle sammen'}</span>`;
-const foldAllHtml=()=>foldLbl(Object.values(PFOLD).some(Boolean));
+// On phones (user's wish) Indtægter and every expense category start folded until opened; what was opened or folded
+// is kept in PFOLD (true = folded, false = opened), so a missing key means the default.
+const pfOn=k=>k in PFOLD?!!PFOLD[k]:(matchMedia('(max-width:760px)').matches&&k!=='g:udgift');
+const pfKeys=()=>['g:indtaegt','g:udgift'].concat(catList().concat([NOCAT,'Opsparing']).map(k=>'c:'+k));
+const foldAllHtml=()=>foldLbl(pfKeys().some(pfOn));
 const savePFold=()=>{try{localStorage.setItem('hb-post-fold',JSON.stringify(PFOLD))}catch(e){}};
-const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!PFOLD[key]}" aria-label="${PFOLD[key]?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${PFOLD[key]?'Fold ud':'Fold sammen'}"></button>`;
+const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!pfOn(key)}" aria-label="${pfOn(key)?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${pfOn(key)?'Fold ud':'Fold sammen'}"></button>`;
 // Expense categories: S.settings.categories holds their order and categories without posts; names used on posts are added.
 const NOCAT='Uden kategori';
 function catList(){const L=((S.settings&&S.settings.categories)||[]).slice();cur().forEach(e=>{if(e.type==='udgift'&&!e._goal&&e.category&&!L.includes(e.category))L.push(e.category)});return L}
@@ -2984,7 +3013,7 @@ function qMatches(q){q=q.trim().toLowerCase();if(!q)return [];
     .sort((a,b)=>((a.type==='udgift'?0:1)-(b.type==='udgift'?0:1))||(st(a)-st(b))||(a.desc||'').localeCompare(b.desc||'','da')).slice(0,12)}
 function jumpPost(id){const e=cur().find(x=>x.id===id);if(!e||!$('tbody'))return;
   F.type=F.account=F.payer='alle';F.q='';$('flType').value=F.type;$('flAcct').value=F.account;$('flPayer').value=F.payer;$('flQ').value='';
-  delete PFOLD['g:'+e.type];if(e.type==='udgift')delete PFOLD['c:'+postCat(e)];savePFold();
+  PFOLD['g:'+e.type]=false;if(e.type==='udgift')PFOLD['c:'+postCat(e)]=false;savePFold();
   $('tbody').innerHTML=rowsHtml();if($('btnFoldPosts'))$('btnFoldPosts').innerHTML=foldAllHtml();
   const tr=$('tbody').querySelector(`tr.row[data-id="${CSS.escape(id)}"]`);if(!tr)return;
   tr.scrollIntoView({block:'center',behavior:'smooth'});tr.focus({preventScroll:true});tr.classList.add('hit');setTimeout(()=>tr.classList.remove('hit'),2200)}
@@ -3016,14 +3045,14 @@ function rowsHtml(){
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false&&exCounts(e)).reduce((a,e)=>a+mAvg(e),0);
     h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+type,label)}${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${type==='udgift'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
-    if(PFOLD['g:'+type])return;
+    if(pfOn('g:'+type))return;
     if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
     const by={};G.forEach(e=>{const k=e.category||NOCAT;(by[k]=by[k]||[]).push(e)});
     (plain?order:[]).concat(Object.keys(by)).filter((k,i,a)=>a.indexOf(k)===i).sort((a,b)=>rank(a)-rank(b)).forEach(k=>{
       const arr=(by[k]||[]).sort(byOrd), sum=arr.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0), ck=k===NOCAT?'':k;
       const fk='c:'+k;
       h+=`<tr class="cat" data-type="udgift" data-cat="${esc(ck)}"><td colspan="4">${foldBtn(fk,k)}${esc(k)}<span class="gcount">${arr.length}</span>${add('udgift',ck,k)}${catList().includes(k)?`<button type="button" class="catdots" data-catedit="${esc(ck)}" aria-label="Ret eller slet kategorien ${esc(k)}" title="Ret eller slet kategorien">···</button>`:''}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
-      if(PFOLD[fk])return;
+      if(pfOn(fk))return;
       arr.forEach(e=>h+=rowHtml(e));
       if(!arr.length)h+=`<tr class="empty" data-type="udgift" data-cat="${esc(ck)}"><td colspan="8" class="muted">Ingen poster i ${esc(k)} endnu. Tryk + for at tilføje en.</td></tr>`})});
   return h;
@@ -3157,15 +3186,17 @@ function bindMain(){
   bindPostSearch();
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
-  $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!PFOLD[k];savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
+  $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!pfOn(k);savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
+    // The whole heading row of a group or category folds it, not only the arrow (the buttons in it keep their own job).
+    const gr=ev.target.closest('tr.grp,tr.cat');if(gr&&!ev.target.closest('button')){const f=gr.querySelector('[data-pfold]');if(f)f.click();return}
     if(ev.target.closest('[data-cats]')){openCats();return}
     const ce=ev.target.closest('[data-catedit]');if(ce){openCats(ce.dataset.catedit);return}
     const a=ev.target.closest('[data-addpost]');if(a){ev.stopPropagation();openEntry(null,{type:a.dataset.addpost,category:a.dataset.cat||''});return}
     if(ev.target.closest('[data-dragpost]'))return;const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)});
   $('tbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.target.closest('[data-dragpost],[data-addpost]')){const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)}});
   bindPostDrag();if($('btnCats'))$('btnCats').onclick=()=>openCats();
-  if($('btnFoldPosts'))$('btnFoldPosts').onclick=()=>{const anyFolded=Object.values(PFOLD).some(Boolean);
-    if(anyFolded)PFOLD={};else{PFOLD={'g:indtaegt':true};catList().concat([NOCAT,'Opsparing']).forEach(k=>PFOLD['c:'+k]=true)}
+  if($('btnFoldPosts'))$('btnFoldPosts').onclick=()=>{const anyFolded=pfKeys().some(pfOn);
+    PFOLD={};pfKeys().forEach(k=>PFOLD[k]=anyFolded?false:k!=='g:udgift')
     savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').innerHTML=foldAllHtml()};}
   if(!$('planSel'))return;
   $('planSel').onchange=e=>{planAcct=e.target.value;render()};
@@ -3980,7 +4011,9 @@ $('dlgData').addEventListener('click',ev=>{if(ev.target===$('dlgData'))$('dlgDat
 function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
   if(page!=='budget'){document.querySelector('button[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
 function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!b)return;b.hidden=!S;const bn=(R&&R.settings&&R.settings.title)||'Mit budget';
-  b.querySelector('.lbl').textContent=dr?'Kladde':sc?'Scenarie':'Budget';
+  b.querySelector('.lbl').textContent=dr?'Kladde':sc?'Scenarie':'Nuværende budget';
+  // "+ Nyt scenarie" next to the button (Overblik only, by CSS); scenarios belong to the primary budget, so not in a draft.
+  const nb=$('btnNewScn');if(nb)nb.hidden=!S||!!dr;
   $('scnName').textContent=dr?(dr.name||'Kladde'):sc?(sc.name||'Scenarie'):bn;b.classList.toggle('on',!!sc||!!dr);
   const row=(id,name,sub,on,dots,at='scn')=>`<div class="scrow${on?' on':''}"><button type="button" role="menuitem" data-${at}="${id}" aria-checked="${on}"><b>${esc(name)}</b><span>${sub}</span></button><button type="button" class="scdots" role="menuitem" data-${at}dots="${id}" aria-label="${dots}" title="${dots}">···</button></div>`;
   // Two kinds, each in its own group with its own "+" button: scenarios are changes to the primary budget, drafts are
@@ -4005,6 +4038,7 @@ function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!
       // A scenario's settings (name, from, saldo, delete) are the panel at the top of the Budget tab.
       SC=id;if(page!=='budget')document.querySelector('button[data-page="budget"]').click();else render();window.scrollTo(0,0);setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0);return}
     SC=b.dataset.scn||null;render();window.scrollTo(0,0)};
+  $('btnNewScn').onclick=()=>{if(S&&!DR)newScenario()};
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnScn')&&!ev.target.closest('#scnMenu'))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}})}
 function splitTxt(){const sp=S.settings||{},sh=shares(),P=S.persons;

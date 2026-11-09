@@ -76,6 +76,8 @@ for (const theme of ["light", "dark"]) {
         localStorage.setItem("hb-theme", t);
         // Overblik folds Konti and Hvem betaler hvad until opened; the shots show them open.
         localStorage.setItem("hb-secopen", JSON.stringify({ konti: true, hvem: true }));
+        // On phones Budgetposter starts folded; the shots open Indtægter and Bolig so posts show.
+        localStorage.setItem("hb-post-fold", JSON.stringify({ "g:indtaegt": false, "c:Bolig": false }));
         if (!notes) sessionStorage.setItem("budgetr:quiet", "1"); // no login note over the screenshot
       },
       [theme, !!s.notes],
