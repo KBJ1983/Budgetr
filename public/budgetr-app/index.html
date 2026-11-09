@@ -352,6 +352,7 @@ tr.paused td{color:var(--ink3)}
 .split{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
 .split input[type=number]{width:70px}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.fchips{display:contents}
 .filters select,.filters input{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:6px 10px;font-size:14px}
 .filters input{min-width:180px}
 /* Search on Poster: matching posts drop down under the field; picking one jumps to its row */
@@ -1154,7 +1155,7 @@ dialog h2,.sethead h2{font-weight:700}
   .navrow .tools{padding:12px 0 0!important}
   .setbtn{display:flex!important}
   .appbar .status{display:none}
-  .mnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1px solid var(--rule);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
+  .mnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 64px repeat(3,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1px solid var(--rule);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
   .mnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:4px 0!important;border:0!important;background:transparent!important;color:var(--ink2)!important;font:500 11px/1.2 var(--font)!important;border-radius:12px!important;-webkit-tap-highlight-color:transparent}
   .mnav svg{box-sizing:content-box;width:22px;height:22px;padding:3px 14px;border-radius:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:background .15s}
   .mnav button[aria-selected="true"]{color:var(--ink)!important;font-weight:600!important}
@@ -1162,7 +1163,11 @@ dialog h2,.sethead h2{font-weight:700}
   .mnav span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .fab{display:flex;align-items:center;justify-content:center;position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:41;width:56px;height:56px;padding:0!important;border:0!important;border-radius:28px!important;background:var(--btn)!important;color:var(--btn-ink)!important;box-shadow:0 6px 18px rgba(16, 20, 21,.28)}
   .fab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
-  body:not([data-page="budget"]):not([data-page="poster"]) .fab,body[data-nobudget] .fab,body[data-nobudget] .mnav{display:none}
+  body[data-nobudget] .mnav{display:none}
+  /* The + in the middle of the bottom bar (like Vinted's Sælg): a round blæk button that opens a new post on every page. */
+  .mnav .mnew{gap:0}
+  .mnav .mnew svg{width:24px;height:24px;padding:12px;border-radius:50%;background:var(--btn);color:var(--btn-ink);stroke-width:2.2}
+  .mnav .mnew:active svg{transform:scale(.94)}
   .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   /* Overblik: the card replaces the sentence; the 12-month graph and long hints stay on bigger screens. */
   .msum{display:block;margin:14px 0 4px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--rule)}
@@ -1276,7 +1281,13 @@ dialog h2,.sethead h2{font-weight:700}
   .person .kv.pend{display:flex;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
   .pmore{display:block;width:100%;margin-top:12px;min-height:42px;background:var(--card)!important;font-size:14px!important}
   /* Poster: search across, the three filters on one row, each category as its own block with a grey head. */
-  .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .filters{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  /* The filters are chips in one row that scrolls sideways, each as wide as its text (like Vinted's filter row). */
+  .filters .fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+  .filters .fchips::-webkit-scrollbar{display:none}
+  .filters .fchips select{flex:0 0 auto;width:auto!important;field-sizing:content;border-radius:999px!important;padding:8px 14px!important;font:500 14px var(--font)!important}
+  tr.cat:has(.pfold[aria-expanded="false"]) :is(.addp,.catdots),tr.grp:has(.pfold[aria-expanded="false"]) .addp,tr.grp .catbtn{display:none!important}
+  .filters .fchips select.on{background:var(--btn)!important;color:var(--btn-ink)!important;border-color:var(--btn)!important}
   .filters .qbox{grid-column:1/-1;order:-1}
   .filters .ptools{grid-column:1/-1}
   .filters select{min-width:0;width:100%;padding:8px 6px;text-overflow:ellipsis}
@@ -1382,10 +1393,10 @@ dialog h2,.sethead h2{font-weight:700}
   <div class="tourcard" id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tourTitle" tabindex="-1"><h2 id="tourTitle"></h2><p id="tourTxt"></p>
     <div class="tourfoot"><span class="tourn" id="tourN"></span><button type="button" id="tourBack">Tilbage</button><button type="button" class="primary" id="tourNext">Næste</button></div></div></div>
 <!-- Phones: the pages as an app bar at the bottom, and a round button for a new post. -->
-<button type="button" class="fab" id="btnNewM" aria-label="Ny budgetpost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <nav class="mnav" aria-label="Sider">
   <button type="button" data-page="budget" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h4v7H4zM10 8h4v12h-4zM16 4h4v16h-4z"/></svg><span>Overblik</span></button>
   <button type="button" data-page="poster" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg><span>Poster</span></button>
+  <button type="button" class="mnew" id="btnNewM" aria-label="Ny budgetpost" title="Ny budgetpost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
   <button type="button" data-page="overf" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/></svg><span>Overførsler</span></button>
   <button type="button" data-page="laan" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10 12 5l8 5M5 10v8M19 10v8M9.5 10v8M14.5 10v8M3 20h18"/></svg><span>Lån</span></button>
   <button type="button" data-page="maal" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/></svg><span>Mål</span></button>
@@ -2142,10 +2153,10 @@ function render(){
   // poster (own tab). hTop is the overview so far; the posts page starts with the scenario bar only.
   const hTop=h; h=scBarHtml(true)+startInfo(true);
   h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
-  <div class="filters">
+  <div class="filters"><div class="fchips">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
-    <select id="flPayer" aria-label="Filtrér betaler"><option value="alle">Alle betalere</option><option value="${FAELLES}">Fælles</option>${S.persons.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
+    <select id="flPayer" aria-label="Filtrér betaler"><option value="alle">Alle betalere</option><option value="${FAELLES}">Fælles</option>${S.persons.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
     <div class="qbox"><input id="flQ" type="search" placeholder="Søg og hop til en post" aria-label="Søg i posterne" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="flQList" autocomplete="off" value="${esc(F.q)}"><div class="qlist" id="flQList" role="listbox" aria-label="Poster der matcher" hidden></div></div>
     <div class="ptools"><button type="button" class="tbtn" id="btnFoldPosts">${foldAllHtml()}</button><button type="button" class="tbtn" id="btnCats" title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg><span>Rediger kategorier</span></button></div>
   </div>
@@ -2912,7 +2923,7 @@ $('btnHelpClose').onclick=()=>$('dlgHelp').close();
   addEventListener('popstate',()=>{if(skip){skip--;return}const d=[...document.querySelectorAll('dialog[open]')].filter(x=>x._hbBack).pop();if(d){d._hbBack=false;d.close()}})})();
 /* ---------- Rundtur: where things are, in six stops ---------- */
 // Started from the profile menu. Each stop points at what the user sees: the top tabs and buttons on a wide screen,
-// the bottom bar, the round + and the gear on a phone. A stop whose button isn't shown is skipped.
+// the bottom bar, the round + in it and the gear on a phone. A stop whose button isn't shown is skipped.
 const TOUR=[
   {el:'.tabs,.mnav',t:'Siderne',x:'Overblik viser hele budgettet. Under Budgetposter retter du indtægter og udgifter, og Lån, Overførsler og Mål har hver deres side.'},
   {el:'#btnNew,#btnNewM',t:'Ny budgetpost',x:'Her lægger du en ny indtægt eller udgift ind. Du kan også trykke på en post for at rette den.'},
@@ -3011,8 +3022,10 @@ function qMatches(q){q=q.trim().toLowerCase();if(!q)return [];
   const st=e=>(e.desc||'').toLowerCase().startsWith(q)?0:1;
   return cur().filter(e=>e.type!=='overfoersel'&&!e.removed&&((e.desc||'').toLowerCase().includes(q)||(e.key||'').toLowerCase().includes(q)))
     .sort((a,b)=>((a.type==='udgift'?0:1)-(b.type==='udgift'?0:1))||(st(a)-st(b))||(a.desc||'').localeCompare(b.desc||'','da')).slice(0,12)}
+// A filter that is set shows as a dark chip on phones.
+function flMark(){['flType','flAcct','flPayer'].forEach(id=>{const s=$(id);if(s)s.classList.toggle('on',s.value!=='alle')})}
 function jumpPost(id){const e=cur().find(x=>x.id===id);if(!e||!$('tbody'))return;
-  F.type=F.account=F.payer='alle';F.q='';$('flType').value=F.type;$('flAcct').value=F.account;$('flPayer').value=F.payer;$('flQ').value='';
+  F.type=F.account=F.payer='alle';F.q='';$('flType').value=F.type;$('flAcct').value=F.account;$('flPayer').value=F.payer;$('flQ').value='';flMark();
   PFOLD['g:'+e.type]=false;if(e.type==='udgift')PFOLD['c:'+postCat(e)]=false;savePFold();
   $('tbody').innerHTML=rowsHtml();if($('btnFoldPosts'))$('btnFoldPosts').innerHTML=foldAllHtml();
   const tr=$('tbody').querySelector(`tr.row[data-id="${CSS.escape(id)}"]`);if(!tr)return;
@@ -3183,6 +3196,7 @@ function bindMain(){
   $('flType').onchange=e=>{F.type=e.target.value;$('tbody').innerHTML=rowsHtml()};
   $('flAcct').onchange=e=>{F.account=e.target.value;$('tbody').innerHTML=rowsHtml()};
   $('flPayer').onchange=e=>{F.payer=e.target.value;$('tbody').innerHTML=rowsHtml()};
+  flMark();['flType','flAcct','flPayer'].forEach(id=>$(id).addEventListener('change',flMark));
   bindPostSearch();
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
