@@ -17,7 +17,7 @@
   --bar-exp: #7aa2d6;
 }
 .bx.ow[data-theme="light"] {
-  --bg: #f0f3f2;
+  --bg: #f2f0ea;
   --bar: #ffffff;
   --card: #ffffff;
   --card-2: #f6f8f7;
@@ -25,7 +25,7 @@
   --rule: #dce3e1;
   --tx-2: #56615f;
   --tx-3: #5f6a68;
-  --band: #eef2f1;
+  --band: #ece9e2;
   --bar-rev: #7cc1aa;
   --bar-exp: #101415;
 }

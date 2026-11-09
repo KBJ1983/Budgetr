@@ -14,7 +14,8 @@ get a colour.
 | Blæk | `#101415` | page `#101415` | text, primary buttons (pill), dark bands |
 | Mynte | `#A9DCCB` | `#A9DCCB` | bars, progress, logo front card, primary button on dark, accent text on dark |
 | Dyb mynte | `#2E6E5B` | – | accent text and links on light, positive amounts |
-| Is | `#F0F3F2` | – | page background |
+| Is | `#F0F3F2` | – | page background of the website |
+| Varmt papir | `#F2F0EA` (tiles `#ECE9E2`) | – | the hero card, and the light page of the app, `/admin`, `/aftale` and login |
 | Hvid | `#FFFFFF` | card `#181D1E` | cards |
 | Kant | `#DCE3E1` | `#283031` | borders and lines |
 | Dæmpet tekst | `#56615F` | `#99A5A3` | secondary text |
