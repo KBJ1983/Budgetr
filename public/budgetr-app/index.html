@@ -993,11 +993,13 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .navrow .tools{align-self:center;padding:10px 0!important;gap:8px}
 .scnbtn{font:500 13px var(--font)!important;padding:8px 12px!important;border-radius:10px!important}
 .scnbtn #scnName{font-weight:700}
-/* "Nuværende budget" is a small, quiet label; "+ Nyt scenarie" a light pill next to the budget button, on Overblik only. */
+/* "Nuværende budget" is a small, quiet label. Every "new" button looks alike: a page's own create button is a blæk
+   pill starting with + (#btnNew, .newcta), a second one a light pill with a thin edge in the same shape (.addcta: Nyt
+   scenarie next to the budget button on every page, Tilføj … in settings and the guide). */
 .scnbtn .lbl{font-size:12px;font-weight:400;color:var(--ink2)}
-.scncta{padding:8px 14px!important;font:600 13px var(--font)!important;border-radius:999px!important;background:var(--card)!important;color:var(--ink)!important;border:1px solid var(--ink)!important}
-.scncta:hover{background:var(--band)!important}
-body:not([data-page="budget"]) #btnNewScn{display:none}
+.newcta{padding:9px 16px!important;font:600 13px var(--font)!important;border-radius:999px!important}
+.addcta{padding:7px 14px!important;font:500 13px var(--font)!important;border-radius:999px!important;background:transparent!important;color:var(--ink2)!important;border:1px solid var(--rule2)!important;box-shadow:none!important}
+.addcta:hover{color:var(--ink)!important;border-color:var(--ink3)!important}
 /* Phones: the label sits above the name, so the button and "+ Nyt scenarie" share one row. */
 @media (max-width:760px){
   .navrow .tools{flex-wrap:nowrap}
@@ -1005,7 +1007,8 @@ body:not([data-page="budget"]) #btnNewScn{display:none}
   .scnbtn{display:inline-grid!important;grid-template-columns:minmax(0,auto) auto;column-gap:8px;row-gap:1px;max-width:100%;text-align:left;padding:7px 12px!important}
   .scnbtn .lbl{grid-column:1/-1;font-size:11px;line-height:1.2}
   .scnbtn #scnName{min-width:0;max-width:none}
-  .scncta{flex-shrink:0;align-self:stretch}
+  #btnNewScn{flex-shrink:0;align-self:center}
+  .devsec .tablewrap,section.ltproj,section.ltend .tablewrap,section.gsum{display:none!important}
 }
 #btnNew{padding:9px 16px!important;font:600 13px var(--font)!important;border-radius:999px}
 button{border-radius:999px}
@@ -1155,7 +1158,7 @@ dialog h2,.sethead h2{font-weight:700}
   .navrow .tools{padding:12px 0 0!important}
   .setbtn{display:flex!important}
   .appbar .status{display:none}
-  .mnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 64px repeat(3,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1px solid var(--rule);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
+  .mnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1px solid var(--rule);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
   .mnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:4px 0!important;border:0!important;background:transparent!important;color:var(--ink2)!important;font:500 11px/1.2 var(--font)!important;border-radius:12px!important;-webkit-tap-highlight-color:transparent}
   .mnav svg{box-sizing:content-box;width:22px;height:22px;padding:3px 14px;border-radius:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:background .15s}
   .mnav button[aria-selected="true"]{color:var(--ink)!important;font-weight:600!important}
@@ -1163,11 +1166,8 @@ dialog h2,.sethead h2{font-weight:700}
   .mnav span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .fab{display:flex;align-items:center;justify-content:center;position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:41;width:56px;height:56px;padding:0!important;border:0!important;border-radius:28px!important;background:var(--btn)!important;color:var(--btn-ink)!important;box-shadow:0 6px 18px rgba(16, 20, 21,.28)}
   .fab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
-  body[data-nobudget] .mnav{display:none}
-  /* The + in the middle of the bottom bar (like Vinted's Sælg): a round blæk button that opens a new post on every page. */
-  .mnav .mnew{gap:0}
-  .mnav .mnew svg{width:24px;height:24px;padding:12px;border-radius:50%;background:var(--btn);color:var(--btn-ink);stroke-width:2.2}
-  .mnav .mnew:active svg{transform:scale(.94)}
+  /* The floating + only on Budgetposter (user's wish – on Overblik it covered the key figures). */
+  body:not([data-page="poster"]) .fab,body[data-nobudget] .fab,body[data-nobudget] .mnav{display:none}
   .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   /* Overblik: the card replaces the sentence; the 12-month graph and long hints stay on bigger screens. */
   .msum{display:block;margin:14px 0 4px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--rule)}
@@ -1282,9 +1282,8 @@ dialog h2,.sethead h2{font-weight:700}
   .pmore{display:block;width:100%;margin-top:12px;min-height:42px;background:var(--card)!important;font-size:14px!important}
   /* Poster: search across, the three filters on one row, each category as its own block with a grey head. */
   .filters{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
-  /* The filters are chips in one row that scrolls sideways, each as wide as its text (like Vinted's filter row). */
-  .filters .fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
-  .filters .fchips::-webkit-scrollbar{display:none}
+  /* The filters are chips, each as wide as its text, that wrap to a new line instead of scrolling sideways. */
+  .filters .fchips{display:flex;flex-wrap:wrap;gap:8px}
   .filters .fchips select{flex:0 0 auto;width:auto!important;field-sizing:content;border-radius:999px!important;padding:8px 14px!important;font:500 14px var(--font)!important}
   tr.cat:has(.pfold[aria-expanded="false"]) :is(.addp,.catdots),tr.grp:has(.pfold[aria-expanded="false"]) .addp,tr.grp .catbtn{display:none!important}
   .filters .fchips select.on{background:var(--btn)!important;color:var(--btn-ink)!important;border-color:var(--btn)!important}
@@ -1382,7 +1381,7 @@ dialog h2,.sethead h2{font-weight:700}
     <div class="tools">
       <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Nuværende budget</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="scnMenu" role="menu" hidden></div></div>
-      <button type="button" id="btnNewScn" class="scncta" hidden>+ Nyt scenarie</button>
+      <button type="button" id="btnNewScn" class="addcta" hidden>+ Nyt scenarie</button>
       <button type="button" id="btnNew" class="primary">+ Ny budgetpost</button>
     </div>
   </div>
@@ -1393,10 +1392,10 @@ dialog h2,.sethead h2{font-weight:700}
   <div class="tourcard" id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tourTitle" tabindex="-1"><h2 id="tourTitle"></h2><p id="tourTxt"></p>
     <div class="tourfoot"><span class="tourn" id="tourN"></span><button type="button" id="tourBack">Tilbage</button><button type="button" class="primary" id="tourNext">Næste</button></div></div></div>
 <!-- Phones: the pages as an app bar at the bottom, and a round button for a new post. -->
+<button type="button" class="fab" id="btnNewM" aria-label="Ny budgetpost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <nav class="mnav" aria-label="Sider">
   <button type="button" data-page="budget" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h4v7H4zM10 8h4v12h-4zM16 4h4v16h-4z"/></svg><span>Overblik</span></button>
   <button type="button" data-page="poster" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg><span>Poster</span></button>
-  <button type="button" class="mnew" id="btnNewM" aria-label="Ny budgetpost" title="Ny budgetpost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
   <button type="button" data-page="overf" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/></svg><span>Overførsler</span></button>
   <button type="button" data-page="laan" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10 12 5l8 5M5 10v8M19 10v8M9.5 10v8M14.5 10v8M3 20h18"/></svg><span>Lån</span></button>
   <button type="button" data-page="maal" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/></svg><span>Mål</span></button>
@@ -1485,8 +1484,8 @@ dialog h2,.sethead h2{font-weight:700}
       <label class="check" id="wMade" style="grid-column:1/-1"><input type="checkbox" id="fMade" checked> Oprettet i banken. Fjern fluebenet, hvis overførslen mangler at blive sat op, så kommer den på listen under klokken</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
       <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
-      <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter, fx børnefamilieydelse. Kan holdes ude af Til rådighed på personkortene under Indstillinger</label>
-      <label class="check" id="wSplit" style="grid-column:1/-1"><input type="checkbox" id="fSplit"> Tæller med i fordelingsnøglen (fast indkomst). Fjern fluebenet for fx børnefamilieydelse, der går direkte til en fælles konto</label>
+      <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter (øremærket), fx børnefamilieydelse, SU til husleje eller et tilskud. Kan holdes ude af Til rådighed på personkortene under Indstillinger</label>
+      <label class="check" id="wSplit" style="grid-column:1/-1"><input type="checkbox" id="fSplit"> Tæller med i fordelingsnøglen (fast indkomst). Fjern fluebenet for en indtægt, der ikke skal påvirke fordelingen, fx en, der går direkte til en fælles konto</label>
       <div class="preview" id="preview"></div>
       <button type="button" class="morefld" id="btnMoreF" aria-expanded="false">Flere felter <span>Dækning fra anden konto, nøgle, note, opgave, udvikling og afkrydsninger</span></button>
     </div>
@@ -1576,7 +1575,7 @@ dialog h2,.sethead h2{font-weight:700}
           <p class="setnote">Budgettets navn og de personer, der deler budgettet. Personerne bruges som betalere på poster, mål og konti.</p>
           <div class="field"><label for="setName">Budgettets navn</label><input id="setName" autocomplete="off"></div>
           <div class="setgrp"><span class="flabel">Personer</span><div class="acctlist" id="personList"></div>
-          <div><button type="button" id="btnAddPerson">Tilføj person</button></div>
+          <div><button type="button" id="btnAddPerson" class="addcta">+ Tilføj person</button></div>
           <p class="setnote">Fjerner du en person, flyttes personens poster og mål til Fælles, og personens konti får ingen ejer.</p></div></section>
         <section class="setsec" id="set-deling"><h3>Deling</h3>
           <p class="setnote">Deler I budgettet, kan op til tre e-mails logge ind på det. Hver logger ind med sin egen e-mail og får sin egen kode på mail. I ser og retter det samme budget.</p>
@@ -1593,7 +1592,7 @@ dialog h2,.sethead h2{font-weight:700}
         <section class="setsec" id="set-konti"><h3>Konti</h3>
           <p class="setnote">Navn, kontonummer, type og ejer. Rækkefølgen ændres ved at trække kontiene på Overblik.</p>
           <div class="acctlist" id="acctList"></div>
-          <div><button type="button" id="btnAddAcct">Tilføj konto</button></div></section>
+          <div><button type="button" id="btnAddAcct" class="addcta">+ Tilføj konto</button></div></section>
         <section class="setsec" id="set-fordeling"><h3>Fordeling</h3>
           <p class="setnote">Sådan deles de poster, der har Fælles som betaler.</p>
           <div class="grid2">
@@ -1678,7 +1677,7 @@ dialog h2,.sethead h2{font-weight:700}
       <div class="field"><label for="gPayer">Hvem betaler</label><select id="gPayer"></select></div>
       <div class="field full"><label for="gTo">Sættes ind på</label><select id="gTo"></select><input id="gToNew" autocomplete="off" placeholder="Navn på den nye konto" aria-label="Navn på den nye konto" style="display:none;margin-top:6px"><span class="err" id="egTo"></span></div>
       <div class="field full"><span class="flabel">Ekstra indbetalinger i perioden</span><div class="gxlist" id="gExtras"></div>
-        <div><button type="button" id="btnGxAdd">Tilføj ekstra indbetaling</button></div>
+        <div><button type="button" id="btnGxAdd" class="addcta">+ Tilføj ekstra indbetaling</button></div>
         <span class="note" id="gxNote">Fx feriepenge, bonus eller en gave. Beløbene trækkes fra det, der skal spares op hver måned. De skal ligge mellem startdato og måldato.</span></div>
       <div class="field full"><label for="gNote">Note</label><input id="gNote" autocomplete="off"></div>
       <div class="field full"><span class="flabel">Med i</span><div class="gscopes" id="gScopes"></div></div>
@@ -1890,7 +1889,7 @@ function spark(P){if(P.length<2)return '';const W=90,H=24,v=P.map(p=>p.m),mx=Mat
 function devHtml(){
   const L=act().map(e=>({e,d:devOf(e)})).filter(x=>x.d).sort((a,b)=>(b.d.pct??1e9)-(a.d.pct??1e9));
   const U=L.filter(x=>x.e.type==='udgift'), flag=U.filter(x=>x.d.flag), sumD=U.reduce((a,x)=>a+x.d.d,0), sumB=U.reduce((a,x)=>a+x.d.base.m,0);
-  let h=`<section><div class="sechead"><h2>Udvikling i poster</h2></div><p class="setstat">Markerer udgifter, der er steget mindst ${devPct()} % det seneste år<button type="button" data-set="visning">Ret</button></p>`;
+  let h=`<section class="devsec"><div class="sechead"><h2>Udvikling i poster</h2></div><p class="setstat">Markerer udgifter, der er steget mindst ${devPct()} % det seneste år<button type="button" data-set="visning">Ret</button></p>`;
   if(!L.length)return h+`<p class="muted" style="font-size:14px;margin:0">Ingen poster har historik endnu. Når du retter et beløb, gemmes det gamle automatisk, og du kan tilføje tidligere beløb på posten under "Udvikling – tidligere beløb". Sammenligningen er med beløbet for cirka et år siden.</p></section>`;
   h+=`<div class="kpis" style="margin-bottom:12px">
     <div class="kpi ${flag.length?'bad':'good'}"><span>Steget mindst ${devPct()} %</span><b>${flag.length}</b><small>${flag.length?esc(flag.slice(0,3).map(x=>x.e.desc).join(', '))+(flag.length>3?' …':''):'Ingen udgifter over grænsen'}</small></div>
@@ -2134,7 +2133,7 @@ function render(){
           rows.push(['= Beregnet','',disp(recFor(p.id,a.id))],['Overføres (rundet op til 100 kr)','',disp(tr)]);
           return `<span>Overføres til ${esc(a.name)} ${ib(`<b>Overførsel til ${esc(a.name)}</b>${tbl(rows)}<p>Derfor er beløbet ikke det samme som "Andel af fælles udgifter": egne poster på fælleskontoen betales fuldt af ${esc(p.name)}, og fælles udgifter betalt fra en personkonto udlignes her.</p>`)}</span><span>${disp(tr)}</span>`}).join('')+`</div>`})()}
       <div class="psav"><span class="ph">Ekstra indtjening</span>${exPosts(p.id).map(e=>`<div class="psrow click" data-open="${e.id}" tabindex="0" role="button" title="Ret posten"><span class="nm">${esc(e.desc)}<small>${esc(howOf(e))}${exOn()?'':' · ikke medregnet'}</small></span><span class="v">${disp(mAvg(e))}</span></div>`).join('')||'<span class="muted" style="font-size:13px">Ingen ekstra indtjening.</span>'}${extraSum(p)?`<div class="psum ex"><span>I alt</span><b>${disp(extraSum(p))}</b></div>`:''}
-        <button type="button" class="ghost" data-exnew="${p.id}" style="align-self:flex-start">Tilføj ekstra indtjening</button></div>
+        <button type="button" class="addcta" data-exnew="${p.id}" style="align-self:flex-start">+ Tilføj ekstra indtjening</button></div>
       ${psavHtml(p,c)}
       <div class="kv pend"><span>Tilbage efter opsparing</span><span style="color:${c.afterSav>=0?'var(--pine)':'var(--brick)'}">${disp(c.afterSav)}</span></div>
       ${c.afterSav<0?`<div class="verdict bad">Opsparingen er ${disp(-c.afterSav)} højere end rådighedsbeløbet.</div>`:''}
@@ -2359,7 +2358,7 @@ function goalsHtml(){
   let h=scBarHtml(false);
   h+=`<div class="hero"><p>${L.length?`I ${ctx} sparer ${S.persons.length===1?'du':'I'} <b>${disp(mon)}</b> op ${per()} til ${L.length} ${L.length===1?'mål':'mål'}. Tilbage efter al opsparing: <b class="${t.afterSav>=0?'left':'neg'}">${disp(t.afterSav)}</b>.`:`Ingen opsparingsmål i ${ctx} endnu.`}</p>
    <small>Et mål er enten et fast beløb, hvor det månedlige beløb beregnes, eller en fast månedlig indbetaling, hvor slutbeløbet beregnes. Ekstra indbetalinger, fx feriepenge eller bonus, ligger uden for budgettet. Hvert mål bliver til en fast månedlig post på den valgte konto, så konti, fordeling, rådighedsbeløb og scenarier regner med det. Mål, der er nået måldatoen eller er inaktive, tæller ikke med.</small></div>`;
-  h+=`<section><div class="sechead"><h2>Opsparingsmål</h2><button type="button" class="primary" data-gnew>Nyt opsparingsmål</button></div>`;
+  h+=`<section><div class="sechead"><h2>Opsparingsmål</h2><button type="button" class="primary newcta" data-gnew>+ Nyt opsparingsmål</button></div>`;
   if(!G.length)h+=`<div class="empty" style="padding:8px 0"><p>Opret et mål, fx udbetaling til hus. Angiv beløb, startdato og måldato, så beregnes det månedlige beløb. Vælg konto og betaler som på en almindelig post.</p></div>`;
   else{h+=`<div class="goals">`+G.map(g=>{const c=goalCalc(g),inCtx=goalIn(g,key),tr=g.to&&g.to!==g.from;
     const badge=g.active===false?'<span class="badge un">Inaktiv</span>':c.ended?`<span class="badge un">${c.mode==='monthly'?'Slutdato':'Måldato'} er passeret</span>`:c.future?`<span class="badge chk">Starter ${idxLbl(c.s).toLowerCase()}</span>`:'';
@@ -2374,7 +2373,7 @@ function goalsHtml(){
     const rowsG=L.map(g=>{const c=goalCalc(g),tr=g.to&&g.to!==g.from;return `<tr><td><span class="gdot" style="background:${gColor(g)}"></span>${esc(g.name||'Mål')}</td><td>${esc(accName(g.from))}${tr?' til '+esc(accName(g.to)):''}</td><td>${esc(perName(g.payer||FAELLES))}</td><td class="r">${c.xs?kr(c.xs):'<span class="muted">–</span>'}</td><td class="r">${disp(c.monthly)}</td></tr>`}).join('');
     const rowsP=S.persons.map(p=>{const c=personCalc(p.id);return `<tr><td>${esc(p.name)}</td><td class="r">${disp(c.gOwn)}</td><td class="r">${disp(c.gSh)}</td><td class="r"><b>${disp(c.gsav)}</b></td><td class="r" style="color:${c.afterSav>=0?'var(--pine)':'var(--brick)'}">${disp(c.afterSav)}</td></tr>`}).join('');
     const accs=[...new Set(L.map(g=>g.from||''))].map(id=>{const c=accountCalc(id);return `<tr><td>${esc(accName(id))}</td><td class="r">${disp(L.filter(g=>(g.from||'')===id).reduce((a,g)=>a+goalCalc(g).monthly,0))}</td><td class="r" style="color:${c.left>=0?'var(--pine)':'var(--brick)'}">${disp(c.left)}</td></tr>`}).join('');
-    h+=`<section><div class="sechead"><h2>Opsummering ${per()}</h2><span class="hint">I ${ctx}. Fælles mål fordeles med samme nøgle som de fælles udgifter.</span></div>
+    h+=`<section class="gsum"><div class="sechead"><h2>Opsummering ${per()}</h2><span class="hint">I ${ctx}. Fælles mål fordeles med samme nøgle som de fælles udgifter.</span></div>
      <div class="kpis" style="margin-bottom:12px">
       <div class="kpi hero2"><span>Til opsparingsmål</span><b>${disp(mon)}</b><small>${per()}</small></div>
       <div class="kpi"><span>Samlet målbeløb</span><b>${kr(T)}</b><small>${L.length-nOpen} mål${nOpen?` + ${nOpen} løbende uden slutbeløb`:''}</small></div>
@@ -2567,7 +2566,7 @@ function overfHtml(){
    <p class="muted" style="font-size:13px;margin-top:8px">"Bør være" følger jeres fordeling efter betaler og rundes op til nærmeste 100 kr. "Sat op nu" er det beløb, der er registreret som overførslens beløb.</p></section>`;
   if(T.length)h+=`<section class="tflow"><div class="sechead"><h2>Pengestrømme</h2><span class="hint">Klik på en streg eller en konto for at fremhæve den. Stregens tykkelse følger beløbet ${per()}.</span></div>${flowSvg(T)}<div class="flowinfo" id="flowInfo" aria-live="polite"></div></section>`;
   const fixIds=new Set(fixes.map(x=>x.e.id)), nf0=(S.accounts.find(a=>a.type==='faelles')||S.accounts[0]||{}).id||'';
-  h+=`<section><div class="sechead"><h2>Overførsler pr. konto</h2><button type="button" class="primary" data-tnew="${nf0}">Ny overførsel</button></div><div class="tcards">`;
+  h+=`<section><div class="sechead"><h2>Overførsler pr. konto</h2><button type="button" class="primary newcta" data-tnew="${nf0}">+ Ny overførsel</button></div><div class="tcards">`;
   const src=acctOrder().filter(a=>all.some(e=>e.from===a.id));
   if(!src.length)h+=`<p class="muted" style="font-size:14px;margin:4px 0">Ingen faste overførsler endnu.</p>`;
   src.forEach(a=>{
@@ -2656,7 +2655,7 @@ function loansHtml(){
   const updMonths=updD?(now.getFullYear()-updD.getFullYear())*12+now.getMonth()-updD.getMonth():0, updOld=updD&&updMonths>=6;
   let h=`<div class="hero"><p>${IN.length===L.length?wI('Du har','I har'):'De valgte lån har'} <b>${kr(tP)}</b> i samlet restgæld fordelt på ${selTxt}. Ydelserne er <b>${kr(tA)}</b> om måneden, og heraf er cirka <b>${kr(tI)}</b> renter.</p>
    <small>${soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>esc(x.l.desc)+' ('+x.c.endTxt+', frigør '+kr(x.c.A)+'/md.)').join(', ')+'. ':''}Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.</small></div>
-  <section><div class="sechead"><h2>Overblik over lån</h2><button type="button" id="btnNewLoan" class="primary">Nyt lån</button></div>
+  <section><div class="sechead"><h2>Overblik over lån</h2><button type="button" id="btnNewLoan" class="primary newcta">+ Nyt lån</button></div>
    <div class="upd ${updOld?'old':''}"><label for="loanUpd">Overblikket er opdateret</label><input type="date" id="loanUpd" value="${esc(S.loanUpdated||'')}">
     <span>${S.loanUpdated?(updOld?`Opdateret for ${updMonths} måneder siden. Tjek restgælden i netbanken.`:`Senest opdateret ${fmtDate(S.loanUpdated)}.`):'Angiv hvornår restgælden sidst er tjekket.'}</span></div>
    <div class="kpis" style="margin-bottom:14px">
@@ -2713,7 +2712,7 @@ function loanProjHtml(){
   const D=loanProjData();
   if(!D)return '';
   const {si,ti,to,months,startTxt}=D;
-  let h=`<section class="ltl"><div class="sechead"><h2>Fremskriv restgæld</h2><span class="hint">Se, hvad restgælden er nede på til en dato, du vælger. Der regnes ud fra restgæld, rente og ydelse${S.loanUpdated?' fra '+fmtDate(S.loanUpdated):''}.</span></div>
+  let h=`<section class="ltl ltproj"><div class="sechead"><h2>Fremskriv restgæld</h2><span class="hint">Se, hvad restgælden er nede på til en dato, du vælger. Der regnes ud fra restgæld, rente og ydelse${S.loanUpdated?' fra '+fmtDate(S.loanUpdated):''}.</span></div>
    <div class="upd"><label for="loanProjTo">Fremskriv til</label><input type="date" id="loanProjTo" value="${esc(to)}">
     <span>${months>0?`${months} ${months===1?'betaling':'betalinger'} fra ${startTxt}.`:''}</span></div>`;
   if(months<=0)return h+`<p class="muted" style="font-size:14px">Vælg en dato efter ${startTxt}, hvor restgælden er opgjort.</p></section>`;
@@ -2764,7 +2763,7 @@ function loanEndsHtml(){
   path+=` L${X(b)},${Y(c2)}`;
   const svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Frigivet ydelse over tid">${g}<path d="${path}" fill="none" stroke="var(--pine)" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
   const soon=L.filter(x=>x.en.i-nw<=12), soonSum=soon.reduce((s,x)=>s+x.free,0);
-  return `<section class="ltl"><div class="sechead"><h2>Udløb og frigivne beløb</h2><span class="hint">Hvornår lånene er betalt ud, og hvor meget der frigives om måneden. Kurven viser det samlede frigivne beløb pr. md. over tid. Numrene svarer til tabellen.</span></div>
+  return `<section class="ltl ltend"><div class="sechead"><h2>Udløb og frigivne beløb</h2><span class="hint">Hvornår lånene er betalt ud, og hvor meget der frigives om måneden. Kurven viser det samlede frigivne beløb pr. md. over tid. Numrene svarer til tabellen.</span></div>
    <div class="kpis" style="margin-bottom:12px">
     <div class="kpi ${soon.length?'good':''}"><span>Frigives inden for 12 md.</span><b>${kr(soonSum)}</b><small>${soon.length?soon.map(x=>esc(x.l.desc||x.l.bank)).join(', '):'Ingen lån udløber det næste år'}</small></div>
     <div class="kpi"><span>Næste udløb</span><b>${idxLbl(L[0].en.i)}</b><small>${esc(L[0].l.desc||L[0].l.bank)}, frigiver ${kr(L[0].free)}/md.</small></div>
@@ -2923,7 +2922,7 @@ $('btnHelpClose').onclick=()=>$('dlgHelp').close();
   addEventListener('popstate',()=>{if(skip){skip--;return}const d=[...document.querySelectorAll('dialog[open]')].filter(x=>x._hbBack).pop();if(d){d._hbBack=false;d.close()}})})();
 /* ---------- Rundtur: where things are, in six stops ---------- */
 // Started from the profile menu. Each stop points at what the user sees: the top tabs and buttons on a wide screen,
-// the bottom bar, the round + in it and the gear on a phone. A stop whose button isn't shown is skipped.
+// the bottom bar, the round + and the gear on a phone. A stop whose button isn't shown is skipped.
 const TOUR=[
   {el:'.tabs,.mnav',t:'Siderne',x:'Overblik viser hele budgettet. Under Budgetposter retter du indtægter og udgifter, og Lån, Overførsler og Mål har hver deres side.'},
   {el:'#btnNew,#btnNewM',t:'Ny budgetpost',x:'Her lægger du en ny indtægt eller udgift ind. Du kan også trykke på en post for at rette den.'},
@@ -4578,7 +4577,7 @@ function renderDImp(){const b=$('dimpBody'),rev=DI.stage==='review',nx=$('dimpNe
   if(!rev){const ok=DI.files.filter(f=>(f.tx&&f.tx.length)||(f.budget&&f.budget.length));
     b.innerHTML=`<p class="wzp">${DI.kind==='budget'?'Læg de budgetter ind, du vil bygge videre på, fx fra Excel eller CSV. Har I hver jeres budget, kan I lægge dem ind på én gang. Kontoudskrifter kan også lægges ind her, så de nyeste beløb kommer med.':'Hent posteringer fra netbanken for hver konto, der skal med, fx de seneste 3–12 måneder, og læg filerne ind her. Læg gerne alle filer ind på én gang, så overførsler mellem egne konti kan findes. Har du allerede et budget i Excel, kan du også lægge det ind her.'} Selve filerne bliver ikke gemt eller sendt videre. Kun de poster, du vælger, bliver gemt.</p>
       <h3 class="dsec" style="margin-top:0">Personer i ${wh}</h3>
-      <div class="dpers">${S.persons.map(p=>`<input data-dpn="${p.id}" value="${esc(p.name)}" aria-label="Navn på person" autocomplete="off">`).join('')}${S.persons.length<6?'<button type="button" id="dAddP">Tilføj person</button>':''}</div>
+      <div class="dpers">${S.persons.map(p=>`<input data-dpn="${p.id}" value="${esc(p.name)}" aria-label="Navn på person" autocomplete="off">`).join('')}${S.persons.length<6?'<button type="button" id="dAddP" class="addcta">+ Tilføj person</button>':''}</div>
       <h3 class="dsec">Filer</h3>
       ${DI.files.map(f=>{const sp=f.tx&&f.tx.length?dSpan(f.tx):null,bn=f.budget?f.budget.length:0;return `<div class="dfile"><div class="dfh"><b>${esc(f.name)}</b>
         <span${f.err?' class="bad"':''}>${f.busy?'Læser filen…':f.err?esc(f.err):bn?`Budget med ${bn} ${bn===1?'post':'poster'}`:`${f.tx.length} posteringer fra ${esc(fmtDate(sp.from))} til ${esc(fmtDate(sp.to))}`}</span>
@@ -4708,7 +4707,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
   if(WS===WS_PERS)b.innerHTML=`<p class="wzp">Hvem er med i budgettet? Skriv navnet på hver person og den løn, der udbetales efter skat hver måned. Navnet skal udfyldes, lønnen kan du tilføje senere.</p>
     <div class="wzgrid" style="grid-template-columns:minmax(0,1fr) 180px auto"><span class="hd">Navn</span><span class="hd">Udbetalt løn pr. md.</span><span></span>
     ${W.persons.map((p,i)=>`<div style="display:contents" data-wp="${i}"><input data-f="name" value="${esc(p.name)}" placeholder="Person ${i+1}" autocomplete="off"><input data-f="sal" inputmode="decimal" value="${esc(p.salary)}" placeholder="fx 32.000"><button type="button" class="ghost danger" data-wpx="${i}" ${W.persons.length<2?'disabled':''} aria-label="Fjern person">✕</button></div>`).join('')}</div>
-    ${W.persons.length<4?'<button type="button" id="wzAddP" style="margin-top:8px">Tilføj person</button>':''}
+    ${W.persons.length<4?'<button type="button" id="wzAddP" class="addcta" style="margin-top:8px">+ Tilføj person</button>':''}
     ${wzCanInvite()&&W.persons.length>1?`<div class="wzinv"><p class="wzp" style="margin-top:16px">Skal de andre kunne logge ind i budgettet? Skriv deres e-mail, så får de en invitation, når budgettet er oprettet. Det kan også gøres senere under Indstillinger &gt; Deling.</p>
       ${W.persons.slice(1,1+WZ_MAX_INVITES).map((p,j)=>`<label class="wzinvf"><span>${esc(p.name||'Person '+(j+2))}s e-mail (valgfri)</span><input data-wpe="${j+1}" type="email" inputmode="email" autocomplete="off" value="${esc(p.email||'')}" placeholder="navn@eksempel.dk"></label>`).join('')}</div>`:''}`;
   if(WS===WS_ACC)b.innerHTML=`<p class="wzp">Hvilke konti bruger ${wzT('du','I')}? Navne og kontonumre kan rettes senere under Indstillinger.</p>
@@ -4729,7 +4728,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
   if(WS===WS_GOALS)b.innerHTML=`<p class="wzp">Har ${wzT('du noget, du','I noget, I')} sparer op til? Korte svar er nok. Alt kan rettes under Opsparingsmål.</p>
     <div class="wzgrid wzgoals" style="grid-template-columns:minmax(0,1fr) 170px 140px 160px"><span class="hd">Mål</span><span class="hd">Type</span><span class="hd">Beløb</span><span class="hd">Måldato</span>
     ${W.goals.map((g,i)=>`<div class="wzgrow" data-wg="${i}"><label class="wzf wide"><span>Mål</span><input data-f="name" value="${esc(g.name)}" placeholder="fx Udbetaling til hus" autocomplete="off" aria-label="Mål"></label><label class="wzf"><span>Type</span><select data-f="mode" aria-label="Type"><option value="target" ${g.mode==='target'?'selected':''}>Fast beløb</option><option value="monthly" ${g.mode==='monthly'?'selected':''}>Beløb pr. md.</option></select></label><label class="wzf"><span>Beløb</span><input data-f="amt" inputmode="decimal" value="${esc(g.amount)}" placeholder="0" aria-label="Beløb"></label><label class="wzf wide"><span>Måldato</span><input data-f="end" type="date" value="${esc(g.end)}" aria-label="Måldato"></label></div>`).join('')}</div>
-    ${W.goals.length<5?'<button type="button" id="wzAddG" style="margin-top:8px">Tilføj mål</button>':''}<p class="muted" style="font-size:13px;margin-top:8px">Målene starter næste måned${W.acc.savings?` og betales ${wzT('','fælles ')}til ${esc(W.acc.savingsName)}`:wzT('',' og betales fælles')}. Ved "Beløb pr. md." er måldatoen valgfri.</p>`;
+    ${W.goals.length<5?'<button type="button" id="wzAddG" class="addcta" style="margin-top:8px">+ Tilføj mål</button>':''}<p class="muted" style="font-size:13px;margin-top:8px">Målene starter næste måned${W.acc.savings?` og betales ${wzT('','fælles ')}til ${esc(W.acc.savingsName)}`:wzT('',' og betales fælles')}. Ved "Beløb pr. md." er måldatoen valgfri.</p>`;
   if(WS===WS_BANK){const inp='style="max-width:100%"';
     b.innerHTML=`<p class="wzp">Når banken regner rådighedsbeløbet ud, trækker den de faste udgifter fra indtægterne. Når du opretter dine udgifter, kan du på hver post vælge, om banken tager den med.</p>
     <p class="wzp" style="margin-top:14px">Bankens vejledende krav til rådighedsbeløbet. Som tommelfingerregel for 2026 ligger det for et par på 11.000–12.500 kr. pr. måned, og hertil kommer cirka 2.500–3.500 kr. pr. barn.</p>
