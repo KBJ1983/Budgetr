@@ -99,7 +99,7 @@ export function Quotes() {
       <div className={styles.sectionInner}>
         <div className={styles.quotesHead} data-reveal>
           <span className={styles.quotesFrom}>
-            Fra hverdagen med <Logo fontSize={14} bg="#F4DE96" />
+            Fra hverdagen med <Logo fontSize={14} dark />
           </span>
           <h2 id="citater-title" className={`${styles.h2} ${styles.h2Light}`}>
             Det siger dem, der bruger det.

@@ -1120,41 +1120,19 @@
 
 /* ================= Citater ================= */
 
-/* On the complementary colour, smørgul (user's wish, Nov 2026): dark text, light see-through cards. The Erhverv
-   price band reuses .quotesCircle/.quotesShape on blæk, so the colours below are scoped to .quotes. */
+/* A blæk band; smørgul only in the details – the quote marks and the initials – never as the band itself (user's wish,
+   Nov 2026). The Erhverv price band reuses .quotesCircle/.quotesShape, so the accents below are scoped to .quotes. */
 .quotes {
   overflow: hidden;
   isolation: isolate;
-  background: var(--v-comp);
-  color: var(--v-comp-ink);
-  --q-card: rgba(255, 255, 255, 0.45);
-  --q-rule: var(--v-comp-rule);
-  --q-muted: var(--v-comp-soft);
-}
-.quotes .quotesCircle {
-  background: rgba(255, 255, 255, 0.3);
-}
-.quotes .h2Light {
-  color: var(--v-comp-ink);
+  background: var(--v-dark);
+  color: var(--v-dark-text);
 }
 .quotes .quoteOpen {
-  color: var(--v-olive);
+  color: var(--v-comp);
 }
-.quotes .quotesFrom {
-  color: var(--q-muted);
-}
-.quotes .quoteCard {
-  background: var(--q-card);
-  border-color: var(--q-rule);
-  color: var(--v-comp-ink);
-}
-.quotes .quoteWho {
-  border-top-color: var(--q-rule);
-}
-.quotes .quoteWho > span:last-child {
-  color: var(--q-muted);
-}
-.quotes .quoteWho b {
+.quotes .quoteAvatar {
+  background: var(--v-comp);
   color: var(--v-comp-ink);
 }
 .quotesCircle {

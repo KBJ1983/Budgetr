@@ -38,7 +38,7 @@ app on the same palette:
   overblik.", "Ro i livet."), the key word with a mynte band under it. Smørgul `#F4DE96` is the complementary accent
   (user's spec, Nov 2026, after koral, umbra and dyb mynte), as a surface with dark text `#101415` (muted `#4D4320`,
   edges `rgba(16,20,21,.25)`): the "29 min · 29 kr" badge, the closing Excel band (with a mynte card shape), the
-  quotes band "Det siger dem, der bruger det" (light see-through cards), the Overførsler card, the Erhverv pill and the
+  quote marks and initials on the blæk quotes band "Det siger dem, der bruger det" (not the band itself – user's wish), the Overførsler card, the Erhverv pill and the
   icon at "Login med engangskode"; on dark it is used as it is (the "Tryghed" overline and the card shape in that band).
   In the films the outlined drifting card on the dark cards is a smørgul card and the circle between scenes is a light
   smørgul (`--comp` in `video/film.css`; Skole keeps its own look). Tryghed sits on slate `#1E2326` with cards `#272D30`.
