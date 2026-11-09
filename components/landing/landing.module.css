@@ -1873,16 +1873,16 @@
 .ctaWrap {
   padding: 0 14px var(--section-y);
 }
-/* A smørgul band with dark text and calm shapes (a light circle, a light card, two outlines). It stands still – no
-   motion and no reveal (user's wish). */
+/* A warm paper band like the hero card, with calm shapes (a white circle, a mynte card, an outline and a small
+   smørgul circle – smørgul only as a detail, never the band, user's wish). It stands still – no motion and no reveal. */
 .cta {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   max-width: 1200px;
   margin: 0 auto;
-  background: var(--v-comp);
-  color: var(--v-comp-ink);
+  background: var(--v-hero);
+  color: var(--v-ink);
   border-radius: 32px;
 }
 .ctaShapes span {
@@ -1896,7 +1896,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.6);
 }
 .ctaShapes span:nth-child(2) {
   right: -40px;
@@ -1905,7 +1905,6 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(-10deg);
-  /* Smørgul goes with mynte. */
   background: var(--v-lime);
 }
 .ctaShapes span:nth-child(3) {
@@ -1918,26 +1917,26 @@
   border: 2px solid var(--v-comp-rule);
 }
 .ctaShapes span:nth-child(4) {
-  left: 12%;
-  bottom: -50px;
-  width: 130px;
-  height: 130px;
+  left: 9%;
+  bottom: -34px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  border: 2px solid var(--v-comp-rule);
+  background: var(--v-comp);
 }
 .ctaInner {
   position: relative;
-  padding: 80px var(--gutter);
+  padding: 52px var(--gutter);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
   text-align: center;
 }
 .ctaTitle {
   margin: 0;
   max-width: 820px;
-  font-size: 58px;
+  font-size: 46px;
   line-height: 1;
   letter-spacing: -0.045em;
   font-weight: 700;
@@ -1954,10 +1953,10 @@
   max-width: 640px;
   font-size: 15px;
   line-height: 1.5;
-  color: var(--v-comp-soft);
+  color: var(--v-ink-2);
 }
 .cta .label {
-  color: var(--v-comp-soft);
+  color: var(--v-ink-2);
 }
 .cta .input {
   border-color: var(--v-comp-rule);
@@ -1966,12 +1965,12 @@
   color: var(--error);
 }
 .cta :focus-visible {
-  outline-color: var(--v-comp-ink);
+  outline-color: var(--v-ink);
 }
 .ctaForm {
   width: 100%;
   max-width: 560px;
-  padding-top: 8px;
+  padding-top: 6px;
   text-align: left;
 }
 
@@ -2265,7 +2264,7 @@
     max-width: 560px;
   }
   .ctaTitle {
-    font-size: 48px;
+    font-size: 40px;
   }
 }
 
@@ -2521,13 +2520,13 @@
     border-radius: 24px;
   }
   .ctaInner {
-    padding: 64px 20px;
+    padding: 40px 20px;
     align-items: stretch;
     text-align: left;
-    gap: 18px;
+    gap: 14px;
   }
   .ctaTitle {
-    font-size: 36px;
+    font-size: 32px;
     line-height: 1.08;
   }
   .ctaLead {

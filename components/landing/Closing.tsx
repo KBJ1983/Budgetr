@@ -210,8 +210,7 @@ export function FinalCta() {
           <span />
         </div>
         <div className={styles.ctaInner}>
-          {/* Dark logo on the smørgul band. */}
-          <Logo fontSize={26} bg="#F4DE96" />
+          <Logo fontSize={24} bg="#F2F0EA" />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Slip for de mange versioner af Excel-budgettet.
           </h2>

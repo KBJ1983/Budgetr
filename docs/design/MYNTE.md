@@ -37,7 +37,7 @@ app on the same palette:
   shapes (a white circle, a mynte card, an outlined card). Big titles are 700 with a second line in 200 ("Ét roligt
   overblik.", "Ro i livet."), the key word with a mynte band under it. Smørgul `#F4DE96` is the complementary accent
   (user's spec, Nov 2026, after koral, umbra and dyb mynte), as a surface with dark text `#101415` (muted `#4D4320`,
-  edges `rgba(16,20,21,.25)`): the "29 min · 29 kr" badge, the closing Excel band (with a mynte card shape), the
+  edges `rgba(16,20,21,.25)`): the "29 min · 29 kr" badge, a small circle on the closing Excel band (the band itself is warm paper), the
   quote marks and initials on the blæk quotes band "Det siger dem, der bruger det" (not the band itself – user's wish), the Overførsler card, the Erhverv pill and the
   icon at "Login med engangskode"; on dark it is used as it is (the "Tryghed" overline and the card shape in that band).
   In the films the outlined drifting card on the dark cards is a smørgul card and the circle between scenes is a light
