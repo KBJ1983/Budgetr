@@ -239,7 +239,7 @@ function Others() {
   );
 }
 
-const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; umbra?: boolean }[] = [
+const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; comp?: boolean }[] = [
   {
     icon: <LockIcon size={20} strokeWidth={1.8} />,
     title: "I ser aldrig kundens budget",
@@ -248,7 +248,7 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; umbr
   {
     icon: <ShieldIcon size={18} strokeWidth={1.8} />,
     title: "Ingen kan se koderne",
-    umbra: true,
+    comp: true,
     body: "Koden står kun i mailen til kunden. Hverken jeres administratorer eller budgetpro kan se den.",
   },
   {
@@ -272,7 +272,7 @@ function Trust() {
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={`${styles.eyebrow} ${styles.eyebrowUmbra}`}>Tryghed</span>
+            <span className={`${styles.eyebrow} ${styles.eyebrowComp}`}>Tryghed</span>
             <h2 id="tryghed-title" className={`${styles.h2} ${styles.h2Light}`}>
               I giver adgangen. Kunden bestemmer over tallene.
             </h2>
@@ -284,7 +284,7 @@ function Trust() {
         <SwipeList className={styles.trustBandGrid} label="Tryghed" tone="dark">
           {TRUST_CARDS.map((card) => (
             <li key={card.title} className={styles.trustBandCard}>
-              <span className={`${styles.trustBandIcon} ${card.umbra ? styles.trustBandIconUmbra : ""}`} aria-hidden="true">
+              <span className={`${styles.trustBandIcon} ${card.comp ? styles.trustBandIconComp : ""}`} aria-hidden="true">
                 {card.icon}
               </span>
               <h3 className={styles.trustBandCardTitle}>{card.title}</h3>

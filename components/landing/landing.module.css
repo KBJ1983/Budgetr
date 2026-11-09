@@ -1,7 +1,7 @@
 /*
  * Landing page styles after the design "budgetpro – Mynte og is komplet" (Nov 2026, docs/design/MYNTE.md): header and
  * hero share one rounded warm paper-white card (#F2F0EA) with large calm shapes (a white circle, a mynte card, an outlined card) on a
- * white frame; sections below alternate white, is (soft) and dark bands, with umbra (#4E3B30) as the second,
+ * white frame; sections below alternate white, is (soft) and dark bands, with dyb mynte (#2E6E5B) as the second,
  * complementary accent (the "29 min · 29 kr" badge, the closing call to action, the Erhverv pill). Red is for errors only. Content is at most 1136px wide (1200px
  * incl. 32px gutters). Breakpoints: 1020px (two columns → one), 768px (mobile).
  */
@@ -16,11 +16,12 @@
   --v-tint: #ddf0e8;
   /* The hero card (header + hero, privat and Erhverv): a warm paper white (user's wish, Nov 2026). */
   --v-hero: #f2f0ea;
-  /* Umbra: the complementary accent (badge, closing band, Overførsler card, Erhverv pill, the login icon). Muted text
-     on it is --v-umbra-soft; --v-umbra-light is its light cut on dark (e.g. "Tryghed"). Red is for errors only. */
-  --v-umbra: #4e3b30;
-  --v-umbra-soft: #e7dfd9;
-  --v-umbra-light: #b49c8c;
+  /* Comp (dyb mynte, user's wish Nov 2026 – it replaced umbra, which replaced koral): the complementary accent (badge,
+     closing band, Overførsler card, Erhverv pill, the login icon). Muted text
+     on it is --v-comp-soft; --v-comp-light is its light cut on dark (e.g. "Tryghed"). Red is for errors only. */
+  --v-comp: #2e6e5b;
+  --v-comp-soft: #cfe3dc;
+  --v-comp-light: #a9dccb;
   /* The Tryghed band: a slate a step lighter than blæk. */
   --v-slate: #1e2326;
   --v-slate-card: #272d30;
@@ -234,8 +235,8 @@
 .eyebrowDark {
   color: var(--v-lime);
 }
-.eyebrowUmbra {
-  color: var(--v-umbra-light);
+.eyebrowComp {
+  color: var(--v-comp-light);
 }
 
 .h2 {
@@ -505,17 +506,17 @@
   text-transform: uppercase;
   color: var(--v-olive);
 }
-/* "29 min · 29 kr": an umbra pill after a short umbra line. */
+/* "29 min · 29 kr": a dyb mynte pill after a short dyb mynte line. */
 .taglineRule {
   width: 40px;
   height: 1px;
-  background: var(--v-umbra);
+  background: var(--v-comp);
 }
 .badge {
   font: 500 12px var(--font-mono);
   letter-spacing: 0.04em;
   color: #fff;
-  background: var(--v-umbra);
+  background: var(--v-comp);
   border-radius: 999px;
   padding: 4px 10px;
   white-space: nowrap;
@@ -925,7 +926,7 @@
   background: var(--v-slate);
   color: var(--v-dark-text);
 }
-/* Shapes behind the cards: a slate circle bottom right, an umbra card at the top edge, an outlined mynte card bottom left. */
+/* Shapes behind the cards: a slate circle bottom right, a dyb mynte card at the top edge, an outlined mynte card bottom left. */
 .trustCircle {
   position: absolute;
   z-index: -1;
@@ -949,7 +950,7 @@
   top: -70px;
   width: 260px;
   transform: rotate(8deg);
-  background: var(--v-umbra);
+  background: var(--v-comp);
   opacity: 0.9;
 }
 .trustOutline {
@@ -987,8 +988,8 @@
   align-items: center;
   justify-content: center;
 }
-.trustBandIconUmbra {
-  background: var(--v-umbra);
+.trustBandIconComp {
+  background: var(--v-comp);
   color: #fff;
 }
 .trustBandCardTitle {
@@ -1116,11 +1117,36 @@
 
 /* ================= Citater ================= */
 
+/* On the complementary colour, dyb mynte (user's wish, Nov 2026): darker see-through cards, mynte details. The Erhverv
+   price band reuses .quotesCircle/.quotesShape on blæk, so the colours below are scoped to .quotes. */
 .quotes {
   overflow: hidden;
   isolation: isolate;
-  background: var(--v-dark);
-  color: var(--v-dark-text);
+  background: var(--v-comp);
+  color: #fff;
+  --q-card: rgba(16, 20, 21, 0.18);
+  --q-rule: rgba(255, 255, 255, 0.16);
+  --q-muted: var(--v-comp-soft);
+}
+.quotes .quotesCircle {
+  background: rgba(255, 255, 255, 0.06);
+}
+.quotes .quotesFrom {
+  color: var(--q-muted);
+}
+.quotes .quoteCard {
+  background: var(--q-card);
+  border-color: var(--q-rule);
+  color: #fff;
+}
+.quotes .quoteWho {
+  border-top-color: var(--q-rule);
+}
+.quotes .quoteWho > span:last-child {
+  color: var(--q-muted);
+}
+.quotes .quoteWho b {
+  color: #fff;
 }
 .quotesCircle {
   position: absolute;
@@ -1523,11 +1549,11 @@
   --b-mut: var(--v-dark-2);
   --b-over: var(--v-dark-2);
 }
-.bentoUmbra {
-  --b-bg: var(--v-umbra);
+.bentoComp {
+  --b-bg: var(--v-comp);
   --b-text: #fff;
-  --b-mut: var(--v-umbra-soft);
-  --b-over: var(--v-umbra-soft);
+  --b-mut: var(--v-comp-soft);
+  --b-over: var(--v-comp-soft);
 }
 .bentoOver {
   font: 500 12px var(--font-mono);
@@ -1860,7 +1886,7 @@
 .ctaWrap {
   padding: 0 14px var(--section-y);
 }
-/* An umbra band with white text and calm shapes (a light circle, a light umbra card, two outlines; no mynte). It stands still – no
+/* A dyb mynte band with white text and calm shapes (a light circle, a light card, two outlines). It stands still – no
    motion and no reveal (user's wish). */
 .cta {
   position: relative;
@@ -1868,7 +1894,7 @@
   overflow: hidden;
   max-width: 1200px;
   margin: 0 auto;
-  background: var(--v-umbra);
+  background: var(--v-comp);
   color: #fff;
   border-radius: 32px;
 }
@@ -1892,9 +1918,8 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(-10deg);
-  /* No mynte on the umbra band (user's wish): its own light cut instead. */
-  background: var(--v-umbra-light);
-  opacity: 0.35;
+  /* A calm light card, no bright mynte on the band. */
+  background: rgba(255, 255, 255, 0.12);
 }
 .ctaShapes span:nth-child(3) {
   right: 150px;
@@ -1942,10 +1967,10 @@
   max-width: 640px;
   font-size: 15px;
   line-height: 1.5;
-  color: var(--v-umbra-soft);
+  color: var(--v-comp-soft);
 }
 .cta .label {
-  color: var(--v-umbra-soft);
+  color: var(--v-comp-soft);
 }
 .cta .input {
   border-color: #fff;
@@ -2019,14 +2044,14 @@
   gap: 14px;
   min-width: 0;
 }
-/* Umbra pill above a title (the Erhverv teaser). */
+/* Dyb mynte pill above a title (the Erhverv teaser). */
 .pill {
   align-self: flex-start;
   font: 500 12px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #fff;
-  background: var(--v-umbra);
+  background: var(--v-comp);
   border-radius: 999px;
   padding: 5px 12px;
 }

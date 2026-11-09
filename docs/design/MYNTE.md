@@ -22,8 +22,8 @@ get a colour.
 | Neutral data | `#C9D2D0` | `#3A4446` | expense bars, dots |
 | Spor | `#E4EAE8` | `#283031` | progress tracks |
 | Blød flade | `#EEF2F1` | `#20272A` | warnings, chips, status pills |
-| Fejl | `#A8473C` | `#E59A8E` | errors only – in the app and on the website, so errors are never mistaken for umbra |
-| Umbra | `#4E3B30` (flade, hvid tekst), `#E7DFD9` (dæmpet tekst på umbra) | `#B49C8C` (lys udgave på mørk) | website: the complementary accent (see below) |
+| Fejl | `#A8473C` | `#E59A8E` | errors only – in the app and on the website, so errors are never mistaken for an accent |
+| Komplementær = dyb mynte | `#2E6E5B` (flade, hvid tekst), `#CFE3DC` (dæmpet tekst på den) | `#A9DCCB` (mynte på mørk) | the complementary accent on the website and in the app (see below) |
 | Mynte-tint | `#DDF0E8` | – | website: the Funktioner band |
 | Varm papirhvid | `#F2F0EA` | – | website: the hero card (header + hero); replaced the cool grey `#EEF1F0` (user's wish) |
 | App-flade | `#ECF1EF` | page `#0A0D0E`, card `#1A2023`, line `#343D40`, muted `#A3AEAC` | the app's page (light) and dark theme |
@@ -35,14 +35,15 @@ app on the same palette:
 
 - Website: white page with is (`#F0F3F2`) sections; header and hero share one rounded warm paper-white card with calm big
   shapes (a white circle, a mynte card, an outlined card). Big titles are 700 with a second line in 200 ("Ét roligt
-  overblik.", "Ro i livet."), the key word with a mynte band under it. Umbra `#4E3B30` (it replaced koral `#A8473C`,
-  Nov 2026) is the complementary accent, as a filled surface with white text: the "29 min · 29 kr" badge, the closing
-  Excel band (secondary text `#E7DFD9`, no mynte on it), the Overførsler card, the Erhverv pill and the icon at "Login
-  med engangskode"; on dark it is `#B49C8C` (the "Tryghed" overline), and an umbra card shape sits in the Tryghed band. Tryghed sits on slate `#1E2326` with cards `#272D30`.
-  Funktioner is one band on the tint: the feature tour (photos), a mosaic of mynte, dyb mynte, blæk, umbra and white
+  overblik.", "Ro i livet."), the key word with a mynte band under it. Dyb mynte `#2E6E5B` is the complementary accent
+  (user's wish, Nov 2026; it replaced umbra `#4E3B30`, which replaced koral `#A8473C`), as a filled surface with white
+  text: the "29 min · 29 kr" badge, the closing Excel band (secondary text `#CFE3DC`), the quotes band "Det siger dem,
+  der bruger det", the Overførsler card, the Erhverv pill and the icon at "Login med engangskode"; on dark it is mynte
+  `#A9DCCB` (the "Tryghed" overline), and a dyb mynte card shape sits in the Tryghed band. Tryghed sits on slate `#1E2326` with cards `#272D30`.
+  Funktioner is one band on the tint: the feature tour (photos), a mosaic of mynte, dyb mynte, blæk and white
   cards, and the full list behind a plus at the bottom. The product is shown as small drawn
   cards with the demo family's numbers (hero, Rådighed, Hvem betaler hvad); real screenshots stay in the feature tour.
-- App: the pages are underline tabs (the open page in blæk with a 2 px umbra line; red only for errors), the first key figure tile is dyb
+- App: the pages are underline tabs (the open page in blæk with a 2 px dyb mynte line, `--comp`; red only for errors), the first key figure tile is dyb
   mynte and the next one mynte, section heads sit on a thin line instead of a grey band.
 - Checkmarks (the check list on the website, the "Tjek" badge on posts) keep their earlier look (user's wish).
 
@@ -64,7 +65,7 @@ dark; outlines (3) and slot in the background colour. Code: `components/Logo.tsx
 ## Shapes
 
 Cards 16–18 px radius, tiles 12 px, buttons and status pills fully round. The app's pages are underline tabs on
-desktop (the open page in blæk with an umbra line) and a bottom bar on phones.
+desktop (the open page in blæk with a dyb mynte line) and a bottom bar on phones.
 
 ## Skole: "Is og solgul"
 

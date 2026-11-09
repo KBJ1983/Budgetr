@@ -46,13 +46,13 @@
 :root{
   /* budgetpro palette ("Mynte og is", Nov 2026, docs/design/MYNTE.md + the design "Mynte og is komplet"): a light
      mint-grey page, white cards, blæk ink and buttons, dyb mynte accent (--pine keeps its old name), mynte for bars and
-     badges, an umbra underline for the open page and the task count (--umbra, the complementary colour; red is for
+     badges, a dyb mynte underline for the open page and the task count (--comp, the complementary colour; red is for
      errors only, so they are never mixed up). --deep is the main key-figure tile, --grp the group bands on Poster.
      Keep in step with the landing palette. */
   --paper:#ECF1EF; --card:#FFFFFF; --ink:#101415; --ink2:#56615F; --ink3:#56615F; --rule:#DCE3E1; --rule2:#C9D2D0; --band:#EEF2F1;
   --pine:#2E6E5B; --pine-bg:#E3F2EC; --pine-ink:#275C4C; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#101415; --ochre-bg:#EEF2F1; --ochre-rule:#101415; --warnline:#101415;
   --hero-sub:#99A5A3; --on-pine:#FFFFFF; --btn:#101415; --btn-ink:#FFFFFF; --barud:#C9D2D0; --lime:#A9DCCB; --lime-bar:#A9DCCB;
-  --umbra:#4E3B30; --umbra-on:#FFFFFF; --deep:#2E6E5B; --deepm:#CFE3DC; --grp:#DDF0E8; --track:#E4EAE8;
+  --comp:#2E6E5B; --comp-on:#FFFFFF; --deep:#2E6E5B; --deepm:#CFE3DC; --grp:#DDF0E8; --track:#E4EAE8;
   --mk1:#4F8F7A; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --font:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
   --bar:#C9D2D0; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4A5A70; --plum-bg:#E9ECF1;
@@ -60,10 +60,10 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --umbra:#B49C8C; --umbra-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
+  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --comp:#A9DCCB; --comp-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
   --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --umbra:#B49C8C; --umbra-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
+  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --comp:#A9DCCB; --comp-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
   --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -979,7 +979,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .appbar .status{font:500 13px var(--font)}
 .appbar .status::before{width:7px;height:7px;background:var(--lime)}
 .tdbtn{width:34px;height:34px;border-radius:50%!important}
-.tdbtn .tdn{top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--umbra);color:var(--umbra-on);font:700 10px/16px var(--font)}
+.tdbtn .tdn{top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--comp);color:var(--comp-on);font:700 10px/16px var(--font)}
 .uchip{padding:0!important;border:0!important}
 .uchip .av{min-width:34px;height:34px;border-radius:17px}
 .uchip .caret{display:none}
@@ -987,7 +987,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .navrow .tabs{align-self:stretch;gap:24px;margin:0!important;padding:0;background:transparent;border:0!important;border-radius:0}
 .navrow .tabs button{min-height:0;padding:16px 0 14px!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0;background:transparent;font:600 14px var(--font)!important;color:var(--ink2)}
 .navrow .tabs button:hover{color:var(--ink);background:transparent}
-.navrow .tabs button[aria-selected="true"]{background:transparent;color:var(--ink);border-bottom-color:var(--umbra)!important}
+.navrow .tabs button[aria-selected="true"]{background:transparent;color:var(--ink);border-bottom-color:var(--comp)!important}
 .navrow .tools{align-self:center;padding:10px 0!important;gap:8px}
 .scnbtn{font:500 13px var(--font)!important;padding:8px 12px!important;border-radius:10px!important}
 .scnbtn #scnName{font-weight:700}

@@ -207,7 +207,7 @@ const BUSINESS = [
   { title: "Skoler", body: "Privatøkonomi i udskolingen med budgetpro Skole." },
 ] as const;
 
-/** A short teaser for budgetpro Erhverv (erhverv.<domain>, /erhverv), after Pris, on blæk with an umbra pill; it closes the page. */
+/** A short teaser for budgetpro Erhverv (erhverv.<domain>, /erhverv), after Pris, on blæk with a dyb mynte pill; it closes the page. */
 export function BusinessTeaser() {
   return (
     <section className={styles.bizWrap} aria-labelledby="erhverv-title">

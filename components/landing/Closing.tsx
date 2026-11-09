@@ -8,7 +8,7 @@ import { PricePlans } from "./PricePlans";
 import { SignupForm } from "./SignupForm";
 import { SwipeList } from "./Swipe";
 
-const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; umbra?: boolean }[] = [
+const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; comp?: boolean }[] = [
   {
     icon: <NoBankIcon size={18} />,
     title: "Ingen adgang til netbanken",
@@ -18,7 +18,7 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; umbr
     icon: <LockIcon size={18} strokeWidth={1.8} />,
     title: "Login med engangskode",
     body: "Ingen adgangskode, der kan lække. Du får en ny kode på mail, hver gang du logger ind.",
-    umbra: true,
+    comp: true,
   },
   {
     icon: <DownloadIcon size={18} strokeWidth={1.8} />,
@@ -42,7 +42,7 @@ export function Trust() {
       <div className={styles.sectionInner}>
         <div className={styles.sectionHead} data-reveal>
           <div className={styles.sectionHeadTitle}>
-            <span className={`${styles.eyebrow} ${styles.eyebrowUmbra}`}>Tryghed</span>
+            <span className={`${styles.eyebrow} ${styles.eyebrowComp}`}>Tryghed</span>
             <h2 id="tryghed-title" className={`${styles.h2} ${styles.h2Light}`}>
               Bygget til de tal, man ikke deler med hvem som helst.
             </h2>
@@ -55,7 +55,7 @@ export function Trust() {
         <SwipeList className={styles.trustBandGrid} label="Tryghed" tone="dark">
           {TRUST_CARDS.map((card) => (
             <li key={card.title} className={styles.trustBandCard}>
-              <span className={`${styles.trustBandIcon} ${card.umbra ? styles.trustBandIconUmbra : ""}`} aria-hidden="true">
+              <span className={`${styles.trustBandIcon} ${card.comp ? styles.trustBandIconComp : ""}`} aria-hidden="true">
                 {card.icon}
               </span>
               <h3 className={styles.trustBandCardTitle}>{card.title}</h3>
@@ -99,7 +99,7 @@ export function Quotes() {
       <div className={styles.sectionInner}>
         <div className={styles.quotesHead} data-reveal>
           <span className={styles.quotesFrom}>
-            Fra hverdagen med <Logo fontSize={14} dark />
+            Fra hverdagen med <Logo fontSize={14} dark bg="#2E6E5B" />
           </span>
           <h2 id="citater-title" className={`${styles.h2} ${styles.h2Light}`}>
             Det siger dem, der bruger det.
@@ -210,8 +210,8 @@ export function FinalCta() {
           <span />
         </div>
         <div className={styles.ctaInner}>
-          {/* No mynte on the umbra band (user's wish): the logo's front card takes umbra's soft tone. */}
-          <Logo fontSize={26} dark bg="#4E3B30" front="#E7DFD9" />
+          {/* On the dyb mynte band the logo's front card takes the band's soft tone. */}
+          <Logo fontSize={26} dark bg="#2E6E5B" front="#CFE3DC" />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Slip for de mange versioner af Excel-budgettet.
           </h2>

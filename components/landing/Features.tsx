@@ -187,7 +187,7 @@ function AllList() {
   );
 }
 
-type Tone = "white" | "mint" | "deep" | "ink" | "umbra";
+type Tone = "white" | "mint" | "deep" | "ink" | "comp";
 type Cell = { tone: Tone; over: string; title: string; body: string; pic?: ReactNode; wide?: boolean };
 
 // Which months a quarterly, a half-yearly and a yearly bill fall in (Budgetposter card).
@@ -262,7 +262,7 @@ const CELLS: readonly Cell[] = [
     ),
   },
   {
-    tone: "umbra",
+    tone: "comp",
     over: "Overførsler",
     title: "Besked, når netbanken skal rettes",
     body: "Ændrer budgettet sig, regnes de faste overførsler om, og du får besked.",
@@ -312,7 +312,7 @@ const TONE: Record<Tone, string | undefined> = {
   mint: styles.bentoMint,
   deep: styles.bentoDeep,
   ink: styles.bentoInk,
-  umbra: styles.bentoUmbra,
+  comp: styles.bentoComp,
 };
 
 /** Every main feature as a mosaic of coloured cards, each with a small drawing (design "Mynte og is komplet"). */
