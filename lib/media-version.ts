@@ -4,7 +4,7 @@
  * keep showing the old ones; the pages add `?v=<MEDIA_V>` to their URLs. Raise it after remaking them.
  * next.config.ts allows exactly this query on those paths (images.localPatterns).
  */
-export const MEDIA_V = "5";
+export const MEDIA_V = "6";
 
 /** A public path with the media version appended. */
 export const media = (path: string) => `${path}?v=${MEDIA_V}`;

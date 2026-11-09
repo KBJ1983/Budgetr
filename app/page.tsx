@@ -13,7 +13,7 @@ import { SiteHeader } from "@/components/landing/SiteHeader";
  * in the hero: the logo glitches in and flies into the header); header and hero share one warm paper-white rounded card with
  * a drawn, dark picture of the Overblik (AppCard). Then the explainer film (components/Film, made from
  * video/privat.html), "Sådan virker det", a photo banner, the slate Tryghed band, Rådighed (a drawn light card), the
- * dyb mynte call to action (FinalCta), Funktioner (on the tint: a sideways tour with photos, a coloured mosaic and the full
+ * smørgul call to action (FinalCta), Funktioner (on the tint: a sideways tour with photos, a coloured mosaic and the full
  * list behind a plus), Deler du økonomi, quotes, Pris + FAQ and a short blæk Erhverv teaser. Title, description and lang come from
  * app/layout.tsx.
  */

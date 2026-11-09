@@ -99,7 +99,7 @@ export function Quotes() {
       <div className={styles.sectionInner}>
         <div className={styles.quotesHead} data-reveal>
           <span className={styles.quotesFrom}>
-            Fra hverdagen med <Logo fontSize={14} dark bg="#2E6E5B" />
+            Fra hverdagen med <Logo fontSize={14} bg="#F4DE96" />
           </span>
           <h2 id="citater-title" className={`${styles.h2} ${styles.h2Light}`}>
             Det siger dem, der bruger det.
@@ -210,8 +210,8 @@ export function FinalCta() {
           <span />
         </div>
         <div className={styles.ctaInner}>
-          {/* On the dyb mynte band the logo's front card takes the band's soft tone. */}
-          <Logo fontSize={26} dark bg="#2E6E5B" front="#CFE3DC" />
+          {/* Dark logo on the smørgul band. */}
+          <Logo fontSize={26} bg="#F4DE96" />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Slip for de mange versioner af Excel-budgettet.
           </h2>

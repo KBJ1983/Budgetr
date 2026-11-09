@@ -16,12 +16,15 @@
   --v-tint: #ddf0e8;
   /* The hero card (header + hero, privat and Erhverv): a warm paper white (user's wish, Nov 2026). */
   --v-hero: #f2f0ea;
-  /* Comp (dyb mynte, user's wish Nov 2026 – it replaced umbra, which replaced koral): the complementary accent (badge,
+  /* Comp = smørgul (user's spec, Nov 2026 – after koral, umbra and dyb mynte): the complementary accent (badge,
      closing band, Overførsler card, Erhverv pill, the login icon). Muted text
-     on it is --v-comp-soft; --v-comp-light is its light cut on dark (e.g. "Tryghed"). Red is for errors only. */
-  --v-comp: #2e6e5b;
-  --v-comp-soft: #cfe3dc;
-  --v-comp-light: #a9dccb;
+     on it is --v-comp-soft, text on it --v-comp-ink, its edge --v-comp-rule; on dark it is used as it is (e.g. "Tryghed").
+     It goes with mynte and dyb mynte. Red is for errors only. */
+  --v-comp: #f4de96;
+  --v-comp-ink: #101415;
+  --v-comp-soft: #4d4320;
+  --v-comp-rule: rgba(16, 20, 21, 0.25);
+  --v-comp-light: #f4de96;
   /* The Tryghed band: a slate a step lighter than blæk. */
   --v-slate: #1e2326;
   --v-slate-card: #272d30;
@@ -506,16 +509,16 @@
   text-transform: uppercase;
   color: var(--v-olive);
 }
-/* "29 min · 29 kr": a dyb mynte pill after a short dyb mynte line. */
+/* "29 min · 29 kr": a smørgul pill after a short line. */
 .taglineRule {
   width: 40px;
   height: 1px;
-  background: var(--v-comp);
+  background: var(--v-comp-soft);
 }
 .badge {
   font: 500 12px var(--font-mono);
   letter-spacing: 0.04em;
-  color: #fff;
+  color: var(--v-comp-ink);
   background: var(--v-comp);
   border-radius: 999px;
   padding: 4px 10px;
@@ -990,7 +993,7 @@
 }
 .trustBandIconComp {
   background: var(--v-comp);
-  color: #fff;
+  color: var(--v-comp-ink);
 }
 .trustBandCardTitle {
   margin: 0;
@@ -1117,19 +1120,25 @@
 
 /* ================= Citater ================= */
 
-/* On the complementary colour, dyb mynte (user's wish, Nov 2026): darker see-through cards, mynte details. The Erhverv
+/* On the complementary colour, smørgul (user's wish, Nov 2026): dark text, light see-through cards. The Erhverv
    price band reuses .quotesCircle/.quotesShape on blæk, so the colours below are scoped to .quotes. */
 .quotes {
   overflow: hidden;
   isolation: isolate;
   background: var(--v-comp);
-  color: #fff;
-  --q-card: rgba(16, 20, 21, 0.18);
-  --q-rule: rgba(255, 255, 255, 0.16);
+  color: var(--v-comp-ink);
+  --q-card: rgba(255, 255, 255, 0.45);
+  --q-rule: var(--v-comp-rule);
   --q-muted: var(--v-comp-soft);
 }
 .quotes .quotesCircle {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.3);
+}
+.quotes .h2Light {
+  color: var(--v-comp-ink);
+}
+.quotes .quoteOpen {
+  color: var(--v-olive);
 }
 .quotes .quotesFrom {
   color: var(--q-muted);
@@ -1137,7 +1146,7 @@
 .quotes .quoteCard {
   background: var(--q-card);
   border-color: var(--q-rule);
-  color: #fff;
+  color: var(--v-comp-ink);
 }
 .quotes .quoteWho {
   border-top-color: var(--q-rule);
@@ -1146,7 +1155,7 @@
   color: var(--q-muted);
 }
 .quotes .quoteWho b {
-  color: #fff;
+  color: var(--v-comp-ink);
 }
 .quotesCircle {
   position: absolute;
@@ -1551,7 +1560,7 @@
 }
 .bentoComp {
   --b-bg: var(--v-comp);
-  --b-text: #fff;
+  --b-text: var(--v-comp-ink);
   --b-mut: var(--v-comp-soft);
   --b-over: var(--v-comp-soft);
 }
@@ -1886,7 +1895,7 @@
 .ctaWrap {
   padding: 0 14px var(--section-y);
 }
-/* A dyb mynte band with white text and calm shapes (a light circle, a light card, two outlines). It stands still – no
+/* A smørgul band with dark text and calm shapes (a light circle, a light card, two outlines). It stands still – no
    motion and no reveal (user's wish). */
 .cta {
   position: relative;
@@ -1895,7 +1904,7 @@
   max-width: 1200px;
   margin: 0 auto;
   background: var(--v-comp);
-  color: #fff;
+  color: var(--v-comp-ink);
   border-radius: 32px;
 }
 .ctaShapes span {
@@ -1909,7 +1918,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.3);
 }
 .ctaShapes span:nth-child(2) {
   right: -40px;
@@ -1918,8 +1927,8 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(-10deg);
-  /* A calm light card, no bright mynte on the band. */
-  background: rgba(255, 255, 255, 0.12);
+  /* Smørgul goes with mynte. */
+  background: var(--v-lime);
 }
 .ctaShapes span:nth-child(3) {
   right: 150px;
@@ -1928,7 +1937,7 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(12deg);
-  border: 2px solid rgba(255, 255, 255, 0.45);
+  border: 2px solid var(--v-comp-rule);
 }
 .ctaShapes span:nth-child(4) {
   left: 12%;
@@ -1936,7 +1945,7 @@
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  border: 2px solid var(--v-comp-rule);
 }
 .ctaInner {
   position: relative;
@@ -1973,13 +1982,13 @@
   color: var(--v-comp-soft);
 }
 .cta .input {
-  border-color: #fff;
+  border-color: var(--v-comp-rule);
 }
 .cta .error {
-  color: #fff;
+  color: var(--error);
 }
 .cta :focus-visible {
-  outline-color: #fff;
+  outline-color: var(--v-comp-ink);
 }
 .ctaForm {
   width: 100%;
@@ -2044,13 +2053,13 @@
   gap: 14px;
   min-width: 0;
 }
-/* Dyb mynte pill above a title (the Erhverv teaser). */
+/* Smørgul pill above a title (the Erhverv teaser). */
 .pill {
   align-self: flex-start;
   font: 500 12px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--v-comp-ink);
   background: var(--v-comp);
   border-radius: 999px;
   padding: 5px 12px;

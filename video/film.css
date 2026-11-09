@@ -12,6 +12,9 @@
   --midnight: #101415; --midnight-2: #181d1e; --midnight-card: #141a1b; --midnight-rule: #20272a; --decor: #1c2223;
   --haze: #99a5a3; --dark-text: #ecf1f0; --logo-dark: #ecf1f0;
   --lime: #a9dccb; --lime-rgb: 169, 220, 203; --lime-dark: #7cc1aa; --lime-tone: #e3f2ec; --olive: #2e6e5b; --error: #a8473c;
+  /* Smørgul, the complementary colour (Nov 2026): the outlined drifting card on the dark cards becomes a smørgul card,
+     and the soft circle between the scenes is a light smørgul. The Skole theme keeps its own look (see below). */
+  --comp: #f4de96; --fcard-b-bg: var(--comp); --fcard-b-line: var(--comp); --orb-bg: #f9edc6;
   --shadow: 0 30px 60px -24px rgba(16, 20, 21, 0.35);
   --font: "Hanken Grotesk", system-ui, sans-serif;
 }
@@ -21,6 +24,7 @@
   --ink-3: #5f6a68; --rule: #e2dfd8; --rule-2: #cfcac0;
   --haze: #99a5a3; --dark-text: #f7f7f2; --logo-dark: #f7f7f2;
   --lime: #f6cf4a; --lime-rgb: 246, 207, 74; --lime-dark: #d49a1a; --lime-tone: #fcf1cc; --olive: #7a5300;
+  --fcard-b-bg: transparent; --fcard-b-line: rgba(var(--lime-rgb), .55); --orb-bg: var(--lime-tone);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; background: #0b0e0f; overflow: hidden; }
@@ -51,7 +55,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .ring { position: absolute; border-radius: 50%; border: 1.5px solid var(--midnight-rule); }
 .fcard { position: absolute; border-radius: 22px; }
 .fcard.a { background: var(--midnight-2); border: 1.5px solid var(--midnight-rule); }
-.fcard.b { border: 2px solid rgba(var(--lime-rgb), .55); }
+.fcard.b { border: 2px solid var(--fcard-b-line); background: var(--fcard-b-bg); }
 .fcard.c { background: var(--lime); }
 .end { background: transparent; }
 .end .darkcard { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -75,7 +79,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .darkcard .hl { background: none; color: var(--lime); }
 
 /* Moving lime shapes behind the scenes (film.js orb) */
-#orb { position: absolute; left: 0; top: 0; width: 100px; height: 100px; border-radius: 50%; background: var(--lime-tone); }
+#orb { position: absolute; left: 0; top: 0; width: 100px; height: 100px; border-radius: 50%; background: var(--orb-bg); }
 #orb2 { position: absolute; left: 0; top: 0; width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--lime-dark); opacity: .5; }
 .dots { position: absolute; width: 360px; height: 220px; background-image: radial-gradient(var(--rule-2) 2px, transparent 2.5px); background-size: 24px 24px; }
 

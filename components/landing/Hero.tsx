@@ -5,7 +5,7 @@ import { LogoIntro } from "./LogoIntro";
 
 /**
  * The hero at the bottom of the warm paper-white top card (design "Mynte og is komplet"); the header sits in the same card,
- * above it. The title's second line is thin, with a mynte band under "overblik."; the "29 min · 29 kr" badge is dyb mynte.
+ * above it. The title's second line is thin, with a mynte band under "overblik."; the "29 min · 29 kr" badge is smørgul.
  * On the right a drawn, dark picture of the Overblik (AppCard).
  */
 export function Hero() {

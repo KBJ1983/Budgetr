@@ -17,8 +17,8 @@ export const BRAND = {
   tint: "#DDF0E8",
   // Warm paper white: the website's hero card (header + hero).
   mist: "#F2F0EA",
-  // Dyb mynte: the website's complementary accent (red is for errors only).
-  comp: "#2E6E5B",
+  // Smørgul: the complementary accent (red is for errors only).
+  comp: "#F4DE96",
   limeTone: "#E3F2EC",
   haze: "#99A5A3",
   snow: "#ECF1F0",
