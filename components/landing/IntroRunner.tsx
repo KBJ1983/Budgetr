@@ -89,7 +89,7 @@ export function IntroRunner() {
         width: `${B.right - B.left}px`,
         height: `${B.bottom - B.top}px`,
         borderRadius: `${rad}px`,
-        background: "#a9dccb",
+        background: "#a7cdd0",
         transformOrigin: `${L.left - B.left}px ${L.top - B.top}px`,
       });
       el.appendChild(badge);

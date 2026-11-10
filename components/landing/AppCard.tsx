@@ -58,7 +58,7 @@ export function AppCard({ dark = false, view = "budget", className }: { dark?: b
   return (
     <div className={[styles.app, dark ? styles.appDark : "", className].filter(Boolean).join(" ")} aria-hidden="true">
       <div className={styles.appBar}>
-        <Logo fontSize={14} dark={dark} bg={dark ? "#0A0D0E" : "#ECF1EF"} />
+        <Logo fontSize={14} dark={dark} bg={dark ? "#0B2A2F" : "#ECF1EF"} />
         <span className={styles.appTabs}>
           <b>Overblik</b>
           <span>Poster</span>

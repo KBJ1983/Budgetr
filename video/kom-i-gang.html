@@ -6,24 +6,24 @@
   (Ny kladde) filled from statements (CSV/PDF) and a budget made in Excel (months as columns, the total row skipped),
   then "Sæt som primært budget". Last, a scenario: "+ Nyt scenarie" in the budget menu, its name and "Gælder fra", a
   changed post, and the comparison with the current budget. Texts, labels and numbers follow the app
-  (public/budgetr-app/index.html: openWiz, renderWiz, openDft, renderDImp, budgetRows, renderScn, compareHtml). "Mynte og is"; runtime and shared styles in film.js / film.css.
+  (public/budgetr-app/index.html: openWiz, renderWiz, openDft, renderDImp, budgetRows, renderScn, compareHtml). "A6"; runtime and shared styles in film.js / film.css.
   Render: `pnpm video kom-i-gang` (and `--reel`). Made-up people (Anna and Jonas, as in the demo budget) and amounts.
 -->
-<html lang="da">
+<html lang="da" data-theme="a6">
 <head>
 <meta charset="utf-8" />
 <title>budgetpro film – kom i gang</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&display=block" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=block" rel="stylesheet" />
 <link rel="stylesheet" href="film.css" />
 <style>
   /* App-like form bits */
   .lead { font-size: 20px; line-height: 1.45; color: var(--ink-3); margin-bottom: 20px; }
   .in { height: 52px; border-radius: 12px; border: 1.5px solid var(--rule-2); background: var(--paper); display: flex; align-items: center; padding: 0 16px; font-size: 20px; color: var(--ink); white-space: nowrap; overflow: hidden; }
   .in.focus { border-color: var(--midnight); background: var(--white); box-shadow: 0 0 0 4px rgba(var(--lime-rgb), .6); }
-  .in .ph { color: #9aa6a4; }
+  .in .ph { color: #a1a1a8; }
   .in.sel::after { content: "▾"; margin-left: auto; padding-left: 10px; font-size: 16px; color: var(--ink-3); }
   .in.sm { height: 42px; font-size: 17px; padding: 0 12px; border-radius: 10px; }
   .caret { display: inline-block; width: 2px; height: 24px; background: var(--ink); margin-left: 1px; }
@@ -251,7 +251,7 @@
       <div class="row"><span class="btn" id="eStart">Start guiden</span><span class="btn ghost">Opret tomt budget</span></div>
     </div>
     <div class="abs card" id="hint">
-      <i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></i>
+      <i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></i>
       <div><b>+ Ny kladde</b><span>Byg et nyt budget ud fra kontoudskrifter fra flere konti</span></div>
     </div>
   </div>

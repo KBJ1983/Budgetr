@@ -3,17 +3,17 @@
   Erhverv film (about 1 min 40 s): first a short look at what the customer gets (the guide's start step, statement import + features), then how easy it is
   for a bank, an estate agent or another business to get started (pick a pack, the agreement page, give access, the
   customers use their codes).
-  "Mynte og is" with motion graphics.
+  "A6" with motion graphics.
   Runtime and shared styles: film.js / film.css. Render: `pnpm video erhverv`. All names, e-mails and codes are made up.
 -->
-<html lang="da">
+<html lang="da" data-theme="a6">
 <head>
 <meta charset="utf-8" />
 <title>budgetpro Erhverv film</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&display=block" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=block" rel="stylesheet" />
 <link rel="stylesheet" href="film.css" />
 <style>
   /* Scene 4: price card */
@@ -46,9 +46,9 @@
   .af-main h2 { font-size: 24px; font-weight: 600; margin-bottom: 14px; }
   .give { display: flex; align-items: flex-end; gap: 14px; padding: 22px; background: var(--white); border: 1px solid var(--rule); border-radius: 18px; }
   .give label { flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 16px; font-weight: 500; color: var(--ink-2); }
-  .input { height: 56px; border-radius: 12px; border: 1.5px solid #9aa6a4; background: var(--white); display: flex; align-items: center; padding: 0 18px; font-size: 21px; color: var(--ink); }
+  .input { height: 56px; border-radius: 12px; border: 1.5px solid #a1a1a8; background: var(--white); display: flex; align-items: center; padding: 0 18px; font-size: 21px; color: var(--ink); }
   .input.focus { border-color: var(--midnight); box-shadow: 0 0 0 4px rgba(169, 220, 203, .6); }
-  .input .ph { color: #9aa6a4; }
+  .input .ph { color: #a1a1a8; }
   .caret { display: inline-block; width: 2px; height: 26px; background: var(--ink); margin-left: 1px; }
   .give .btn { height: 56px; }
   .okline { margin-top: 16px; display: inline-flex; align-items: center; gap: 12px; padding: 12px 20px; border-radius: 999px; background: var(--lime-tone); color: var(--olive); font-size: 18px; font-weight: 500; }
@@ -167,7 +167,7 @@
       <span class="btn" id="sendReq">Send prisforespørgsel <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       <div class="note">Det er kun en prisforespørgsel. I opretter ikke en aftale.</div>
       <div id="sent">
-        <div class="check" id="sentCheck"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#101415" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path id="sentTick" d="M5 12.5l4.5 4.5L19 7.5" stroke-dasharray="22" stroke-dashoffset="22"/></svg></div>
+        <div class="check" id="sentCheck"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path id="sentTick" d="M5 12.5l4.5 4.5L19 7.5" stroke-dasharray="22" stroke-dashoffset="22"/></svg></div>
         <h3>Tak. Jeres prisforespørgsel er sendt.</h3>
         <p>Vi skriver til jer med et tilbud på 50 koder × 12 måneder.</p>
       </div>
@@ -248,8 +248,8 @@
     </div>
   </div>
 
-  <div class="abs card joined" id="join1"><span class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#101415" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>maja@eksempel.dk har brugt koden</b><span>budgetpro i 12 måneder fra i dag</span></div></div>
-  <div class="abs card joined" id="join2"><span class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#101415" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>jonas@eksempel.dk har brugt koden</b><span>budgetpro i 12 måneder fra i dag</span></div></div>
+  <div class="abs card joined" id="join1"><span class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>maja@eksempel.dk har brugt koden</b><span>budgetpro i 12 måneder fra i dag</span></div></div>
+  <div class="abs card joined" id="join2"><span class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>jonas@eksempel.dk har brugt koden</b><span>budgetpro i 12 måneder fra i dag</span></div></div>
   </div>
 
   <div id="steps"></div>

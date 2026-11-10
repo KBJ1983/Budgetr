@@ -44,27 +44,30 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* budgetpro palette ("Mynte og is", Nov 2026, docs/design/MYNTE.md + the design "Mynte og is komplet"): a light
-     warm paper page (the front page hero, user's wish), white cards, blæk ink and buttons, dyb mynte accent (--pine keeps its old name), mynte for bars and
-     badges, a smørgul underline for the open page and the task count (--comp, the complementary colour; red is for
-     errors only, so they are never mixed up). --deep is the main key-figure tile, --grp the group bands on Poster.
-     Keep in step with the landing palette. */
-  --paper:#F2F0EA; --card:#FFFFFF; --ink:#101415; --ink2:#56615F; --ink3:#56615F; --rule:#DCE3E1; --rule2:#C9D2D0; --band:#ECE9E2;
-  --pine:#2E6E5B; --pine-bg:#E3F2EC; --pine-ink:#275C4C; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#101415; --ochre-bg:#ECE9E2; --ochre-rule:#101415; --warnline:#101415;
-  --hero-sub:#99A5A3; --on-pine:#FFFFFF; --btn:#101415; --btn-ink:#FFFFFF; --barud:#C9D2D0; --lime:#A9DCCB; --lime-bar:#A9DCCB;
-  --comp:#F4DE96; --comp-on:#101415; --deep:#2E6E5B; --deepm:#CFE3DC; --grp:#DDF0E8; --track:#E4EAE8;
-  --mk1:#4F8F7A; --mk2:#9A7D45; --mk3:#52688A; --mk4:#8F5B6A; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --font:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
+  /* App palette (Nov 2026, user's choice): the website's blue only where you act – buttons (--btn #5B3DF5), links and
+     accent text (--pine #4B2FE0, keeps its old name), the active tab and the task badge (--comp) – and otherwise calm
+     slate blue-greys close together: key-figure tiles (--deep), the Fordeling envelopes (--env1–4, darkest to lightest,
+     Til rådighed the lightest), bars (--lime), tints (--pine-bg, --grp), the scenario banner (--scn). "Better" is a
+     dark slate (--pos), not green; "worse" stays red (--neg). No petrol, sand, rosa, lilac or violet surfaces (user's
+     wish: one calm expression). --brick stays for errors. --grp is the group bands on Poster. */
+  --paper:#F3F3F1; --card:#FFFFFF; --ink:#18181B; --ink2:#5E5E63; --ink3:#5E5E63; --rule:#E0E0DB; --rule2:#CFCFCA; --band:#E9E9E5;
+  --pine:#4B2FE0; --pine-bg:#E7EAEF; --pine-ink:#3A22B8; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#18181B; --ochre-bg:#E9E9E5; --ochre-rule:#18181B; --warnline:#18181B;
+  --hero-sub:#9C9CA3; --on-pine:#FFFFFF; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#CFCFCA; --lime:#8B98AC; --lime-bar:#8B98AC;
+  --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2E3B4E; --deepm:#C5CDD8; --grp:#E7EAEF; --track:#E7E7E3; --scn:#E3E7ED; --scn-on:#18181B;
+  --pos:#2E3B4E; --pos-bg:#E3E7ED; --neg:#A3453A; --neg-bg:#F6E1DC; --logo-ink:#18181B; --logo-front:#18181B;
+  --tone2:#4D5B73; --tone2-bg:#E7EAEF;
+  --mk1:#34415A; --mk2:#5E6C84; --mk3:#8B98AC; --mk4:#B8C1CE; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
   --bar:#C9D2D0; --focus:#2F6FB3; --sky:#3D6AA8; --sky-bg:#E1EBF7; --plum:#4A5A70; --plum-bg:#E9ECF1;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --comp:#F4DE96; --comp-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
-  --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
+  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#2F3746; --scn-on:#F3F3F1; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
+  --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#0A0D0E; --card:#1A2023; --ink:#ECF1F0; --ink2:#A3AEAC; --ink3:#8A9694; --rule:#343D40; --rule2:#4A5558; --band:#242B2E; --comp:#F4DE96; --comp-on:#101415; --deep:#343E42; --deepm:#B4BDBB; --grp:#1D3A32; --track:#2C3437;
-  --pine:#A9DCCB; --pine-bg:#1E3A32; --pine-ink:#BFE6D8; --brick:#E59A8E; --brick-bg:#34211F; --hero-sub:#5F6A68; --on-pine:#101415; --ochre:#ECF1F0; --ochre-bg:#20272A; --ochre-rule:#ECF1F0; --warnline:#ECF1F0; --btn:#A9DCCB; --btn-ink:#101415; --barud:#4A5558; --bar:#4A5558; --lime:#A9DCCB; --lime-bar:#A9DCCB; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#8FC9B5; --mk2:#C9B48A; --mk3:#8EA3BF; --mk4:#C39AA6; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
+  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#2F3746; --scn-on:#F3F3F1; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
+  --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--font)}
@@ -282,8 +285,8 @@ details.acctd .acct>div:first-child>h3,details.acctd .acct>div:first-child>.num{
 .cmpgrid tr.cmpkey td{background:var(--pine-bg);font-weight:600;font-size:15px}
 .cmpgrid tr.cmpkey td:nth-child(3){font-size:16px;color:var(--ink)}
 .cmpgrid .dpill{display:inline-block;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
-.cmpgrid .dpill.up{background:var(--card);color:var(--pine);box-shadow:inset 0 0 0 1px var(--pine)}
-.cmpgrid .dpill.dn{background:var(--brick-bg);color:var(--brick);box-shadow:inset 0 0 0 1px var(--brick)}
+.cmpgrid .dpill.up{background:var(--pos-bg);color:var(--pos)}
+.cmpgrid .dpill.dn{background:var(--neg-bg);color:var(--neg)}
 .cmpgrid .dpill.z{background:var(--card);color:var(--ink3)}
 .extog{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--ink2);border:1px solid var(--rule);border-radius:8px;padding:6px 10px;background:var(--card);cursor:pointer}
 .extog.small{padding:3px 8px;font-size:13px;margin-top:8px}
@@ -321,7 +324,7 @@ tr.paused td{color:var(--ink3)}
 .kpi.bad{background:var(--brick-bg);border-color:transparent} .kpi.bad b,.kpi.bad span{color:var(--brick)}
 .bankdet{margin-top:12px;font-size:14px} .bankdet summary{cursor:pointer;color:var(--ink2)}
 /* Månedstjek on Overblik (monthCheckHtml) */
-.mcheck{margin:24px 0 0;padding:18px 20px;border:1px solid var(--rule);border-left:4px solid var(--lime,#A9DCCB);border-radius:14px;background:var(--card)}
+.mcheck{margin:24px 0 0;padding:18px 20px;border:1px solid var(--rule);border-radius:14px;background:var(--card)}
 .mcheck .mchead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.mcheck h2{margin:0;font-size:18px}
 .mcheck p{margin:8px 0 0;font-size:14.5px;color:var(--ink2)}.mcheck ul{margin:10px 0 0;padding-left:18px;font-size:14.5px;line-height:1.6}
 .mcheck .mcbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
@@ -377,7 +380,9 @@ td.r,th.r,td.act,td.chk{white-space:nowrap}
 .lnum{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--pine);color:var(--paper);font-size:11px;font-weight:700;margin-right:8px;vertical-align:1px}
 .lend{display:block;font-size:12px;color:var(--pine);white-space:nowrap}
 .ltl svg{width:100%;height:auto;display:block}
-.ltbl table{font-size:13px} .ltbl td,.ltbl th{padding:7px 6px} .ltbl td.restcol b{font-size:14px}
+.ltbl table{font-size:12.5px} .ltbl td,.ltbl th{padding:7px 5px} .ltbl td.restcol b{font-size:13.5px}
+/* Desktop: the loans table and the goal summary fit their card instead of scrolling sideways (notes and dates wrap). */
+@media (min-width:761px){.ltbl td *:not(b):not(.lbar):not(.lbar *){white-space:normal!important}.ltbl td{overflow-wrap:break-word}section.gsum{display:block}div.gsum{grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr))}}
 th{font-weight:500;color:var(--ink2);font-size:13px;background:var(--card);position:sticky;top:0}
 td.r,th.r{text-align:right}
 tr.cat td{background:var(--paper);font-weight:700;border-bottom:1px solid var(--rule);padding-top:12px}
@@ -527,7 +532,7 @@ dialog h2{margin-bottom:16px}
 .toast.show{opacity:1}
 /* Rundtur: a dimmed page with a hole around one button and a small card next to it (openTour()). */
 .tour{position:fixed;inset:0;z-index:200}
-.tourhole{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(16, 20, 21,.55);outline:2px solid var(--lime,#A9DCCB);outline-offset:2px;transition:top .2s,left .2s,width .2s,height .2s;pointer-events:none}
+.tourhole{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(16, 20, 21,.55);outline:2px solid var(--lime,#8B98AC);outline-offset:2px;transition:top .2s,left .2s,width .2s,height .2s;pointer-events:none}
 .tourcard{position:fixed;width:min(330px,calc(100vw - 32px));background:var(--card);color:var(--ink);border:1px solid var(--rule);border-radius:14px;padding:16px 18px 14px;box-shadow:0 12px 32px rgba(16, 20, 21,.28)}
 .tourcard h2{margin:0 0 6px;font-size:16px}
 .tourcard p{margin:0;font-size:14px;line-height:1.5;color:var(--ink2)}
@@ -613,9 +618,9 @@ td.act{width:1%;white-space:nowrap}
 /* Logo ("Mynte og is", see components/Logo.tsx): the symbol (a pocket with two cards; back card + pocket in the
    name's colour, front card mynte, outlines and slot in the surface colour behind it) + "budget" Hanken Grotesk 700
    and "pro" Hanken Grotesk 200. Symbol height 1.05 × font size, gap .24 × font size. */
-.logo{display:inline-flex;align-items:baseline;gap:.24em;font-size:22px;line-height:1;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
+.logo{display:inline-flex;align-items:baseline;gap:.24em;font-size:22px;line-height:1;color:var(--logo-ink);text-decoration:none;white-space:nowrap;border-radius:6px}
 .logo svg{display:block;flex:0 0 auto;width:1.1025em;height:1.05em;align-self:flex-end;margin-bottom:-.02em}
-.logo .lk-ink{fill:var(--ink)} .logo .lk-front{fill:var(--lime)} .logo .lk-cut{stroke:var(--card);stroke-width:3} .logo .lk-slot{fill:var(--card)}
+.logo .lk-ink{fill:var(--logo-ink)} .logo .lk-front{fill:var(--logo-front)} .logo .lk-cut{stroke:var(--card);stroke-width:3} .logo .lk-slot{fill:var(--card)}
 .logo .lb{font:700 1em/1 "Hanken Grotesk",var(--font);letter-spacing:-.045em}
 .logo .lp{font:200 1em/1 "Hanken Grotesk",var(--font);letter-spacing:-.035em;margin-left:.03em}
 .abr{margin-left:auto;display:flex;align-items:center;gap:14px}
@@ -850,7 +855,7 @@ dialog#dlgPdf,dialog#dlgMail{width:min(560px,94vw)}
 dialog.filmdlg{width:min(980px,96vw);max-width:none}
 .filmdlg h2{margin-bottom:6px}
 .filmdlg .filmtxt{font-size:14px;margin:0 0 14px}
-.filmdlg video{display:block;width:100%;aspect-ratio:16/9;border-radius:12px;background:#101415}
+.filmdlg video{display:block;width:100%;aspect-ratio:16/9;border-radius:12px;background:#18181B}
 .filmdlg video:focus:not(:focus-visible){outline:none}
 @media (max-width:767px){.filmdlg video{aspect-ratio:9/16;width:auto;max-width:100%;height:min(66vh,560px);margin:0 auto}}
 #mailPdfOpt{display:flex;flex-direction:column;gap:18px} #mailPdfOpt[hidden]{display:none}
@@ -1062,13 +1067,10 @@ button.primary,button.danger,.dlgfoot button{font-weight:600}
 .leftppl b{font:600 17px var(--mono);letter-spacing:-.02em}.leftppl .left{color:var(--pine)}.leftppl .neg{color:var(--brick)}
 .kpi.hero2{background:var(--deep);border-color:var(--deep)}
 .kpi.hero2 span,.kpi.hero2 small{color:var(--deepm)}
-.kpi.hero2 b{color:#FFFFFF;font-weight:500}
-.kpi.hero2+.kpi:not(.bad){background:var(--lime);border-color:var(--lime)}
-.kpi.hero2+.kpi:not(.bad) span,.kpi.hero2+.kpi:not(.bad) b{color:#101415}
-.kpi.hero2+.kpi:not(.bad) small{color:#2B3836}
+.kpi.hero2 b{color:var(--dnum,#FFFFFF);font-weight:500}
 .kpi.good{background:var(--card);border-color:var(--rule)}
-.kpi.good b,.kpi.good span{color:var(--ink)} .kpi.good small{color:var(--ink2)}
-.kpi.bad{background:var(--card);border-color:var(--brick)}
+.kpi.good span{color:var(--ink2)} .kpi.good b{color:var(--pos)} .kpi.good small{color:var(--ink2)}
+.kpi.bad{background:var(--card);border-color:var(--rule)} .kpi.bad b{color:var(--neg)!important} .kpi.bad span{color:var(--ink2)!important}
 details.acctd,.tcard,.acct{border-radius:12px}
 details.acctd>summary{min-height:52px;padding:0 18px}
 details.acctd>summary h3{font-size:15px!important;font-weight:700}
@@ -1162,7 +1164,7 @@ dialog h2,.sethead h2{font-weight:700}
   .mnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:4px 0!important;border:0!important;background:transparent!important;color:var(--ink2)!important;font:500 11px/1.2 var(--font)!important;border-radius:12px!important;-webkit-tap-highlight-color:transparent}
   .mnav svg{box-sizing:content-box;width:22px;height:22px;padding:3px 14px;border-radius:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:background .15s}
   .mnav button[aria-selected="true"]{color:var(--ink)!important;font-weight:600!important}
-  .mnav button[aria-selected="true"] svg{background:var(--lime);color:#101415}
+  .mnav button[aria-selected="true"] svg{background:var(--lime);color:#18181B}
   .mnav span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .fab{display:flex;align-items:center;justify-content:center;position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:41;width:56px;height:56px;padding:0!important;border:0!important;border-radius:28px!important;background:var(--btn)!important;color:var(--btn-ink)!important;box-shadow:0 6px 18px rgba(16, 20, 21,.28)}
   .fab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
@@ -1255,9 +1257,9 @@ dialog h2,.sethead h2{font-weight:700}
   #app>section .kpi{border-color:transparent;padding:12px;border-radius:12px;min-width:0}
   #app>section .kpi:not(.hero2){background:var(--paper)}
   #app>section .kpi.hero2{grid-column:1/-1}
-  #app>section .kpi.good{background:var(--pine-bg)}
-  #app>section .kpi.bad{background:var(--brick-bg)}
-  #app>section .kpi.hero2+.kpi:not(.bad){background:var(--lime)}
+  #app>section .kpi.good{background:var(--paper)}
+  #app>section .kpi.bad{background:var(--paper)}
+  
   #app>section .kpi b{font-size:17px!important;overflow-wrap:anywhere}
   #app>section .kpi.hero2 b{font-size:22px!important}
   #app>section .kpi small{font-size:11.5px}
@@ -1346,6 +1348,310 @@ dialog h2,.sethead h2{font-weight:700}
   body{background:#fff;color:#000}
   section{break-inside:avoid-page}
 }
+
+/* ---------- D (Nov 2026): Overblik with an inbox, Til rådighed, the bank's view and four envelopes ---------- */
+:root{--env1:#34415A;--env1-on:#FFFFFF;--env2:#4D5B73;--env2-on:#FFFFFF;--env3:#6B7990;--env3-on:#FFFFFF;--env4:#9AA6B8;--env4-on:#18181B;--env0:#4D5B73;--dnum:#FFFFFF}
+:root[data-theme="dark"]{--env1:#3A475C;--env2:#4D5B73;--env3:#6B7990;--env4:#9AA6B8;--env0:#AEB9C9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--env1:#3A475C;--env2:#4D5B73;--env3:#6B7990;--env4:#9AA6B8;--env0:#AEB9C9}}
+.inbox{background:var(--card);border-radius:16px;padding:18px 20px;margin-top:20px}
+.inbox .ih{display:flex;align-items:center;gap:10px}
+.inbox h2{margin:0;font-size:18px}
+.dcount{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--deep);color:#fff;font:600 11px/1 var(--mono);padding:0 6px}
+.inbox .todo{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 24px;margin-top:6px}
+.inbox .t{display:grid;grid-template-columns:30px minmax(0,1fr);gap:2px 12px;padding:12px 0 2px;font-size:14px;align-content:start}
+.inbox .t .ic{grid-row:1/4;width:30px;height:30px;border-radius:50%;background:var(--env3);color:var(--env3-on);display:grid;place-items:center;font:600 13px/1 var(--mono)}
+.inbox .t b{font-size:15px}
+.inbox .t>span:not(.ic){color:var(--ink2)}
+.lnk{justify-self:start;background:none;border:0;padding:0;margin-top:4px;color:var(--pine);font:600 13.5px var(--font);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.dtop{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;margin-top:16px}
+.dmain{position:relative;overflow:hidden;isolation:isolate;background:var(--deep);color:#F3F3F1;border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:8px;margin:0}
+.dmain::before{content:"";position:absolute;right:-70px;top:-80px;width:230px;height:230px;border-radius:50%;background:var(--env0);z-index:-1}
+.dmain::after{content:"";position:absolute;right:-60px;bottom:-120px;width:190px;height:190px;border-radius:48px;background:var(--env2);opacity:.45;transform:rotate(18deg);z-index:-1}
+.dmain .over{font:500 12px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:#B9CDCF}
+.dmain .big{font:500 46px/1 var(--mono);letter-spacing:-.02em;color:var(--dnum)}
+.dmain .big.neg{color:#F0A196}
+.dmain p{margin:0;color:#B9CDCF;font-size:14px;max-width:48ch}
+.dmain .ppl{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.dmain .ppl span{background:rgba(255,255,255,.1);border-radius:10px;padding:7px 11px;font-size:13px}
+.dmain .ppl b{font:500 13px var(--mono);margin-left:6px}
+.dmain .calc{font:400 12.5px var(--mono);color:#B9CDCF;border-top:1px solid rgba(255,255,255,.14);padding-top:8px;margin-top:auto}
+.dbank{background:var(--card);border-radius:18px;padding:18px 20px;margin:0;display:flex;flex-direction:column;gap:8px}
+.dbank h2{margin:0;font-size:17px}
+.dbank .hint{margin:0}
+.dbank .brow{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.dbank .brow b{font:600 15px var(--mono)}
+.dbank .meter{position:relative;height:12px;border-radius:6px;background:var(--band);margin:4px 0 2px}
+.dbank .meter .f{position:absolute;inset:0 auto 0 0;border-radius:6px;background:var(--env1)}
+.dbank .meter .mk{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink)}
+.dbank .meter-l{position:relative;height:16px;font-size:12px;color:var(--ink2)}
+.dbank .meter-l .mkl{position:absolute;transform:translateX(-50%);color:var(--ink);font-weight:600;white-space:nowrap}
+.dbank .okline{font-size:13.5px;border-radius:10px;padding:8px 11px;background:var(--pos-bg);color:var(--ink)}
+.dbank .okline.bad{background:var(--neg-bg)}
+.dbank .bankdet{margin-top:4px}
+.dfor{background:var(--card);border-radius:18px;padding:18px 20px;margin-top:16px}
+.dfor .sechead{margin:0 0 12px}
+.dfor .stack{display:flex;height:64px;border-radius:14px;overflow:hidden;gap:2px}
+.dfor.small .stack{height:46px}
+.dfor .stack i{display:flex;flex-direction:column;justify-content:center;padding:0 12px;font-style:normal;font-size:12.5px;min-width:0;overflow:hidden;white-space:nowrap}
+.dfor .stack i b{font:600 15px/1.2 var(--mono)}
+.dfor .stack i span,.dfor .stack i b{overflow:hidden;text-overflow:clip}
+.dfor .stack i.nar{padding:0 8px} .dfor .stack i.nar span{display:none} .dfor .stack i.nar b{font-size:12.5px}
+.dfor .stack i.tiny{padding:0} .dfor .stack i.tiny>*{display:none}
+.elegend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:13px;color:var(--ink2)}
+.elegend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.elegend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.elegend b{font:600 12.5px var(--mono);color:var(--ink)}
+.e1{background:var(--env1);color:var(--env1-on)} .e2{background:var(--env2);color:var(--env2-on)} .e3{background:var(--env3);color:var(--env3-on)} .e4{background:var(--env4);color:var(--env4-on)} .e0{background:var(--env0)}
+.dfor .brace{position:relative;height:46px;margin-top:6px}
+.dfor .brace .bx{position:absolute;top:0;height:12px;border:2px solid var(--ink3);border-top:0;border-radius:0 0 8px 8px}
+.dfor .brace .bt{position:absolute;top:16px;right:0;font-size:12.5px;line-height:1.3;color:var(--ink2);text-align:left}
+.dfor .brace .bt b{font-family:var(--mono);color:var(--ink)}
+.dfor .env{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:6px}
+/* The four envelopes in the calm look of Opsparing og gæld (user's wish): plain cards with a thin edge, the name and the
+   amount on one line, the share of the income under it as a thin bar in the envelope's slate tone, then the posts as
+   rows on a thin line. The stack above is a thin bar too; the envelopes carry the numbers. */
+.dfor .ev{border-radius:14px;overflow:hidden;display:flex;flex-direction:column;padding:16px 16px 14px;background:var(--card);border:1px solid var(--rule);color:var(--ink)}
+.dfor .ev.e1,.dfor .ev.e2,.dfor .ev.e3,.dfor .ev.e4{background:var(--card);color:var(--ink)}
+.dfor .ev .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dfor .ev .top span{font-size:15px;font-weight:600}
+.dfor .ev .top b{font:500 16px/1.2 var(--mono);white-space:nowrap}
+.dfor .ev .pc{display:block;margin-top:2px;font-size:12.5px;color:var(--ink2)}
+.dfor .ev .evbar{height:8px;border-radius:99px;background:var(--track);margin:10px 0 2px;overflow:hidden}
+.dfor .ev .evbar i{display:block;height:100%;border-radius:99px}
+.dfor .ev ul{list-style:none;margin:10px 0 0;padding:0;font-size:13.5px}
+.dfor .ev li{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--rule)}
+.dfor .ev li:first-child{border-top:0}
+.dfor .ev li span:last-child{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.dfor .ev .home{margin:10px 0 0;font-size:12.5px;color:var(--ink2)}
+.dfor:not(.small) .stack{height:12px;border-radius:99px}
+.dfor:not(.small) .stack i{padding:0}
+.dfor:not(.small) .stack i>*{display:none}
+.dfor .dv-st{display:none}
+.dfor .stairs{display:grid;gap:3px;margin-top:10px}
+.dfor .st{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:2px 10px;align-items:center;padding:7px 0;font-size:14px}
+.dfor .st .lab{display:flex;flex-direction:column;line-height:1.25}
+.dfor .st .lab small{color:var(--ink2);font-size:12px}
+.dfor .st .bar{grid-column:1/-1;grid-row:2;position:relative;height:14px}
+.dfor .st .bar i{position:absolute;top:0;bottom:0;border-radius:5px}
+.dfor .st .bar i.hatch{background:repeating-linear-gradient(135deg,var(--band) 0 6px,var(--rule2) 6px 7px)}
+.dfor .st .v{text-align:right;font-family:var(--mono)}
+.dfor .st.sub{border-top:1px dashed var(--rule)} .dfor .st.sub .lab{font-weight:600}
+.dfor .st.end{border-top:2px solid var(--ink)} .dfor .st.end .lab{font-weight:700} .dfor .st.end .v{font-weight:600;font-size:16px}
+section.whosec{margin-top:22px}
+#app>section.inbox,#app>section.dfor{padding:18px 20px;border-bottom:0}
+#app>section.inbox{margin-top:20px}
+#app>section.dfor>.sechead{background:none;border:0;padding:0;margin:0 0 12px;border-radius:0}
+#app>section.dfor>.sechead h2{font-size:18px}
+.dtop>section{border-bottom:0}
+/* Opsparing og gæld */
+.ftop{margin-top:16px}
+.ftop .kpis{margin-bottom:12px}
+.subseg{display:inline-flex;background:var(--band);border-radius:999px;padding:3px;gap:2px;margin:4px 0 4px}
+.subseg button{border:0;background:none;padding:6px 14px;border-radius:999px;font:500 14px var(--font);color:var(--ink2);cursor:pointer}
+.subseg button[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+/* Hvad nu hvis */
+#app>.ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;margin-top:18px}
+#app>.ph h2{margin:0;font-size:24px}
+.scards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.scard{text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--card);border:0;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 0 0 1px var(--rule)}
+.scard.new{background:color-mix(in srgb,var(--tone2) 10%,var(--card))}
+.scard.sel{box-shadow:inset 0 0 0 2px var(--tone2)}
+.scard.cur.sel{box-shadow:inset 0 0 0 2px var(--ink2)}
+.scard b{font-size:15px}
+.scard .fv{font:500 26px/1.1 var(--mono)}
+.scard.new .fv{color:var(--tone2)}
+.scard .d{font-size:12.5px;color:var(--ink2)}
+.chp{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:5px 10px 5px 8px;white-space:nowrap}
+.chp::before{content:"";width:9px;height:9px;border-radius:50%}
+.chp.cur{background:var(--band);color:var(--ink)} .chp.cur::before{background:var(--ink2)}
+.chp.new{background:var(--tone2);color:var(--card)} .chp.new::before{background:var(--card)}
+.chp.dif{background:var(--band);color:var(--ink)} .chp.dif::before{background:linear-gradient(90deg,var(--pos) 50%,var(--neg) 50%)}
+.dl{display:inline-block;align-self:flex-start;font:600 12.5px var(--mono);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.dl.good{background:var(--pos-bg);color:var(--pos)} .dl.bad{background:var(--neg-bg);color:var(--neg)}
+.compare .cmpgrid>.tablewrap:first-child td:nth-child(2),.compare .cmpgrid>.tablewrap:first-child th:nth-child(2){background:color-mix(in srgb,var(--band) 70%,var(--card))}
+.compare .cmpgrid>.tablewrap:first-child td:nth-child(3),.compare .cmpgrid>.tablewrap:first-child th:nth-child(3){background:var(--tone2-bg);color:var(--tone2);font-weight:600}
+@media (max-width:760px){
+  .dtop{grid-template-columns:1fr}
+  .dmain .big{font-size:38px}
+  .dfor .dv-bar{display:none} .dfor .dv-st{display:block}
+  .dfor.small .dv-bar{display:block}
+  .dfor.small .stack i>*{display:none}
+  .inbox .todo{grid-template-columns:1fr} .inbox .t+.t{border-top:1px solid var(--rule)}
+  .chp{font-size:10px}
+  /* Hvad nu hvis on a phone: the comparison fits the screen instead of scrolling sideways (user's wish). */
+  .compare .tablewrap{overflow-x:visible}
+  .compare table{font-size:11.5px} .compare th,.compare td{padding:6px 3px!important;font-size:11.5px!important}
+  .compare tr.cmpkey td{font-size:12.5px!important}
+  .compare table{table-layout:fixed;width:100%}
+  .compare td:first-child,.compare th:first-child{width:34%;white-space:normal!important;overflow-wrap:anywhere}
+  .compare .cmpgrid>.tablewrap:last-child th:nth-child(2){width:20%}
+  .compare tr.cmpsub td{white-space:normal!important}
+  .compare td.r,.compare th.r{white-space:nowrap}
+  .compare .chp{font-size:9px;padding:3px 5px;letter-spacing:.03em} .compare .chp::before{display:none}
+  .compare .dl,.compare .dpill{font-size:10.5px;padding:1px 4px}
+  .compare .badge{font-size:10.5px}
+}
+
+/* Opsparing og gæld: the overview */
+.fcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+#app section.fcard,.fcard{background:var(--card);border-radius:16px;padding:18px 20px;border:0}
+.fwide{margin-top:16px}
+.fch{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.fcard h2{margin:0 0 4px;font-size:17px}
+.fcard .lnk{margin-top:0}
+.prog{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 0;border-top:1px solid var(--rule);font-size:14px}
+.fch+.prog{border-top:0}
+.prog>span:first-child{display:flex;flex-direction:column}
+.prog small{color:var(--ink2);font-size:12.5px}
+.prog .num{font-family:var(--mono);font-size:13px;white-space:nowrap}
+.prog .tr{grid-column:1/-1;height:8px;border-radius:4px;background:var(--band);overflow:hidden}
+.prog .tr i{display:block;height:100%;border-radius:4px;background:var(--env3)}
+.prog.debt .tr i{background:var(--env1)}
+.tl div{display:grid;grid-template-columns:90px 14px minmax(0,1fr);gap:10px;font-size:14px;padding:6px 0;align-items:start}
+.tl div::before{content:"";grid-column:2;grid-row:1;width:10px;height:10px;border-radius:50%;background:var(--tone2);margin-top:5px}
+.tl div>span:first-child{grid-column:1;grid-row:1;font-family:var(--mono);font-size:12.5px;color:var(--ink2);padding-top:1px}
+.tl div>span:last-child{grid-column:3;grid-row:1}
+.scard .fv.neg{color:var(--neg)}
+@media (max-width:760px){.fcards{grid-template-columns:1fr}.tl div{grid-template-columns:76px 12px minmax(0,1fr)}}
+
+.fcard.why{margin-top:16px}
+#app>section.fcard>h2,#app>section.fcard>.fch>h2{background:none;border:0;padding:0;margin:0 0 4px;border-radius:0;font-size:17px}
+.wrows{display:grid}
+.wrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--rule);font-size:14px}
+.wrow:first-child{border-top:0}
+.wrow>span:first-child{display:flex;flex-direction:column}
+.wrow small{color:var(--ink2);font-size:12.5px}
+.wrow.tot{border-top:2px solid var(--ink);font-weight:700}
+.wrow.tot .dl{font-size:14px}
+
+/* Overblik, round 2 (user's wishes): short task lines, no shapes behind the main number, cards keep their own height,
+   and the bank's view as a calculation. */
+.dmain::before,.dmain::after{content:none}
+.dtop{align-items:start}
+.dmain .calc{margin-top:8px}
+.inbox{padding:14px 18px!important}
+.inbox h2{font-size:16px}
+.inbox ul.todo{list-style:none;margin:6px 0 0;padding:0;display:block}
+.inbox li.t{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--rule);font-size:14px}
+.inbox li.t:first-child{border-top:0}
+.inbox li.t .ic{flex:0 0 24px;width:24px;height:24px;font-size:12px;grid-row:auto}
+.inbox li.t b{font-size:14.5px}
+.inbox li.t .tx{color:var(--ink2);flex:1;min-width:0}
+.inbox li.t .lnk{margin:0;white-space:nowrap}
+.bcalc{display:grid;margin-top:4px}
+.bcalc .brow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;border-top:1px solid var(--rule);font-size:14px}
+.bcalc .brow:first-child{border-top:0}
+.bcalc .brow>span{display:flex;flex-direction:column}
+.bcalc .brow small{color:var(--ink2);font-size:12.5px}
+.bcalc .brow small .lnk{font-size:12.5px}
+.bcalc .brow b{font:600 14px var(--mono);white-space:nowrap}
+.bcalc .brow.sub{border-top:1px dashed var(--rule2)} .bcalc .brow.sub span{font-weight:600}
+.bcalc .brow.end{border-top:2px solid var(--ink);font-weight:700}
+.bcalc .brow.end b{font-size:15px;padding:2px 9px;border-radius:999px}
+.bcalc .brow.end.good b{background:var(--pos-bg);color:var(--pos)} .bcalc .brow.end.bad b{background:var(--neg-bg);color:var(--neg)}
+@media (max-width:760px){.inbox li.t{flex-wrap:wrap;gap:4px 10px}.inbox li.t .tx{flex-basis:calc(100% - 34px);margin-left:34px}.inbox li.t .lnk{margin-left:34px}}
+
+/* Income bar on top of the envelopes */
+.dfor .ihead{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap;margin-bottom:6px;font-size:14px}
+.dfor .ihead b{font:600 15px var(--mono)}
+.dfor .ihead small{color:var(--ink2);font-size:12.5px}
+.dfor .ihead small .lnk{font-size:12.5px;margin:0 0 0 4px}
+.dfor .istack{display:flex;height:46px;border-radius:12px;overflow:hidden;gap:2px}
+.dfor .istack i{display:flex;flex-direction:column;justify-content:center;padding:0 10px;font-style:normal;font-size:12px;min-width:0;overflow:hidden;white-space:nowrap;background:color-mix(in srgb,var(--env0) 22%,var(--card));color:var(--ink)}
+.dfor .istack i b{font:600 13px var(--mono)}
+.dfor .istack i span,.dfor .istack i b{overflow:hidden}
+.dfor .istack i.ex{background:color-mix(in srgb,var(--env0) 40%,var(--card))}
+.dfor .istack i.off{background:repeating-linear-gradient(135deg,var(--band) 0 6px,var(--card) 6px 12px);color:var(--ink2);box-shadow:inset 0 0 0 1px var(--rule2)}
+.dfor .istack i.nar{padding:0} .dfor .istack i.nar>*{display:none}
+.dfor .ismall{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px;font-size:12.5px;color:var(--ink2)}
+.dfor .ismall span{display:inline-flex;align-items:center;gap:6px}
+.dfor .ismall i{width:10px;height:10px;border-radius:3px;background:color-mix(in srgb,var(--env0) 22%,var(--card));box-shadow:inset 0 0 0 1px var(--rule2)}
+.dfor .ismall i.ex{background:color-mix(in srgb,var(--env0) 40%,var(--card))}
+.dfor .ismall i.off{background:repeating-linear-gradient(135deg,var(--band) 0 3px,var(--card) 3px 6px)}
+.dfor .ismall b{font:600 12px var(--mono);color:var(--ink)}
+.dfor .iarrow{font-size:12.5px;color:var(--ink2);margin:6px 0 8px}
+
+.dmain .mcalc{display:grid;grid-template-columns:1fr auto;gap:3px 16px;max-width:360px;border-top:1px solid rgba(255,255,255,.14);padding-top:10px;margin-top:10px;font-size:13.5px;color:#B9CDCF}
+.dmain .mcalc b{font:500 13.5px var(--mono);color:#F3F3F1;text-align:right;white-space:nowrap}
+.dmain .mcalc .tot{border-top:1px solid rgba(255,255,255,.3);padding-top:5px;margin-top:3px;font-weight:700;color:#F3F3F1}
+.dmain .mcalc b.tot{color:var(--dnum)}
+.dbank .bfree{margin:10px 0 0;font-size:12.5px;color:var(--ink2);line-height:1.45}
+.dbank .bfree b{font:600 12.5px var(--mono);color:var(--ink)} .dbank .bfree b.pos{color:var(--pos)}
+.dbank .bfree .brow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;font-size:14px}
+.dbank .bfree .brow>span{display:flex;flex-direction:column}
+.dbank .bfree .brow small{color:var(--ink2);font-size:12.5px}
+.dbank .bfree .brow.end{border-top:1px solid var(--rule);font-weight:600}
+.dbank .bfree .brow.end b{font:600 14px var(--mono);padding:2px 9px;border-radius:999px}
+.dbank .bfree .brow.end.good b{background:var(--pos-bg);color:var(--pos)} .dbank .bfree .brow.end.bad b{background:var(--neg-bg);color:var(--neg)}
+
+/* Hvem betaler (D) */
+.wsplit{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:8px 0 6px;gap:2px}
+.wsplit i.s0{background:var(--env1)} .wsplit i.s1{background:var(--env3)}
+.wflow{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:16px;align-items:start}
+.wcard{background:var(--card);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column}
+.wcard.acc{background:var(--deep);color:#F3F3F1}
+.wcard .who{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.wcard .who>div{display:flex;flex-direction:column}
+.wcard .who small{color:var(--ink2);font-size:12.5px}
+.wcard.acc .who small,.wcard.acc .ln small,.wcard.acc .hint{color:#B9CDCF}
+.wcard .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--env3);color:#18181B;flex:0 0 auto}
+.wcard .av.k{background:#F3F3F1;color:var(--deep)}
+.wcard .ln{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:6px 0;border-top:1px solid var(--rule)}
+.wcard .ln:first-of-type{border-top:0}
+.wcard .ln>span:first-child{display:flex;flex-direction:column}
+.wcard .ln small{color:var(--ink2);font-size:12px}
+.wcard .ln .num{font-family:var(--mono);white-space:nowrap}
+.wcard.acc .ln{border-color:rgba(255,255,255,.14)}
+.wcard .ln.res{border-top:2px solid var(--ink);font-weight:700;padding-top:9px}
+.wcard.acc .ln.res{border-color:#F3F3F1}
+.wcard .ln.res .num{font-size:16px}
+.wcard .ln.res.bad .num{color:var(--neg)} .wcard.acc .ln.res.bad .num{color:#F0A196}
+.wcard .fix{background:var(--neg-bg);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:13px;margin:2px 0 6px}
+.wcard .fix b{font-family:var(--mono)} .wcard .fix .lnk{font-size:13px;margin:0}
+.wcard .wnote{margin:8px 0 0;font-size:12.5px}
+#app .fcard .lrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--rule);font-size:14px}
+#app .fcard .fch+.lrow{border-top:0}
+#app .fcard .lrow>span:first-child{display:flex;flex-direction:column}
+#app .fcard .lrow small{color:var(--ink2);font-size:12.5px}
+.state{font-size:12px;border-radius:999px;padding:3px 10px;white-space:nowrap;font-weight:600}
+.state.ok{background:var(--pos-bg);color:var(--pos)} .state.w{background:var(--neg-bg);color:var(--neg)}
+details.whodet{margin-top:16px;background:var(--card);border-radius:16px;padding:14px 18px}
+details.whodet>summary{cursor:pointer;font-weight:600;font-size:14.5px}
+details.whodet[open]>summary{margin-bottom:6px}
+details.whodet section.whosec{margin-top:6px;padding:0;border:0}
+details.whodet section.whosec>.sechead{display:none}
+#app>.fcard{margin-top:16px}
+
+/* Budgetposter (D): group rows coloured like the envelopes */
+.edot{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:8px;vertical-align:-1px}
+.edot.e0{background:var(--env0)} .edot.e1{background:var(--env1)} .edot.e2{background:var(--env2)} .edot.e3{background:var(--env3)} .edot.e4{background:var(--env4)}
+tr.grp .gsub{font-weight:400;font-size:12.5px;color:var(--ink2);margin-left:8px}
+tr.grp.resline td{font-weight:700;background:color-mix(in srgb,var(--env4) 22%,var(--card))!important}
+tr.grp.resline td.r{font-size:16px}
+
+.dfor h2 .hsub{font-weight:400;color:var(--ink2);font-size:.85em}
+
+/* The scenario bar */
+.scnbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:10px 0 0;padding:10px 14px;border-radius:12px;background:var(--scn,#E3E7ED);color:var(--scn-on,#18181B);font-size:14px;box-shadow:0 6px 18px -8px rgba(16,20,21,.45)}
+.scnbar[hidden]{display:none}
+.scnbar .sbdot{width:10px;height:10px;border-radius:50%;background:#18181B;flex:0 0 auto}
+.scnbar .sbtx{flex:1;min-width:200px}
+.scnbar .sbbtn{border:0;border-radius:999px;padding:7px 14px;font:600 13.5px var(--font);background:#18181B;color:#FFFFFF;cursor:pointer;white-space:nowrap}
+.scnbar .sbbtn.ghost2{background:transparent;color:#18181B;box-shadow:inset 0 0 0 1.5px rgba(24,24,27,.55)}
+@media (max-width:760px){.scnbar{font-size:13px;padding:9px 12px}.scnbar .sbbtn{padding:6px 12px;font-size:12.5px}.scnbar .sbx{display:none}}
+
+#dlgNewSc{max-width:520px}
+#dlgNewSc .nhead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+#dlgNewSc .nhead h2{margin:0 0 8px}#dlgNewSc .nhead p{margin:0;color:var(--ink2)}
+#dlgNewSc .dx{flex:0 0 auto;width:36px;height:36px;padding:0;border-radius:50%;border:1px solid var(--rule);background:var(--card);display:grid;place-items:center;cursor:pointer}
+#dlgNewSc .dx svg{width:16px;height:16px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+#dlgNewSc .nscbody{display:grid;gap:12px;padding:4px 0 8px}
+#dlgNewSc label{display:grid;gap:5px;font-size:14px;font-weight:600}
+#dlgNewSc input{font:400 15px var(--font);padding:10px 12px;border:1px solid var(--rule2);border-radius:10px;background:var(--card);color:var(--ink)}
+#dlgNewSc .nscideas{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+#dlgNewSc .nscideas .chip{border:1px solid var(--rule);background:var(--band);border-radius:999px;padding:4px 10px;font:500 13px var(--font);cursor:pointer;color:var(--ink)}
+#dlgNewSc .nscnext{font-size:13px;margin:0}
+#dlgNewSc .err{color:var(--brick);font-size:13px;margin:0}
 </style>
 <script>/* Light unless the user picked dark (user's wish, Nov 2026: not the system theme). */{let t='light';try{if(localStorage.getItem('hb-theme')==='dark')t='dark'}catch(e){}document.documentElement.setAttribute('data-theme',t)}</script>
 </head>
@@ -1377,7 +1683,7 @@ dialog h2,.sethead h2{font-weight:700}
 </header>
 <div class="wrap">
   <div class="navrow">
-    <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Overblik</button><button type="button" role="tab" data-page="poster" aria-selected="false">Budgetposter</button><button type="button" role="tab" data-page="laan" aria-selected="false">Overblik over lån</button><button type="button" role="tab" data-page="overf" aria-selected="false">Faste overførsler</button><button type="button" role="tab" data-page="maal" aria-selected="false">Opsparingsmål</button></nav>
+    <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Overblik</button><button type="button" role="tab" data-page="poster" aria-selected="false">Budgetposter</button><button type="button" role="tab" data-page="overf" aria-selected="false">Hvem betaler</button><button type="button" role="tab" data-page="formue" aria-selected="false">Opsparing og gæld</button><button type="button" role="tab" data-page="hvis" aria-selected="false">Hvad nu hvis</button></nav>
     <div class="tools">
       <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Nuværende budget</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="scnMenu" role="menu" hidden></div></div>
@@ -1385,6 +1691,7 @@ dialog h2,.sethead h2{font-weight:700}
       <button type="button" id="btnNew" class="primary">+ Ny budgetpost</button>
     </div>
   </div>
+  <div id="scnBar" class="scnbar" role="region" aria-label="Scenarie" hidden></div>
   <div id="draftBar" class="dftbar" role="region" aria-label="Kladde" hidden></div>
   <div id="app"></div>
 </div>
@@ -1395,10 +1702,10 @@ dialog h2,.sethead h2{font-weight:700}
 <button type="button" class="fab" id="btnNewM" aria-label="Ny budgetpost"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <nav class="mnav" aria-label="Sider">
   <button type="button" data-page="budget" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h4v7H4zM10 8h4v12h-4zM16 4h4v16h-4z"/></svg><span>Overblik</span></button>
-  <button type="button" data-page="poster" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg><span>Poster</span></button>
-  <button type="button" data-page="overf" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/></svg><span>Overførsler</span></button>
-  <button type="button" data-page="laan" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10 12 5l8 5M5 10v8M19 10v8M9.5 10v8M14.5 10v8M3 20h18"/></svg><span>Lån</span></button>
-  <button type="button" data-page="maal" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/></svg><span>Mål</span></button>
+  <button type="button" data-page="poster" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg><span>Budgetposter</span></button>
+  <button type="button" data-page="overf" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/></svg><span>Hvem betaler</span></button>
+  <button type="button" data-page="formue" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/></svg><span>Opsparing</span></button>
+  <button type="button" data-page="hvis" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V9a3 3 0 0 1 3-3h9M14 2l4 4-4 4M6 14h7a3 3 0 0 1 3 3v3"/></svg><span>Hvad hvis</span></button>
 </nav>
 
 <dialog id="dlg" class="wideform">
@@ -1738,6 +2045,19 @@ dialog h2,.sethead h2{font-weight:700}
     <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnMailCancel">Annullér</button><button type="button" class="primary" id="btnMailGo">Send</button></div></div>
   </form>
 </dialog>
+<dialog id="dlgNewSc" aria-labelledby="nscTitle">
+  <form method="dialog" id="nscForm" novalidate>
+    <div class="nhead"><div><h2 id="nscTitle">Nyt scenarie</h2><p>Et scenarie er en kopi af det nuværende budget, hvor du kan prøve en ændring af, fx ny bolig, barsel eller færre timer. Det nuværende budget ændres ikke.</p></div><button type="button" class="dx" id="nscClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="nscbody">
+      <label>Navn<input id="nscName" required maxlength="60" placeholder="Fx Nyt hus"></label>
+      <label><span>Gælder fra <span class="muted" style="font-weight:400">(valgfrit)</span></span><input id="nscFrom" maxlength="30" placeholder="Fx januar 2027"></label>
+      <div class="nscideas"><span class="muted">Idéer:</span><button type="button" class="chip" data-nsci="Nyt hus">Nyt hus</button><button type="button" class="chip" data-nsci="Barsel">Barsel</button><button type="button" class="chip" data-nsci="Ny bil">Ny bil</button><button type="button" class="chip" data-nsci="Renten stiger 1 %">Renten stiger 1 %</button><button type="button" class="chip" data-nsci="Færre timer">Færre timer</button></div>
+      <p class="muted nscnext">Bagefter retter du posterne under Budgetposter, mens scenariet er valgt. En gul bjælke øverst viser, at du er i scenariet.</p>
+      <p class="err" id="nscErr" hidden>Skriv et navn til scenariet.</p>
+    </div>
+    <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="nscCancel">Annuller</button><button type="submit" class="primary" id="nscOk">Opret scenarie</button></div></div>
+  </form>
+</dialog>
 <dialog id="dlgNote" aria-labelledby="noteTitle">
   <form method="dialog">
     <div class="nhead"><div><h2 id="noteTitle">Tillykke</h2><p id="noteSub"></p></div><button type="button" class="dx" id="btnNoteClose" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -2012,61 +2332,196 @@ function personCalc(pid){
   return {own,extra,shInc,held,heldSum,ownExp,shExp,sh,left,psav,gOwn,gSh,gsav,sav,afterSav:left-sav};
 }
 
+/* The tabs and the bottom bar: Lån is a sub page of Opsparing og gæld, so its tab stays marked there. */
+function markTabs(){const pg=page==='laan'||page==='maal'?'formue':page;document.querySelectorAll('button[data-page]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.page===pg)))}
+function goPage(pg){page=pg;document.body.dataset.page=pg;markTabs();$('btnNew').style.display=pg==='budget'||pg==='poster'?'':'none';render();window.scrollTo(0,0)}
 /* ---------- render ---------- */
+/* ---------- D (Nov 2026, prototype in public/forslag/): one main number, Til rådighed, and four envelopes that add up
+   to the income: Regninger (the fixed expenses the bank counts), Husholdning (the fixed expenses the bank leaves to the
+   rådighedsbeløb, e.g. food and gifts), Opsparing, Til rådighed. Bankens rådighedsbeløb is a step on the way. ---------- */
+function envData(){const t=totals(),bk=bankCalc(),E=act();
+  const Hs=E.filter(e=>e.type==='udgift'&&!e._goal&&!inBank(e)), Rs=E.filter(e=>e.type==='udgift'&&!e._goal&&inBank(e));
+  const H=Hs.reduce((a,e)=>a+mAvg(e),0);
+  const byCat=L=>{const g={};L.forEach(e=>{const k=e.category||'Uden kategori';g[k]=(g[k]||0)+mAvg(e)});return Object.entries(g).sort((a,b)=>b[1]-a[1])};
+  const sav=E.filter(e=>e._goal).map(e=>[String(e.desc||'').replace(/^Opsparing: /,''),mAvg(e)]).concat(S.persons.filter(p=>pNum(p,'savings')).map(p=>[p.name+'s opsparing',pNum(p,'savings')]));
+  return {t,bk,R:t.exp-H,H,O:t.sav,L:t.sav?t.afterSav:t.left,rc:byCat(Rs),hc:byCat(Hs),sav}}
+const perLeft=p=>{const c=personCalc(p.id);return totals().sav?c.afterSav:c.left};
+function inboxItems(){const L=[];
+  const fx=cur().filter(e=>e.type==='overfoersel').map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
+  if(fx.length){const gap=fx.reduce((a,x)=>a+x.rec-setupAmt(x.e),0);L.push({t:`Ret ${fx.length} ${fx.length===1?'overførsel':'overførsler'} i netbanken`,x:gap>0?`${kr(gap)} for lidt om måneden`:'Beløbene passer ikke',b:'Se overførslerne',a:'data-go="overf"'})}
+  S.accounts.forEach(a=>{const M0=monthly(a.id),sd=saldoFor(a.id),st=planStart(sd);let v=sd.amount,low=Infinity,li=st;
+    for(let k=0;k<12;k++){const x=M0[(((st+k)%12)+12)%12];v+=x.i-x.o;if(v<low){low=v;li=st+k}}
+    if(low<0)L.push({t:`${esc(a.name)} går i minus i ${idxLbl(li).toLowerCase()}`,x:`Laveste saldo ${kr(low)}`,b:'Se måned for måned',a:`data-plan="${a.id}"`})});
+  const ck=cur().filter(e=>e.check&&e.type!=='overfoersel');
+  if(ck.length)L.push({t:`${ck.length} ${ck.length===1?'post skal':'poster skal'} tjekkes`,x:ck.slice(0,2).map(e=>esc(e.desc)).join(', ')+(ck.length>2?' m.fl.':''),b:ck.length===1?'Åbn posten':'Se posterne',a:ck.length===1?`data-open="${ck[0].id}"`:'data-tjek'});
+  const td=todoList().length;if(td)L.push({t:esc(todoCount(td))+' venter',x:'Under klokken',b:'Se opgaverne',a:'data-todos'});
+  return L}
+function inboxHtml(){const L=inboxItems();if(!L.length)return '';
+  return `<section class="inbox"><div class="ih"><h2>Det skal ${wI('du','I')} gøre</h2><span class="dcount">${L.length}</span></div><ul class="todo">${L.map((x,i)=>`<li class="t"><span class="ic">${i+1}</span><b>${x.t}</b><span class="tx">${x.x}</span><button type="button" class="lnk" ${x.a}>${x.b}</button></li>`).join('')}</ul></section>`}
+function mainHtml(D){const t=D.t;
+  return `<section class="dmain"><span class="over">Til rådighed ${per()}</span><b class="big ${D.L<0?'neg':''}">${disp(D.L)}</b>
+    <p>Det, ${wI('du','I')} har tilbage at bruge, når regninger, husholdning og opsparing er betalt.</p>
+    ${S.persons.length>1?`<div class="ppl">${S.persons.map(p=>`<span>${esc(p.name)}<b>${disp(perLeft(p))}</b></span>`).join('')}</div>`:''}
+    <div class="mcalc"><span>Indtægter</span><b>${disp(t.inc)}</b><span>− Regninger</span><b>${disp(D.R)}</b><span>− Husholdning</span><b>${disp(D.H)}</b>${t.sav?`<span>− Opsparing</span><b>${disp(t.sav)}</b>`:''}<span class="tot">= Til rådighed</span><b class="tot">${disp(D.L)}</b></div></section>`}
+function bankHtml(bk){const F=(loansFreedWithin(12)||[]).filter(x=>x.inB),fr=F.reduce((a,x)=>a+x.free,0),ok=bk.buf>=0,nb=bk.buf+fr;
+  const row=(cls,l,sub,v)=>`<div class="brow ${cls}"><span>${l}${sub?`<small>${sub}</small>`:''}</span><b>${v}</b></div>`;
+  return `<section class="dbank"><h2>Sådan ser banken det <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2>
+    <div class="bcalc">${row('','Indtægter',bk.extra?'Inkl. ekstra indtjening':'Løn og andre faste indtægter',disp(bk.inc+bk.extra))}
+    ${row('','− Faste udgifter','Uden husholdning og opsparing',disp(bk.fixed))}
+    ${row('sub','= Rådighedsbeløb','',disp(bk.rad))}
+    ${row('','− Krav',`${kr(+bk.b.adults||0)} for ${adultsLbl()}${+bk.b.children?' + '+(+bk.b.children)+' børn × '+kr(+bk.b.childRate||0):''} <button type="button" class="lnk" data-set="bank">Ret</button>`,disp(bk.req))}
+    ${row('end '+(ok?'good':'bad'),ok?'= Over kravet':'= Under kravet','',disp(Math.abs(bk.buf)))}</div>
+    ${F.length?`<p class="bfree">${F.map(x=>`Fra ${idxLbl(x.i).toLowerCase()} er ${esc((x.l.desc||x.l.bank||'lånet').toLowerCase())} betalt: <b class="pos">+${disp(x.free)}</b>`).join('. ')}. Så er ${wI('du','I')} ${disp(Math.abs(nb))} ${nb>=0?'over':'under'} kravet.</p>`:''}</section>`}
+function fordelingHtml(D,small){const t=D.t,inc=Math.max(1,t.inc),P=v=>Math.max(0,v)/inc*100,pc=v=>Math.round(P(v))+' % af indtægten';
+  const parts=[['e1','Regninger',D.R],['e2','Husholdning',D.H],['e3','Opsparing',D.O],['e4','Til rådighed',D.L]];
+  const fit=v=>P(v)>=13?'':P(v)>=7?' nar':' tiny';
+  const bar=`<div class="stack">${parts.filter(x=>x[2]>0.5).map(x=>`<i class="${x[0]}${fit(x[2])}" style="width:${P(x[2])}%" title="${x[1]}: ${disp(x[2])}"><span>${x[1]}</span><b>${disp(x[2])}</b></i>`).join('')}</div>`;
+  const legend=`<div class="elegend">${parts.map(x=>`<span><i class="${x[0]}"></i>${x[1]} <b>${disp(x[2])}</b></span>`).join('')}</div>`;
+  const brace=`<div class="brace"><div class="bx" style="left:${P(D.R)}%;width:${Math.max(0,100-P(D.R))}%"></div><div class="bt" style="left:${Math.min(P(D.R),60)}%">Bankens rådighedsbeløb <b>${disp(D.bk.rad)}</b> · krav ${kr(D.bk.req)} · <b>${kr(Math.abs(D.bk.buf))} ${D.bk.buf>=0?'over':'under'}</b></div></div>`;
+  if(small)return `<section class="dfor small"><div class="sechead"><h2>Sådan fordeler de ${disp(t.inc)} <span class="hsub">(samlede indtægter)</span> sig</h2></div><div class="dv-bar">${bar}${legend}</div></section>`;
+  const top=(L,n)=>{const a=L.slice(0,n),r=L.slice(n).reduce((s,x)=>s+x[1],0);return a.concat(r>0.5?[['Andet',r]]:[]).map(([k,v])=>`<li><span>${esc(k)}</span><span>${disp(v)}</span></li>`).join('')};
+  const env=(c,l,v,items,home)=>`<div class="ev ${c}"><div class="top"><span>${l}</span><b>${disp(v)}</b></div><small class="pc">${pc(v)}</small><div class="evbar"><i class="${c}" style="width:${Math.min(100,P(v))}%"></i></div><ul>${items||'<li class="muted"><span>Ingen</span></li>'}</ul>${home?`<div class="home">${home}</div>`:''}</div>`;
+  const ppl=S.persons.length>1?S.persons.map(p=>`<li><span>${esc(p.name)}</span><span>${disp(perLeft(p))}</span></li>`).join(''):'';
+  const envs=`<div class="env">${env('e1','Regninger',D.R,top(D.rc,3),'Faste udgifter, banken regner med')}${env('e2','Husholdning',D.H,top(D.hc,3),'Dækkes af bankens rådighedsbeløb')}${env('e3','Opsparing',D.O,D.sav.slice(0,4).map(([k,v])=>`<li><span>${esc(k)}</span><span>${disp(v)}</span></li>`).join(''),'<button type="button" class="lnk" data-go="maal">Se målene</button>')}${env('e4','Til rådighed',D.L,ppl,'Til alt det andet')}</div>`;
+  const st=(cls,l,sub,v,left,w,c)=>`<div class="st ${cls}"><div class="lab">${l}${sub?`<small>${sub}</small>`:''}</div><div class="bar"><i class="${c||''}" style="left:${left}%;width:${w}%"></i></div><div class="v">${v}</div></div>`;
+  const a=P(D.R),b=P(D.H),o=P(D.O),l=P(D.L);
+  const stairs=`<div class="stairs">${st('','Indtægter','Løn og andre indtægter',disp(t.inc),0,100,'e0')}${st('','− Regninger','Faste udgifter, banken regner med','−'+disp(D.R),100-a,a,'e1')}${st('sub','= Bankens rådighedsbeløb','Det tal, banken regner med',disp(D.bk.rad),0,100-a,'hatch')}${st('','− Husholdning','Fx mad, tøj og gaver','−'+disp(D.H),100-a-b,b,'e2')}${t.sav?st('','− Opsparing','Mål og opsparing','−'+disp(D.O),100-a-b-o,o,'e3'):''}${st('end','= Til rådighed','',disp(D.L),0,l,'e4')}</div>`;
+  return `<section class="dfor"><div class="sechead"><h2>Sådan fordeler de ${disp(t.inc)} sig <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2></div>
+    <div class="dv-bar">${bar}${brace}${envs}</div><div class="dv-st"><p class="hint">Hvert trin trækker noget fra.</p>${stairs}</div></section>`}
+/* Opsparing og gæld: the goals and the loans under one tab, with three key figures on top and a switch between them. */
+function formueHead(){const t=totals(),key=SC||'base',G=(S.goals||[]).filter(g=>goalIn(g,key)).map(goalCalc);
+  const saved=G.reduce((a,c)=>a+(c.est||0),0),target=G.reduce((a,c)=>a+(c.T||0),0);
+  const L=(S.loans||[]).filter(l=>l.include!==false).map(loanCalc),debt=L.reduce((a,c)=>a+c.P,0),af=L.reduce((a,c)=>a+Math.max(0,c.afdrag),0),yd=L.reduce((a,c)=>a+c.A,0),rt=L.reduce((a,c)=>a+c.interest,0);
+  return `${scBarHtml(false)}<div class="ftop"><div class="kpis">
+    <div class="kpi hero2"><span>${wI('Du bliver','I bliver')} rigere hver måned</span><b>${kr(t.sav+af)}</b><small>${kr(t.sav)} til opsparing + ${kr(af)} i afdrag</small></div>
+    <div class="kpi"><span>Sparet op til mål</span><b>${kr(saved)}</b><small>${target?Math.round(saved/target*100)+' % af '+kr(target):'Ingen mål med et beløb endnu'}</small></div>
+    <div class="kpi"><span>Gæld i alt</span><b>${kr(debt)}</b><small>${L.length?`Ydelse ${kr(yd)}/md., heraf ${kr(rt)} renter`:'Ingen lån endnu'}</small></div></div>
+    <div class="subseg" role="tablist" aria-label="Opsparing og gæld"><button type="button" role="tab" data-sub="formue" aria-selected="${page==='formue'}">Overblik</button><button type="button" role="tab" data-sub="maal" aria-selected="${page==='maal'}">Opsparingsmål</button><button type="button" role="tab" data-sub="laan" aria-selected="${page==='laan'}">Lån</button></div></div>`}
+function formueOverHtml(){const key=SC||'base',nw=nowIdx();
+  const G=(S.goals||[]).filter(g=>goalIn(g,key)).map(g=>({g,c:goalCalc(g)}));
+  const L=(S.loans||[]).filter(l=>l.include!==false).map(l=>({l,c:loanCalc(l)}));
+  const bar=(p,col)=>`<div class="tr"><i style="width:${Math.max(0,Math.min(100,p*100))}%${col?';background:'+col:''}"></i></div>`;
+  const gRows=G.map(({g,c})=>`<div class="prog"><span>${esc(g.name||'Mål')}<small>${kr(c.monthly)}/md.${c.e!==null?' · '+idxLbl(c.e).toLowerCase():''}</small></span><span class="num">${c.T?kr(c.est)+' / '+kr(c.T):kr(c.est)}</span>${c.T?bar(c.pct||0,gColor(g)):''}</div>`).join('')||'<p class="muted">Ingen opsparingsmål endnu.</p>';
+  const lRows=L.map(({l,c})=>`<div class="prog debt"><span>${esc(l.desc||l.bank||'Lån')}<small>${kr(c.P)} tilbage${l.rate!==''&&l.rate!=null?' · '+(+l.rate).toLocaleString('da-DK',{minimumFractionDigits:2,maximumFractionDigits:2})+' %':''}${c.endTxt?' · betalt '+esc(c.endTxt):''}</small></span><span class="num">${c.O?Math.round(c.paid*100)+' % betalt':''}</span>${c.O?bar(c.paid):''}</div>`).join('')||'<p class="muted">Ingen lån endnu.</p>';
+  const ev=[];
+  L.forEach(({l,c})=>{const en=loanEnd(l,c);if(en&&en.i>=nw)ev.push({i:en.i,t:`${esc(l.desc||l.bank||'Lånet')} er betalt. <b>+${kr(c.budget!==null?c.budget:c.A)}</b> om måneden.`})});
+  G.forEach(({g,c})=>{if(c.e!==null&&c.e>=nw&&c.T)ev.push({i:c.e,t:`${esc(g.name||'Målet')} er sparet op: ${kr(c.T)}.`})});
+  ev.sort((a,b)=>a.i-b.i);
+  return `<div class="fcards"><section class="fcard"><div class="fch"><h2>Opsparingsmål</h2><button type="button" class="lnk" data-sub="maal">Se og ret målene</button></div>${gRows}</section>
+    <section class="fcard"><div class="fch"><h2>Lån · betalt af</h2><button type="button" class="lnk" data-sub="laan">Se og ret lånene</button></div>${lRows}</section></div>
+    ${ev.length?`<section class="fcard fwide"><h2>Det sker</h2><div class="tl">${ev.slice(0,8).map(x=>`<div><span>${idxLbl(x.i).toLowerCase()}</span><span>${x.t}</span></div>`).join('')}</div></section>`:''}`}
+function bindFormue(){document.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>goPage(b.dataset.sub))}
+/* Hvad nu hvis: the current budget and each scenario as a card (Til rådighed and the difference), then the chosen
+   scenario's settings and the comparison, step by step. Posts are changed on Budgetposter while the scenario is open. */
+/* How the scenario's difference in Til rådighed comes about: each changed post with its effect (an income that rises
+   adds, an expense or goal that rises takes away; transfers move money between own accounts and change nothing),
+   and the rest (e.g. savings on a person card) on one line, so the rows add up to the difference on the card. */
+function whyHtml(sc,base){const v=calcWith(entriesFor(sc),()=>{const t=totals();return t.sav?t.afterSav:t.left}),d=v-base;
+  const R=scChanges(sc).map(c=>({...c,eff:c.type==='indtaegt'?c.n-c.b:c.type==='overfoersel'?0:c.b-c.n})).filter(c=>Math.abs(c.eff)>=0.5);
+  const rest=d-R.reduce((a,c)=>a+c.eff,0);
+  const pill=x=>`<span class="dl ${x>0?'good':'bad'}">${x>0?'+':'−'}${disp(Math.abs(x))}</span>`;
+  if(!R.length&&Math.abs(rest)<0.5)return `<section class="fcard why"><h2>Sådan bliver forskellen til</h2><p class="muted">Ingen ændringer endnu. Gå til Budgetposter, mens scenariet er valgt, og ret eller fjern en post der.</p></section>`;
+  return `<section class="fcard why"><div class="fch"><h2>Sådan bliver forskellen til</h2><span class="hint">Hver ændring i ${esc(sc.name||'scenariet')} og hvad den betyder for, hvad ${wI('du','I')} har til rådighed ${per()}.</span></div>
+    <div class="wrows">${R.map(c=>`<div class="wrow"><span>${esc(c.desc)}<small>${c.kind==='Ny'||c.kind==='Nyt mål'?'Ny':c.kind==='Fjernet'?'Fjernet':'Ændret'} · ${c.b?disp(c.b):'0 kr'} → ${c.n?disp(c.n):'0 kr'}</small></span>${pill(c.eff)}</div>`).join('')}
+    ${Math.abs(rest)>=0.5?`<div class="wrow"><span>Andet<small>Fx opsparing på et personkort eller afrunding</small></span>${pill(rest)}</div>`:''}
+    <div class="wrow tot"><span>= Forskel i Til rådighed</span>${pill(d)}</div></div>
+    <p class="hint" style="margin-top:8px"><button type="button" class="lnk" data-go="poster">Ret posterne under Budgetposter</button></p></section>`}
+/* Hvem betaler (D): how the money actually moves. The split, then each person's lønkonto and the main shared account
+   side by side (persons on the outside), each as a short calculation ending in what is left; a transfer that does not
+   match what should be transferred shows the fix right there. The other accounts follow as short rows; a row only
+   shows the amounts that are not 0. The full person calculation is folded below (WHODET). */
+let WHODET=false;
+function whoHtml(){const sh=shares(),P=S.persons,E=act(),fa=S.accounts.filter(a=>a.type==='faelles');
+  const pc=v=>Math.round((v||0)*100)+' %';
+  const ln=(l,sub,v,cls)=>`<div class="ln${cls?' '+cls:''}"><span>${l}${sub?`<small>${sub}</small>`:''}</span><span class="num">${v}</span></div>`;
+  const neg=v=>v>0.5?'−'+disp(v):disp(0);
+  const tr=id=>E.filter(e=>e.type==='overfoersel'&&e.from===id);
+  const fix=e=>{const r=transferRec(e),now=setupAmt(e);return r!==null&&Math.abs(r-now)>=1?`<div class="fix">I netbanken står <b>${kr(now)}</b>. Ret den til <b>${kr(r)}</b>. <button type="button" class="lnk" data-tfix="${e.id}" data-v="${r}">Markér som rettet</button></div>`:''};
+  const main=fa.slice().sort((a,b)=>accountCalc(b.id).tin-accountCalc(a.id).tin)[0];
+  const person=p=>{const id=homeAcct(p.id),a=S.accounts.find(x=>x.id===id);if(!a)return `<div class="wcard"><div class="who"><span class="av">${esc((p.name||'?')[0])}</span><b>${esc(p.name)}</b></div><p class="muted">Ingen lønkonto valgt.</p></div>`;
+    const c=accountCalc(id),T=tr(id),fair=perLeft(p),diff=c.left-fair;
+    return `<div class="wcard"><div class="who"><span class="av">${esc((p.name||'?')[0])}</span><div><b>${esc(p.name)}</b><small>${esc(a.name)}</small></div></div>
+      ${ln('Indtægter',c.extra&&!exOn()?'Uden ekstra indtjening':'',disp(c.inc))}
+      ${c.tin>0.5?ln('Overført ind','',disp(c.tin)):''}
+      ${T.map(e=>ln('→ '+esc(accName(e.to)),esc(e.desc||''),neg(mAvg(e)))+fix(e)).join('')}
+      ${c.exp>0.5?ln('Egne udgifter','Betales fra kontoen',neg(c.exp)):''}
+      ${c.sav>0.5?ln('Opsparing','Bliver på eller går fra kontoen',neg(c.sav)):''}
+      ${ln('= Tilbage på kontoen','',disp(c.left),'res'+(c.left<0?' bad':''))}
+      ${Math.abs(diff)>=1?`<p class="hint wnote">Til rådighed efter fordelingen er ${disp(fair)}. Forskellen på ${disp(Math.abs(diff))} kommer af, at overførslerne rundes op til hele 100 kr.</p>`:''}</div>`};
+  const shared=a=>{const c=accountCalc(a.id),gap=c.need-c.tin,T=tr(a.id),from=E.filter(e=>e.type==='overfoersel'&&e.to===a.id);
+    return `<div class="wcard acc"><div class="who"><span class="av k">${esc((a.name||'?')[0])}</span><div><b>${esc(a.name)}</b><small>Fælles konto</small></div></div>
+      ${ln('Fra '+(from.length?esc([...new Set(from.map(e=>accName(e.from)))].join(' og ')):'andre konti'),'',disp(c.tin))}
+      ${c.inc>0.5?ln('Indtægter direkte på kontoen','',disp(c.inc)):''}
+      ${c.exp>0.5?ln('Fælles udgifter','Bolig, bil, børn m.m.',neg(c.exp)):''}
+      ${c.sav>0.5?ln('Opsparing','',neg(c.sav)):''}
+      ${T.map(e=>ln('→ '+esc(accName(e.to)),'',neg(mAvg(e)))).join('')}
+      ${ln(gap>0.5?'= Mangler':'= Går op',gap>0.5?'Overførslerne er for små':Math.abs(gap)>=1?'Overskuddet kommer af afrunding til hele 100 kr':'',(gap>0.5?'−':'+')+disp(Math.abs(gap)),'res'+(gap>0.5?' bad':''))}</div>`};
+  const order=P.length===2&&main?[person(P[0]),shared(main),person(P[1])]:P.map(person).concat(main?[shared(main)]:[]);
+  const rest=S.accounts.filter(a=>a!==main&&!P.some(p=>homeAcct(p.id)===a.id));
+  const restRow=a=>{const c=accountCalc(a.id),gap=a.type==='faelles'?c.need-c.tin:-c.left,ok=gap<=0.5;
+    const parts=[c.in>0.5&&'ind '+disp(c.in),c.out>0.5&&'ud '+disp(c.out)].filter(Boolean).join(' · ')||'Ingen bevægelser';
+    return `<div class="lrow"><span>${esc(a.name)}<small>${parts}</small></span><span class="state ${ok?'ok':'w'}">${ok?(c.out<0.5&&c.in>0.5?'✓ Sparer op':'✓ Går op'):'Mangler '+disp(gap)}</span></div>`};
+  const sp=(S.settings||{}).split;
+  return `<div class="ph"><h2>Hvem betaler</h2><button type="button" class="lnk" data-set="fordeling">Ret fordelingen</button></div>
+    ${P.length>1?`<section class="fcard"><h2>${wI('Du','I')} deler de fælles udgifter ${sp==='lige'?'ligeligt':sp==='manuel'?'med en fast procent':'efter indkomst'}</h2>
+      <div class="wsplit">${P.map((p,i)=>`<i class="s${i%2}" style="width:${(sh[p.id]||0)*100}%"></i>`).join('')}</div>
+      <p class="hint">${P.map(p=>esc(p.name)+' '+pc(sh[p.id])).join(' · ')}. Egne udgifter, fx mobil og a-kasse, betaler hver især selv.</p></section>`:''}
+    <div class="wflow">${order.join('')}</div>
+    ${rest.length?`<section class="fcard"><div class="fch"><h2>De andre konti</h2><button type="button" class="lnk" id="btnAccts">Rediger konti</button></div>${rest.map(restRow).join('')}</section>`:''}`}
+/* While a scenario is open, a bar stays at the top of every page: which scenario is being changed, and the way back
+   to the current budget (user's wish). */
+function renderScnBar(){const b=$('scnBar');if(!b)return;const sc=S&&curSc();b.hidden=!sc;if(!sc){b.innerHTML='';return}
+  b.innerHTML=`<span class="sbdot" aria-hidden="true"></span><span class="sbtx">Du retter nu i scenariet <b>${esc(sc.name||'Scenarie')}</b>${sc.from?' · fra '+esc(sc.from):''}.<span class="sbx"> Det nuværende budget ændres ikke.</span></span>
+    ${page!=='hvis'?'<button type="button" class="sbbtn ghost2" id="sbCmp">Se forskellen</button>':''}<button type="button" class="sbbtn" id="sbBack">Tilbage til nuværende budget</button>`;
+  $('sbBack').onclick=()=>{SC=null;render();toast('Du er tilbage i det nuværende budget')};
+  const c=$('sbCmp');if(c)c.onclick=()=>goPage('hvis')}
+function hvisHtml(){const sc=curSc(),val=e=>calcWith(e,()=>{const t=totals();return t.sav?t.afterSav:t.left}),base=val(baseEntries());
+  const L=S.scenarios||[];
+  const card=(id,chip,cls,name,v,d)=>`<button type="button" class="scard ${cls}${(SC||'')===id?' sel':''}" data-sc="${id}"><span class="chp ${cls}">${chip}</span><b>${esc(name)}</b><span class="hint">Til rådighed ${per()}</span><span class="fv${v<0?' neg':''}">${disp(v)}</span>${d===null?'<span class="d">Sådan er det i dag</span>':Math.abs(d)<0.5?'<span class="d">Samme som nuværende</span>':`<span class="dl ${d>0?'good':'bad'}">${disp(Math.abs(d))} ${d>0?'mere':'mindre'} end nuværende</span>`}</button>`;
+  let h=`<div class="ph"><h2>Hvad nu hvis</h2>${DR?'':'<button type="button" class="primary newcta" id="btnNewSc">+ Nyt scenarie</button>'}</div>
+    <p class="hint" style="margin:0 0 12px">Prøv en ændring, fx ny bolig, barsel eller færre timer, uden at røre ${wI('dit','jeres')} budget.</p>
+    <div class="scards">${card('','Nuværende budget','cur',(rootS().settings||{}).title||'Nuværende',base,null)}${L.map(x=>{const v=val(entriesFor(x));return card(x.id,'Scenarie'+(x.from?' · fra '+esc(x.from):''),'new',x.name||'Scenarie',v,v-base)}).join('')}</div>`;
+  if(L.length>1)h+=`<p style="margin:10px 0 0"><button type="button" class="helplink" data-cmpall>Sammenlign alle scenarier</button></p>`;
+  if(sc)h+=whyHtml(sc,base)+`<div class="scedit">${SCEDIT(sc)}</div>`+compareHtml(sc);
+  else h+=`<p class="muted" style="margin-top:14px">${L.length?'Vælg et scenarie for at se det trin for trin.':'Der er ingen scenarier endnu. Tryk på Nyt scenarie for at lave et.'}</p>`;
+  return h}
+const SCEDIT=sc=>`${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
+    <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}`;
+
 function render(){
   const app=$('app');
   if(!loaded){app.innerHTML='<div class="empty"><p>Henter budget…</p></div>';return}
   document.body.toggleAttribute('data-nobudget',!S);
-  renderScn();renderDraftBar();renderTodos();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',laan:'Overblik over lån',overf:'Faste overførsler',maal:'Opsparingsmål'}[page]||'Budget');
+  renderScn();renderDraftBar();renderScnBar();renderTodos();document.title='budgetpro · '+({budget:'Overblik',poster:'Budgetposter',formue:'Opsparing og gæld',laan:'Opsparing og gæld',overf:'Hvem betaler',maal:'Opsparing og gæld',hvis:'Hvad nu hvis'}[page]||'Budget');
   if(!S){app.innerHTML=`<div class="empty"><h2>Intet budget endnu</h2><p>I guiden vælger du først, om budgettet skal starte tomt, ud fra kontoudtog eller ud fra de budgetter, du har. Derefter skal du kun udfylde navn og personer. Resten kan du springe over. Alt kan rettes bagefter.</p><button type="button" class="primary" id="btnWizStart">Start guiden</button> <button type="button" id="btnStart">Opret tomt budget</button> <button type="button" id="btnExample">Prøv med eksempeldata</button><p style="margin-top:14px"><button type="button" class="helplink" id="btnFilm">Se en hurtig intro til, hvordan du kommer i gang (1,5 min.)</button></p></div>`;
     $('btnStart').onclick=()=>{S=blank();commit();};$('btnWizStart').onclick=()=>openWiz();$('btnExample').onclick=()=>loadExample();$('btnFilm').onclick=()=>openFilm();
     // The first time the app opens without a budget, the film starts by itself (once per browser).
     if(!filmSeen())setTimeout(()=>{if(!S&&!filmSeen()&&!document.querySelector('dialog[open]'))openFilm()},400);return}
   syncENT();
   INFO=[];closePop();
-  if(page==='laan'){$('exAll').checked=exOn();app.innerHTML=loansHtml();bindLoans();clampHero();return}
-  if(page==='overf'){$('exAll').checked=exOn();app.innerHTML=overfHtml();bindOverf();clampHero();return}
-  if(page==='maal'){$('exAll').checked=exOn();app.innerHTML=goalsHtml();bindGoals();clampHero();return}
+  if(page==='laan'){$('exAll').checked=exOn();app.innerHTML=formueHead()+loansHtml();bindLoans();bindFormue();clampHero();return}
+  if(page==='maal'){$('exAll').checked=exOn();app.innerHTML=formueHead()+goalsHtml();bindGoals();bindFormue();clampHero();return}
+  if(page==='formue'){$('exAll').checked=exOn();app.innerHTML=formueHead()+formueOverHtml();bindFormue();bindMain();return}
+  if(page==='hvis'){$('exAll').checked=exOn();app.innerHTML=hvisHtml();bindMain();clampHero();return}
   $('exAll').checked=exOn();
   const t=totals(), sh=shares();
   const unplaced=act().filter(e=>e.type==='udgift'&&!e.account);
   const checks=cur().filter(e=>e.check).length;
   const sc=curSc();
-  let h=scBarHtml(true)+startInfo(false);
-  if(sc){h+=`<div class="scedit">${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
-    <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}</div>`}
+  let h=scBarHtml(false)+startInfo(false);
   /* Overblik, top to bottom (user's wish, Nov 2026: not too much in the first view): Månedstjek when it is due,
      Rådighedsbeløb, Konti and Hvem betaler hvad folded (sfoldHtml), and last "Hvad er der tilbage" with the sentence
      (the key-figure card on phones) and Måned for måned. */
   if(!sc&&!DR)h+=monthCheckHtml();
-  if(sc)h+=compareHtml(sc);
-  const bk=bankCalc();
-  h+=`<section class="bank"><div class="sechead"><h2>Rådighedsbeløb <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2><span class="hint">Nettoindtægt minus bankens faste udgifter. Banken regner ikke mad og husholdning, opsparing og gaver med, fordi de skal dækkes af rådighedsbeløbet.</span></div>
-   <div class="kpis">
-    <div class="kpi hero2"><span>Rådighedsbeløb ${ib(`<b>Rådighedsbeløb</b>${tbl([['Nettoindtægt','',kr(bk.inc+bk.extra)],['− Bankens faste udgifter','',kr(bk.fixed)],['= Rådighedsbeløb','',kr(bk.rad)]])}<p>Det beløb, der er tilbage til mad, tøj, gaver, fritid og opsparing.</p>`)}</span><b>${kr(bk.rad)}</b><small>${(()=>{const d=bk.rad-t.left;return Math.abs(d)<1?'pr. måned, det samme som der er tilbage efter faste udgifter':`pr. måned. ${kr(Math.abs(d))} ${d>0?'mere':'mindre'} end der er tilbage efter faste udgifter${exclList(bk)&&d>0?', fordi banken ikke regner alle faste udgifter med':''}`})()}</small></div>
-    <div class="kpi ${bk.buf>=0?'good':'bad'}"><span>${bk.buf>=0?'Luft over kravet':'Under kravet'}</span><b>${kr(Math.abs(bk.buf))}</b><small>pr. måned</small></div>
-    ${(()=>{const F=loansFreedWithin(12).filter(x=>x.inB);if(!F.length)return '';const fr=F.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=F[F.length-1].i;
-      return `<div class="kpi ${nb>=0?'good':'bad'}"><span>${nb>=0?'Luft':'Under kravet'} fra ${idxLbl(last).toLowerCase()} ${ib(`<b>Når lån udløber inden for 12 md.</b>${tbl(F.map(x=>[esc(x.l.desc||x.l.bank),idxLbl(x.i).toLowerCase(),'+'+kr(x.free)]).concat([['Rådighedsbeløb nu','',kr(bk.rad)],['+ Frigivet','',kr(fr)],['= Rådighedsbeløb','',kr(bk.rad+fr)],['− Vejledende krav','',kr(bk.req)],[nb>=0?'= Luft':'= Under kravet','',kr(Math.abs(nb))]]))}<p>Kun lån, hvis budgetpost indgår i bankens faste udgifter, er regnet med. Udløb er beregnet ud fra restgæld, rente og ydelse. Se Overblik over lån.</p>`)}</span><b>${kr(Math.abs(nb))}</b><small>+${kr(fr)} frigives: ${esc(F.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '))}</small></div>`})()}
-   </div>
-   <p class="setstat" style="margin:12px 0 0">Vejledende krav: ${kr(+bk.b.adults||0)} for ${adultsLbl()} + ${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}${S.persons.some(p=>extraSum(p))?(exOn()?' · Ekstra indtjening medregnet':' · Ekstra indtjening ikke medregnet'):''}<button type="button" data-set="bank">Ret</button></p>
-   <details class="bankdet"><summary>Se beregningen</summary>
-   <div class="kpis" style="margin-top:10px">
-    <div class="kpi"><span>Nettoindtægt ${ib(listInfo('Nettoindtægt',act().filter(e=>e.type==='indtaegt'),null,'Løn skal være udbetalt beløb efter skat.'))}</span><b>${kr(bk.inc+bk.extra)}</b><small>${bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'}</small></div>
-    <div class="kpi"><span>Bankens faste udgifter ${ib(catInfo('Bankens faste udgifter',act().filter(e=>e.type==='udgift'&&inBank(e)),'De faste udgifter øverst, uden de poster, der skal dækkes af rådighedsbeløbet.'))}</span><b>${kr(bk.fixed)}</b><small>${esc(exclNote(bk))}</small></div>
-    <div class="kpi"><span>Vejledende krav ${ib(`<b>Vejledende krav</b>${tbl([[adultsLbl(),'',kr(+bk.b.adults||0)],[`${+bk.b.children||0} børn × ${kr(+bk.b.childRate||0)}`,'',kr((+bk.b.children||0)*(+bk.b.childRate||0))],['= Krav','',kr(bk.req)]])}<p>En tommelfingerregel, ikke bankens egne satser. Bankerne har hver deres interne krav. Satserne kan rettes under "Juster det vejledende krav".</p>`)}</span><b>${kr(bk.req)}</b><small>Tommelfingerregel for ${adultsLbl()} + ${+bk.b.children||0} børn, ikke bankens egne satser</small></div>
-   </div>
-    <p class="muted" style="font-size:13px;margin:8px 0 0">${exSrc()}</p>${exPosts().length?`<label class="extog small" title="Gælder hele budgettet"><input type="checkbox" data-extog ${exOn()?'checked':''}> Medregn ekstra indtjening</label>`:''}
-    <p class="muted" style="font-size:13px;margin:8px 0">Bankerne har hver deres interne satser. Som tommelfingerregel for 2026 ligger kravet for et par på 11.000–12.500 kr. pr. måned. Hertil kommer cirka 2.500–3.500 kr. pr. barn, og beløbet stiger med barnets alder. Ekstra indtjening medregnes typisk kun, hvis den kan dokumenteres over flere år.</p>
-    <p style="font-size:14px;margin:8px 0 4px"><b>Ikke med i bankens faste udgifter</b></p>
-    <ul class="excl">${bk.excl.map(e=>`<li><button type="button" class="exlink" data-open="${e.id}" title="Åbn posten"><span>${esc(e.desc)}</span><span>${kr(mAvg(e))}</span></button></li>`).join('')||'<li class="muted">Ingen</li>'}</ul>
-    <p class="muted" style="font-size:13px">Sæt eller fjern flueben ved "Medregnes i bankens faste udgifter" på den enkelte post.</p>
-    <p style="font-size:14px;margin:10px 0 0"><button type="button" class="tbtn" data-help="bank"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det: bankens rådighedsbeløb</span></button></p>
-   </details></section>`;
+  const bk=bankCalc(), D=envData();
+  h+=inboxHtml()+`<div class="dtop">${mainHtml(D)}${bankHtml(bk)}</div>`+fordelingHtml(D);
+  /* (the bank's fold-out moved into the calculation above) */
 
-  // konti
+  // konti and personer: shown on Hvem betaler (kH)
+  let kH='',kA='';
   const ids=S.accounts.map(a=>a.id); if(unplaced.length)ids.push('');
   const maxv=Math.max(1,...ids.map(id=>{const c=accountCalc(id);return Math.max(c.in,c.out)}));
-  h+=`<section ${sfAttr('konti')}><div class="sechead">${sfHead('konti','Konti')}<span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span></div><div class="sfbody"><div class="shtools"><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti</span></button></div><div class="accounts">`;
+  kA+=`<section class="whosec"><div class="sechead"><h2>Konti</h2><span class="hint">Hvad løber ind og ud af hver konto, og hvad der er tilbage.</span></div><div class="sfbody"><div class="shtools"><button type="button" class="tbtn" id="btnFoldAll">${foldLbl(ids.every(id=>isFolded(id)))}</button><button type="button" class="tbtn" id="btnAccts" title="Tilføj, omdøb og slet konti, og ret navne på personer"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.8"/><path d="M2 7h12M4.5 4V3h7v1"/></svg><span>Rediger konti</span></button></div><div class="accounts">`;
   ids.forEach(id=>{
     const a=S.accounts.find(x=>x.id===id)||{id:'',name:'Ikke placeret',type:'',number:''};
     const c=accountCalc(id);
@@ -2088,8 +2543,8 @@ function render(){
     const exTog=accEx&&!exOn()?`<p class="setstat" style="margin:6px 0 0">Ekstra indtjening på ${disp(accEx)} er ikke medregnet<button type="button" data-set="indtaegter">Ret</button></p>`:'';
     const sumTxt=id===''?`<span class="bad">${disp(c.exp)} ikke placeret</span>`:a.type==='faelles'?(()=>{const gp=c.need-c.tin;return `<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span>${gp>0.5?`<span class="bad">Mangler <b style="color:inherit">${disp(gp)}</b></span>`:(Math.abs(gp)<0.5?`<span class="ok">Dækket</span>`:`<span class="ok">Dækket, overskud ${disp(-gp)}</span>`)}`})()
       :`<span class="io">Ind ${disp(c.in)} · Ud ${disp(c.out)} · </span><span class="${c.left>=0?'ok':'bad'}">Tilbage <b style="color:inherit">${disp(c.left)}</b></span>`;
-    h+=`<details class="acctd" data-acc="${esc(id)}" ${isFolded(id)?'':'open'}><summary><div>${id?`<span class="dragh" draggable="true" role="button" tabindex="0" data-drag="${esc(id)}" aria-label="Flyt ${esc(a.name)}. Træk, eller brug pil op og ned" title="Træk for at flytte kontoen">⋮⋮</span>`:''}<h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><div class="asum">${sumTxt}</div></summary>`;
-    h+=`<div class="acct"><div><h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div>
+    kA+=`<details class="acctd" data-acc="${esc(id)}" ${isFolded(id)?'':'open'}><summary><div>${id?`<span class="dragh" draggable="true" role="button" tabindex="0" data-drag="${esc(id)}" aria-label="Flyt ${esc(a.name)}. Træk, eller brug pil op og ned" title="Træk for at flytte kontoen">⋮⋮</span>`:''}<h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div></div><div class="asum">${sumTxt}</div></summary>`;
+    kA+=`<div class="acct"><div><h3>${esc(a.name)}</h3><div class="num">${esc(a.number||'')}${a.type==='faelles'?' Fælles konto':a.owner?' Tilhører '+esc(perName(a.owner)):''}</div>
       <div class="kv"><span>Indtægter ${ib(listInfo('Indtægter direkte på kontoen',E_.filter(e=>e.type==='indtaegt'&&(e.account||'')===id),null,'Kvartals- og årsbeløb er omregnet til et gennemsnit pr. måned.'))}</span><span>${disp(c.inc)}</span>
       <span>Overført ind ${ib(listInfo('Overført ind fra andre konti',E_.filter(e=>e.type==='overfoersel'&&e.to===id),null,E_.some(e=>e.type==='overfoersel'&&e.to===id&&e.auto)?'Auto-beløb følger den anbefalede andel og rundes op til nærmeste 100 kr.':''))}</span><span>${disp(c.tin)}</span>
       <span>Faste udgifter ${ib(catInfo('Faste udgifter betalt fra kontoen',E_.filter(e=>e.type==='udgift'&&!e._goal&&(e.account||'')===id)))}</span><span>${disp(c.exp)}</span>
@@ -2100,18 +2555,18 @@ function render(){
         <div class="barrow"><span>Ud</span><div class="track"><div class="fill out" style="width:${w(c.out)}%"></div></div><span class="v">${disp(c.out)}</span></div>
         ${verdict}</div></div></details>`;
   });
-  h+=`</div></div></section>`;
+  kA+=`</div></div></section>`;
 
   // personer
   const sp=S.settings||{};
-  h+=`<section ${sfAttr('hvem')}><div class="sechead">${sfHead('hvem','Hvem betaler hvad')}<span class="hint">Hvad hver person har til rådighed efter sin del af de faste udgifter.</span></div><div class="sfbody">
+  kH+=`<section class="whosec"><div class="sechead"><h2>Hvem betaler hvad</h2><span class="hint">Hvad hver person har til rådighed efter sin del af de faste udgifter.</span></div><div class="sfbody">
     <div class="shtools"><button type="button" class="tbtn" data-help="fordeling"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.6.3-.8.7-.8 1.3M8 11.4v.1"/></svg><span>Sådan regnes det</span></button></div>
     <p class="setstat">${splitTxt()}${S.persons.some(p=>extraSum(p))?(exOn()?' · Ekstra indtjening medregnet':' · Ekstra indtjening ikke medregnet'):''}${boundTxt()?(boundOn()?' · Bundne indtægter medregnet':' · Bundne indtægter holdt ude'):''}<button type="button" data-set="fordeling">Ret</button></p><div class="people${S.persons.length===1?' solo':''}">`;
   S.persons.forEach(p=>{
     const c=personCalc(p.id);
     // Til rådighed as a small sum: incomes (+, green), expenses (−, red), then the result below.
     const incT=c.own+c.extra+c.shInc, expT=c.ownExp+c.shExp, ln=(cls,label,v)=>`<span class="${cls}">${label}</span><span class="${cls} v">${disp(v)}</span>`;
-    h+=`<div class="person${PDET.has(p.id)?' open':''}"><h3>${esc(p.name)}</h3><div class="kv calc">
+    kH+=`<div class="person${PDET.has(p.id)?' open':''}"><h3>${esc(p.name)}</h3><div class="kv calc">
       <span class="ch in">Indtægter</span><span class="ch"></span>
       ${ln('in',`+ Faste indtægter ${ib(listInfo('Faste indtægter',act().filter(e=>e.type==='indtaegt'&&!e.extra&&inFree(e)&&e.payer===p.id)))}`,c.own)}
       ${extraSum(p)?ln('in',`+ Ekstra indtjening ${ib(`<b>Ekstra indtjening</b>${tbl(exPosts(p.id).map(e=>[esc(e.desc),howOf(e),disp(mAvg(e))]),extraSum(p))}<p>${exOn()?'Medregnes i beregningen.':'Medregnes ikke lige nu.'} Fluebenet herunder gælder hele husstanden. Indgår ikke i fordelingen af fælles udgifter. Posterne står under Indtægter.</p>`)}`,c.extra)
@@ -2139,21 +2594,17 @@ function render(){
       ${c.afterSav<0?`<div class="verdict bad">Opsparingen er ${disp(-c.afterSav)} højere end rådighedsbeløbet.</div>`:''}
       ${moreBtn(p.id,'Vis indtægter, udgifter og opsparing')}</div>`;
   });
-  h+=`</div></div></section>`;
+  kH+=`</div></div></section>`;
 
-  // Hvad er der tilbage: the main number in a sentence (the key-figure card on phones), last on the page.
-  const main=t.sav?t.afterSav:t.left, fixInfo=ib(catInfo('Alle faste udgifter',act().filter(e=>e.type==='udgift'&&!e._goal)));
-  h+=`<section class="leftsec"><div class="sechead"><h2>Hvad er der tilbage</h2><span class="hint">Indtægter minus faste udgifter${t.sav?' og opsparing':''} ${per()}.</span></div>
-  ${mobSumHtml(t)}
-  <div class="hero"><p>${S.persons.length===1?'Du har':'Husstanden har'} <b>${disp(t.inc)}</b> i indtægter${t.sav?`, <b>${disp(t.exp)}</b> i faste udgifter${fixInfo} og <b>${disp(t.sav)}</b> i opsparing${t.gsav?ib(listInfo('Opsparing',act().filter(e=>e._goal),S.persons.filter(p=>pNum(p,'savings')).map(p=>[esc(p.name),'opsparingsfelt',disp(pNum(p,'savings')),pNum(p,'savings')]),'Opsparingsmål styres under fanen Opsparingsmål.')):''}`:` og <b>${disp(t.exp)}</b> i faste udgifter${fixInfo}`}. Tilbage ${per()}: <b class="${main>=0?'left':'neg'}">${disp(main)}</b>.</p>
-  <small class="hbar">${S.persons.some(p=>extraSum(p))?(exOn()?'Inkl. ekstra indtjening. ':'Uden ekstra indtjening. '):''}${checks?`${checks} ${checks===1?'post er':'poster er'} markeret til tjek. `:''}${(()=>{const n=act().filter(e=>(devOf(e)||{}).flag).length;return n?`${n} ${n===1?'udgift er':'udgifter er'} steget mindst ${devPct()} % det seneste år. `:''})()}${unplaced.length?`${unplaced.length} udgifter er ikke placeret på en konto endnu.`:''}</small></div>
-  ${S.persons.length>1?`<div class="leftppl"><span class="msh">${t.sav?'Tilbage pr. person efter opsparing':'Til rådighed pr. person'}</span>${S.persons.map(p=>{const pc=personCalc(p.id),v=t.sav?pc.afterSav:pc.left;return `<span class="lp"><span>${esc(p.name)}</span><b class="${v>=0?'left':'neg'}">${disp(v)}</b></span>`}).join('')}</div>`:''}</section>`;
+  const kHp=kH;kH+=kA;
+  if(page==='overf'){app.innerHTML=whoHtml()+`<details class="whodet"${WHODET?' open':''}><summary>Se beregningen pr. person: indtægter, udgifter, opsparing og ekstra indtjening</summary>${kHp}</details>`+overfHtml();
+    const wd=document.querySelector('.whodet');if(wd)wd.ontoggle=()=>{WHODET=wd.open};bindMain();bindOverf();clampHero();return}
 
   // poster (own tab). hTop is the overview so far; the posts page starts with the scenario bar only.
   const hTop=h; h=scBarHtml(true)+startInfo(true);
-  h+=`<section><div class="sechead"><h2>Poster</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Faste overførsler</button>.</span></div>
+  h+=`<section><div class="sechead"><h2>Budgetposter</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Hvem betaler</button>, og opsparingsmålene under <button type="button" class="ghost" data-go="formue" style="padding:0;color:var(--pine);text-decoration:underline">Opsparing og gæld</button>.</span></div>
   <div class="filters"><div class="fchips">
-    <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Udgifter</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
+    <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Alle udgifter</option><option value="regn">Regninger</option><option value="hush">Husholdning</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
     <select id="flPayer" aria-label="Filtrér betaler"><option value="alle">Alle betalere</option><option value="${FAELLES}">Fælles</option>${S.persons.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
     <div class="qbox"><input id="flQ" type="search" placeholder="Søg og hop til en post" aria-label="Søg i posterne" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="flQList" autocomplete="off" value="${esc(F.q)}"><div class="qlist" id="flQList" role="listbox" aria-label="Poster der matcher" hidden></div></div>
@@ -2233,27 +2684,27 @@ function scChanges(sc){
   const base=baseEntries(), now=entriesFor(sc), out=[];
   now.forEach(e=>{if(e._goal)return;const b=base.find(x=>x.id===e.id);
     const bv=b&&b.active!==false?mAvg(b):0, nv=e.active!==false?mAvg(e):0;
-    if(e._added)out.push({kind:'Ny',desc:e.desc,b:0,n:nv});
-    else if(e._ovr&&e.removed)out.push({kind:'Fjernet',desc:b.desc,b:bv,n:0});
+    if(e._added)out.push({kind:'Ny',desc:e.desc,b:0,n:nv,type:e.type});
+    else if(e._ovr&&e.removed)out.push({kind:'Fjernet',desc:b.desc,b:bv,n:0,type:b.type});
     else if(e._ovr)out.push({kind:'Ændret',desc:e.desc,b:bv,n:nv,type:e.type});});
   (S.goals||[]).forEach(g=>{const a=goalIn(g,'base')&&goalCounts(g), b=goalIn(g,sc.id)&&goalCounts(g);if(a===b)return;const m=goalCalc(g).monthly;
-    out.push({kind:b?'Nyt mål':'Fjernet',desc:'Opsparing: '+(g.name||'Mål'),b:a?m:0,n:b?m:0})});
+    out.push({kind:b?'Nyt mål':'Fjernet',desc:'Opsparing: '+(g.name||'Mål'),b:a?m:0,n:b?m:0,type:'udgift'})});
   return out;
 }
 function compareRows(sc){const A=calcWith(baseEntries(),metrics),B=calcWith(entriesFor(sc),metrics);return A.map((r,i)=>[r[0],r[1],B[i][1],B[i][1]-r[1]])}
 function compareHtml(sc){
   const rows=compareRows(sc), ch=scChanges(sc);
-  const good=(label,d)=>/udgifter|bør overføres/i.test(label)?d<=0:d>=0;
-  const cell=(l,d)=>Math.abs(d)<0.5?'<td class="r muted">0 kr</td>':`<td class="r" style="color:${good(l,d)?'var(--pine)':'var(--brick)'};font-weight:500">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</td>`;
+  const good=(label,d)=>/^faste udgifter|bør overføres/i.test(label)?d<=0:d>=0;
+  const cell=(l,d)=>Math.abs(d)<0.5?'<td class="r muted">uændret</td>':`<td class="r"><span class="dl ${good(l,d)?'good':'bad'}">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</span></td>`;
   // The last rows are what each person has left; they get their own highlighted group.
   const nKey=rows.length-S.persons.length;
   const pill=(l,d)=>`<td class="r">${Math.abs(d)<0.5?'<span class="dpill z">0 kr</span>':`<span class="dpill ${good(l,d)?'up':'dn'}">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</span>`}</td>`;
   return `<section class="compare" id="cmp"><div class="sechead"><h2>Nuværende og ${esc(sc.name||'scenarie')}${sc.from?' fra '+esc(sc.from):''} <button type="button" class="helplink" data-cmpall>Sammenlign scenarier</button></h2><span class="hint">Grøn er en forbedring, rød en forværring. Beløb ${per()}.</span></div>
-   <div class="cmpgrid"><div class="tablewrap"><table><thead><tr><th></th><th class="r">Nuværende</th><th class="r">Scenarie</th><th class="r">Forskel</th></tr></thead><tbody>
+   <div class="cmpgrid"><div class="tablewrap"><table><thead><tr><th></th><th class="r"><span class="chp cur">Nuværende</span></th><th class="r"><span class="chp new">${esc(sc.name||'Scenarie')}</span></th><th class="r"><span class="chp dif">Forskel</span></th></tr></thead><tbody>
    ${rows.map((r,i)=>i<nKey?`<tr><td>${esc(r[0])}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${cell(r[0],r[3])}</tr>`
      :(i===nKey?'<tr class="cmpsub"><td colspan="4">Til rådighed pr. person</td></tr>':'')+`<tr class="cmpkey"><td>${esc(r[0].replace(/: til rådighed$/,''))}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${pill(r[0],r[3])}</tr>`).join('')}</tbody></table></div>
    <div class="tablewrap"><table><thead><tr><th>Ændrede poster</th><th></th><th class="r">Før</th><th class="r">Efter</th></tr></thead><tbody>
-   ${ch.length?ch.map(c=>`<tr><td class="desc">${esc(c.desc)}</td><td><span class="badge ${c.kind==='Fjernet'?'un':'chk'}">${c.kind}</span></td><td class="r">${disp(c.b)}</td><td class="r">${disp(c.n)}</td></tr>`).join(''):'<tr><td colspan="4" class="muted" style="white-space:normal">Ingen ændringer endnu. Klik på en post nedenfor for at rette beløbet eller fjerne den i scenariet, eller brug Ny post.</td></tr>'}</tbody></table></div></div></section>`;
+   ${ch.length?ch.map(c=>`<tr><td class="desc">${esc(c.desc)}</td><td><span class="badge ${c.kind==='Fjernet'?'un':'chk'}">${c.kind}</span></td><td class="r">${disp(c.b)}</td><td class="r">${disp(c.n)}</td></tr>`).join(''):'<tr><td colspan="4" class="muted" style="white-space:normal">Ingen ændringer endnu. Gå til Budgetposter, mens scenariet er valgt, og ret eller fjern en post der.</td></tr>'}</tbody></table></div></div></section>`;
 }
 /* Side-by-side comparison of the current budget and its scenarios: key figures and who pays what. keys are 'base' or
    scenario ids; the first one is the reference for the differences. Shared by the dialog and the PDF.
@@ -2811,13 +3262,13 @@ $('frmLoan').addEventListener('submit',ev=>{ev.preventDefault();
   if(loanEdit)Object.assign(S.loans.find(x=>x.id===loanEdit),d);else S.loans.push(Object.assign({id:'l'+uid()},d));
   $('dlgLoan').close();commit();toast(loanEdit?'Lån gemt':'Lån oprettet');
 });
-document.querySelectorAll('button[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;document.body.dataset.page=page;document.querySelectorAll('button[data-page]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.page===page)));$('btnNew').style.display=page==='budget'||page==='poster'?'':'none';render();window.scrollTo(0,0)});
+document.querySelectorAll('button[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;document.body.dataset.page=page;markTabs();$('btnNew').style.display=page==='budget'||page==='poster'?'':'none';render();window.scrollTo(0,0)});
 function filtered(){
   const q=F.q.trim().toLowerCase();
   if(F.type==='overfoersel')F.type='alle';
   return cur().filter(e=>{
-    if(e.type==='overfoersel')return false;
-    if(F.type==='tjek'){if(!e.check)return false}else if(F.type==='steget'){if(!(devOf(e)||{}).flag)return false}else if(F.type!=='alle'&&e.type!==F.type)return false;
+    if(e.type==='overfoersel'||e._goal)return false;
+    if(F.type==='regn'){if(e.type!=='udgift'||!inBank(e))return false}else if(F.type==='hush'){if(e.type!=='udgift'||inBank(e))return false}else if(F.type==='tjek'){if(!e.check)return false}else if(F.type==='steget'){if(!(devOf(e)||{}).flag)return false}else if(F.type!=='alle'&&e.type!==F.type)return false;
     if(F.account!=='alle'){const a=F.account;if(e.type==='overfoersel'){if(e.from!==a&&e.to!==a)return false}else if((e.account||'')!==a)return false}
     if(F.payer!=='alle'&&e.type!=='overfoersel'&&e.payer!==F.payer)return false;
     if(F.payer!=='alle'&&e.type==='overfoersel')return false;
@@ -2924,9 +3375,9 @@ $('btnHelpClose').onclick=()=>$('dlgHelp').close();
 // Started from the profile menu. Each stop points at what the user sees: the top tabs and buttons on a wide screen,
 // the bottom bar, the round + and the gear on a phone. A stop whose button isn't shown is skipped.
 const TOUR=[
-  {el:'.tabs,.mnav',t:'Siderne',x:'Overblik viser hele budgettet. Under Budgetposter retter du indtægter og udgifter, og Lån, Overførsler og Mål har hver deres side.'},
+  {el:'.tabs,.mnav',t:'Siderne',x:'Overblik viser, hvad der er til rådighed, og hvad der skal gøres. Under Budgetposter retter du indtægter og udgifter. Hvem betaler viser fordeling, konti og overførsler. Opsparing og gæld samler mål og lån, og under Hvad nu hvis prøver du ændringer af.'},
   {el:'#btnNew,#btnNewM',t:'Ny budgetpost',x:'Her lægger du en ny indtægt eller udgift ind. Du kan også trykke på en post for at rette den.'},
-  {el:'#btnScn',t:'Scenarier og kladder',x:'Prøv en ændring af, fx ny bolig eller færre timer, uden at røre dit budget. Kladder er hele budgetter ved siden af, fx lavet ud fra kontoudskrifter.'},
+  {el:'#btnScn',t:'Scenarier og kladder',x:'Vælg mellem det nuværende budget, scenarier og kladder. Scenarierne ser du side om side under Hvad nu hvis. Kladder er hele budgetter ved siden af, fx lavet ud fra kontoudskrifter.'},
   {el:'#btnTodo',t:'Opgaver',x:'Her samler vi det, der skal gøres, fx en fast overførsel, der skal rettes i netbanken.'},
   {el:'.setbtn',t:'Indstillinger',x:'Husstand, konti, fordeling af de fælles udgifter, påmindelser og deling med andre.'},
   {el:'#btnUserMenu',t:'Menuen',x:'Import og eksport til PDF og Excel, Sådan regnes det, filmen om at komme i gang og denne rundtur.'}];
@@ -3052,21 +3503,24 @@ function rowsHtml(){
   const add=(type,cat,label)=>`<button type="button" class="addp" data-addpost="${type}" data-cat="${esc(cat)}" aria-label="Ny post i ${esc(label)}" title="Ny post i ${esc(label)}">+</button>`;
   const order=catList(), rank=k=>k===NOCAT?1e6:(order.indexOf(k)<0?1e5:order.indexOf(k));
   let h='';
-  [['indtaegt','Indtægter','in'],['udgift','Faste udgifter','out']].forEach(([type,label,cls])=>{
-    const G=L.filter(e=>e.type===type);if(!G.length&&!plain)return;
+  [['indtaegt','Indtægter','in','indtaegt'],['udgift','Regninger','out e1g','regn'],['udgift','Husholdning','out e2g','hush']].forEach(([type,label,cls,gk])=>{
+    const G=L.filter(e=>e.type===type&&(gk==='regn'?inBank(e):gk==='hush'?!inBank(e):true));if(!G.length&&!plain)return;
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false&&exCounts(e)).reduce((a,e)=>a+mAvg(e),0);
-    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+type,label)}${label}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${type==='udgift'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
-    if(pfOn('g:'+type))return;
+    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+gk,label)}<span class="edot ${gk==='regn'?'e1':gk==='hush'?'e2':'e0'}"></span>${label}${gk==='regn'?'<small class="gsub">Faste udgifter, banken regner med</small>':gk==='hush'?'<small class="gsub">Dækkes af rådighedsbeløbet</small>':''}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${gk==='regn'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5h5.2l5.8 5.8-5.2 5.2-5.8-5.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
+    if(pfOn('g:'+gk))return;
     if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
     const by={};G.forEach(e=>{const k=e.category||NOCAT;(by[k]=by[k]||[]).push(e)});
-    (plain?order:[]).concat(Object.keys(by)).filter((k,i,a)=>a.indexOf(k)===i).sort((a,b)=>rank(a)-rank(b)).forEach(k=>{
+    (plain&&gk==='regn'?order.filter(k=>!L.some(e=>e.type==='udgift'&&!inBank(e)&&(e.category||NOCAT)===k)):[]).concat(Object.keys(by)).filter((k,i,a)=>a.indexOf(k)===i).sort((a,b)=>rank(a)-rank(b)).forEach(k=>{
       const arr=(by[k]||[]).sort(byOrd), sum=arr.filter(e=>e.active!==false).reduce((a,e)=>a+mAvg(e),0), ck=k===NOCAT?'':k;
-      const fk='c:'+k;
+      const fk='c:'+gk+':'+k;
       h+=`<tr class="cat" data-type="udgift" data-cat="${esc(ck)}"><td colspan="4">${foldBtn(fk,k)}${esc(k)}<span class="gcount">${arr.length}</span>${add('udgift',ck,k)}${catList().includes(k)?`<button type="button" class="catdots" data-catedit="${esc(ck)}" aria-label="Ret eller slet kategorien ${esc(k)}" title="Ret eller slet kategorien">···</button>`:''}</td><td class="r">${disp(sum)}</td><td colspan="3"></td></tr>`;
       if(pfOn(fk))return;
       arr.forEach(e=>h+=rowHtml(e));
       if(!arr.length)h+=`<tr class="empty" data-type="udgift" data-cat="${esc(ck)}"><td colspan="8" class="muted">Ingen poster i ${esc(k)} endnu. Tryk + for at tilføje en.</td></tr>`})});
+  const GS=act().filter(e=>e._goal);
+  if(plain&&GS.length)h+=`<tr class="grp savline e3g"><td colspan="4"><span class="edot e3"></span>Opsparingsmål<span class="gcount">${GS.length} ${GS.length===1?'mål':'mål'} · rettes under <button type="button" class="ghost" data-go="formue" style="padding:0;color:var(--pine);text-decoration:underline">Opsparing og gæld</button></span></td><td class="r">${disp(GS.reduce((a,e)=>a+mAvg(e),0))}</td><td colspan="3"></td></tr>`;
+  if(plain){const t=totals(),v=t.sav?t.afterSav:t.left;h+=`<tr class="grp resline e4g"><td colspan="4"><span class="edot e4"></span>= Til rådighed<span class="gcount">indtægter − regninger − husholdning − opsparing</span></td><td class="r">${disp(v)}</td><td colspan="3"></td></tr>`}
   return h;
 }
 /* Drag a post by its ⋮⋮ handle (pointer events, so touch works) onto another post or a category heading.
@@ -3178,6 +3632,10 @@ function bindMain(){
   bindScopes();bindPsav();
   {const a=$('scSaldo'),d=$('scSaldoD');if(a&&d){const sv=()=>{setSaldo(a.dataset.acc,parseAmt(a.value)||0,d.value||(curSc()&&curSc().from&&parseDateX('01.'+curSc().from))||DAY(),true);commit()};a.onchange=sv;d.onchange=sv}}
   document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{const t=document.querySelector(`button[data-page="${b.dataset.goto}"]`);if(t)t.click()});
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goPage(b.dataset.go));
+  document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{planAcct=b.dataset.plan;render();const p=document.querySelector('section.plan');if(p)p.scrollIntoView({behavior:'smooth',block:'start'})});
+  document.querySelectorAll('[data-tjek]').forEach(b=>b.onclick=()=>{F.type='tjek';goPage('poster')});
+  document.querySelectorAll('[data-todos]').forEach(b=>b.onclick=()=>{const t=$('btnTodo');if(t)setTimeout(()=>t.click(),0)});
   document.querySelectorAll('[data-newpost]').forEach(b=>b.onclick=()=>openEntry(null));
   if($('btnNewSc'))$('btnNewSc').onclick=newScenario;
   if($('scName')){const sc=curSc();
@@ -3199,7 +3657,7 @@ function bindMain(){
   bindPostSearch();
   const openRow=id=>id.startsWith('g_')?openGoal(id.slice(2)):openEntry(id);
   document.querySelectorAll('tr[data-devid]').forEach(tr=>{tr.onclick=()=>openEntry(tr.dataset.devid);tr.onkeydown=e=>{if(e.key==='Enter')openEntry(tr.dataset.devid)}});
-  $('tbody').addEventListener('click',ev=>{const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!pfOn(k);savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
+  $('tbody').addEventListener('click',ev=>{const go=ev.target.closest('[data-go]');if(go){goPage(go.dataset.go);return}const pf=ev.target.closest('[data-pfold]');if(pf){const k=pf.dataset.pfold;PFOLD[k]=!pfOn(k);savePFold();$('tbody').innerHTML=rowsHtml();const fb=$('btnFoldPosts');if(fb)fb.innerHTML=foldAllHtml();return}
     // The whole heading row of a group or category folds it, not only the arrow (the buttons in it keep their own job).
     const gr=ev.target.closest('tr.grp,tr.cat');if(gr&&!ev.target.closest('button')){const f=gr.querySelector('[data-pfold]');if(f)f.click();return}
     if(ev.target.closest('[data-cats]')){openCats();return}
@@ -3421,7 +3879,7 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
    same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
 // An amount and its unit are joined by a no-break space, so a line never breaks between '1.234' and 'kr' (or '%').
 function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ').replace(/(\d) (kr\b|%)/g,'$1\u00a0$2')}
-const PC={paper:[240,243,242],card:[255,255,255],ink:[16,20,21],ink2:[86,97,95],ink3:[86,97,95],rule:[220,227,225],pine:[46,110,91],pineBg:[227,242,236],lime:[169,220,203],limeDark:[169,220,203],haze:[153,165,163],brick:[168,71,60],brickBg:[246,230,227],ochre:[16,20,21],ochreBg:[238,242,241],focus:[47,111,179]};
+const PC={paper:[243,243,241],card:[255,255,255],ink:[24,24,27],ink2:[94,94,99],ink3:[94,94,99],rule:[224,224,219],pine:[75,47,224],pineBg:[231,234,239],lime:[139,152,172],limeDark:[77,91,115],haze:[156,156,163],brick:[168,71,60],brickBg:[246,230,227],ochre:[24,24,27],ochreBg:[233,233,229],focus:[47,111,179]};
 const PGC=[[79,143,122],[154,125,69],[82,104,138],[143,91,106],PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
 const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
 /* Month-by-month plan for the goals chart (same rules as goalChart on the page). */
@@ -3435,8 +3893,8 @@ function goalPlan(L){
   const tot=[],xtot=[];for(let i=a;i<b;i++){tot.push(C.reduce((s,x)=>s+val(x,i),0));xtot.push(C.reduce((s,x)=>s+xv(x,i),0))}
   return {C,a,b,N,val,xv,xd,tot,xtot};
 }
-/* The budgetpro logo ("Mynte og is", see components/Logo.tsx), drawn on a canvas so the PDF shows the real logo:
-   the symbol (pocket with two upright cards, blæk + mynte front card; the outlines and the slot are cut out, so it sits on any
+/* The budgetpro logo ("A6", see components/Logo.tsx), drawn on a canvas so the PDF shows the real logo:
+   the symbol (pocket with two upright cards, all graphite – the logo never uses the blue; the outlines and the slot are cut out, so it sits on any
    surface) + "budget" Hanken Grotesk 700 and "pro" Hanken Grotesk 200 in blæk. base = the baseline as a share of the
    height; ref = the height of the name alone, so logo(x, yb, h) keeps the name the same size as the old wordmark. */
 async function pdfLogo(){
@@ -3448,7 +3906,7 @@ async function pdfLogo(){
     const asc=Math.max(mb.actualBoundingBoxAscent,mp.actualBoundingBoxAscent), desc=Math.max(mb.actualBoundingBoxDescent,mp.actualBoundingBoxDescent);
     const top=Math.max(asc,sh-sub), bot=Math.max(desc,sub);
     c.width=Math.ceil(pad*2+sw+gap+mb.width+pl+mp.width);c.height=Math.ceil(pad*2+top+bot);x=c.getContext('2d');
-    const by=pad+top, sy=by+sub-sh, INK='#101415', LIME='#A9DCCB';
+    const by=pad+top, sy=by+sub-sh, INK='#18181B', LIME=INK;
     // Symbol in viewBox units (0.5 1.5 63 60): each shape is filled, then its outline (and finally the slot) is cut out.
     x.save();x.translate(pad,sy);x.scale(k,k);x.translate(-0.5,-1.5);x.lineWidth=3;
     const rr=(X,Y,w,h,r)=>{x.beginPath();if(x.roundRect)x.roundRect(X,Y,w,h,r);else x.rect(X,Y,w,h)};
@@ -3806,7 +4264,7 @@ async function runPdf(opt){
 /* ---------- Excel ---------- */
 /* One sheet per tab (Budget, Overblik over lån, Faste overførsler, Opsparingsmål) laid out like the page, plus all
    entries as a filterable list. Styled with xlsx-js-style (SheetJS with cell styles); amounts stay numbers with a kr format. */
-const XC={pine:'2E6E5B',pineBg:'E3F2EC',limeDark:'A9DCCB',ink:'101415',ink2:'56615F',ink3:'56615F',rule:'DCE3E1',paper:'F0F3F2',haze:'99A5A3',brick:'A8473C',brickBg:'F6E6E3',ochre:'101415',ochreBg:'EEF2F1',white:'FFFFFF'};
+const XC={pine:'4B2FE0',pineBg:'E7EAEF',limeDark:'4D5B73',ink:'18181B',ink2:'5E5E63',ink3:'5E5E63',rule:'E0E0DB',paper:'F3F3F1',haze:'9C9CA3',brick:'A8473C',brickBg:'F6E6E3',ochre:'18181B',ochreBg:'E9E9E5',white:'FFFFFF'};
 const XKR='#,##0 "kr";-#,##0 "kr";0 "kr"';
 const xm=(...L)=>{const r={};L.forEach(o=>{if(o)Object.keys(o).forEach(k=>{r[k]=o[k]&&typeof o[k]==='object'&&k!=='fill'?Object.assign({},r[k],o[k]):o[k]})});return r};
 const xbd=c=>({style:'thin',color:{rgb:c||XC.rule}});
@@ -4021,8 +4479,15 @@ $('dlgData').querySelectorAll('.dtile').forEach(b=>b.onclick=()=>{$('dlgData').c
 $('btnDataClose').onclick=()=>$('dlgData').close();
 $('dlgData').addEventListener('click',ev=>{if(ev.target===$('dlgData'))$('dlgData').close()});
 /* Scenario picker in the tab row (replaces the Nuværende/scenario buttons on each page). Items change, so it binds by delegation. */
-function newScenario(){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:'Scenarie '+(S.scenarios.length+1),from:'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
-  if(page!=='budget'){document.querySelector('button[data-page="budget"]').click()}commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
+/* A new scenario starts with a short dialog (name, from when), so it is clear that a new one is being made (user's wish). */
+function newScenario(){if(!S||DR)return;const d=$('dlgNewSc');$('nscName').value='';$('nscFrom').value='';$('nscErr').hidden=true;
+  $('nscName').placeholder='Fx Scenarie '+((S.scenarios||[]).length+1);d.showModal();setTimeout(()=>$('nscName').focus(),0)}
+$('nscForm').onsubmit=ev=>{ev.preventDefault();const n=$('nscName').value.trim();if(!n){$('nscErr').hidden=false;$('nscName').focus();return}
+  $('dlgNewSc').close();makeScenario(n,$('nscFrom').value.trim());toast(`Scenariet "${n}" er oprettet. Ret posterne under Budgetposter.`)};
+$('nscCancel').onclick=$('nscClose').onclick=()=>$('dlgNewSc').close();
+document.querySelectorAll('[data-nsci]').forEach(b=>b.onclick=()=>{$('nscName').value=b.dataset.nsci;$('nscErr').hidden=true;$('nscName').focus()});
+function makeScenario(name,from){S.scenarios=S.scenarios||[];const id='s'+uid();S.scenarios.push({id,name:name||'Scenarie '+(S.scenarios.length+1),from:from||'',overrides:{},added:[]});(S.goals||[]).forEach(g=>{if(goalIn(g,'base'))g.scopes.push(id)});SC=id;
+  if(page!=='hvis')goPage('hvis');commit();setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0)}
 function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!b)return;b.hidden=!S;const bn=(R&&R.settings&&R.settings.title)||'Mit budget';
   b.querySelector('.lbl').textContent=dr?'Kladde':sc?'Scenarie':'Nuværende budget';
   // "+ Nyt scenarie" next to the button (Overblik only, by CSS); scenarios belong to the primary budget, so not in a draft.
@@ -4049,7 +4514,7 @@ function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!
     if(DR)leaveDraft();
     if(b.hasAttribute('data-scdots')){const id=b.dataset.scdots;if(!id){openSet();setTimeout(()=>{$('setName').focus();$('setName').select()},50);return}
       // A scenario's settings (name, from, saldo, delete) are the panel at the top of the Budget tab.
-      SC=id;if(page!=='budget')document.querySelector('button[data-page="budget"]').click();else render();window.scrollTo(0,0);setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0);return}
+      SC=id;if(page!=='hvis'&&page!=='poster')goPage('hvis');else render();window.scrollTo(0,0);setTimeout(()=>{const n=$('scName');if(n){n.focus();n.select()}},0);return}
     SC=b.dataset.scn||null;render();window.scrollTo(0,0)};
   $('btnNewScn').onclick=()=>{if(S&&!DR)newScenario()};
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnScn')&&!ev.target.closest('#scnMenu'))close()});

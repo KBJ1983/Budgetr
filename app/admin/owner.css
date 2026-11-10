@@ -1,33 +1,33 @@
 /* Owner overview (/admin). Builds on the app's .bx styles in app/login/app.css,
    with the budget app's look: a lead sentence, section heads on a thin line, mono amounts.
-   Dark uses the budget app's dark palette (page #0A0D0E, cards #1A2023, lines #343D40), so cards stand out from the
+   Dark uses the budget app's dark palette (page #202024, cards #2A2A2F, lines #3A3A41), so cards stand out from the
    page and headings never sit in a box of the cards' colour. The band (table rows, map land) is a step off the cards;
-   the month bars are mynte + blue on dark and mynte-dark + blæk on light. (.bx.ow, so these win over .bx.) */
+   the month bars are light violet + blue on dark and ultraviolet + graphite on light. (.bx.ow, so these win over .bx.) */
 .bx.ow {
-  --bg: #0a0d0e;
-  --bar: #0a0d0e;
-  --card: #1a2023;
-  --card-2: #151a1c;
-  --field: #0f1314;
-  --rule: #343d40;
-  --tx-2: #a3aeac;
-  --tx-3: #8a9694;
-  --band: #242b2e;
-  --bar-rev: #a9dccb;
+  --bg: #202024;
+  --bar: #18181b;
+  --card: #2a2a2f;
+  --card-2: #25252a;
+  --field: #25252a;
+  --rule: #3a3a41;
+  --tx-2: #acacb2;
+  --tx-3: #94949b;
+  --band: #303036;
+  --bar-rev: #b4a8ff;
   --bar-exp: #7aa2d6;
 }
 .bx.ow[data-theme="light"] {
-  --bg: #f2f0ea;
+  --bg: #f3f3f1;
   --bar: #ffffff;
   --card: #ffffff;
-  --card-2: #f6f8f7;
+  --card-2: #f8f8f6;
   --field: #ffffff;
-  --rule: #dce3e1;
-  --tx-2: #56615f;
-  --tx-3: #5f6a68;
-  --band: #ece9e2;
-  --bar-rev: #7cc1aa;
-  --bar-exp: #101415;
+  --rule: #e0e0db;
+  --tx-2: #5e5e63;
+  --tx-3: #6a6a70;
+  --band: #e9e9e5;
+  --bar-rev: #5b3df5;
+  --bar-exp: #202024;
 }
 .ow .bx-main > .bx-note {
   margin-top: 8px;
@@ -68,14 +68,14 @@
 /* Henvendelser from the Erhverv form, in the brand's own colours: a lime count pill (lime only as a fill,
    with midnight text) and a midnight strip on light / a raised midnight strip on dark. */
 .ow {
-  --inq-bg: #141a1b;
-  --inq-rule: #283031;
-  --inq-tx: #f0f3f2;
-  --inq-sub: #a0aba9;
+  --inq-bg: #18181b;
+  --inq-rule: #3a3a41;
+  --inq-tx: #f3f3f1;
+  --inq-sub: #acacb2;
 }
 .ow[data-theme="light"] {
-  --inq-bg: #101415;
-  --inq-rule: #101415;
+  --inq-bg: #202024;
+  --inq-rule: #202024;
 }
 .ow-badge {
   display: inline-flex;
@@ -85,8 +85,8 @@
   height: 22px;
   padding: 0 7px;
   border-radius: 999px;
-  background: #a9dccb;
-  color: #101415;
+  background: #b4a8ff;
+  color: #18181b;
   font: 600 12px var(--font-mono);
   vertical-align: middle;
 }
@@ -132,7 +132,7 @@
 }
 .ow-alert-go {
   flex: none;
-  color: #a9dccb;
+  color: #b4a8ff;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;

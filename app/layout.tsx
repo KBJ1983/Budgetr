@@ -1,14 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Hanken_Grotesk } from "next/font/google";
+import { Geist_Mono, Hanken_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import { Track } from "@/components/Track";
 import "./globals.css";
 
-// "Mynte og is" (docs/design/MYNTE.md): all text in Hanken Grotesk (also the logo: "budget" 700, "pro" 200, --font-logo
-// in globals.css), numbers and amounts in Geist Mono.
-const text = Hanken_Grotesk({
+// Palette "A6" (Nov 2026): all text in Plus Jakarta Sans, the logo in Hanken Grotesk ("budget" 700, "pro" 200,
+// --font-logo in globals.css), numbers and amounts in Geist Mono. next/font serves them from our own domain.
+const text = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-text",
+  display: "swap",
+});
+// Hanken Grotesk also stays the text font of budgetpro Skole (app/skole/layout.tsx), so it keeps every weight.
+const logoFace = Hanken_Grotesk({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
-  variable: "--font-text",
+  variable: "--font-logo-face",
   display: "swap",
 });
 const geistMono = Geist_Mono({
@@ -32,7 +39,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="da" className={`${text.variable} ${geistMono.variable}`}>
+    <html lang="da" className={`${text.variable} ${logoFace.variable} ${geistMono.variable}`}>
       <body>
         {children}
         <Track />

@@ -21,7 +21,7 @@ export function LegalShell({ title, updated, lead, children }: { title: string; 
       <header className={legal.top}>
         <div className={legal.topInner}>
           <Link href="/" aria-label="budgetpro forside">
-            <Logo fontSize={22} bg={BRAND.paper} />
+            <Logo fontSize={22} bg={BRAND.stone} />
           </Link>
           <Link href="/" className={legal.back}>
             Til forsiden

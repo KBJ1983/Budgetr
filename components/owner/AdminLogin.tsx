@@ -43,7 +43,7 @@ export function AdminLogin() {
   return (
     <div className="bx ow-login">
       <main className="bx-card ow-login-card">
-        <Logo fontSize={20} dark bg="#181D1E" />
+        <Logo fontSize={20} dark bg="#2A2A2F" />
         <h1>Log ind</h1>
         <form className="bx-auth-form" onSubmit={submit} noValidate>
           <label className="bx-field" htmlFor={emailId}>

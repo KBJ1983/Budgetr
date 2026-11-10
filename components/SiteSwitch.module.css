@@ -32,16 +32,16 @@
   text-decoration: none;
 }
 
-/* Mynte og is (Privat and Erhverv). */
+/* A6 (Privat and Erhverv). */
 .midnat .link {
-  color: #5f6a68;
+  color: #5e5e63;
 }
 .midnat .link:hover,
 .midnat .current {
-  color: #101415;
+  color: #18181b;
 }
 .midnat .current {
-  background: #eef2f1;
+  background: #e7e7e3;
 }
 
 @media (max-width: 767.98px) {

@@ -1,10 +1,10 @@
 /**
- * budgetpro brand ("Mynte og is", Nov 2026, docs/design/MYNTE.md): the symbol is a pocket with two upright cards. The
- * front card is always mynte; the back card and the pocket take the colour of the name – blæk on light backgrounds,
- * is-white on dark ones (on mynte the front card turns white). The outlines and the slot in the pocket take the
- * background colour, so pass `bg` when the logo sits on another surface. "budget" is Hanken Grotesk 700 and "pro"
- * Hanken Grotesk 200, same colour. Sizes follow `fontSize`. The keys keep their old names: midnight is now blæk, lime
- * mynte and olive dyb mynte.
+ * budgetpro brand ("A6", Nov 2026): the symbol is a pocket with two upright cards. The logo never uses the blue
+ * (user's wish): on light backgrounds the whole logo is graphite, in negative (on dark) the whole logo is white, and the
+ * app icon is the white symbol on an ultraviolet square. The outlines and the slot in the pocket take the background colour, so pass `bg` when
+ * the logo sits on another surface. "budget" is Hanken Grotesk 700 and "pro" Hanken Grotesk 200, same colour. Sizes
+ * follow `fontSize`. The older keys keep their names (midnight = blæk, lime = mynte, olive = dyb mynte); Skole keeps
+ * its own logo (blæk with a solgul front card).
  */
 export const BRAND = {
   midnight: "#101415",
@@ -28,25 +28,40 @@ export const BRAND = {
   sunInk: "#7A5300",
   sunTone: "#FCF1C8",
   warm: "#F5F5F0",
+  // "Petrol og sand" (before A6): kept for history.
+  petrol: "#1E6670",
+  petrolDeep: "#0E373D",
+  sand: "#E6C987",
+  // "A6" (Nov 2026, current): graphite for the logo and the dark parts, ultraviolet for the front card and buttons,
+  // the dark graphite of the website's bands (and the app's dark theme), rosa only for small details.
+  graphite: "#18181B",
+  violet: "#5B3DF5",
+  dark: "#202024",
+  stone: "#F3F3F1",
+  rosa: "#FF9FCF",
 } as const;
 
 export type LogoTone = "light" | "dark" | "lime";
 
 const TONES: Record<LogoTone, { ink: string; front: string; bg: string }> = {
-  light: { ink: BRAND.midnight, front: BRAND.lime, bg: "#FFFFFF" },
-  dark: { ink: BRAND.snow, front: BRAND.lime, bg: BRAND.midnight },
-  lime: { ink: BRAND.midnight, front: "#FFFFFF", bg: BRAND.lime },
+  light: { ink: BRAND.graphite, front: BRAND.graphite, bg: "#FFFFFF" },
+  dark: { ink: "#FFFFFF", front: "#FFFFFF", bg: BRAND.dark },
+  lime: { ink: BRAND.graphite, front: "#FFFFFF", bg: BRAND.lime },
 };
 
-/** The symbol alone (pocket with two cards). `size` is the height in px; `front` recolours the front card (Skole: solgul). */
-export function LogoMark({ size = 32, tone = "light", bg, front }: { size?: number; tone?: LogoTone; bg?: string; front?: string }) {
+/**
+ * The symbol alone (pocket with two cards). `size` is the height in px; `front` recolours the front card and `ink` the
+ * pocket and back card (Skole: blæk with solgul).
+ */
+export function LogoMark({ size = 32, tone = "light", bg, front, ink }: { size?: number; tone?: LogoTone; bg?: string; front?: string; ink?: string }) {
   const t = TONES[tone];
   const cut = bg ?? t.bg;
+  const body = ink ?? t.ink;
   return (
     <svg viewBox="0.5 1.5 63 60" width={(size * 63) / 60} height={size} aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
-      <rect x="9" y="3" width="34" height="22" rx="5" fill={t.ink} stroke={cut} strokeWidth="3" />
+      <rect x="9" y="3" width="34" height="22" rx="5" fill={body} stroke={cut} strokeWidth="3" />
       <rect x="21" y="8" width="34" height="22" rx="5" fill={front ?? t.front} stroke={cut} strokeWidth="3" />
-      <rect x="2" y="19" width="60" height="41" rx="13" fill={t.ink} stroke={cut} strokeWidth="3" />
+      <rect x="2" y="19" width="60" height="41" rx="13" fill={body} stroke={cut} strokeWidth="3" />
       <rect x="40" y="35" width="15" height="8" rx="4" fill={cut} />
     </svg>
   );
@@ -59,12 +74,14 @@ export function Logo({
   dark = false,
   bg,
   front,
+  ink,
 }: {
   fontSize?: number;
   tone?: LogoTone;
   dark?: boolean;
   bg?: string;
   front?: string;
+  ink?: string;
 }) {
   const tn: LogoTone = tone ?? (dark ? "dark" : "light");
   return (
@@ -77,11 +94,11 @@ export function Logo({
         gap: fontSize * 0.24,
         lineHeight: 1,
         whiteSpace: "nowrap",
-        color: TONES[tn].ink,
+        color: ink ?? TONES[tn].ink,
       }}
     >
       <span aria-hidden="true" style={{ alignSelf: "flex-end", marginBottom: -fontSize * 0.02 }}>
-        <LogoMark size={fontSize * 1.05} tone={tn} bg={bg} front={front} />
+        <LogoMark size={fontSize * 1.05} tone={tn} bg={bg} front={front} ink={ink} />
       </span>
       <span aria-hidden="true" style={{ display: "inline-flex", alignItems: "baseline" }}>
         <span style={{ font: `700 ${fontSize}px/1 var(--font-logo)`, letterSpacing: "-0.045em" }}>budget</span>
@@ -93,7 +110,7 @@ export function Logo({
   );
 }
 
-/** App icon: the symbol in white and lime on a midnight rounded square (same as public/icon.svg). */
+/** App icon: the symbol in white on an ultraviolet rounded square (same as public/icon.svg). */
 export function AppIcon({ size = 32 }: { size?: number }) {
   return (
     <span
@@ -105,10 +122,10 @@ export function AppIcon({ size = 32 }: { size?: number }) {
         width: size,
         height: size,
         borderRadius: size * 0.25,
-        background: BRAND.midnight,
+        background: BRAND.violet,
       }}
     >
-      <LogoMark size={size * 0.66} tone="dark" />
+      <LogoMark size={size * 0.66} tone="dark" bg={BRAND.violet} />
     </span>
   );
 }
@@ -120,12 +137,12 @@ export function AppIcon({ size = 32 }: { size?: number }) {
  */
 export function SkoleLogo({ fontSize = 22, dark = false, bg, mono = false }: { fontSize?: number; dark?: boolean; bg?: string; mono?: boolean }) {
   const tn: LogoTone = dark ? "dark" : "light";
-  const cut = bg ?? TONES[tn].bg;
-  const ink = TONES[tn].ink;
+  const cut = bg ?? (dark ? BRAND.midnight : "#FFFFFF");
+  const ink = dark ? BRAND.snow : BRAND.midnight;
   return (
     <span role="img" aria-label="budgetpro Skole" style={{ display: "inline-flex", alignItems: "baseline", lineHeight: 1, whiteSpace: "nowrap" }}>
       <span aria-hidden="true" style={{ display: "inline-flex" }}>
-        <Logo fontSize={fontSize} tone={tn} bg={bg} front={mono ? ink : BRAND.sun} />
+        <Logo fontSize={fontSize} tone={tn} bg={bg ?? (dark ? BRAND.midnight : "#FFFFFF")} front={mono ? ink : BRAND.sun} ink={ink} />
       </span>
       {/* line-height 0 + overflow hidden: the pill's baseline is then its bottom edge, so it stands on the baseline. */}
       <span aria-hidden="true" style={{ lineHeight: 0 }}>
@@ -165,7 +182,7 @@ export function SkoleAppIcon({ size = 32 }: { size?: number }) {
         background: BRAND.midnight,
       }}
     >
-      <LogoMark size={size * 0.66} tone="dark" front={BRAND.sun} />
+      <LogoMark size={size * 0.66} tone="dark" bg={BRAND.midnight} front={BRAND.sun} ink={BRAND.snow} />
     </span>
   );
 }

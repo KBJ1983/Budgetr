@@ -15,8 +15,8 @@ describe("mailHtml", () => {
 
   it("shows a 6-digit code and a seat code in a code box", () => {
     const h = mailHtml({ subject: "s", text: "Skriv koden:\n\n123 456\n\nEller:\n\nABCD-EFGH" }, { siteUrl: SITE });
-    expect(h).toMatch(/background:#E3F2EC[^>]*>123 456<\/td>/);
-    expect(h).toMatch(/background:#E3F2EC[^>]*>ABCD-EFGH<\/td>/);
+    expect(h).toMatch(/background:#ECE9FE[^>]*>123 456<\/td>/);
+    expect(h).toMatch(/background:#ECE9FE[^>]*>ABCD-EFGH<\/td>/);
   });
 
   it("makes the first own link a button, later ones plain links, and always shows the raw address", () => {
@@ -77,7 +77,7 @@ describe("mailHtml", () => {
     expect(h).toContain('alt="budgetpro Skole"');
     expect(h).toMatch(/background:#FCF1C8[^>]*>123 456<\/td>/);
     expect(h).toContain("budgetpro Skole · ");
-    expect(h).not.toContain("#E3F2EC");
+    expect(h).not.toContain("#ECE9FE");
     expect(mailHtml({ subject: "s", text: "x" }, { theme: "skole" })).toContain(">Skole</span>");
   });
 });

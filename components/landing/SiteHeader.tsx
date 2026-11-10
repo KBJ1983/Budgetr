@@ -33,7 +33,7 @@ export function SiteHeader({
       <SiteSwitch current={site} tone="midnat" />
       <div className={styles.headerInner}>
         <a href="#top" className={styles.brand} data-intro-target="">
-          <Logo fontSize={24} bg={BRAND.mist} />
+          <Logo fontSize={24} bg={BRAND.stone} />
         </a>
         <nav aria-label="Hovedmenu" className={styles.nav}>
           {links.map((link) => (

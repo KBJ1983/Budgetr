@@ -11,10 +11,10 @@
  */
 
 .intro {
-  /* Logo on lime (designmanual: on lime the front card is white). */
-  --ink: #101415;
+  /* Logo on light petrol: graphite with a white front card. */
+  --ink: #22272a;
   --front: #ffffff;
-  --cut: #a9dccb;
+  --cut: #a7cdd0;
   --fs: clamp(34px, 9vw, 120px);
 
   position: absolute;
@@ -24,7 +24,7 @@
   display: none;
   overflow: hidden;
   border-radius: 24px;
-  background: #a9dccb;
+  background: #a7cdd0;
   cursor: pointer;
 }
 @media (max-width: 768px) {
@@ -42,12 +42,12 @@
 .intro[data-state="play"] {
   animation: bail 0.35s ease-in 6s forwards;
 }
-/* Landing: the header's colours (midnight logo, lime front card, cut-outs in the card's grey). */
+/* Landing: the header's colours (graphite logo, petrol front card, cut-outs in the card's grey). */
 .intro[data-state="shrink"] {
   pointer-events: none;
 }
 .intro[data-state="land"] {
-  --front: #a9dccb;
+  --front: #1e6670;
   --cut: #f0f3f2;
   pointer-events: none;
 }

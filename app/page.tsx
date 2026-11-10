@@ -1,42 +1,50 @@
 import styles from "@/components/landing/landing.module.css";
-import { FinalCta, Pricing, Quotes, Trust } from "@/components/landing/Closing";
-import { Availability, BusinessTeaser, Explainer, HowItWorks, PhotoBanner, Sharing } from "@/components/landing/ContentSections";
-import { Features } from "@/components/landing/Features";
-import { Hero } from "@/components/landing/Hero";
+import f from "@/components/landing/front.module.css";
+import {
+  FrontBento,
+  FrontFeatures,
+  FrontFilm,
+  FrontFinal,
+  FrontHero,
+  FrontPricing,
+  FrontSafety,
+  FrontStory,
+  FrontTalk,
+} from "@/components/landing/Front";
 import { InPageLinks } from "@/components/landing/InPageLinks";
-import { ScrollReveal } from "@/components/landing/ScrollReveal";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader } from "@/components/landing/SiteHeader";
 
+const NAV = [
+  { href: "#saadan", label: "Sådan virker det" },
+  { href: "#funktioner", label: "Funktioner" },
+  { href: "#tryghed", label: "Tryghed" },
+  { href: "#pris", label: "Pris" },
+] as const;
+
 /**
- * Landing page after the design "budgetpro – Mynte og is komplet" (Nov 2026): it opens with the logo intro (LogoIntro,
- * in the hero: the logo glitches in and flies into the header); header and hero share one warm paper-white rounded card with
- * a drawn, dark picture of the Overblik (AppCard). Then the explainer film (components/Film, made from
- * video/privat.html), "Sådan virker det", a photo banner, the slate Tryghed band, Rådighed (a drawn light card), the
- * warm paper call to action (FinalCta), Funktioner (on the tint: a sideways tour with photos, a coloured mosaic and the full
- * list behind a plus), Deler du økonomi, quotes, Pris + FAQ and a short blæk Erhverv teaser. Title, description and lang come from
- * app/layout.tsx.
+ * The private front page, design "A6" (Nov 2026, user's choice; prototype public/forslag/mix.html, sections in
+ * components/landing/Front.tsx): a centred hero, the explainer film, a bento grid of the app with the demo family's
+ * numbers and a photo, the dark "Sådan bliver tallet til" band, Funktioner (a scenario card and the groups folded),
+ * the dialog "Det, I plejer at spørge hinanden om", Tryghed, price + FAQ and the closing signup with a photo.
+ * Title, description and lang come from app/layout.tsx.
  */
 export default function HomePage() {
   return (
-    <div className={styles.page}>
-      <SiteHeader />
-      <main>
-        <Hero />
-        <Explainer />
-        <HowItWorks />
-        <PhotoBanner />
-        <Trust />
-        <Availability />
-        <FinalCta />
-        <Features mosaic />
-        <Sharing />
-        <Quotes />
-        <Pricing />
-        <BusinessTeaser />
+    <div className={`${styles.page} ${f.page}`}>
+      <SiteHeader links={NAV} />
+      <main className={f.main}>
+        <FrontHero />
+        <FrontFilm />
+        <FrontBento />
+        <FrontStory />
+        <FrontFeatures />
+        <FrontTalk />
+        <FrontSafety />
+        <FrontPricing />
+        <FrontFinal />
       </main>
       <SiteFooter />
-      <ScrollReveal />
       <InPageLinks />
     </div>
   );

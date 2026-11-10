@@ -1,59 +1,61 @@
 /*
- * Landing page styles after the design "budgetpro – Mynte og is komplet" (Nov 2026, docs/design/MYNTE.md): header and
- * hero share one rounded warm paper-white card (#F2F0EA) with large calm shapes (a white circle, a mynte card, an outlined card) on a
- * white frame; sections below alternate white, is (soft) and dark bands, with dyb mynte (#2E6E5B) as the second,
- * complementary accent (the "29 min · 29 kr" badge, the closing call to action, the Erhverv pill). Red is for errors only. Content is at most 1136px wide (1200px
- * incl. 32px gutters). Breakpoints: 1020px (two columns → one), 768px (mobile).
+ * Shared landing styles (Erhverv, and the header/footer/film the private front page reuses – its own layout is
+ * front.module.css). Layout after "budgetpro – Mynte og is komplet" (docs/design/MYNTE.md), recoloured to "A6" (Nov 2026):
+ * stone-grey hero card, white and stone sections, graphite dark bands, ultraviolet buttons and accent text, light violet
+ * for small highlights. Red is for errors only. Content is at most 1136px wide (1200px incl. 32px gutters).
+ * Breakpoints: 1020px (two columns → one), 768px (mobile).
  */
 
 .page {
-  /* "Mynte og is" palette (docs/design/MYNTE.md). The names stay from earlier designs: dark = blæk, lime = mynte,
-     olive = dyb mynte, paper = is (soft sections). */
-  --v-paper: #f0f3f2;
+  /* "A6" palette (Nov 2026, user's choice; prototype public/forslag/mix.html): stone-grey page #f3f3f1, white cards,
+     graphite text and dark bands (#18181b / #202024), ultraviolet #5b3df5 for buttons (--v-btn) and #4b2fe0 for accent
+     text, light violet #b4a8ff for highlights on dark, rosa #ff9fcf only for small details (--v-rosa; never in lists).
+     The names stay from earlier designs: dark = graphite, lime = light violet, olive = accent violet, comp = a light
+     violet tint (it was sand). */
+  --v-paper: #f3f3f1;
   --v-white: #ffffff;
-  --v-stone: #f0f3f2;
-  /* Mynte tint: the hero card and the "Alle funktioner" band. */
-  --v-tint: #ddf0e8;
-  /* The hero card (header + hero, privat and Erhverv): a warm paper white (user's wish, Nov 2026). */
-  --v-hero: #f2f0ea;
-  /* Comp = smørgul (user's spec, Nov 2026 – after koral, umbra and dyb mynte): the complementary accent (badge,
-     closing band, Overførsler card, Erhverv pill, the login icon). Muted text
-     on it is --v-comp-soft, text on it --v-comp-ink, its edge --v-comp-rule; on dark it is used as it is (e.g. "Tryghed").
-     It goes with mynte and dyb mynte. Red is for errors only. */
-  --v-comp: #f4de96;
-  --v-comp-ink: #101415;
-  --v-comp-soft: #4d4320;
-  --v-comp-rule: rgba(16, 20, 21, 0.25);
-  --v-comp-light: #f4de96;
-  /* The Tryghed band: a slate a step lighter than blæk. */
-  --v-slate: #1e2326;
-  --v-slate-card: #272d30;
-  --v-slate-rule: #343b3e;
-  --v-slate-text: #a9b3b1;
-  --v-deep-text: #cfe3dc;
+  --v-stone: #f3f3f1;
+  --v-tint: #f3f3f1;
+  --v-hero: #f3f3f1;
+  --v-btn: #5b3df5;
+  --v-btn-hover: #4b2fe0;
+  --v-rosa: #ff9fcf;
+  /* Comp: a light violet tint for the small accents (badge, the "Tilbage" tile, checkmarks, feature icons, the plan
+     tag, one mosaic tile). Muted text on it is --v-comp-soft, text on it --v-comp-ink, its edge --v-comp-rule. */
+  --v-comp: #e4deff;
+  --v-comp-ink: #18181b;
+  --v-comp-soft: #4a4270;
+  --v-comp-rule: rgba(24, 24, 27, 0.2);
+  --v-comp-light: #e4deff;
+  /* The Tryghed band: a step darker than the graphite. */
+  --v-slate: #18181b;
+  --v-slate-card: #2a2a2f;
+  --v-slate-rule: #3a3a41;
+  --v-slate-text: #acacb2;
+  --v-deep-text: #c9c9ce;
   --v-card: #ffffff;
-  --v-ink: #101415;
-  --v-ink-2: #56615f;
-  --v-ink-3: #56615f;
-  --v-rule: #dce3e1;
-  --v-rule-2: #e4eae8;
-  --v-dark: #101415;
-  --v-dark-2nd: #181d1e;
-  --v-dark-card: #181d1e;
-  --v-dark-rule: #283031;
-  --v-dark-text: #ecf1f0;
-  --v-dark-2: #99a5a3;
-  --v-dark-3: #7f8b89;
-  /* Accent text and links on light. */
-  --v-olive: #2e6e5b;
-  --v-olive-hover: #23574a;
-  /* Mynte: bars, key figures and badges, the primary button on dark; text only on dark. */
-  --v-lime: #a9dccb;
-  --v-lime-hover: #c4e8dc;
-  --v-lime-dark: #7cc1aa;
-  --v-lime-tone: #e3f2ec;
-  /* Big decorative circles on midnight bands. */
-  --v-circle: #1c2223;
+  --v-ink: #18181b;
+  --v-ink-2: #5e5e63;
+  --v-ink-3: #5e5e63;
+  --v-rule: #e0e0db;
+  --v-rule-2: #e9e9e5;
+  --v-dark: #202024;
+  --v-dark-2nd: #2a2a2f;
+  --v-dark-card: #2a2a2f;
+  --v-dark-rule: #3a3a41;
+  --v-dark-text: #f3f3f1;
+  --v-dark-2: #acacb2;
+  --v-dark-3: #94949b;
+  /* Accent text and links on light: ultraviolet. */
+  --v-olive: #4b2fe0;
+  --v-olive-hover: #3a22b8;
+  /* Light violet: bars, key figures, the primary button on dark; text only on dark. */
+  --v-lime: #b4a8ff;
+  --v-lime-hover: #c9c0ff;
+  --v-lime-dark: #5b3df5;
+  --v-lime-tone: #eeebff;
+  /* Big decorative circles on the dark bands. */
+  --v-circle: #26262b;
 
   --content: 1136px;
   --gutter: 32px;
@@ -62,8 +64,8 @@
   --card-pad: max(var(--gutter), calc((min(100%, 1400px) - var(--content)) / 2));
   --error: #a8473c;
   --error-on-dark: #e59a8e;
-  --product-shadow: 0 30px 60px -24px rgba(16, 20, 21, 0.35);
-  --float-shadow: 0 18px 36px -10px rgba(16, 20, 21, 0.22);
+  --product-shadow: 0 30px 60px -24px rgba(24, 24, 27, 0.35);
+  --float-shadow: 0 18px 36px -10px rgba(24, 24, 27, 0.22);
 
   min-height: 100vh;
   display: flex;
@@ -151,7 +153,7 @@
   font-size: 15px;
   font-weight: 600;
   color: #fff;
-  background: var(--v-ink);
+  background: var(--v-btn);
   border-radius: 999px;
   padding: 10px 18px;
   text-decoration: none;
@@ -183,7 +185,7 @@
   background: var(--v-white);
   border: 1px solid var(--v-rule);
   border-radius: 0 0 20px 20px;
-  box-shadow: 0 24px 40px -20px rgba(16, 20, 21, 0.35);
+  box-shadow: 0 24px 40px -20px rgba(24, 24, 27, 0.35);
   padding: 4px 20px 12px;
 }
 .menuPanel[hidden] {
@@ -310,8 +312,8 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--v-lime-tone);
-  color: var(--v-olive);
+  background: #f1e1bd;
+  color: var(--v-comp-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -369,7 +371,7 @@
   padding: 0 22px;
   border-radius: 999px;
   border: 0;
-  background: var(--v-ink);
+  background: var(--v-btn);
   color: #fff;
   font-size: 15px;
   font-weight: 600;
@@ -477,7 +479,7 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(7deg);
-  border: 2px solid rgba(16, 20, 21, 0.18);
+  border: 2px solid rgba(24, 24, 27, 0.18);
 }
 .heroText {
   position: relative;
@@ -561,8 +563,8 @@
   font-size: 15px;
   font-weight: 600;
   color: #fff;
-  background: var(--v-ink);
-  border: 1px solid var(--v-ink);
+  background: var(--v-btn);
+  border: 1px solid var(--v-btn);
   border-radius: 999px;
   padding: 14px 24px;
   text-decoration: none;
@@ -570,7 +572,7 @@
 }
 .heroButton:hover {
   color: #fff;
-  background: var(--v-dark-2nd);
+  background: var(--v-btn-hover);
 }
 /* Outlined pill next to the primary button. */
 .heroButtonGhost {
@@ -579,7 +581,7 @@
   font-size: 15px;
   font-weight: 600;
   color: var(--v-ink);
-  border: 1px solid rgba(16, 20, 21, 0.16);
+  border: 1px solid rgba(24, 24, 27, 0.16);
   border-radius: 999px;
   padding: 14px 24px;
   text-decoration: none;
@@ -604,10 +606,10 @@
   --a-line: #dce3e1;
   --a-text: #101415;
   --a-mut: #56615f;
-  --a-hl: #2e6e5b;
+  --a-hl: #1e6670;
   --a-neu: #c9d2d0;
   --a-err: #a8473c;
-  --a-shadow: rgba(16, 20, 21, 0.14);
+  --a-shadow: rgba(24, 24, 27, 0.14);
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -620,12 +622,12 @@
   color: var(--a-text);
 }
 .appDark {
-  --a-bg: #0a0d0e;
-  --a-surf: #1a2023;
-  --a-line: #343d40;
+  --a-bg: #0b2a2f;
+  --a-surf: #163c42;
+  --a-line: #2b4c51;
   --a-text: #ecf1f0;
   --a-mut: #a3aeac;
-  --a-hl: #a9dccb;
+  --a-hl: #a7cdd0;
   --a-neu: #4a5558;
   --a-err: #e59a8e;
   --a-shadow: rgba(10, 13, 14, 0.45);
@@ -687,8 +689,8 @@
   color: var(--a-text);
 }
 .appFigureOn {
-  background: var(--v-lime);
-  border-color: var(--v-lime);
+  background: var(--v-comp);
+  border-color: var(--v-comp);
   color: var(--v-ink);
 }
 .appFigureOn b {
@@ -743,7 +745,7 @@
   background: #ecf1ef;
   border: 1px solid var(--v-rule);
   border-radius: 28px;
-  box-shadow: 0 30px 60px -20px rgba(16, 20, 21, 0.14);
+  box-shadow: 0 30px 60px -20px rgba(24, 24, 27, 0.14);
   font-size: 10px;
   font-weight: 500;
   color: var(--v-ink-3);
@@ -879,7 +881,7 @@
   margin: 0 auto;
   border-radius: 32px;
   overflow: hidden;
-  background: #101415;
+  background: #202024;
 }
 .bannerImage {
   object-fit: cover;
@@ -888,7 +890,7 @@
 .bannerShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(16, 20, 21, 0.82) 0%, rgba(16, 20, 21, 0.2) 60%, rgba(16, 20, 21, 0) 100%);
+  background: linear-gradient(0deg, rgba(24, 24, 27, 0.82) 0%, rgba(24, 24, 27, 0.2) 60%, rgba(24, 24, 27, 0) 100%);
 }
 .bannerText {
   position: relative;
@@ -1062,7 +1064,7 @@
   background: var(--v-white);
   border: 1px solid var(--v-rule);
   border-radius: 18px;
-  box-shadow: 0 30px 60px -20px rgba(16, 20, 21, 0.14);
+  box-shadow: 0 30px 60px -20px rgba(24, 24, 27, 0.14);
 }
 .shareCardLabel {
   font: 500 12px var(--font-mono);
@@ -1345,7 +1347,7 @@
   width: 72px;
   height: 72px;
   border-radius: 20px;
-  background: var(--v-lime);
+  background: var(--v-comp);
   color: var(--v-ink);
 }
 /* Drawn loans: a name, the end month and a mynte bar for how far it is paid. */
@@ -1585,7 +1587,7 @@
   width: 100%;
   height: 38px;
   border-radius: 6px;
-  background: rgba(16, 20, 21, 0.12);
+  background: rgba(24, 24, 27, 0.12);
 }
 .bentoMonths i[data-pay="ink"] {
   background: var(--v-ink);
@@ -1700,7 +1702,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow: 0 30px 60px -30px rgba(16, 20, 21, 0.14);
+  box-shadow: 0 30px 60px -30px rgba(24, 24, 27, 0.14);
 }
 .priceHead {
   display: flex;
@@ -1743,13 +1745,13 @@
 .planButton[aria-pressed="true"] {
   background: var(--v-white);
   color: var(--v-ink);
-  box-shadow: 0 1px 3px rgba(16, 20, 21, 0.15);
+  box-shadow: 0 1px 3px rgba(24, 24, 27, 0.15);
 }
 .planTag {
   font-size: 11px;
   font-weight: 600;
   color: var(--v-ink);
-  background: var(--v-lime);
+  background: var(--v-comp);
   border-radius: 999px;
   padding: 2px 8px;
 }
@@ -1789,14 +1791,14 @@
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: var(--v-ink);
+  background: var(--v-btn);
   border-radius: 999px;
   padding: 16px;
   text-decoration: none;
 }
 .buttonBlock:hover {
   color: #fff;
-  background: var(--v-dark-2nd);
+  background: var(--v-btn-hover);
 }
 /* Pulled up under the button: the card's gap is too wide for a line that belongs to it. */
 .priceCardNote {
@@ -1881,48 +1883,9 @@
   overflow: hidden;
   max-width: 1200px;
   margin: 0 auto;
-  background: var(--v-hero);
-  color: var(--v-ink);
+  background: var(--v-dark);
+  color: var(--v-dark-text);
   border-radius: 32px;
-}
-.ctaShapes span {
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-}
-.ctaShapes span:nth-child(1) {
-  left: -160px;
-  top: -220px;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.6);
-}
-.ctaShapes span:nth-child(2) {
-  right: -40px;
-  bottom: -70px;
-  width: 300px;
-  aspect-ratio: 1.55;
-  border-radius: 18% / 26%;
-  transform: rotate(-10deg);
-  background: var(--v-lime);
-}
-.ctaShapes span:nth-child(3) {
-  right: 150px;
-  bottom: 40px;
-  width: 150px;
-  aspect-ratio: 1.55;
-  border-radius: 18% / 26%;
-  transform: rotate(12deg);
-  border: 2px solid var(--v-comp-rule);
-}
-.ctaShapes span:nth-child(4) {
-  left: 9%;
-  bottom: -34px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: var(--v-comp);
 }
 .ctaInner {
   position: relative;
@@ -1953,19 +1916,23 @@
   max-width: 640px;
   font-size: 15px;
   line-height: 1.5;
-  color: var(--v-ink-2);
+  color: var(--v-dark-2);
 }
-.cta .label {
-  color: var(--v-ink-2);
+.cta .signupDark .input {
+  border-color: transparent;
 }
-.cta .input {
-  border-color: var(--v-comp-rule);
+.cta .signupDark .submit {
+  background: var(--v-comp);
+  color: var(--v-comp-ink);
+}
+.cta .signupDark .submit:hover {
+  background: #eed9ab;
 }
 .cta .error {
   color: var(--error);
 }
 .cta :focus-visible {
-  outline-color: var(--v-ink);
+  outline-color: #fff;
 }
 .ctaForm {
   width: 100%;
@@ -1994,8 +1961,7 @@
   color: var(--v-dark-text);
   border-radius: 32px;
 }
-.bizShapes,
-.ctaShapes {
+.bizShapes {
   position: absolute;
   inset: 0;
   z-index: -1;

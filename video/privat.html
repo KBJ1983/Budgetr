@@ -1,18 +1,18 @@
 <!doctype html>
 <!--
   Privat film (about 1 min 48 s) for budgetpro.dk: what you get with budgetpro – the guide's start step, statement import, the overview, sharing, goals,
-  loans, reminders and the rest – and the price. "Mynte og is" with motion graphics (logo build, kinetic headlines,
+  loans, reminders and the rest – and the price. "A6" with motion graphics (logo build, kinetic headlines,
   curtain transitions, lime orb). Runtime and shared styles: film.js / film.css. Render: `pnpm video privat`.
   Screenshots show the fictional demo budget (public/landing/, `pnpm shots`).
 -->
-<html lang="da">
+<html lang="da" data-theme="a6">
 <head>
 <meta charset="utf-8" />
 <title>budgetpro film</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&display=block" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@200;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=block" rel="stylesheet" />
 <link rel="stylesheet" href="film.css" />
 <style>
   #gs { left: 900px; top: 200px; }
@@ -37,7 +37,7 @@
   .gf .full { grid-column: 1 / -1; }
   .gin { height: 54px; border-radius: 12px; border: 1.5px solid var(--rule-2); background: var(--paper); display: flex; align-items: center; padding: 0 16px; font-size: 21px; color: var(--ink); }
   .gin.focus { border-color: var(--midnight); background: var(--white); box-shadow: 0 0 0 4px rgba(169, 220, 203, .6); }
-  .gin .ph { color: #9aa6a4; }
+  .gin .ph { color: #a1a1a8; }
   .caret { display: inline-block; width: 2px; height: 26px; background: var(--ink); margin-left: 1px; }
   .gseg { display: inline-flex; justify-self: start; border: 1.5px solid var(--rule-2); border-radius: 12px; overflow: hidden; }
   .gseg span { padding: 10px 18px; font-size: 18px; color: var(--ink-2); }
@@ -221,7 +221,7 @@
       <div class="mb"><div class="mf"><b>budgetpro</b><span>1. marts</span></div>
         <h4>Tillykke, du har nået 50 % af dit opsparingsmål</h4>
         <p>Sommerferie i Italien: skønnet opsparet 12.000 kr af 24.000 kr.</p></div>
-      <div class="side"><svg width="96" height="96" viewBox="0 0 76 76"><circle cx="38" cy="38" r="30" fill="none" stroke="#EEF2F1" stroke-width="10"/><circle id="ring" cx="38" cy="38" r="30" fill="none" stroke="#7CC1AA" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 38 38)"/><text id="ringPct" x="38" y="44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="17" font-weight="500" fill="#101415">0 %</text></svg></div>
+      <div class="side"><svg width="96" height="96" viewBox="0 0 76 76"><circle cx="38" cy="38" r="30" fill="none" stroke="#ECECE9" stroke-width="10"/><circle id="ring" cx="38" cy="38" r="30" fill="none" stroke="#7CC1AA" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 38 38)"/><text id="ringPct" x="38" y="44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="17" font-weight="500" fill="#101415">0 %</text></svg></div>
     </div>
     <div class="abs card mailc" id="m3">
       <span data-icon="56"></span>
@@ -239,12 +239,12 @@
       <h2>Alt det, et regneark ellers skal <span class="hl">klare</span></h2>
     </div>
     <div class="abs" id="more">
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 9c0 6 12 0 12 6"/></svg></i><div><b>Scenarier</b><span>Hvad hvis I flytter eller skifter job?</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></i><div><b>Kladder</b><span>Et nyt budget ved siden af</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></i><div><b>Faste overførsler</b><span>Pengene, der flytter sig selv</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><b>Måned for måned</b><span>Saldoen på hver konto</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></i><div><b>Opgaver</b><span>Noter, hvad der skal gøres</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2E6E5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></i><div><b>PDF og Excel</b><span>Dine tal, når du vil have dem</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 9c0 6 12 0 12 6"/></svg></i><div><b>Scenarier</b><span>Hvad hvis I flytter eller skifter job?</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></i><div><b>Kladder</b><span>Et nyt budget ved siden af</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></i><div><b>Faste overførsler</b><span>Pengene, der flytter sig selv</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><b>Måned for måned</b><span>Saldoen på hver konto</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></i><div><b>Opgaver</b><span>Noter, hvad der skal gøres</span></div></div>
+      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></i><div><b>PDF og Excel</b><span>Dine tal, når du vil have dem</span></div></div>
     </div>
   </div>
 

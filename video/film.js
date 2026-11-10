@@ -232,6 +232,12 @@
     const accent = v("--lime"), inkDark = v("--logo-dark");
     if (accent) TONES.light.front = TONES.dark.front = TONES.lime.bg = accent;
     if (inkDark) TONES.dark.ink = inkDark;
+    // A6: the logo is one colour – graphite on light, white on dark – and cut out of the dark cards' own colour.
+    if (v("--logo-mono") === "1") {
+      TONES.light.ink = TONES.light.front = v("--ink");
+      TONES.dark.front = TONES.dark.ink;
+      TONES.dark.bg = v("--midnight");
+    }
   }
   /** The pocket symbol (components/Logo.tsx LogoMark), with groups for the back card, the front card and the pocket. */
   function markSvg(tone = "light", bg) {
@@ -251,10 +257,11 @@
       const st = el.dataset.sticker ? `<span class="lg-stw"><span class="lg-st">${el.dataset.sticker}</span></span>` : "";
       el.innerHTML = `${markSvg(tone, el.dataset.bg)}<span class="lg-name"><b>budget</b><i>pro</i></span>${st}`;
     });
+    const iconBg = getComputedStyle(document.documentElement).getPropertyValue("--icon-bg").trim() || "#101415";
     $$("[data-icon]").forEach((el) => {
       const n = Number(el.dataset.icon) || 64;
-      el.style.cssText += `;display:inline-grid;place-items:center;flex:none;width:${n}px;height:${n}px;border-radius:${n * 0.25}px;background:#101415`;
-      el.innerHTML = markSvg("dark").replace("<svg ", `<svg width="${n * 0.66}" height="${n * 0.66}" style="overflow:visible" `);
+      el.style.cssText += `;display:inline-grid;place-items:center;flex:none;width:${n}px;height:${n}px;border-radius:${n * 0.25}px;background:${iconBg}`;
+      el.innerHTML = markSvg("dark", iconBg).replace("<svg ", `<svg width="${n * 0.66}" height="${n * 0.66}" style="overflow:visible" `);
     });
   }
   /** The logo builds itself from second a: the pocket rises, the two cards drop in, the name slides out, a sticker pops. */

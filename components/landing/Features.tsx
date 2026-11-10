@@ -49,7 +49,7 @@ const SLIDES: readonly TourSlide[] = [
     label: "Milepæle",
     title: "Besked, når I når et mål.",
     body: "Ved 10, 25, 50, 75 og 100 % af et opsparingsmål får du en besked, næste gang du logger ind.",
-    visual: { kind: "shot", name: "besked", alt: "Beskeden ved login: et opsparingsmål har nået 50 %", width: 1040, height: 972 },
+    visual: { kind: "shot", name: "besked", alt: "Beskeden ved login: et opsparingsmål har nået 50 %", width: 1040, height: 1224 },
   },
   {
     label: "Påmindelser",

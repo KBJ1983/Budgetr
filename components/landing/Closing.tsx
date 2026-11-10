@@ -148,7 +148,7 @@ const FAQ = [
   },
   {
     q: "Skal jeg give adgang til min netbank?",
-    a: "Nej. Du henter selv en kontoudskrift som CSV, Excel eller PDF og uploader den. Beløbene kan også skrives ind i hånden.",
+    a: "Nej. Du henter selv en kontoudskrift som CSV, Excel eller PDF og uploader den. Beløbene kan også skrives ind manuelt.",
   },
   {
     q: "Hvordan virker påmindelserne?",
@@ -202,22 +202,17 @@ export function Pricing() {
 export function FinalCta() {
   return (
     <section className={styles.ctaWrap} aria-labelledby="cta-title">
+      {/* A plain deep petrol band, without background shapes (user's wish, Nov 2026). */}
       <div className={styles.cta}>
-        <div className={styles.ctaShapes} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-        </div>
         <div className={styles.ctaInner}>
-          <Logo fontSize={24} bg="#F2F0EA" />
+          <Logo fontSize={24} dark bg="#202024" />
           <h2 id="cta-title" className={styles.ctaTitle}>
             Slip for de mange versioner af Excel-budgettet.
           </h2>
           <p className={styles.ctaLead}>Ét samlet budget. Tilgængeligt overalt.</p>
           <p className={styles.ctaBody}>Prøv gratis i 30 dage, og følg guiden. Betalingskortet skal først bruges, når de 30 dage er gået.</p>
           <div className={styles.ctaForm}>
-            <SignupForm idPrefix="cta" centered />
+            <SignupForm idPrefix="cta" variant="dark" centered />
           </div>
         </div>
       </div>

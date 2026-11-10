@@ -66,10 +66,10 @@ try {
   await page.waitForURL(/\/opret/);
   check(true, "hero button opens the signup");
 
-  // Tryghed comes right after "Sådan virker det"
+  // Front page "A6": hero, film, the story band, Funktioner, the dialog, Tryghed, Pris (components/landing/Front.tsx)
   await page.goto(`${BASE}/`);
   const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.id).filter(Boolean));
-  check(order.indexOf("tryghed") === order.indexOf("saadan") + 1, `Tryghed follows Sådan virker det (${order.join(" → ")})`);
+  check(order.join(",") === "top,film,saadan,funktioner,sammen,tryghed,pris", `front page sections in order (${order.join(" → ")})`);
 
   // Final signup form prefills the account signup
   const signup = page.locator('form:has(input[type="email"])');
@@ -88,12 +88,9 @@ try {
   check((await page.locator("#bxUser").textContent()) === "KBJ", "app shows the logged-in test user");
   // A click anywhere on the page must not act as a page button (<body data-page> once did: it re-rendered and jumped to the top).
   {
-    // Konti is folded until its head is pressed (Overblik: Rådighedsbeløb first, then Konti and Hvem betaler hvad).
-    const konti = page.locator('section[data-sfold="konti"]');
-    if ((await konti.count()) > 0 && !(await konti.evaluate((n) => n.classList.contains("open")))) {
-      await konti.locator(".sftog").click();
-      check(await konti.evaluate((n) => n.classList.contains("open")), "Konti folds out from its head");
-    }
+    // Konti and Hvem betaler hvad live on the Hvem betaler page (D, Nov 2026).
+    await page.locator(`.tabs [role=tab]`, { hasText: /^Hvem betaler$/ }).first().click();
+    await page.waitForTimeout(400);
     const acct = page.locator("details.acctd").last();
     if ((await acct.count()) > 0) {
       await acct.evaluate((n) => n.scrollIntoView({ block: "center" }));
@@ -104,24 +101,35 @@ try {
       check((await acct.evaluate((n) => n.open)) === !was && (await page.evaluate(() => scrollY)) === y0, "an account folds where it is clicked, without jumping to the top");
       await acct.locator("summary h3").click();
     }
+    check((await page.locator(".wcard").count()) > 0, "Hvem betaler shows the person cards");
+    await page.locator(`.tabs [role=tab]`, { hasText: /^Overblik$/ }).first().click();
+    await page.waitForTimeout(400);
   }
   if (HAS_PRIVATE) {
-    await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
-    for (const t of ["Måned for måned", "Hvad er der tilbage", "Ekstra indtjening"]) {
+    await page.getByRole("heading", { name: /Sådan ser banken det/ }).first().waitFor();
+    for (const t of ["Måned for måned", "Til rådighed", "Sådan fordeler"]) {
       check((await page.getByText(t).count()) > 0, `KBJ budget shows “${t}”`);
     }
   }
   for (const [name, text] of [
-    ["Overblik over lån", /restgæld/i],
-    ["Faste overførsler", /overfør/i],
-    ["Opsparingsmål", /opspar/i],
+    ["Hvem betaler", /overfør/i],
+    ["Opsparing og gæld", /opspar/i],
     ["Budgetposter", /Udvikling i poster|Intet budget/],
-    ["Overblik", /Hvem betaler hvad|Intet budget/],
+    ["Hvad nu hvis", /scenarie/i],
+    ["Overblik", /Sådan ser banken det|Intet budget/],
   ]) {
     await page.locator(`.tabs [role=tab]`, { hasText: new RegExp(`^${name}$`) }).first().click();
     await page.waitForTimeout(400);
     check((await page.locator("#app").getByText(text).count()) > 0, `tab “${name}” renders`);
   }
+  // Lån is a sub page of Opsparing og gæld
+  await page.locator(`.tabs [role=tab]`, { hasText: /^Opsparing og gæld$/ }).first().click();
+  await page.waitForTimeout(300);
+  await page.locator(".subseg [data-sub=laan]").click();
+  await page.waitForTimeout(400);
+  check((await page.locator("#app").getByText(/restgæld/i).count()) > 0, "Lån opens under Opsparing og gæld");
+  await page.locator(`.tabs [role=tab]`, { hasText: /^Overblik$/ }).first().click();
+  await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/kbj.png` });
 
   // Switch to TEST1: empty budget → the app's own guide / empty budget
@@ -145,7 +153,7 @@ try {
   check((await page.getByText("Intet budget endnu").count()) === 0, "TEST1's budget is saved");
   await loginAs("KBJ");
   if (HAS_PRIVATE) {
-    await page.getByRole("heading", { name: "Hvem betaler hvad" }).first().waitFor();
+    await page.getByRole("heading", { name: /Sådan ser banken det/ }).first().waitFor();
     check((await page.getByText(kbjName).count()) > 0, "KBJ still has the real budget");
   }
   const keys = await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("budgetr-app:")).sort());

@@ -1,6 +1,7 @@
 /*
  * "Kom godt i gang" guides (A4, printed to PDF by scripts/guides.mjs).
- * Palette from the brand ("Mynte og is", docs/design/MYNTE.md); <html data-theme="skole"> swaps mynte for solgul ("Is og solgul").
+ * Palette from the brand ("Mynte og is", docs/design/MYNTE.md); <html data-theme="skole"> swaps mynte for solgul ("Is og solgul"),
+ * <html data-theme="a6"> gives the website's "A6" look (Erhverv): graphite, stone, ultraviolet buttons, light violet on dark.
  */
 @import url("../public/budgetr-app/fonts/fonts.css");
 
@@ -14,6 +15,18 @@
   --line: #dce3e1;
   --muted: #56615f;
   --haze: #99a5a3;
+}
+html[data-theme="a6"] {
+  --midnight: #18181b;
+  --midnight2: #2a2a2f;
+  --accent: #b4a8ff;
+  --accent-ink: #4b2fe0;
+  --accent-tone: #ece9fe;
+  --page: #f3f3f1;
+  --line: #e0e0db;
+  --muted: #5e5e63;
+  --haze: #acacb2;
+  --btn: #5b3df5;
 }
 html[data-theme="skole"] {
   --accent: #f6cf4a;
@@ -748,4 +761,79 @@ td b {
 }
 .addr .url {
   justify-self: start;
+}
+
+/* "A6" (Erhverv, Nov 2026): Plus Jakarta Sans, stone cover, ultraviolet buttons, a rosa badge, dark parts in graphite. */
+html[data-theme="a6"] body {
+  background: #d4d4d0;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+@media print {
+  html[data-theme="a6"] body {
+    background: #fff;
+  }
+}
+html[data-theme="a6"] .cover-paper {
+  background: #f3f3f1;
+}
+html[data-theme="a6"] .cover-paper .cover-step,
+html[data-theme="a6"] .cover-paper .cover-foot {
+  border-color: #e0e0db;
+}
+html[data-theme="a6"] .cover-rule {
+  background: #18181b;
+}
+html[data-theme="a6"] .cover-badge {
+  color: #18181b;
+  background: #ff9fcf;
+}
+html[data-theme="a6"] .cover h1 .hl {
+  background: linear-gradient(transparent 78%, #b4a8ff 78%, #b4a8ff 92%, transparent 92%);
+}
+html[data-theme="a6"] .cover-step b,
+html[data-theme="a6"] .steps > li > .n {
+  background: var(--btn);
+  color: #fff;
+}
+html[data-theme="a6"] .btn-ref.primary,
+html[data-theme="a6"] .s-btn.primary,
+html[data-theme="a6"] .s-pill.on {
+  background: var(--btn);
+  border-color: var(--btn);
+  color: #fff;
+}
+html[data-theme="a6"] .screen-body.dark {
+  background: #202024;
+}
+html[data-theme="a6"] .screen-body.dark .s-input {
+  background: #2a2a2f;
+  border-color: #3a3a41;
+}
+html[data-theme="a6"] .screen-body.dark .s-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #18181b;
+}
+html[data-theme="a6"] .box.dark {
+  background: #202024;
+}
+html[data-theme="a6"] .intro,
+html[data-theme="a6"] .qa div p {
+  color: #3f3f46;
+}
+html[data-theme="a6"] .screen,
+html[data-theme="a6"] .mail,
+html[data-theme="a6"] .shot {
+  box-shadow: 0 2mm 6mm rgba(24, 24, 27, 0.08);
+}
+/* Plus Jakarta Sans runs a little wider than Hanken Grotesk: slightly smaller body text keeps every page on its sheet. */
+html[data-theme="a6"] .steps > li p {
+  font-size: 9.2pt;
+}
+html[data-theme="a6"] .box p,
+html[data-theme="a6"] .box li {
+  font-size: 8.9pt;
+}
+html[data-theme="a6"] .intro {
+  font-size: 10.6pt;
 }

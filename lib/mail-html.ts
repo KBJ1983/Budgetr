@@ -1,9 +1,9 @@
 /**
- * Turns a plain-text mail (subject + text) into a simple branded HTML mail ("Mynte og is", docs/design/MYNTE.md;
- * with theme "skole" budgetpro Skole's "Is og solgul", docs/design/skole-21b.html).
+ * Turns a plain-text mail (subject + text) into a simple branded HTML mail ("A6", Nov 2026; with theme "skole"
+ * budgetpro Skole's "Is og solgul", docs/design/skole-21b.html).
  * The text part is sent unchanged next to it; this only reads it:
  * - blocks separated by blank lines become paragraphs (single line breaks stay),
- * - a line that is only a link to our own site becomes a midnight button (the first one) or an olive link (the rest),
+ * - a line that is only a link to our own site becomes a button (the first one) or an accent-coloured link (the rest),
  *   always with the raw address under it so it can be copied; links to other sites are never made clickable,
  * - a line that is only a code ("123 456" or "ABCD-EFGH") becomes a big code box,
  * - lines starting with "- " become a list, an UPPERCASE first line a small heading, and a block of "Label: value"
@@ -21,22 +21,32 @@ export interface MailHtmlOptions {
   theme?: "skole";
 }
 
-const C = {
+/** Colours per theme: budgetpro in "A6" (stone page, graphite text, ultraviolet button and links), Skole keeps "Is og solgul". */
+const A6 = {
+  paper: "#F3F3F1",
+  card: "#FFFFFF",
+  rule: "#E0E0DB",
+  ink: "#18181B",
+  text: "#5E5E63",
+  muted: "#5E5E63",
+  button: "#5B3DF5",
+};
+const MYNTE = {
   paper: "#F0F3F2",
   card: "#FFFFFF",
   rule: "#DCE3E1",
   ink: "#101415",
   text: "#56615F",
   muted: "#56615F",
-  olive: "#2E6E5B",
-  limeTone: "#E3F2EC",
+  button: "#101415",
 };
-const FONT = "'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const FONT = "'Plus Jakarta Sans', 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const FONT_SKOLE = "'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 const MONO = "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
 /** Per theme: footer, logo PNG in public/mail/ (made at double size, shown at half), code box and accent text on white. */
 const THEMES = {
-  budgetpro: { footer: "budgetpro · Dit overblik. Dine drømme.", name: "budgetpro", logo: { path: "/mail/logo.png", width: 150, height: 33 }, codeBg: C.limeTone, accent: C.olive },
-  skole: { footer: "budgetpro Skole · Et tema om privatøkonomi til udskolingen", name: "budgetpro Skole", logo: { path: "/mail/logo-skole.png", width: 192, height: 33 }, codeBg: "#FCF1C8", accent: "#7A5300" },
+  budgetpro: { footer: "budgetpro · Dit overblik. Dine drømme.", name: "budgetpro", logo: { path: "/mail/logo.png", width: 150, height: 33 }, codeBg: "#ECE9FE", accent: "#4B2FE0", c: A6, font: FONT },
+  skole: { footer: "budgetpro Skole · Et tema om privatøkonomi til udskolingen", name: "budgetpro Skole", logo: { path: "/mail/logo-skole.png", width: 192, height: 33 }, codeBg: "#FCF1C8", accent: "#7A5300", c: MYNTE, font: FONT_SKOLE },
 };
 
 export const MAIL_LOGO = THEMES.budgetpro.logo;
@@ -66,6 +76,8 @@ export function mailHtml(mail: { subject: string; text: string }, opts: MailHtml
   const site = originOf(opts.siteUrl);
   const own = (u: string) => site !== null && originOf(u) === site;
   const th = THEMES[opts.theme ?? "budgetpro"];
+  const C = th.c;
+  const FONT = th.font;
   let buttonUsed = false;
 
   // Text with our own links made clickable (trailing punctuation stays text), everything escaped.
@@ -91,7 +103,7 @@ export function mailHtml(mail: { subject: string; text: string }, opts: MailHtml
     const label = opts.button ?? (new URL(url).pathname.startsWith("/app") ? "Åbn budgetpro" : "Åbn linket");
     return (
       `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 12px;"><tr>` +
-      `<td align="center" bgcolor="${C.ink}" style="background:${C.ink};border-radius:999px;">` +
+      `<td align="center" bgcolor="${C.button}" style="background:${C.button};border-radius:999px;">` +
       `<a href="${escapeHtml(url)}" style="display:inline-block;padding:13px 28px;font-family:${FONT};font-size:15px;font-weight:600;line-height:1.2;color:#FFFFFF;text-decoration:none;border-radius:999px;">${escapeHtml(label)}</a>` +
       `</td></tr></table>` +
       p(`Virker knappen ikke, kan du kopiere linket:<br>${link(url)}`, `font-size:13px;line-height:1.5;color:${C.muted};`)

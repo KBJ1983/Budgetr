@@ -10,24 +10,21 @@ const BASE = process.env.BASE_URL ?? "http://localhost:3200";
 const OUT = "public/landing";
 mkdirSync(OUT, { recursive: true });
 
+// The app's five pages (structure "D"): `tab` is a page button; Lån and Opsparingsmål are sub pages of Opsparing og gæld
+// (`sub`, the switch at the top of that page).
 const SHOTS = [
   { name: "overblik", viewport: [1180, 737] },
   { name: "poster", viewport: [1180, 737], tab: "poster" },
-  { name: "laan", viewport: [1180, 737], tab: "laan" },
-  { name: "maal", viewport: [1180, 737], tab: "maal" },
-  { name: "bank", viewport: [880, 900], el: "section.bank" },
-  // Person cards only down to what is left each month: the checkboxes and everything below are hidden in the shot.
-  {
-    name: "hvem",
-    viewport: [940, 1000],
-    el: "section:has(.people)",
-    css: ".person .ptog, .person .big ~ .muted ~ * { display: none !important }",
-  },
+  { name: "laan", viewport: [1180, 737], tab: "formue", sub: "laan" },
+  { name: "maal", viewport: [1180, 737], tab: "formue", sub: "maal" },
+  { name: "bank", viewport: [880, 900], el: "section.dbank" },
+  // Hvem betaler: the split, each lønkonto and the shared account as short calculations.
+  { name: "hvem", viewport: [1180, 737], tab: "overf" },
   { name: "mobil", viewport: [390, 780], mobile: true },
   // The rest of the hero tour on a phone (swiped through in the mobile hero).
   { name: "mobil-poster", viewport: [390, 780], mobile: true, tab: "poster" },
-  { name: "mobil-laan", viewport: [390, 780], mobile: true, tab: "laan" },
-  { name: "mobil-maal", viewport: [390, 780], mobile: true, tab: "maal" },
+  { name: "mobil-laan", viewport: [390, 780], mobile: true, tab: "formue", sub: "laan" },
+  { name: "mobil-maal", viewport: [390, 780], mobile: true, tab: "formue", sub: "maal" },
   // The login note (a goal milestone + the update reminder) and the reminder settings.
   { name: "besked", viewport: [760, 760], el: "#dlgNote", notes: true },
   { name: "paamind", viewport: [1100, 700], el: "#dlgSet", settings: "paamind" },
@@ -74,8 +71,6 @@ for (const theme of ["light", "dark"]) {
       ([t, notes]) => {
         localStorage.setItem("budgetr:session", "test5");
         localStorage.setItem("hb-theme", t);
-        // Overblik folds Konti and Hvem betaler hvad until opened; the shots show them open.
-        localStorage.setItem("hb-secopen", JSON.stringify({ konti: true, hvem: true }));
         // On phones Budgetposter starts folded; the shots open Indtægter and Bolig so posts show.
         localStorage.setItem("hb-post-fold", JSON.stringify({ "g:indtaegt": false, "c:Bolig": false }));
         if (!notes) sessionStorage.setItem("budgetr:quiet", "1"); // no login note over the screenshot
@@ -83,7 +78,7 @@ for (const theme of ["light", "dark"]) {
       [theme, !!s.notes],
     );
     await page.goto(`${BASE}/app`);
-    await page.getByRole("heading", { name: "Hvem betaler hvad" }).waitFor();
+    await page.locator("section.dbank").waitFor();
     await page.evaluate((css) => {
       const u = document.getElementById("bxUser");
       if (u) u.textContent = "AJ";
@@ -92,7 +87,8 @@ for (const theme of ["light", "dark"]) {
       document.head.append(st);
     }, s.css ?? "");
     // On phones the pages sit in the bottom bar (.mnav); the top tabs are hidden there.
-    if (s.tab) await page.locator(`${s.mobile ? ".mnav" : ".tabs"} [data-page="${s.tab}"]`).click();
+    if (s.tab) await page.locator(`${s.mobile ? ".mnav" : ".tabs"} button[data-page="${s.tab}"]`).click();
+    if (s.sub) await page.locator(`button[data-sub="${s.sub}"]`).first().click();
     if (s.notes) await page.locator("#dlgNote").waitFor();
     if (s.settings) {
       // The app opens a settings page from any [data-set] element (its functions are not on window).
