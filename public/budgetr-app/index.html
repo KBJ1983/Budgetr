@@ -47,13 +47,13 @@
   /* App palette (Nov 2026, user's choice): the website's blue only where you act – buttons (--btn #5B3DF5), links and
      accent text (--pine #4B2FE0, keeps its old name), the active tab and the task badge (--comp) – and otherwise calm
      slate blue-greys close together: key-figure tiles (--deep), the Fordeling envelopes (--env1–4, darkest to lightest,
-     Til rådighed the lightest), bars (--lime), tints (--pine-bg, --grp), the scenario banner (--scn). "Better" is a
+     Til rådighed the lightest), bars (--lime), tints (--pine-bg, --grp), the scenario banner (--scn, yellow – user's wish: you see at once that you edit a scenario). "Better" is a
      dark slate (--pos), not green; "worse" stays red (--neg). No petrol, sand, rosa, lilac or violet surfaces (user's
      wish: one calm expression). --brick stays for errors. --grp is the group bands on Poster. */
   --paper:#F3F3F1; --card:#FFFFFF; --ink:#18181B; --ink2:#5E5E63; --ink3:#5E5E63; --rule:#E0E0DB; --rule2:#CFCFCA; --band:#E9E9E5;
   --pine:#4B2FE0; --pine-bg:#E7EAEF; --pine-ink:#3A22B8; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#18181B; --ochre-bg:#E9E9E5; --ochre-rule:#18181B; --warnline:#18181B;
   --hero-sub:#9C9CA3; --on-pine:#FFFFFF; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#CFCFCA; --lime:#8B98AC; --lime-bar:#8B98AC;
-  --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2E3B4E; --deepm:#C5CDD8; --grp:#E7EAEF; --track:#E7E7E3; --scn:#E3E7ED; --scn-on:#18181B;
+  --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2E3B4E; --deepm:#C5CDD8; --grp:#E7EAEF; --track:#E7E7E3; --scn:#F7DC7E; --scn-on:#18181B;
   --pos:#2E3B4E; --pos-bg:#E3E7ED; --neg:#A3453A; --neg-bg:#F6E1DC; --logo-ink:#18181B; --logo-front:#18181B;
   --tone2:#4D5B73; --tone2-bg:#E7EAEF;
   --mk1:#34415A; --mk2:#5E6C84; --mk3:#8B98AC; --mk4:#B8C1CE; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -63,10 +63,10 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#2F3746; --scn-on:#F3F3F1; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
+  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#E9C95C; --scn-on:#18181B; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
   --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#2F3746; --scn-on:#F3F3F1; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
+  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#E9C95C; --scn-on:#18181B; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
   --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -1632,7 +1632,7 @@ tr.grp.resline td.r{font-size:16px}
 .dfor h2 .hsub{font-weight:400;color:var(--ink2);font-size:.85em}
 
 /* The scenario bar */
-.scnbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:10px 0 0;padding:10px 14px;border-radius:12px;background:var(--scn,#E3E7ED);color:var(--scn-on,#18181B);font-size:14px;box-shadow:0 6px 18px -8px rgba(16,20,21,.45)}
+.scnbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:10px 0 0;padding:10px 14px;border-radius:12px;background:var(--scn,#F7DC7E);color:var(--scn-on,#18181B);font-size:14px;box-shadow:0 6px 18px -8px rgba(16,20,21,.45)}
 .scnbar[hidden]{display:none}
 .scnbar .sbdot{width:10px;height:10px;border-radius:50%;background:#18181B;flex:0 0 auto}
 .scnbar .sbtx{flex:1;min-width:200px}
