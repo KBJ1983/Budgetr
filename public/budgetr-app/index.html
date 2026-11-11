@@ -1549,6 +1549,10 @@ section.whosec{margin-top:22px}
 .inbox li.ck.mcok{padding-top:4px}
 .inbox .mcsub{margin:6px 0 2px;font-size:14px;color:var(--ink2)}
 .inbox li.ck{padding-left:0!important}
+/* Månedstjek: the change sits right-aligned on a slightly darker chip, next to its Ret (user's wish). */
+.inbox li.ck .nm{flex:1}
+.inbox li.ck .am{flex:none;margin-left:auto;padding:4px 10px;border-radius:8px;background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+.inbox li.ck.mcok .am,.inbox li.ck .am:only-child{background:none}
 .inbox li.ck.mcok button{padding:7px 16px}
 tr.row.mark td{background:var(--pine-bg)!important}
 tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
@@ -1563,7 +1567,7 @@ tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
 .bcalc .brow.end{border-top:2px solid var(--ink);font-weight:700}
 .bcalc .brow.end b{font-size:15px;padding:2px 9px;border-radius:999px}
 .bcalc .brow.end.good b{background:var(--pos-bg);color:var(--pos)} .bcalc .brow.end.bad b{background:var(--neg-bg);color:var(--neg)}
-@media (max-width:760px){.inbox li.ck{flex-wrap:wrap;padding-left:34px}.inbox li.ck .am{flex-basis:100%;order:1}.inbox li.ck .ckb{order:2}
+@media (max-width:760px){.inbox li.ck{flex-wrap:wrap}.inbox li.ck .nm{flex-basis:100%}.inbox li.ck .am{margin-left:0}
   .inbox li.t{flex-wrap:wrap;gap:4px 10px}.inbox li.t .tx{flex-basis:calc(100% - 34px);margin-left:34px}.inbox li.t .lnk{margin-left:34px}}
 
 /* Income bar on top of the envelopes */
@@ -2615,7 +2619,7 @@ function render(){
   const hTop=h; h=scBarHtml(true)+startInfo(true);
   h+=`<section><div class="sechead"><h2>Budgetposter</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Hvem betaler</button>, og opsparingsmålene under <button type="button" class="ghost" data-go="formue" style="padding:0;color:var(--pine);text-decoration:underline">Opsparing og gæld</button>.</span></div>
   <div class="filters"><div class="fchips">
-    <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Alle udgifter</option><option value="regn">Regninger</option><option value="hush">Husholdning</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
+    <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Alle udgifter</option><option value="regn">Udgifter, banken regner med</option><option value="hush">Husholdning</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
     <select id="flPayer" aria-label="Filtrér betaler"><option value="alle">Alle betalere</option><option value="${FAELLES}">Fælles</option>${S.persons.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
     <div class="qbox"><input id="flQ" type="search" placeholder="Søg og hop til en post" aria-label="Søg i posterne" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="flQList" autocomplete="off" value="${esc(F.q)}"><div class="qlist" id="flQList" role="listbox" aria-label="Poster der matcher" hidden></div></div>
@@ -3511,7 +3515,7 @@ function rowsHtml(){
   const add=(type,cat,label)=>`<button type="button" class="addp" data-addpost="${type}" data-cat="${esc(cat)}" aria-label="Ny post i ${esc(label)}" title="Ny post i ${esc(label)}">+</button>`;
   const order=catList(), rank=k=>k===NOCAT?1e6:(order.indexOf(k)<0?1e5:order.indexOf(k));
   let h='';
-  [['indtaegt','Indtægter','in','indtaegt'],['udgift','Regninger','out e1g','regn'],['udgift','Husholdning','out e2g','hush']].forEach(([type,label,cls,gk])=>{
+  [['indtaegt','Indtægter','in','indtaegt'],['udgift','Udgifter','out e1g','regn'],['udgift','Husholdning','out e2g','hush']].forEach(([type,label,cls,gk])=>{
     const G=L.filter(e=>e.type===type&&(gk==='regn'?inBank(e):gk==='hush'?!inBank(e):true));if(!G.length&&!plain)return;
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false&&exCounts(e)).reduce((a,e)=>a+mAvg(e),0);
