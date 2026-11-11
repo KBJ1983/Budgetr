@@ -1538,6 +1538,14 @@ section.whosec{margin-top:22px}
 .inbox li.t b{font-size:14.5px}
 .inbox li.t .tx{color:var(--ink2);flex:1;min-width:0}
 .inbox li.t .lnk{margin:0;white-space:nowrap}
+/* A post to check, under its item: name, amount, "Beløbet passer" and "Ret". */
+.inbox li.ck{display:flex;align-items:center;gap:6px 12px;padding:7px 0 7px 36px;font-size:14px}
+.inbox li.ck .nm{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inbox li.ck .am{flex:1;color:var(--ink2);font-family:var(--mono);font-size:13px;white-space:nowrap}
+.inbox li.ck .ckb{display:flex;gap:6px}
+.inbox li.ck button{margin:0;padding:5px 12px;min-height:0;font-size:13px;border-radius:999px;white-space:nowrap}
+tr.row.mark td{background:var(--pine-bg)!important}
+tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
 .bcalc{display:grid;margin-top:4px}
 .bcalc .brow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;border-top:1px solid var(--rule);font-size:14px}
 .bcalc .brow:first-child{border-top:0}
@@ -1549,7 +1557,8 @@ section.whosec{margin-top:22px}
 .bcalc .brow.end{border-top:2px solid var(--ink);font-weight:700}
 .bcalc .brow.end b{font-size:15px;padding:2px 9px;border-radius:999px}
 .bcalc .brow.end.good b{background:var(--pos-bg);color:var(--pos)} .bcalc .brow.end.bad b{background:var(--neg-bg);color:var(--neg)}
-@media (max-width:760px){.inbox li.t{flex-wrap:wrap;gap:4px 10px}.inbox li.t .tx{flex-basis:calc(100% - 34px);margin-left:34px}.inbox li.t .lnk{margin-left:34px}}
+@media (max-width:760px){.inbox li.ck{flex-wrap:wrap;padding-left:34px}.inbox li.ck .am{flex-basis:100%;order:1}.inbox li.ck .ckb{order:2}
+  .inbox li.t{flex-wrap:wrap;gap:4px 10px}.inbox li.t .tx{flex-basis:calc(100% - 34px);margin-left:34px}.inbox li.t .lnk{margin-left:34px}}
 
 /* Income bar on top of the envelopes */
 .dfor .ihead{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap;margin-bottom:6px;font-size:14px}
@@ -2346,6 +2355,7 @@ function envData(){const t=totals(),bk=bankCalc(),E=act();
   const sav=E.filter(e=>e._goal).map(e=>[String(e.desc||'').replace(/^Opsparing: /,''),mAvg(e)]).concat(S.persons.filter(p=>pNum(p,'savings')).map(p=>[p.name+'s opsparing',pNum(p,'savings')]));
   return {t,bk,R:t.exp-H,H,O:t.sav,L:t.sav?t.afterSav:t.left,rc:byCat(Rs),hc:byCat(Hs),sav}}
 const perLeft=p=>{const c=personCalc(p.id);return totals().sav?c.afterSav:c.left};
+var CK_MAX=6; // posts to check listed one by one on Overblik; more go behind "Se alle på Budgetposter"
 function inboxItems(){const L=[];
   const fx=cur().filter(e=>e.type==='overfoersel').map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   if(fx.length){const gap=fx.reduce((a,x)=>a+x.rec-setupAmt(x.e),0);L.push({t:`Ret ${fx.length} ${fx.length===1?'overførsel':'overførsler'} i netbanken`,x:gap>0?`${kr(gap)} for lidt om måneden`:'Beløbene passer ikke',b:'Se overførslerne',a:'data-go="overf"'})}
@@ -2353,11 +2363,13 @@ function inboxItems(){const L=[];
     for(let k=0;k<12;k++){const x=M0[(((st+k)%12)+12)%12];v+=x.i-x.o;if(v<low){low=v;li=st+k}}
     if(low<0)L.push({t:`${esc(a.name)} går i minus i ${idxLbl(li).toLowerCase()}`,x:`Laveste saldo ${kr(low)}`,b:'Se måned for måned',a:`data-plan="${a.id}"`})});
   const ck=cur().filter(e=>e.check&&e.type!=='overfoersel');
-  if(ck.length)L.push({t:`${ck.length} ${ck.length===1?'post skal':'poster skal'} tjekkes`,x:ck.slice(0,2).map(e=>esc(e.desc)).join(', ')+(ck.length>2?' m.fl.':''),b:ck.length===1?'Åbn posten':'Se posterne',a:ck.length===1?`data-open="${ck[0].id}"`:'data-tjek'});
+  // Each post to check gets its own row under the item: "Beløbet passer" takes the mark off, "Ret" shows it on Budgetposter.
+  if(ck.length)L.push({t:`${ck.length} ${ck.length===1?'post skal':'poster skal'} tjekkes`,x:'Passer beløbet stadig?',b:ck.length>CK_MAX?'Se alle på Budgetposter':'',a:'data-tjek',posts:ck.slice(0,CK_MAX)});
   const td=todoList().length;if(td)L.push({t:esc(todoCount(td))+' venter',x:'Under klokken',b:'Se opgaverne',a:'data-todos'});
   return L}
 function inboxHtml(){const L=inboxItems();if(!L.length)return '';
-  return `<section class="inbox"><div class="ih"><h2>Det skal ${wI('du','I')} gøre</h2><span class="dcount">${L.length}</span></div><ul class="todo">${L.map((x,i)=>`<li class="t"><span class="ic">${i+1}</span><b>${x.t}</b><span class="tx">${x.x}</span><button type="button" class="lnk" ${x.a}>${x.b}</button></li>`).join('')}</ul></section>`}
+  return `<section class="inbox"><div class="ih"><h2>Det skal ${wI('du','I')} gøre</h2><span class="dcount">${L.length}</span></div><ul class="todo">${L.map((x,i)=>`<li class="t"><span class="ic">${i+1}</span><b>${x.t}</b><span class="tx">${x.x}</span>${x.b?`<button type="button" class="lnk" ${x.a}>${x.b}</button>`:''}</li>`
+    +(x.posts||[]).map(e=>`<li class="ck"><span class="nm">${esc(e.desc)}</span><span class="am">${kr(amtOf(e))} · ${(FREQ[e.freq]||'').toLowerCase()}</span><span class="ckb"><button type="button" data-ckok="${e.id}">Beløbet passer</button><button type="button" data-ckfix="${e.id}">Ret</button></span></li>`).join('')).join('')}</ul></section>`}
 function mainHtml(D){const t=D.t;
   return `<section class="dmain"><span class="over">Til rådighed ${per()}</span><b class="big ${D.L<0?'neg':''}">${disp(D.L)}</b>
     <p>Det, ${wI('du','I')} har tilbage at bruge, når regninger, husholdning og opsparing er betalt.</p>
@@ -3474,12 +3486,15 @@ function qMatches(q){q=q.trim().toLowerCase();if(!q)return [];
     .sort((a,b)=>((a.type==='udgift'?0:1)-(b.type==='udgift'?0:1))||(st(a)-st(b))||(a.desc||'').localeCompare(b.desc||'','da')).slice(0,12)}
 // A filter that is set shows as a dark chip on phones.
 function flMark(){['flType','flAcct','flPayer'].forEach(id=>{const s=$(id);if(s)s.classList.toggle('on',s.value!=='alle')})}
-function jumpPost(id){const e=cur().find(x=>x.id===id);if(!e||!$('tbody'))return;
+// keep: the row stays marked (a post to check, sent here from Overblik) until the page is drawn again.
+function jumpPost(id,keep){const e=cur().find(x=>x.id===id);if(!e||!$('tbody'))return;
   F.type=F.account=F.payer='alle';F.q='';$('flType').value=F.type;$('flAcct').value=F.account;$('flPayer').value=F.payer;$('flQ').value='';flMark();
-  PFOLD['g:'+e.type]=false;if(e.type==='udgift')PFOLD['c:'+postCat(e)]=false;savePFold();
+  // The fold keys as rowsHtml() writes them: g:indtaegt / g:regn / g:hush, and c:<group>:<category>.
+  const gk=e.type!=='udgift'?e.type:inBank(e)?'regn':'hush';
+  PFOLD['g:'+gk]=false;if(e.type==='udgift')PFOLD['c:'+gk+':'+postCat(e)]=false;savePFold();
   $('tbody').innerHTML=rowsHtml();if($('btnFoldPosts'))$('btnFoldPosts').innerHTML=foldAllHtml();
   const tr=$('tbody').querySelector(`tr.row[data-id="${CSS.escape(id)}"]`);if(!tr)return;
-  tr.scrollIntoView({block:'center',behavior:'smooth'});tr.focus({preventScroll:true});tr.classList.add('hit');setTimeout(()=>tr.classList.remove('hit'),2200)}
+  tr.scrollIntoView({block:'center',behavior:'smooth'});tr.focus({preventScroll:true});tr.classList.add('hit');if(keep)tr.classList.add('mark');else setTimeout(()=>tr.classList.remove('hit'),2200)}
 function bindPostSearch(){const inp=$('flQ'),box=$('flQList');let M=[],act=-1;
   const close=()=>{box.hidden=true;inp.setAttribute('aria-expanded','false');inp.removeAttribute('aria-activedescendant');act=-1};
   const mark=()=>{[...box.querySelectorAll('[data-qid]')].forEach((b,i)=>b.setAttribute('aria-selected',String(i===act)));
@@ -3635,6 +3650,8 @@ function bindMain(){
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goPage(b.dataset.go));
   document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{planAcct=b.dataset.plan;render();const p=document.querySelector('section.plan');if(p)p.scrollIntoView({behavior:'smooth',block:'start'})});
   document.querySelectorAll('[data-tjek]').forEach(b=>b.onclick=()=>{F.type='tjek';goPage('poster')});
+  document.querySelectorAll('[data-ckok]').forEach(b=>b.onclick=()=>{const x=S.entries.find(e=>e.id===b.dataset.ckok);if(!x)return;x.check=false;commit();toast('Posten er tjekket')});
+  document.querySelectorAll('[data-ckfix]').forEach(b=>b.onclick=()=>{const id=b.dataset.ckfix;goPage('poster');setTimeout(()=>jumpPost(id,true),0)});
   document.querySelectorAll('[data-todos]').forEach(b=>b.onclick=()=>{const t=$('btnTodo');if(t)setTimeout(()=>t.click(),0)});
   document.querySelectorAll('[data-newpost]').forEach(b=>b.onclick=()=>openEntry(null));
   if($('btnNewSc'))$('btnNewSc').onclick=newScenario;
