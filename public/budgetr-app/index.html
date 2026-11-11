@@ -10,6 +10,7 @@
   var uid=null;try{uid=localStorage.getItem('budgetr:session')}catch(e){}
   if(!uid){location.replace('/login?next=/app');return}
   window.BUDGETR_USER=uid;window.BUDGETR_KEY='budgetr-app:'+uid;window.BUDGETR_SEED=null;
+  if(uid==='demo')document.documentElement.classList.add('isdemo'); // the demo strip over the top bar
   /* Test user "guide" always starts over in the guide: every load forgets the browser copy and ignores the disk copy. */
   var fresh=uid==='guide';
   if(fresh){try{[window.BUDGETR_KEY,window.BUDGETR_KEY+':unsynced',window.BUDGETR_KEY+':disk'].forEach(function(k){localStorage.removeItem(k)})}catch(e){}}
@@ -30,7 +31,7 @@
   document.addEventListener('DOMContentLoaded',function(){
     /* Real accounts show their name (initials in the avatar); test users their login in capitals. */
     var nm=null;try{nm=localStorage.getItem('budgetr:session-name')}catch(e){}
-    var w=nm?nm.split(/\s+/).filter(Boolean):[],ini=w.length?(w[0][0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase():(uid[0]+(/d$/.test(uid)?uid.slice(-1):'')).toUpperCase(); // at most two letters, so the avatar stays round
+    var w=nm?nm.split(/\s+/).filter(Boolean):[],ini=w.length?(w.length>1?w[0][0]+w[w.length-1][0]:w[0].slice(0,2)).toUpperCase():(/d$/.test(uid)?uid[0]+uid.slice(-1):uid.slice(0,2)).toUpperCase(); // always two letters in a round avatar
     [['bxUser',ini],['umAv',ini],['umName',nm||uid.toUpperCase()]].forEach(function(a){var n=document.getElementById(a[0]);if(n)n.textContent=a[1]});
     var b=document.getElementById('btnUser');if(b)b.onclick=window.BUDGETR_LOGOUT;
   });
@@ -640,12 +641,13 @@ td.act{width:1%;white-space:nowrap}
 #todoMenu .tdhead span{font-size:13px;color:var(--ink2)}
 #todoMenu .tdlist{display:flex;flex-direction:column;padding:6px}
 #todoMenu .tdrow{display:flex;align-items:center;gap:8px;border-radius:8px}
-#todoMenu .tdrow:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
-#todoMenu .tdopen{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 10px;background:transparent;border:0;text-align:left}
-#todoMenu .tdopen b{font-size:14px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#todoMenu .tdopen span{font-size:13px;line-height:1.4;color:var(--ink2);font-weight:400}
-#todoMenu .tdopen small{font-size:12px;color:var(--ink3)}
-#todoMenu .tdok{flex:0 0 auto;margin-right:6px;padding:5px 12px;font-size:13px;border:1px solid var(--rule);border-radius:8px;background:var(--card)}
+/* Each task: its text, then "Ok" (done) and "Ret" (opens it) – user's wish. */
+#todoMenu .tdtx{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 10px;text-align:left}
+#todoMenu .tdbtns{flex:0 0 auto;display:flex;gap:6px;margin-right:6px}
+#todoMenu .tdtx b{font-size:14px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#todoMenu .tdtx span{font-size:13px;line-height:1.4;color:var(--ink2);font-weight:400}
+#todoMenu .tdtx small{font-size:12px;color:var(--ink3)}
+#todoMenu .tdok,#todoMenu .tdfix{flex:0 0 auto;padding:5px 12px;font-size:13px;border:1px solid var(--rule);border-radius:8px;background:var(--card)}
 #todoMenu .tdempty{margin:0;padding:16px;font-size:14px;line-height:1.45;color:var(--ink2)}
 @media (max-width:760px){.appbar #todoMenu{position:fixed;top:66px;left:12px;right:12px;width:auto;max-height:calc(100vh - 80px)}}
 .acctedit .acttodo{grid-column:1/-1}
@@ -1026,13 +1028,17 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 @media (min-width:761px){
   .ptbl tr.row>td+td,.ptbl thead th+th{border-left:1px solid color-mix(in srgb,var(--rule) 55%,transparent)}
 }
-/* The profile button: always a small round avatar on a light tone, so it does not take the focus; the task count in red
+/* The profile button: always a small round avatar with two letters on a dark grey (not black), so it does not take the focus; the task count in red
    (user's wish, Nov 2026). */
-.uchip .av{width:34px;min-width:34px!important;height:34px;padding:0!important;border-radius:50%!important;background:var(--band)!important;color:var(--ink)!important;border:1px solid var(--rule);font:600 12px var(--font)!important}
+.uchip .av{width:34px;min-width:34px!important;height:34px;padding:0!important;border-radius:50%!important;background:#52525B!important;color:#FFFFFF!important;border:0;font:600 12px var(--font)!important}
 .tdbtn .tdn{background:#D93F35!important;color:#FFFFFF!important}
 /* A post marked to check: the mark is highlighted with what to do (user's wish). */
 #frm label.check.ckon{padding:8px 10px;border-radius:10px;background:var(--pine-bg);box-shadow:inset 3px 0 0 var(--btn);flex-wrap:wrap}
 #frm label.check .ckhint{flex-basis:100%;font-size:12.5px;color:var(--ink2);padding-left:28px}
+/* The demo user (login DEMO, /demobruger) sees a strip over the top bar: fictional family, fictional numbers (user's wish). */
+.demostrip{display:none;padding:8px 16px;background:#3F3F46;color:#FFFFFF;font-size:13px;line-height:1.4;text-align:center}
+.demostrip a{color:#FFFFFF;font-weight:600;margin-left:6px;white-space:nowrap}
+html.isdemo .demostrip{display:block}
 /* Nyt scenarie: the three steps; an empty scenario's "Sådan bliver forskellen til" on the scenario's yellow with a way on. */
 .nschow{margin-top:14px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--scn) 45%,var(--card));color:var(--scn-on);font-size:13.5px;line-height:1.45}
 .nschow ol{margin:6px 0 0;padding-left:20px}.nschow li+li{margin-top:3px}
@@ -1709,6 +1715,7 @@ tr.grp.resline td.r{font-size:16px}
 <script>/* Light unless the user picked dark (user's wish, Nov 2026: not the system theme). */{let t='light';try{if(localStorage.getItem('hb-theme')==='dark')t='dark'}catch(e){}document.documentElement.setAttribute('data-theme',t)}</script>
 </head>
 <body data-page="budget">
+<div class="demostrip" role="note">Du ser en <b>demo</b> med en opdigtet familie og fiktive tal. Det, du retter, nulstilles næste gang demoen startes. <a href="/opret">Opret dit eget budget</a></div>
 <header class="appbar">
   <div class="appbar-in">
     <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><svg viewBox="0.5 1.5 63 60" aria-hidden="true"><g><rect class="lk-ink lk-cut" x="9" y="3" width="34" height="22" rx="5"/></g><g><rect class="lk-front lk-cut" x="21" y="8" width="34" height="22" rx="5"/></g><rect class="lk-ink lk-cut" x="2" y="19" width="60" height="41" rx="13"/><rect class="lk-slot" x="40" y="35" width="15" height="8" rx="4"/></svg><span aria-hidden="true"><span class="lb">budget</span><span class="lp">pro</span></span></a>
@@ -5378,7 +5385,7 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
   btn.parentElement.hidden=!S;$('todoN').hidden=!n;$('todoN').textContent=n>99?'99+':String(n);
   btn.setAttribute('aria-label',n?'Opgaver, '+todoCount(n):'Opgaver, ingen åbne');
   menu.innerHTML=`<div class="tdhead"><b>Opgaver</b><span>${n?`${todoCount(n)}, der venter`:'Ingen åbne opgaver'}</span></div>`
-    +(n?`<div class="tdlist">${L.map(x=>{const key=x.k+':'+x.id+':'+(x.f||'');return `<div class="tdrow"><button type="button" class="tdopen" data-tdopen="${esc(key)}"><b>${esc(x.title)}</b><span>${esc(x.text)}</span><small>${x.kind}</small></button><button type="button" class="tdok" data-tdok="${esc(key)}" aria-label="Markér ${esc(x.title)} som klaret">Klar</button></div>`}).join('')}</div>`
+    +(n?`<div class="tdlist">${L.map(x=>{const key=x.k+':'+x.id+':'+(x.f||'');return `<div class="tdrow"><div class="tdtx"><b>${esc(x.title)}</b><span>${esc(x.text)}</span><small>${x.kind}</small></div><div class="tdbtns"><button type="button" class="tdok" data-tdok="${esc(key)}" aria-label="${esc(x.title)}: ok">Ok</button><button type="button" class="tdfix" data-tdopen="${esc(key)}" aria-label="Ret ${esc(x.title)}">Ret</button></div></div>`}).join('')}</div>`
       :'<p class="tdempty">Konti og faste overførsler, der ikke er oprettet i banken endnu, vises her. Det samme gør opgaver, du skriver på en budgetpost eller en konto. De bliver stående, til du markerer dem som klaret.</p>')}
 {const btn=$('btnTodo'),menu=$('todoMenu');const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
   btn.onclick=ev=>{ev.stopPropagation();document.querySelectorAll('.expmenu').forEach(m=>{if(m!==menu)m.hidden=true});const o=menu.hidden;menu.hidden=!o;btn.setAttribute('aria-expanded',String(o));
@@ -5387,7 +5394,7 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
     const [k,id,f]=(ok||op).dataset[ok?'tdok':'tdopen'].split(':');
     // The list is redrawn at once, so the click must not reach the close-on-outside-click handler.
     if(ok){ev.stopPropagation();const x=k==='a'?S.accounts.find(a=>a.id===id):S.entries.find(e=>e.id===id);if(!x)return;
-      if(f==='check')x.check=false;else if(f==='made')setMade(x,true);else setTodo(x,'');commit();toast(f==='made'?'Markeret som oprettet i banken':'Opgaven er klaret');
+      if(f==='check')x.check=false;else if(f==='made')setMade(x,true);else setTodo(x,'');commit();toast(f==='made'?'Markeret som oprettet i banken':f==='check'?'Beløbet er markeret som ok':'Opgaven er klaret');
       const nx=menu.querySelector('button');if(nx)nx.focus();else btn.focus();return}
     close();
     if(k==='a'){openSet('konti');setTimeout(()=>{const r=document.querySelector(`.acctedit[data-id="${id}"] ${f==='made'?'.actmade input':'.acttodo'}`);if(r){r.scrollIntoView({block:'center'});r.focus()}},0)}

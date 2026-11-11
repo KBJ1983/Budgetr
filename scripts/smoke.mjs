@@ -85,8 +85,8 @@ try {
 
   // KBJ: the original app with the real budget
   await loginAs("KBJ");
-  // The round avatar shows at most two letters; the profile menu has the full login.
-  check((await page.locator("#umName").textContent()) === "KBJ" && (await page.locator("#bxUser").textContent()) === "K", "app shows the logged-in test user");
+  // The round avatar shows two letters; the profile menu has the full login.
+  check((await page.locator("#umName").textContent()) === "KBJ" && (await page.locator("#bxUser").textContent()) === "KB", "app shows the logged-in test user");
   // A click anywhere on the page must not act as a page button (<body data-page> once did: it re-rendered and jumped to the top).
   {
     // Konti and Hvem betaler hvad live on the Hvem betaler page (D, Nov 2026).

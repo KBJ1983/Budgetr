@@ -67,7 +67,7 @@ export function demoCustomer(now = new Date()) {
     { id: "mikkel", name: "Mikkel – lønkonto", number: "", type: "personlig", owner: "p2", startSaldo: 0 },
     { id: "mad", name: "Madkonto", number: "", type: "faelles", owner: "", startSaldo: 1200, saldo: 1200, saldoDate: iso(0) },
     { id: "hus", name: "Husopsparing", number: "", type: "faelles", owner: "", startSaldo: 112000, saldo: 112000, saldoDate: iso(-1) },
-    { id: "ferie", name: "Feriekonto", number: "", type: "faelles", owner: "", startSaldo: 0, todo: "Opret kontoen i banken", todoSince: iso(-1, 12), made: false, madeSince: iso(-1, 12) },
+    { id: "ferie", name: "Feriekonto", number: "", type: "faelles", owner: "", startSaldo: 0, todo: "Find en konto med god rente", todoSince: iso(-1, 12), made: false, madeSince: iso(-1, 12) },
     { id: "boern", name: "Børneopsparing", number: "", type: "faelles", owner: "", startSaldo: 0 },
   ];
 
