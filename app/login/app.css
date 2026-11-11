@@ -907,7 +907,7 @@
 
 /* ---------- auth pages (/login, /opret, /login/bekraeft, components/app/AuthShell.tsx) ----------
    A dark graphite rounded card on a white frame ("A6", Nov 2026), always dark: form on the right, Tryghed on the
-   left (below on phones). White is the primary button (as on the site's dark parts). */
+   left (below on phones). The primary button is the site's blue (user's wish), everything else on the card white or grey. */
 .bx-auth {
   --bg: #202024;
   --card: #2a2a2f;
@@ -917,9 +917,9 @@
   --tx-3: #94949b;
   --rule: #3a3a41;
   --field: #25252a;
-  --accent: #ffffff;
-  --accent-tx: #18181b;
-  --accent-hover: #e7e7e3;
+  --accent: #5b3df5;
+  --accent-tx: #ffffff;
+  --accent-hover: #4b2fe0;
   --pos: #f3f3f1;
   --neg: #e59a8e;
   color-scheme: dark;
