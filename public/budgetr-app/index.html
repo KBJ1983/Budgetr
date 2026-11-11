@@ -1026,6 +1026,11 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 @media (min-width:761px){
   .ptbl tr.row>td+td,.ptbl thead th+th{border-left:1px solid color-mix(in srgb,var(--rule) 55%,transparent)}
 }
+/* Nyt scenarie: the three steps; an empty scenario's "Sådan bliver forskellen til" on the scenario's yellow with a way on. */
+.nschow{margin-top:14px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--scn) 45%,var(--card));color:var(--scn-on);font-size:13.5px;line-height:1.45}
+.nschow ol{margin:6px 0 0;padding-left:20px}.nschow li+li{margin-top:3px}
+section.fcard.why.wempty{background:color-mix(in srgb,var(--scn) 40%,var(--card))!important;border-color:color-mix(in srgb,var(--scn) 80%,var(--rule))!important}
+section.fcard.why.wempty p{margin:6px 0 14px;max-width:720px;color:var(--scn-on)}
 /* The budget menu in the top bar (wider screens): only the budget's name; "Scenarie"/"Kladde" shows while one is open. */
 @media (min-width:761px){
   #btnNewScn{display:none!important}
@@ -2094,7 +2099,7 @@ tr.grp.resline td.r{font-size:16px}
       <label>Navn<input id="nscName" required maxlength="60" placeholder="Fx Nyt hus"></label>
       <label><span>Gælder fra <span class="muted" style="font-weight:400">(valgfrit)</span></span><input id="nscFrom" maxlength="30" placeholder="Fx januar 2027"></label>
       <div class="nscideas"><span class="muted">Idéer:</span><button type="button" class="chip" data-nsci="Nyt hus">Nyt hus</button><button type="button" class="chip" data-nsci="Barsel">Barsel</button><button type="button" class="chip" data-nsci="Ny bil">Ny bil</button><button type="button" class="chip" data-nsci="Renten stiger 1 %">Renten stiger 1 %</button><button type="button" class="chip" data-nsci="Færre timer">Færre timer</button></div>
-      <p class="muted nscnext">Bagefter retter du posterne under Budgetposter, mens scenariet er valgt. En gul bjælke øverst viser, at du er i scenariet.</p>
+      <div class="nschow"><b>Sådan gør du</b><ol><li>Giv scenariet et navn, og opret det.</li><li>Gå til Budgetposter, mens scenariet er valgt. Den gule bjælke øverst viser, at du er i scenariet.</li><li>Ret, fjern eller tilføj poster. Under Hvad nu hvis ser du, hvordan forskellen bliver til.</li></ol></div>
       <p class="err" id="nscErr" hidden>Skriv et navn til scenariet.</p>
     </div>
     <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="nscCancel">Annuller</button><button type="submit" class="primary" id="nscOk">Opret scenarie</button></div></div>
@@ -2459,7 +2464,7 @@ function whyHtml(sc,base){const v=calcWith(entriesFor(sc),()=>{const t=totals();
   const R=scChanges(sc).map(c=>({...c,eff:c.type==='indtaegt'?c.n-c.b:c.type==='overfoersel'?0:c.b-c.n})).filter(c=>Math.abs(c.eff)>=0.5);
   const rest=d-R.reduce((a,c)=>a+c.eff,0);
   const pill=x=>`<span class="dl ${x>0?'good':'bad'}">${x>0?'+':'−'}${disp(Math.abs(x))}</span>`;
-  if(!R.length&&Math.abs(rest)<0.5)return `<section class="fcard why"><h2>Sådan bliver forskellen til</h2><p class="muted">Ingen ændringer endnu. Gå til Budgetposter, mens scenariet er valgt, og ret eller fjern en post der.</p></section>`;
+  if(!R.length&&Math.abs(rest)<0.5)return `<section class="fcard why wempty"><h2>Sådan bliver forskellen til</h2><p>Ingen ændringer endnu. Gå til Budgetposter, mens scenariet er valgt, og ret, fjern eller tilføj en post der. Så vises hver ændring her, og hvad den betyder for, hvad ${wI('du','I')} har til rådighed.</p><button type="button" class="primary" data-go="poster">Gå til Budgetposter</button></section>`;
   return `<section class="fcard why"><div class="fch"><h2>Sådan bliver forskellen til</h2><span class="hint">Hver ændring i ${esc(sc.name||'scenariet')} og hvad den betyder for, hvad ${wI('du','I')} har til rådighed ${per()}.</span></div>
     <div class="wrows">${R.map(c=>`<div class="wrow"><span>${esc(c.desc)}<small>${c.kind==='Ny'||c.kind==='Nyt mål'?'Ny':c.kind==='Fjernet'?'Fjernet':'Ændret'} · ${c.b?disp(c.b):'0 kr'} → ${c.n?disp(c.n):'0 kr'}</small></span>${pill(c.eff)}</div>`).join('')}
     ${Math.abs(rest)>=0.5?`<div class="wrow"><span>Andet<small>Fx opsparing på et personkort eller afrunding</small></span>${pill(rest)}</div>`:''}
