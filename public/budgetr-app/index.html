@@ -1033,8 +1033,10 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
    (user's wish, Nov 2026). */
 .uchip .av{width:34px;min-width:34px!important;height:34px;padding:0!important;border-radius:50%!important;background:#52525B!important;color:#FFFFFF!important;border:0;font:600 12px var(--font)!important}
 .tdbtn .tdn{background:#D93F35!important;color:#FFFFFF!important}
-/* A post marked to check: the mark is highlighted with what to do (user's wish). */
-#frm label.check.ckon{padding:8px 10px;border-radius:10px;background:var(--pine-bg);box-shadow:inset 3px 0 0 var(--btn);flex-wrap:wrap}
+/* A post marked to check: the mark is highlighted with what to do, on the scenarios' pale yellow, no coloured edge
+   (user's wish). */
+#frm label.check.ckon{padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--scn) 40%,#FFFFFF);color:var(--scn-on);flex-wrap:wrap}
+#frm label.check.ckon .ckhint{color:color-mix(in srgb,var(--scn-on) 72%,transparent)}
 #frm label.check .ckhint{flex-basis:100%;font-size:12.5px;color:var(--ink2);padding-left:28px}
 /* The demo user (login DEMO, /demobruger) sees a strip over the top bar: fictional family, fictional numbers (user's wish). */
 .demostrip{display:none;padding:8px 16px;background:#3F3F46;color:#FFFFFF;font-size:13px;line-height:1.4;text-align:center}
@@ -1603,8 +1605,11 @@ section.whosec{margin-top:22px}
 .inbox li.ck.mcok button{padding:7px 16px}
 /* The note beside the Budgetposter heading sits right on a slightly darker tile, so it does not float (user's wish). */
 #app>section>.sechead .hint.phint{margin-left:auto;text-align:right;padding:10px 14px;border-radius:10px;background:var(--band)}
-tr.row.mark td{background:var(--pine-bg)!important}
-tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
+/* The row "Ret" jumped to: pale yellow like the scenarios, no coloured edge (user's wish); a dark yellow tone in the dark
+   theme, so the row's own text colours still read. */
+tr.row.mark td{background:color-mix(in srgb,var(--scn) 40%,#FFFFFF)!important}
+:root[data-theme="dark"] tr.row.mark td{background:color-mix(in srgb,var(--scn) 22%,var(--card))!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) tr.row.mark td{background:color-mix(in srgb,var(--scn) 22%,var(--card))!important}}
 .bcalc{display:grid;margin-top:4px}
 .bcalc .brow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;border-top:1px solid var(--rule);font-size:14px}
 .bcalc .brow:first-child{border-top:0}
