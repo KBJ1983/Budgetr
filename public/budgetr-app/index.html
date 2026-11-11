@@ -1016,6 +1016,16 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   .devsec .tablewrap,section.ltproj,section.ltend .tablewrap,section.gsum{display:none!important}
 }
 #btnNew{padding:9px 16px!important;font:600 13px var(--font)!important;border-radius:999px}
+/* The budget menu in the top bar (wider screens): only the budget's name; "Scenarie"/"Kladde" shows while one is open. */
+@media (min-width:761px){
+  #btnNewScn{display:none!important}
+  .abl{display:flex;align-items:center;margin-left:10px;padding-left:20px;border-left:1px solid var(--rule);min-width:0}
+  .abl .scnbtn{background:transparent!important;border-color:transparent!important;font:600 15px var(--font)!important;padding:8px 12px!important}
+  .abl .scnbtn:hover{background:var(--card)!important;border-color:var(--rule)!important}
+  .abl .scnbtn:not(.on) .lbl{display:none}
+  .abl .scnbtn.on{background:var(--card)!important;border-color:var(--rule2)!important}
+  .abl .expmenu{left:0;right:auto}
+}
 button{border-radius:999px}
 button.primary,button.danger,.dlgfoot button{font-weight:600}
 .psrow button,.catrow button,.acctedit button,.gxrow button{border-radius:8px}
@@ -1680,6 +1690,7 @@ tr.grp.resline td.r{font-size:16px}
 <header class="appbar">
   <div class="appbar-in">
     <a class="logo" href="/" title="Til forsiden" aria-label="budgetpro – til forsiden"><svg viewBox="0.5 1.5 63 60" aria-hidden="true"><g><rect class="lk-ink lk-cut" x="9" y="3" width="34" height="22" rx="5"/></g><g><rect class="lk-front lk-cut" x="21" y="8" width="34" height="22" rx="5"/></g><rect class="lk-ink lk-cut" x="2" y="19" width="60" height="41" rx="13"/><rect class="lk-slot" x="40" y="35" width="15" height="8" rx="4"/></svg><span aria-hidden="true"><span class="lb">budget</span><span class="lp">pro</span></span></a>
+    <div class="abl" id="scnSlot"></div>
     <div class="abr">
       <span class="status" id="status">Gemmes automatisk i sikker database</span>
       <button type="button" class="tdbtn setbtn" data-set="" aria-label="Indstillinger" title="Indstillinger"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button>
@@ -1706,7 +1717,7 @@ tr.grp.resline td.r{font-size:16px}
   <div class="navrow">
     <nav class="tabs" role="tablist" aria-label="Sider"><button type="button" role="tab" data-page="budget" aria-selected="true">Overblik</button><button type="button" role="tab" data-page="poster" aria-selected="false">Budgetposter</button><button type="button" role="tab" data-page="overf" aria-selected="false">Hvem betaler</button><button type="button" role="tab" data-page="formue" aria-selected="false">Opsparing og gæld</button><button type="button" role="tab" data-page="hvis" aria-selected="false">Hvad nu hvis</button></nav>
     <div class="tools">
-      <div class="expwrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Nuværende budget</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
+      <div class="expwrap" id="scnWrap"><button type="button" class="scnbtn" id="btnScn" aria-haspopup="menu" aria-expanded="false" aria-controls="scnMenu"><span class="lbl">Nuværende budget</span> <span id="scnName">Nuværende</span> <span class="caret" aria-hidden="true">▾</span></button>
         <div class="expmenu" id="scnMenu" role="menu" hidden></div></div>
       <button type="button" id="btnNewScn" class="addcta" hidden>+ Nyt scenarie</button>
       <button type="button" id="btnNew" class="primary">+ Ny budgetpost</button>
@@ -4540,6 +4551,11 @@ function renderScn(){const sc=curSc(),dr=curDraft(),R=rootS(),b=$('btnScn');if(!
   $('btnNewScn').onclick=()=>{if(S&&!DR)newScenario()};
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnScn')&&!ev.target.closest('#scnMenu'))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}})}
+/* Wider screens: the budget menu sits in the top bar next to the logo, so the tab row only holds the pages and
+   "+ Ny budgetpost" (user's wish, Nov 2026); "+ Nyt scenarie" is then in the menu and on Hvad nu hvis. Phones keep it
+   above the page with "+ Nyt scenarie" beside it. */
+{const mq=matchMedia('(max-width:760px)'),place=()=>{const w=$('scnWrap');if(mq.matches)document.querySelector('.navrow .tools').prepend(w);else $('scnSlot').append(w)};
+  place();mq.addEventListener('change',place)}
 function splitTxt(){const sp=S.settings||{},sh=shares(),P=S.persons;
   const k=sp.split==='manuel'?'med fast procent':sp.split==='lige'?'ligeligt':'efter fast indkomst';
   return `Fordelt ${k}${P.length?' ('+P.map(p=>esc(p.name)+' '+Math.round((sh[p.id]||0)*100)+' %').join(', ')+')':''}`}
@@ -5383,7 +5399,8 @@ function showNotes(){if(!S)return;
     +(N.length?'<p class="ntfoot">budgetpro er ikke forbundet til din netbank. Tallet bygger på, at indbetalingerne er gået ind som planlagt.</p>':'')
     +(rem?`<div class="ntrow"><span class="ntico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>${N.length?'Tid til at se budgettet igennem':'Påmindelse'}</b>
       <p>${mo?`Det er ${mo===1?'en måned':mo+' måneder'} siden, du sidst rettede i budgettet.`:'Det er et stykke tid siden, du sidst rettede i budgettet.'} Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.${(n=>n?` Du har også ${todoCount(n)}, der venter under klokken øverst.`:'')(todoList().length)}</p></div></div>`:'')+tdRow;
-  $('btnNoteGo').textContent=N.length?'Se opsparingsmål':rem?'Se budgetposter':'Se opgaverne';$('btnNoteGo').dataset.go=N.length?'maal':rem?'poster':'todo';
+  // No "Se opsparingsmål" with the milestones (user's wish): only Luk; the reminders keep their way on.
+  $('btnNoteGo').hidden=!!N.length;$('btnNoteGo').textContent=rem?'Se budgetposter':'Se opgaverne';$('btnNoteGo').dataset.go=rem?'poster':'todo';
   $('dlgNote').showModal()}
 // Closing the note in any way marks it as seen.
 $('dlgNote').addEventListener('close',()=>{if(!NOTES)return;const {N,rem,td}=NOTES;NOTES=null;N.forEach(x=>x.g.hit=x.m);if(rem)rootS().settings.remindSeen=DAY();
