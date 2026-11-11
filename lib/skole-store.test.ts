@@ -104,6 +104,19 @@ describe("skole store", () => {
     expect(await teacherClasses(T1, now, dir)).toEqual([]);
   });
 
+  it("never lets a pupil's save bring a deleted class's code back", async () => {
+    const cls = await createClass({ trin: 8, count: 1, days: 90, teacherId: T1 }, now, dir);
+    const code = cls.codes[0]!;
+    const store = openStore(dir);
+    const left = await store.get(codeKey(code));
+    await deleteClass(cls, dir);
+    // A save that read the code before the delete and wrote it after.
+    await store.set(codeKey(code), left!);
+    expect(await lookupCode(code, now, dir)).toBeNull();
+    expect(await store.get(codeKey(code))).toBeNull();
+    expect(await saveProgress(code, emptyFlow(), {}, now, dir)).toBe(false);
+  });
+
   it("extends a class and its codes by 30 days at a time, up to a year", async () => {
     const cls = await createClass({ trin: 8, count: 2, days: 30, teacherId: T1 }, now, dir);
     await saveProgress(cls.codes[0]!, { ...emptyFlow(), caseId: "sara" }, { 2: "Svar" }, now, dir);

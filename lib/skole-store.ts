@@ -168,8 +168,9 @@ export async function extendClass(cls: SchoolClass, dir?: string): Promise<Schoo
 /** Deletes a class with its codes and the pupils' work. */
 export async function deleteClass(cls: SchoolClass, dir?: string): Promise<void> {
   const store = openStore(dir);
-  await Promise.all(cls.codes.map((c) => store.del(codeKey(c))));
+  // The class first: a pupil's save that lands after this sees no class and removes its own code (saveProgress).
   await store.del(classKey(cls.id));
+  await Promise.all(cls.codes.map((c) => store.del(codeKey(c))));
   if (cls.teacherId) await writeIndex(cls.teacherId, (await readIndex(cls.teacherId, dir)).filter((id) => id !== cls.id), dir);
 }
 
@@ -240,16 +241,30 @@ export async function lookupCode(
 ): Promise<{ flow: Flow | null; answers: Answers; expires: string; openTo?: number } | null> {
   const r = await readCode(code, now, dir);
   if (!r) return null;
-  const openTo = parse<SchoolClass>(await openStore(dir).get(classKey(r.classId)))?.openTo;
+  const cls = parse<SchoolClass>(await openStore(dir).get(classKey(r.classId)));
+  // A code only lives as long as its class: a save that raced the class being deleted may have written it back.
+  if (!cls) return dropOrphan(code, dir);
+  const openTo = cls.openTo;
   return { flow: r.flow ?? null, answers: r.answers ?? {}, expires: codeExpires(r).toISOString(), ...(openTo ? { openTo } : {}) };
+}
+
+async function dropOrphan(code: string, dir?: string): Promise<null> {
+  await openStore(dir).del(codeKey(code));
+  return null;
 }
 
 /** Saves a pupil's choices and answers (already checked with sanitizeFlow/sanitizeAnswers). False for an unknown code. */
 export async function saveProgress(code: string, flow: Flow, answers: Answers, now = new Date(), dir?: string): Promise<boolean> {
   const r = await readCode(code, now, dir);
   if (!r) return false;
+  const store = openStore(dir);
   const next: CodeRecord = { ...r, flow, answers, updated: now.toISOString() };
-  await openStore(dir).set(codeKey(code), JSON.stringify(next));
+  await store.set(codeKey(code), JSON.stringify(next));
+  // The class may have been deleted while this save was under way; then the work must not stay behind.
+  if (!(await store.get(classKey(r.classId)))) {
+    await dropOrphan(code, dir);
+    return false;
+  }
   return true;
 }
 
