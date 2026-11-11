@@ -30,7 +30,7 @@
   document.addEventListener('DOMContentLoaded',function(){
     /* Real accounts show their name (initials in the avatar); test users their login in capitals. */
     var nm=null;try{nm=localStorage.getItem('budgetr:session-name')}catch(e){}
-    var w=nm?nm.split(/\s+/).filter(Boolean):[],ini=w.length?(w[0][0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase():uid.toUpperCase();
+    var w=nm?nm.split(/\s+/).filter(Boolean):[],ini=w.length?(w[0][0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase():(uid[0]+(/d$/.test(uid)?uid.slice(-1):'')).toUpperCase(); // at most two letters, so the avatar stays round
     [['bxUser',ini],['umAv',ini],['umName',nm||uid.toUpperCase()]].forEach(function(a){var n=document.getElementById(a[0]);if(n)n.textContent=a[1]});
     var b=document.getElementById('btnUser');if(b)b.onclick=window.BUDGETR_LOGOUT;
   });
@@ -1026,6 +1026,13 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 @media (min-width:761px){
   .ptbl tr.row>td+td,.ptbl thead th+th{border-left:1px solid color-mix(in srgb,var(--rule) 55%,transparent)}
 }
+/* The profile button: always a small round avatar on a light tone, so it does not take the focus; the task count in red
+   (user's wish, Nov 2026). */
+.uchip .av{width:34px;min-width:34px!important;height:34px;padding:0!important;border-radius:50%!important;background:var(--band)!important;color:var(--ink)!important;border:1px solid var(--rule);font:600 12px var(--font)!important}
+.tdbtn .tdn{background:#D93F35!important;color:#FFFFFF!important}
+/* A post marked to check: the mark is highlighted with what to do (user's wish). */
+#frm label.check.ckon{padding:8px 10px;border-radius:10px;background:var(--pine-bg);box-shadow:inset 3px 0 0 var(--btn);flex-wrap:wrap}
+#frm label.check .ckhint{flex-basis:100%;font-size:12.5px;color:var(--ink2);padding-left:28px}
 /* Nyt scenarie: the three steps; an empty scenario's "Sådan bliver forskellen til" on the scenario's yellow with a way on. */
 .nschow{margin-top:14px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--scn) 45%,var(--card));color:var(--scn-on);font-size:13.5px;line-height:1.45}
 .nschow ol{margin:6px 0 0;padding-left:20px}.nschow li+li{margin-top:3px}
@@ -1832,7 +1839,7 @@ tr.grp.resline td.r{font-size:16px}
         <div><button type="button" id="btnHistAdd">Tilføj tidligere beløb</button></div>
         <span class="note" id="histNote">Når du retter beløbet, gemmes det gamle beløb automatisk her med datoen, så udviklingen kan følges.</span></div>
       <label class="check"><input type="checkbox" id="fActive" checked> Aktiv</label>
-      <label class="check"><input type="checkbox" id="fCheck"> Skal tjekkes</label>
+      <label class="check" id="wCheck"><input type="checkbox" id="fCheck"> Skal tjekkes<span class="ckhint" hidden>Tjek beløbet. Fjern markeringen her, når beløbet passer – så forsvinder posten fra opgaverne.</span></label>
       <label class="check" id="wMade" style="grid-column:1/-1"><input type="checkbox" id="fMade" checked> Oprettet i banken. Fjern fluebenet, hvis overførslen mangler at blive sat op, så kommer den på listen under klokken</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
       <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
@@ -2699,6 +2706,9 @@ function monthCheckItem(){if(curSc()||DR||!monthCheckDue())return null;const las
   // No "første gang" label (it confused people); the first check just asks to look the budget through.
   return {x:last?(rows.length?`Det er ændret siden ${esc(fmtDate(last))}. Passer beløbene?`:`Passer budgettet stadig? Intet er rettet siden ${esc(fmtDate(last))}.`):(rows.length?'Se de nye beløb igennem én gang om måneden.':'Se budgettet igennem én gang om måneden. Passer det stadig, så bekræft det med ét tryk.'),mc:rows}}
 function monthCheckDone(){S.settings.monthCheck=DAY();delete S.settings.mcOk;commit();toast('Tak. Vi spørger igen om en måned')}
+// "Skal tjekkes" in the post editor: while it is on, it is highlighted and says to take it off once the amount is checked.
+function ckMark(on){$('wCheck').classList.toggle('ckon',on);$('wCheck').querySelector('.ckhint').hidden=!on}
+$('fCheck').addEventListener('change',e=>ckMark(e.target.checked));
 function bindMonthCheck(){const ok=$('btnMcOk');if(ok)ok.onclick=monthCheckDone;
   document.querySelectorAll('[data-mcok]').forEach(b=>b.onclick=()=>{(S.settings.mcOk=S.settings.mcOk||[]).push(b.dataset.mcok);
     if(!(monthCheckItem()||{mc:[]}).mc.length)return monthCheckDone();commit();toast('Beløbet er markeret som ok')})}
@@ -3772,7 +3782,7 @@ function openEntry(id,preset){
   opts($('fPayer'),[[FAELLES,'Fælles'],...S.persons.map(p=>[p.id,p.name])],e.payer||FAELLES);
   opts($('fFrom'),accs,e.from);opts($('fTo'),accs,e.to);
   opts($('fCover'),[['',''],...accs],e.cover||'');
-  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fFree').checked=isBound(Object.assign({},e,{type:'indtaegt',extra:false}));$('fAuto').checked=!!e.auto;
+  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;ckMark(!!e.check);$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fFree').checked=isBound(Object.assign({},e,{type:'indtaegt',extra:false}));$('fAuto').checked=!!e.auto;
   {const base=id?S.entries.find(x=>x.id===id):null, scx=curSc();$('fHist').innerHTML='';$('fSince').value=base?(base.since||''):'';
     ((base&&base.history)||[]).slice().sort((a,b)=>a.date<b.date?-1:1).forEach(x=>addHist(x));
     $('wHist').style.display=scx?'none':'';
@@ -5381,7 +5391,7 @@ function renderTodos(){const btn=$('btnTodo'),menu=$('todoMenu'),L=todoList(),n=
       const nx=menu.querySelector('button');if(nx)nx.focus();else btn.focus();return}
     close();
     if(k==='a'){openSet('konti');setTimeout(()=>{const r=document.querySelector(`.acctedit[data-id="${id}"] ${f==='made'?'.actmade input':'.acttodo'}`);if(r){r.scrollIntoView({block:'center'});r.focus()}},0)}
-    else if(S.entries.some(e=>e.id===id))openEntry(id)});
+    else if(S.entries.some(e=>e.id===id)){openEntry(id);if(f==='check')setTimeout(()=>$('wCheck').scrollIntoView({block:'center'}),60)}});
   document.addEventListener('click',ev=>{if(!menu.hidden&&!ev.target.closest('#btnTodo')&&!ev.target.closest('#todoMenu'))close()});
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!menu.hidden){close();btn.focus()}});}
 
