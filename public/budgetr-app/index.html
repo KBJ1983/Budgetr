@@ -2513,8 +2513,8 @@ function whoHtml(){const sh=shares(),P=S.persons,E=act(),fa=S.accounts.filter(a=
 /* While a scenario is open, a bar stays at the top of every page: which scenario is being changed, and the way back
    to the current budget (user's wish). */
 function renderScnBar(){const b=$('scnBar');if(!b)return;const sc=S&&curSc();b.hidden=!sc;if(!sc){b.innerHTML='';return}
-  b.innerHTML=`<span class="sbdot" aria-hidden="true"></span><span class="sbtx">Du retter nu i scenariet <b>${esc(sc.name||'Scenarie')}</b>${sc.from?' · fra '+esc(sc.from):''}.<span class="sbx"> Det nuværende budget ændres ikke.</span></span>
-    ${page!=='hvis'?'<button type="button" class="sbbtn ghost2" id="sbCmp">Se forskellen</button>':''}<button type="button" class="sbbtn" id="sbBack">Tilbage til nuværende budget</button>`;
+  b.innerHTML=`<span class="sbdot" aria-hidden="true"></span><span class="sbtx">Du retter nu i scenariet <b>${esc(sc.name||'Scenarie')}</b>${sc.from?' · fra '+esc(sc.from):''}.<span class="sbx"> Det gældende budget ændres ikke.</span></span>
+    ${page!=='hvis'?'<button type="button" class="sbbtn ghost2" id="sbCmp">Se forskellen</button>':''}<button type="button" class="sbbtn" id="sbBack">Tilbage til gældende budget</button>`;
   $('sbBack').onclick=()=>{SC=null;render();toast('Du er tilbage i det nuværende budget')};
   const c=$('sbCmp');if(c)c.onclick=()=>goPage('hvis')}
 function hvisHtml(){const sc=curSc(),val=e=>calcWith(e,()=>{const t=totals();return t.sav?t.afterSav:t.left}),base=val(baseEntries());
