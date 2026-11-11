@@ -13,7 +13,7 @@
   --tx-2: #acacb2;
   --tx-3: #94949b;
   --band: #303036;
-  --bar-rev: #b4a8ff;
+  --bar-rev: #f3f3f1;
   --bar-exp: #7aa2d6;
 }
 .bx.ow[data-theme="light"] {
@@ -85,7 +85,7 @@
   height: 22px;
   padding: 0 7px;
   border-radius: 999px;
-  background: #b4a8ff;
+  background: #ffffff;
   color: #18181b;
   font: 600 12px var(--font-mono);
   vertical-align: middle;
@@ -132,7 +132,7 @@
 }
 .ow-alert-go {
   flex: none;
-  color: #b4a8ff;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;

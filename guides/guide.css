@@ -19,9 +19,9 @@
 html[data-theme="a6"] {
   --midnight: #18181b;
   --midnight2: #2a2a2f;
-  --accent: #b4a8ff;
+  --accent: #5b3df5;
   --accent-ink: #4b2fe0;
-  --accent-tone: #ece9fe;
+  --accent-tone: #ececE9;
   --page: #f3f3f1;
   --line: #e0e0db;
   --muted: #5e5e63;
@@ -788,7 +788,7 @@ html[data-theme="a6"] .cover-badge {
   background: #ff9fcf;
 }
 html[data-theme="a6"] .cover h1 .hl {
-  background: linear-gradient(transparent 78%, #b4a8ff 78%, #b4a8ff 92%, transparent 92%);
+  background: linear-gradient(transparent 78%, #5b3df5 78%, #5b3df5 92%, transparent 92%);
 }
 html[data-theme="a6"] .cover-step b,
 html[data-theme="a6"] .steps > li > .n {

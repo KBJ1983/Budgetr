@@ -9,11 +9,11 @@
   --f-tile: #e9e9e5;
   --f-dark-tile: #34343a;
   --f-dark-muted: #acacb2;
-  --f-light: #b4a8ff;
+  --f-light: #18181b;
   /* On the dark parts the blue reads as purple, so accents there are white (rosa stays for Til rådighed). */
   --f-on-dark: #ffffff;
   --f-tick-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%2318181B' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --f-tint: #eeebff;
+  --f-tint: #e9e9e5;
   --f-pos: #11845a;
   --f-neg: #c4372e;
   --f-neg-on-dark: #ff9c8a;
@@ -1033,5 +1033,20 @@
     order: -1;
     min-height: 0;
     aspect-ratio: 4 / 3;
+  }
+}
+
+/* ---------- scroll reveal (ScrollReveal, landing.module.css "Motion") ----------
+   The headlines inside a block that comes into view wipe up out of a mask, as on the earlier front page. */
+@media (prefers-reduced-motion: no-preference) {
+  .page :global([data-reveal-state]) :is(.h2, .giant, .scenTitle) {
+    transition:
+      clip-path 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 80ms),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--reveal-delay, 0ms) + 80ms);
+    clip-path: inset(-20% -6% -30% -6%);
+  }
+  .page :global([data-reveal-state="pending"]) :is(.h2, .giant, .scenTitle) {
+    clip-path: inset(0 -6% 100% -6%);
+    transform: translateY(0.35em);
   }
 }

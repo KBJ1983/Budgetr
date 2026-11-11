@@ -12,6 +12,7 @@ import {
   FrontTalk,
 } from "@/components/landing/Front";
 import { InPageLinks } from "@/components/landing/InPageLinks";
+import { ScrollReveal } from "@/components/landing/ScrollReveal";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { SiteHeader } from "@/components/landing/SiteHeader";
 
@@ -46,6 +47,7 @@ export default function HomePage() {
       </main>
       <SiteFooter />
       <InPageLinks />
+      <ScrollReveal />
     </div>
   );
 }

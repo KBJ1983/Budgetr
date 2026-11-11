@@ -9,9 +9,9 @@
 .page {
   /* "A6" palette (Nov 2026, user's choice; prototype public/forslag/mix.html): stone-grey page #f3f3f1, white cards,
      graphite text and dark bands (#18181b / #202024), ultraviolet #5b3df5 for buttons (--v-btn) and #4b2fe0 for accent
-     text, light violet #b4a8ff for highlights on dark, rosa #ff9fcf only for small details (--v-rosa; never in lists).
-     The names stay from earlier designs: dark = graphite, lime = light violet, olive = accent violet, comp = a light
-     violet tint (it was sand). */
+     text, white for the accents on the dark parts (no light violet anywhere – user's wish: it reads as purple), rosa
+     #ff9fcf only for small details (--v-rosa; never in lists). The names stay from earlier designs: dark = graphite,
+     lime = the accent on dark (white), olive = accent violet text, comp = a neutral tint (it was sand). */
   --v-paper: #f3f3f1;
   --v-white: #ffffff;
   --v-stone: #f3f3f1;
@@ -20,13 +20,13 @@
   --v-btn: #5b3df5;
   --v-btn-hover: #4b2fe0;
   --v-rosa: #ff9fcf;
-  /* Comp: a light violet tint for the small accents (badge, the "Tilbage" tile, checkmarks, feature icons, the plan
+  /* Comp: a neutral grey tint for the small accents (badge, the "Tilbage" tile, checkmarks, feature icons, the plan
      tag, one mosaic tile). Muted text on it is --v-comp-soft, text on it --v-comp-ink, its edge --v-comp-rule. */
-  --v-comp: #e4deff;
+  --v-comp: #e9e9e5;
   --v-comp-ink: #18181b;
-  --v-comp-soft: #4a4270;
+  --v-comp-soft: #5e5e63;
   --v-comp-rule: rgba(24, 24, 27, 0.2);
-  --v-comp-light: #e4deff;
+  --v-comp-light: #e9e9e5;
   /* The Tryghed band: a step darker than the graphite. */
   --v-slate: #18181b;
   --v-slate-card: #2a2a2f;
@@ -49,11 +49,12 @@
   /* Accent text and links on light: ultraviolet. */
   --v-olive: #4b2fe0;
   --v-olive-hover: #3a22b8;
-  /* Light violet: bars, key figures, the primary button on dark; text only on dark. */
-  --v-lime: #b4a8ff;
-  --v-lime-hover: #c9c0ff;
+  /* The accent on the dark parts (bars, key figures, the primary button on dark): white. Where a rule using it sits on
+     light, it is set to --v-btn or the tint instead. */
+  --v-lime: #ffffff;
+  --v-lime-hover: #e7e7e3;
   --v-lime-dark: #5b3df5;
-  --v-lime-tone: #eeebff;
+  --v-lime-tone: #e9e9e5;
   /* Big decorative circles on the dark bands. */
   --v-circle: #26262b;
 
@@ -470,7 +471,7 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(-9deg);
-  background: var(--v-lime);
+  background: var(--v-btn);
 }
 .heroShapes span:nth-child(3) {
   right: -60px;
@@ -531,7 +532,7 @@
   font-weight: 700;
   letter-spacing: -0.06em;
   padding: 0 0.04em;
-  background: linear-gradient(var(--v-lime), var(--v-lime)) no-repeat 0 88% / 100% 0.34em;
+  background: linear-gradient(var(--v-btn), var(--v-btn)) no-repeat 0 88% / 100% 0.34em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -1085,7 +1086,7 @@
   align-items: center;
   padding: 0 10px;
   white-space: nowrap;
-  background: var(--v-lime);
+  background: var(--v-lime-tone);
   color: var(--v-ink);
 }
 .splitBar > span:first-child {
@@ -1384,7 +1385,7 @@
   display: block;
   height: 100%;
   border-radius: 6px;
-  background: var(--v-lime);
+  background: var(--v-btn);
 }
 .tourText {
   padding: 18px 22px 24px;
@@ -1489,8 +1490,7 @@
   aspect-ratio: 1.55;
   border-radius: 18% / 26%;
   transform: rotate(9deg);
-  /* Mynte, not the accent colour (user's wish, Nov 2026). */
-  background: var(--v-lime);
+  background: var(--v-lime-tone);
 }
 .bento {
   list-style: none;
@@ -1522,9 +1522,9 @@
   border: 1px solid var(--v-rule);
 }
 .bentoMint {
-  --b-bg: var(--v-lime);
-  --b-mut: #2b3836;
-  --b-over: #2b3836;
+  --b-bg: var(--v-lime-tone);
+  --b-mut: #5e5e63;
+  --b-over: #5e5e63;
 }
 .bentoDeep {
   --b-bg: var(--v-olive);
@@ -1642,9 +1642,9 @@
   border: 1px solid currentColor;
 }
 .bentoPillFill {
-  border-color: var(--v-lime);
-  background: var(--v-lime);
-  color: var(--v-ink);
+  border-color: var(--v-btn);
+  background: var(--v-btn);
+  color: #ffffff;
   padding: 6px 12px;
 }
 .bentoScen {

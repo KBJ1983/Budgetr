@@ -24,6 +24,7 @@ import { SignupForm } from "./SignupForm";
  * tallet til" band, Funktioner (a scenario card + the groups folded), the dialog "Det, I plejer at spørge hinanden om",
  * Tryghed, price + FAQ and the closing signup. Every number is the demo family's (lib/demo-customer.ts, Sofie and
  * Mikkel) as the app shows it – keep them in step when the demo changes. Rosa only in small details, never in lists.
+ * Blocks marked data-reveal / data-reveal-group come in as they scroll into view (ScrollReveal, once per session).
  */
 
 /* ---------------- Hero + film ---------------- */
@@ -73,7 +74,7 @@ const ROWS = [
 
 export function FrontBento() {
   return (
-    <section className={f.bento} aria-label="Det får du i budgetpro">
+    <section className={f.bento} aria-label="Det får du i budgetpro" data-reveal-group>
       <div className={`${f.tile} ${f.tMain}`}>
         <span className={f.k}>Sofie og Mikkel · demofamilien</span>
         <h2 className={f.tTitle}>Til rådighed pr. måned</h2>
@@ -203,7 +204,7 @@ const CHAPTERS = [
 
 export function FrontStory() {
   return (
-    <section id="saadan" className={f.story} aria-labelledby="story-title">
+    <section id="saadan" className={f.story} aria-labelledby="story-title" data-reveal>
       <div>
         <p className={f.ovDark}>Sådan bliver tallet til</p>
         <h2 id="story-title" className={f.giant}>
@@ -214,7 +215,7 @@ export function FrontStory() {
           begge kan stole på, fordi det bygger på deres egne poster.
         </p>
       </div>
-      <ol className={f.chapters}>
+      <ol className={f.chapters} data-reveal-group>
         {CHAPTERS.map((c) => (
           <li key={c.no}>
             <span className={f.no}>{c.no}</span>
@@ -316,14 +317,14 @@ export function FrontFeatures() {
   return (
     <section id="funktioner" className={f.feats} aria-labelledby="feats-title">
       <div className={f.featsLeft}>
-        <div>
+        <div data-reveal>
           <p className={f.ov}>Funktioner</p>
           <h2 id="feats-title" className={f.h2}>
             Alt det, budgettet holder styr på.
           </h2>
           <p className={f.headBody}>Opsparing, lån, påmindelser og det, der ellers kræver et regneark. Alle funktioner er med i prisen.</p>
         </div>
-        <div className={f.scen}>
+        <div className={f.scen} data-reveal="tilt">
           <span className={f.scenIcon}>
             <BranchIcon size={20} />
           </span>
@@ -361,7 +362,7 @@ export function FrontFeatures() {
           />
         </div>
       </div>
-      <div className={f.fold}>
+      <div className={f.fold} data-reveal-group>
         {GROUPS.map((g) => (
           <details key={g.title} className={f.fx}>
             <summary>
@@ -410,7 +411,7 @@ const TALK = [
 export function FrontTalk() {
   return (
     <section id="sammen" className={f.talk} aria-labelledby="talk-title">
-      <div className={f.talkPhoto}>
+      <div className={f.talkPhoto} data-reveal="tilt">
         <Image
           src="/landing/foto-flytning.jpg"
           alt="Et par, der flytter sammen, med flyttekasser"
@@ -420,13 +421,13 @@ export function FrontTalk() {
           style={{ objectPosition: "50% 40%" }}
         />
       </div>
-      <div>
+      <div data-reveal>
         <p className={f.ov}>Spørg budgettet</p>
         <h2 id="talk-title" className={f.h2}>
           Det, I plejer at spørge hinanden om.
         </h2>
         <p className={f.headBody}>budgetpro har svaret, fordi det kender jeres poster, konti og lån.</p>
-        <div className={f.chat}>
+        <div className={f.chat} data-reveal-group>
           {TALK.map((t) => (
             <div key={t.q} className={f.pair}>
               <div className={f.q}>
@@ -462,7 +463,7 @@ const SAFE = [
 export function FrontSafety() {
   return (
     <section id="tryghed" className={f.safe} aria-labelledby="safe-title">
-      <div className={f.safeHead}>
+      <div className={f.safeHead} data-reveal>
         <p className={f.ov}>Tryghed</p>
         <h2 id="safe-title" className={f.h2}>
           Dine tal er dine. Det er hele ideen.
@@ -472,7 +473,7 @@ export function FrontSafety() {
           kommer ind.
         </p>
       </div>
-      <ul className={f.points}>
+      <ul className={f.points} data-reveal-group>
         {SAFE.map((p) => (
           <li key={p.title}>
             <span className={f.fi}>{p.icon}</span>
@@ -481,7 +482,7 @@ export function FrontSafety() {
           </li>
         ))}
       </ul>
-      <div className={f.ledger}>
+      <div className={f.ledger} data-reveal>
         <div>
           <h3>Det gemmer vi</h3>
           <Ticks
@@ -518,7 +519,7 @@ const FAQ = [
 export function FrontPricing() {
   return (
     <section id="pris" className={f.pricing} aria-labelledby="pris-title">
-      <div>
+      <div data-reveal>
         <p className={f.ov}>Pris</p>
         <h2 id="pris-title" className={f.h2}>
           Én pris. Alle funktioner.
@@ -533,7 +534,7 @@ export function FrontPricing() {
           ))}
         </div>
       </div>
-      <div className={f.priceCard}>
+      <div className={f.priceCard} data-reveal="tilt">
         <PricePlans />
         <Link href="/opret" className={f.btnBlock}>
           Prøv gratis i 30 dage
@@ -548,14 +549,14 @@ export function FrontPricing() {
 export function FrontFinal() {
   return (
     <section className={f.final} aria-labelledby="final-title">
-      <div className={f.finalText}>
+      <div className={f.finalText} data-reveal>
         <h2 id="final-title" className={f.h2}>
           Slip for de mange versioner af Excel-budgettet.
         </h2>
         <p className={f.headBody}>Ét budget, der altid er det nyeste – for dig og dem, du deler økonomi med.</p>
         <SignupForm idPrefix="cta" />
       </div>
-      <div className={f.finalPhoto}>
+      <div className={f.finalPhoto} data-reveal="tilt">
         <Image
           src="/landing/foto-noegler.jpg"
           alt="En familie, der får nøglerne til et nyt hjem"

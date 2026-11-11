@@ -1,5 +1,5 @@
 /* Account pages (login, /admin, /aftale), "A6" (Nov 2026).
-   Dark theme = the front page's graphite (#202024) with light violet accents; light theme = the site palette (stone
+   Dark theme = the front page's graphite (#202024) with white accents (no light violet – user's wish); light theme = the site palette (stone
    page, white cards, ultraviolet accent and buttons). */
 .bx {
   --bg: #202024;
@@ -11,9 +11,9 @@
   --tx-3: #94949b;
   --rule: #3a3a41;
   --field: #25252a;
-  --pos: #b4a8ff;
-  --pos-bg: #2e2a45;
-  --pos-rule: #4a4380;
+  --pos: #f3f3f1;
+  --pos-bg: #2c2c31;
+  --pos-rule: #3a3a41;
   --neg: #e59a8e;
   --neg-bg: #34211f;
   --neg-rule: #5a3530;
@@ -24,9 +24,9 @@
   --slate: #acacb2;
   --slate-bg: #2c2c31;
   --slate-rule: #3a3a41;
-  --accent: #b4a8ff;
+  --accent: #ffffff;
   --accent-tx: #18181b;
-  --accent-hover: #c9c0ff;
+  --accent-hover: #e7e7e3;
   --hi-bg: #f3f3f1;
   --hi-tx: #18181b;
   --hi-tx-2: #5e5e63;
@@ -51,8 +51,8 @@
   --rule: #e0e0db;
   --field: #ffffff;
   --pos: #4b2fe0;
-  --pos-bg: #eeebff;
-  --pos-rule: #d2cbff;
+  --pos-bg: #ecece9;
+  --pos-rule: #d6d6d1;
   --neg: #a8473c;
   --neg-bg: #f6e6e3;
   --neg-rule: #ebc6be;
@@ -907,7 +907,7 @@
 
 /* ---------- auth pages (/login, /opret, /login/bekraeft, components/app/AuthShell.tsx) ----------
    A dark graphite rounded card on a white frame ("A6", Nov 2026), always dark: form on the right, Tryghed on the
-   left (below on phones). Light violet is the primary button (as on the site's dark parts). */
+   left (below on phones). White is the primary button (as on the site's dark parts). */
 .bx-auth {
   --bg: #202024;
   --card: #2a2a2f;
@@ -917,10 +917,10 @@
   --tx-3: #94949b;
   --rule: #3a3a41;
   --field: #25252a;
-  --accent: #b4a8ff;
+  --accent: #ffffff;
   --accent-tx: #18181b;
-  --accent-hover: #c9c0ff;
-  --pos: #b4a8ff;
+  --accent-hover: #e7e7e3;
+  --pos: #f3f3f1;
   --neg: #e59a8e;
   color-scheme: dark;
   background: #ffffff;
@@ -1025,7 +1025,7 @@
   padding: 0 14px;
 }
 .bx-auth .bx-input:focus {
-  outline: 2px solid #b4a8ff;
+  outline: 2px solid #ffffff;
   outline-offset: 1px;
   border-color: var(--rule);
 }
@@ -1073,7 +1073,7 @@
   padding: 6px 14px 6px 10px;
 }
 .bx-auth-eyebrow svg {
-  color: #b4a8ff;
+  color: #ffffff;
 }
 .bx-auth-trust h2 {
   margin: 0;
@@ -1128,7 +1128,7 @@
   border-radius: 11px;
   background: var(--card);
   border: 1px solid #20272a;
-  color: #b4a8ff;
+  color: #ffffff;
   align-items: center;
   justify-content: center;
 }
