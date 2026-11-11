@@ -1,3 +1,4 @@
+import { mailAllowed, tooMany } from "@/lib/rate-limit";
 import { validateTeacher } from "@/lib/skole";
 import { deliverTeacherMail } from "@/lib/skole-auth";
 import { signupTeacher } from "@/lib/skole-teachers";
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
   }
   const v = validateTeacher(body);
   if (!v.ok) return Response.json({ errors: v.errors }, { status: 400 });
+  if (!(await mailAllowed(req.headers, v.value.email))) return tooMany();
   const source = await tryNoteGoal("laerer", req.headers);
   return Response.json(await deliverTeacherMail(req, await signupTeacher(v.value, undefined, undefined, source)), {
     headers: { "Cache-Control": "no-store" },

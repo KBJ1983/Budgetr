@@ -29,6 +29,12 @@ export interface Store {
   claim(key: string, field: string, value: string): Promise<{ value: string; fresh: boolean }>;
   /** Every field of a record made by bump or claim ({} when there is none). */
   fields(key: string): Promise<Record<string, string>>;
+  /**
+   * Counts `by` more (1 by default) under key and returns the count; the count starts over ttlS seconds after its
+   * first hit, and by = 0 only reads it. Atomic, so requests sent at once can't slip past a limit (lib/rate-limit.ts).
+   * Not listed in any folder.
+   */
+  hit(key: string, ttlS: number, by?: number): Promise<number>;
 }
 
 export const dataDir = () => process.env.BUDGETR_DATA_DIR || path.join(process.cwd(), "data");
@@ -127,6 +133,16 @@ function diskStore(dir: string): Store {
     async fields(key) {
       return readRecord(file(key));
     },
+    async hit(key, ttlS, by = 1) {
+      const f = path.join(dir, "_hits", ...key.split("/"));
+      return queued(f, async () => {
+        const r = await readRecord(f), now = Date.now();
+        const live = Number(r.until) > now;
+        const n = (live ? Number(r.n) || 0 : 0) + by;
+        if (by) await writeFileSafe(f, JSON.stringify({ n: String(n), until: String(live ? r.until : now + ttlS * 1000) }));
+        return n;
+      });
+    },
   };
 }
 
@@ -184,6 +200,13 @@ export function redisStore(redis: Redis): Store {
         for (const [f, v] of Object.entries(all)) out[f] = String(v);
       }
       return out;
+    },
+    async hit(key, ttlS, by = 1) {
+      const hk = `${PREFIX}hit:${key}`;
+      if (!by) return Number((await redis.get<string>(hk)) ?? 0);
+      const n = await redis.incrby(hk, by);
+      if (n === by) await redis.expire(hk, ttlS);
+      return n;
     },
   };
 }

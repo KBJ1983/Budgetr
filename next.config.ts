@@ -16,11 +16,21 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/app", destination: "/budgetr-app/index.html" }];
   },
-  // Not launched yet: tell search engines not to index anything (pages, the app, images)
-  // until ALLOW_INDEXING=1 is set. robots.txt (app/robots.ts) follows the same switch.
+  // Security headers on every response: no other site may show ours in a frame (clickjacking on /app, /admin,
+  // /aftale), no type sniffing, no full URLs (codes in links) sent to other sites, no camera/mic/location. Not
+  // launched yet: also tell search engines not to index anything until ALLOW_INDEXING=1 is set (app/robots.ts
+  // follows the same switch).
   async headers() {
-    if (process.env.ALLOW_INDEXING === "1") return [];
-    return [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+    const security = [
+      { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+      { key: "X-Frame-Options", value: "SAMEORIGIN" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+      { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+    ];
+    const noIndex = process.env.ALLOW_INDEXING === "1" ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
+    return [{ source: "/:path*", headers: [...security, ...noIndex] }];
   },
 };
 

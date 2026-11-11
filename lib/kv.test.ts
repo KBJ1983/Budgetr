@@ -28,6 +28,12 @@ function fakeRedis(raw = false) {
     sadd: async (k: string, m: string) => (set(k).add(m), 1),
     srem: async (k: string, m: string) => Number(set(k).delete(m)),
     smembers: async (k: string) => [...set(k)],
+    incrby: async (k: string, by: number) => {
+      const v = Number(strings.get(k) ?? 0) + by;
+      strings.set(k, String(v));
+      return v;
+    },
+    expire: async () => 1,
     multi() {
       const ops: (() => Promise<unknown>)[] = [];
       const tx = {
@@ -90,6 +96,16 @@ describe.each<[string, () => Store]>([
     expect(await s.list("stats/besoeg")).toEqual(["x.json"]);
     await s.del("stats/besoeg/x.json");
     expect(await s.fields("stats/besoeg/x.json")).toEqual({});
+  });
+
+  it("counts hits at once without losing any, and keeps them out of folder lists", async () => {
+    const s = make();
+    const n = await Promise.all(Array.from({ length: 30 }, () => s.hit("login/ip/1.2.3.4", 60)));
+    expect([...n].sort((a, b) => a - b)).toEqual(Array.from({ length: 30 }, (_, i) => i + 1));
+    expect(await s.list("login/ip")).toEqual([]);
+    expect(await s.list("")).toEqual([]);
+    expect(await s.hit("login/ip/1.2.3.4", 60, 0)).toBe(30);
+    expect(await s.hit("login/ip/5.6.7.8", 60, 0)).toBe(0);
   });
 
   it("takes two saves of the same key at once", async () => {

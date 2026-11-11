@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { requestAdminLogin } from "@/lib/agreement-admins";
 import { deliverAdminLogin } from "@/lib/agreement-auth";
+import { mailAllowed, tooMany } from "@/lib/rate-limit";
 import { isEmail, normalizeEmail } from "@/lib/signup";
 
 // /aftale: mails a login code + link to a kundeadmin. The answer is the same whether or not the e-mail is a
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
   }
   const email = normalizeEmail((body as Record<string, unknown> | null)?.email);
   if (!isEmail(email)) return Response.json({ error: "email" }, { status: 400 });
+  if (!(await mailAllowed(req.headers, email))) return tooMany();
   try {
     return Response.json(await deliverAdminLogin(req.nextUrl.origin, await requestAdminLogin(email)), { headers: { "Cache-Control": "no-store" } });
   } catch (e) {

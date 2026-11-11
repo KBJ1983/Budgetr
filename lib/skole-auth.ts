@@ -7,12 +7,16 @@ import { readTeacherSession } from "./session";
 import { requestOrigin, skoleBase } from "./skole-host";
 import { teacherMail } from "./skole-mail";
 import { readTeacher, type Teacher, type TeacherMail } from "./skole-teachers";
+import { isTestTeacher } from "./skole-test-teachers";
+import { testUsersOpen } from "./users";
 
 const DEV = process.env.NODE_ENV !== "production";
 
 /** The logged-in, confirmed teacher behind a cookie value, else null. */
 export async function currentTeacher(cookie: string | undefined): Promise<Teacher | null> {
   const id = await readTeacherSession(cookie);
+  // A test teacher's cookie stops working when the test logins close at launch (lib/users.ts testUsersOpen).
+  if (id && isTestTeacher(id) && !testUsersOpen()) return null;
   const t = id ? await readTeacher(id) : null;
   return t?.verifiedAt ? t : null;
 }

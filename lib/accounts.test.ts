@@ -172,6 +172,12 @@ describe("codes", () => {
     expect(await redeemCode(input.email, login.code, t0, dir)).toBeNull();
     expect(await redeem(login.token, t0, dir)).toBeNull();
   });
+
+  it("can't be guessed by sending many wrong codes at once", async () => {
+    const l = (await signup(input, t0, dir))!;
+    await Promise.all(Array.from({ length: 40 }, () => redeemCode(input.email, wrong(l.code), t0, dir)));
+    expect(await redeemCode(input.email, l.code, t0, dir)).toBeNull();
+  });
 });
 
 describe("sharing a budget", () => {

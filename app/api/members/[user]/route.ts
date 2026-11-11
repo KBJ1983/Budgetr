@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { addMember, isMemberId, listLogins, removeMember } from "@/lib/accounts";
 import { deliver } from "@/lib/auth-mail";
+import { allow, DAY, mailAllowed, tooMany } from "@/lib/rate-limit";
 import { SESSION_COOKIE, sessionLogin } from "@/lib/session";
 
 // Sharing a budget (lib/accounts.ts): who can log in to it, adding an e-mail (the primary only) and taking one off
@@ -26,6 +27,9 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/members/[us
   } catch {
     return new Response(null, { status: 400 });
   }
+  // Invites go out by mail: a few a day per budget, and the same mail limits as the login forms.
+  const to = typeof body?.email === "string" ? body.email : "";
+  if (!(await allow("invite", user, 6, DAY)) || !(await mailAllowed(req.headers, to))) return tooMany();
   const r = await addMember(user, body ?? {});
   if (!r.ok) return Response.json({ error: r.error }, { status: 400 });
   try {

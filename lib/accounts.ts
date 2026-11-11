@@ -20,6 +20,7 @@
  */
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { openStore } from "./kv";
+import { allow } from "./rate-limit";
 import { writeProfile } from "./profile";
 import { isEmail, normalizeEmail, type SignupInput } from "./signup";
 import { isAccountId } from "./users";
@@ -31,6 +32,8 @@ export const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const RESEND_GAP_MS = 60 * 1000;
 /** Wrong codes allowed per mail; then the link and code stop working and a new mail is needed. */
 export const MAX_CODE_TRIES = 5;
+/** How long the atomic try counter for one mailed code lives (longer than the code itself). */
+export const CODE_TRY_WINDOW_S = 60 * 60;
 /** E-mails that can log in to one budget: the primary and the members. */
 export const MAX_LOGINS = 3;
 
@@ -232,6 +235,12 @@ export async function redeemCode(email: unknown, code: unknown, now = new Date()
   const l = await findLogin(email, dir);
   const t = l && holderOf(l).token;
   if (!l || !t?.code || !(Date.parse(t.expires) > now.getTime())) return null;
+  // Counted atomically per mailed code before comparing, so guesses sent at once can't slip past the limit.
+  if (!(await allow("code", t.code, MAX_CODE_TRIES, CODE_TRY_WINDOW_S, dir))) {
+    delete holderOf(l).token;
+    await saveAccount(l.account, dir);
+    return null;
+  }
   if (same(t.code, codeHash(l, digits))) return use(l, now, dir);
   t.tries = (t.tries ?? 0) + 1;
   if (t.tries >= MAX_CODE_TRIES) delete holderOf(l).token;

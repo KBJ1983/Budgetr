@@ -1,0 +1,4 @@
+# Never upload private data with a `vercel` deploy from this machine (git-ignored too, but the CLI reads the folder).
+public/private/
+data/
+.env*

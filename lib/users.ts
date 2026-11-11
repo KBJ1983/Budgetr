@@ -35,5 +35,16 @@ export function findUser(login: string): TestUser | undefined {
 
 export const userById = (id: string | null | undefined) => USERS.find((u) => u.id === id);
 
+/** The fictional demo customer is open to everyone, also on the live site. */
+export const DEMO_ID = "demo";
+
+/**
+ * Test logins (KBJ, TEST1–5, GUIDE and the test teachers) have no password, so they only work while the site is
+ * closed: in development, behind SITE_PASSWORD (the test period), or when TEST_USERS=1 is set on purpose. When the
+ * password is removed at launch they close by themselves; their saved data is left as it is. Server-side only.
+ */
+export const testUsersOpen = () =>
+  process.env.NODE_ENV !== "production" || !!process.env.SITE_PASSWORD || process.env.TEST_USERS === "1";
+
 /** Real accounts (lib/accounts.ts) have ids like "u-k3x9…", so they never clash with a test user or a data/ file. */
 export const isAccountId = (id: unknown): id is string => typeof id === "string" && /^u-[a-z0-9]{12}$/.test(id);

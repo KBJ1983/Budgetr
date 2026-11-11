@@ -2,7 +2,7 @@
  * Server session for real accounts: an httpOnly cookie "<userId>[.<memberId>].<expires ms>.<HMAC>" set when a
  * mailed link or code is used (app/api/auth/redeem). The budget and profile APIs only serve an account to its own
  * sessions (the primary's and its members', lib/accounts.ts); a removed member's session stops working. Test users
- * (lib/users.ts) need no cookie – they keep the old no-password trust level.
+ * (lib/users.ts) need no cookie, but only while testUsersOpen() (the demo always).
  *
  * The HMAC key is AUTH_SECRET (at least 32 characters) or, without it, a random key kept as "auth-secret"
  * in the store (lib/kv.ts).
@@ -10,7 +10,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { readAccount, type Login } from "./accounts";
 import { openStore } from "./kv";
-import { isAccountId, userById } from "./users";
+import { DEMO_ID, isAccountId, testUsersOpen, userById } from "./users";
 
 export const SESSION_COOKIE = "budgetr_session";
 export const SESSION_MAX_AGE_S = 90 * 24 * 60 * 60;
@@ -83,7 +83,7 @@ export async function sessionLogin(userId: string, cookie: string | undefined, n
 
 /** May this request read and write userId's budget and profile? */
 export async function canAccess(userId: string, cookie: string | undefined, now = new Date(), dir?: string) {
-  if (userById(userId)) return true;
+  if (userById(userId)) return userId === DEMO_ID || testUsersOpen();
   return isAccountId(userId) && !!(await sessionLogin(userId, cookie, now, dir));
 }
 

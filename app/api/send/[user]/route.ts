@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { loginName } from "@/lib/accounts";
 import { sendMail } from "@/lib/auth-mail";
 import { fileMail, MAX_FILE_BYTES, parseSend, takeSend } from "@/lib/send-file";
+import { mailAllowed, tooMany } from "@/lib/rate-limit";
 import { SESSION_COOKIE, sessionLogin } from "@/lib/session";
 import { userById } from "@/lib/users";
 
@@ -26,6 +27,7 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/send/[user]
   const r = parseSend(body);
   if (!r.ok) return Response.json({ error: r.error }, { status: 400 });
   if (!(await takeSend(user))) return Response.json({ error: "limit" }, { status: 429 });
+  if (!(await mailAllowed(req.headers, r.value.to))) return tooMany();
 
   const sender = l ? loginName(l) : test!.name;
   const senderEmail = l ? (l.member ?? l.account).email : "test-bruger";

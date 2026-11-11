@@ -2180,7 +2180,7 @@ let page='budget', loanSort='input', loanEdit=null, loanDelArmed=false, bankOpen
 const F={type:'alle',account:'alle',payer:'alle',q:''};
 let planAcct='budget';
 const $=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf=new Intl.NumberFormat('da-DK',{maximumFractionDigits:0});
 const kr=v=>nf.format(Math.round(v))+' kr';
 const disp=v=>kr(view==='aar'?v*12:v);
@@ -5468,7 +5468,13 @@ $('btnNoteGo').onclick=()=>{const p=$('btnNoteGo').dataset.go;$('dlgNote').close
 
 /* ---------- opstart ---------- */
 function loadLocal(){try{const v=localStorage.getItem(window.BUDGETR_KEY);if(v)return JSON.parse(v)}catch(e){}try{return window.BUDGETR_SEED?JSON.parse(window.BUDGETR_SEED):null}catch(e){return null}}
-function normalize(x){if(!x||!Array.isArray(x.entries))return null;x.scenarios=Array.isArray(x.scenarios)?x.scenarios:[];x.loans=Array.isArray(x.loans)?x.loans:[];x.goals=Array.isArray(x.goals)?x.goals:[];x.goals.forEach(g=>{if(!Array.isArray(g.scopes))g.scopes=['base']});(x.persons||[]).forEach(p=>{if(!Array.isArray(p.extras)&&p.extra===undefined)return;const L=Array.isArray(p.extras)?p.extras:[{desc:'',amount:+p.extra||0}],acc=((x.accounts||[]).find(a=>a.type!=='faelles'&&a.owner===p.id)||{}).id||'';
+/* Text in a budget can come from someone else (a shared budget, the shared demo), and parts of it end up in HTML
+   attributes. So no saved text may break out: quotes and angle brackets become their typographic look-alikes, in
+   values and keys alike, before anything is shown. */
+const SAFE_CH={'"':'”','<':'‹','>':'›'},safeStr=t=>/["<>]/.test(t)?t.replace(/["<>]/g,c=>SAFE_CH[c]):t;
+function cleanText(v){if(typeof v==='string')return safeStr(v);if(Array.isArray(v))return v.map(cleanText);
+  if(v&&typeof v==='object'){const o={};for(const k of Object.keys(v))o[safeStr(k)]=cleanText(v[k]);return o}return v}
+function normalize(x){x=cleanText(x);if(!x||!Array.isArray(x.entries))return null;x.scenarios=Array.isArray(x.scenarios)?x.scenarios:[];x.loans=Array.isArray(x.loans)?x.loans:[];x.goals=Array.isArray(x.goals)?x.goals:[];x.goals.forEach(g=>{if(!Array.isArray(g.scopes))g.scopes=['base']});(x.persons||[]).forEach(p=>{if(!Array.isArray(p.extras)&&p.extra===undefined)return;const L=Array.isArray(p.extras)?p.extras:[{desc:'',amount:+p.extra||0}],acc=((x.accounts||[]).find(a=>a.type!=='faelles'&&a.owner===p.id)||{}).id||'';
   L.filter(v=>+v.amount>0).forEach((v,i)=>x.entries.push({id:'x'+p.id+i+Date.now().toString(36),type:'indtaegt',desc:v.desc||'Ekstra indtjening',key:'',category:'',freq:0,start:1,amount:Math.round(+v.amount),account:acc,payer:p.id,extra:true,split:false,active:true,check:false,note:'',since:DAY()}));
   delete p.extras;delete p.extra});x.persons=x.persons||[];x.accounts=x.accounts||[];x.settings=x.settings||{split:'indkomst',manualPct:50};
   // Tasks written before todoSince existed count from today.

@@ -2,12 +2,14 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { loginName, redeem, redeemCode } from "@/lib/accounts";
 import { claimCustomerSeat } from "@/lib/customer-seats";
+import { redeemAllowed, tooMany } from "@/lib/rate-limit";
 import { makeSession, SESSION_COOKIE, sessionCookieOptions } from "@/lib/session";
 
 // Uses a mailed link ({ token }, POST from /login/bekraeft, never on GET) or the mailed code ({ email, code }, from
 // /login and /opret on the device that asked for it): confirms the e-mail the first time and starts the session.
 // The page then stores id + name in localStorage for the app, like the test-user login does.
 export async function POST(req: NextRequest) {
+  if (!(await redeemAllowed(req.headers))) return tooMany();
   let body: { token?: unknown; email?: unknown; code?: unknown; kode?: unknown };
   try {
     body = await req.json();

@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { adminLogin } from "@/lib/owner-store";
+import { allow, clientIp } from "@/lib/rate-limit";
 import { ADMIN_COOKIE, adminCookieOptions } from "@/lib/session";
 
 // The owner's password login for /admin (lib/owner-store.ts): POST { email, password } sets the admin cookie,
@@ -12,6 +13,8 @@ export async function POST(req: NextRequest) {
   } catch {
     return new Response(null, { status: 400 });
   }
+  // Per IP first, so one guesser is stopped before the shared lockout in adminLogin is reached.
+  if (!(await allow("admin-ip", clientIp(req.headers), 6, 15 * 60))) return Response.json({ error: "locked" }, { status: 429 });
   const r = await adminLogin(body?.email, body?.password);
   if (!r.ok) return Response.json({ error: r.error }, { status: r.error === "locked" ? 429 : 401 });
   (await cookies()).set(ADMIN_COOKIE, r.cookie, adminCookieOptions);

@@ -12,6 +12,7 @@
  */
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { openStore } from "./kv";
+import { allow } from "./rate-limit";
 import { normalizeEmail } from "./signup";
 import type { TeacherInput } from "./skole";
 import { adoptLegacyClasses } from "./skole-store";
@@ -151,6 +152,12 @@ export async function redeemTeacherCode(email: unknown, code: unknown, now = new
   if (!/^\d{6}$/.test(digits)) return null;
   const t = await findTeacher(email, dir);
   if (!t?.token || !(Date.parse(t.token.expires) > now.getTime())) return null;
+  // Counted atomically per mailed code before comparing, so guesses sent at once can't slip past the limit.
+  if (!(await allow("teacher-code", t.token.code, MAX_TEACHER_CODE_TRIES, 60 * 60, dir))) {
+    delete t.token;
+    await saveTeacher(t, dir);
+    return null;
+  }
   if (same(t.token.code, codeHash(t, digits))) return use(t, now, dir);
   t.token.tries += 1;
   if (t.token.tries >= MAX_TEACHER_CODE_TRIES) delete t.token;

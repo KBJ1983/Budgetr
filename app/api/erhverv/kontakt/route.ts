@@ -3,6 +3,7 @@ import { sendMail } from "@/lib/auth-mail";
 import { inquiryMail, validateInquiry } from "@/lib/erhverv";
 import { saveInquiry, takeInquiry } from "@/lib/erhverv-store";
 import { ownerEmails } from "@/lib/owner-store";
+import { allow, clientIp, DAY } from "@/lib/rate-limit";
 import { tryNoteGoal } from "@/lib/traffic-store";
 
 // The Erhverv page's contact form (lib/erhverv.ts). Saved in the store and mailed to the owner; "website" is a field
@@ -19,6 +20,8 @@ export async function POST(req: Request) {
   if (typeof body?.website === "string" && body.website.trim()) return Response.json({ ok: true });
   const r = validateInquiry(body);
   if (!r.ok) return Response.json({ errors: r.errors }, { status: 400 });
+  // Per IP first, so one sender with ever new e-mails can't use up the day's shared limit for real requests.
+  if (!(await allow("inquiry-ip", clientIp(req.headers), 4, DAY))) return Response.json({ error: "limit" }, { status: 429 });
   if (!(await takeInquiry(r.value.email))) return Response.json({ error: "limit" }, { status: 429 });
 
   await saveInquiry(r.value, undefined, undefined, await tryNoteGoal("henvendelse", req.headers));

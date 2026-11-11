@@ -1,11 +1,16 @@
+import { clientIp, HOUR, missesLeft, noteMiss, tooMany } from "@/lib/rate-limit";
 import { isCode, normalizeCode, sanitizeAnswers, sanitizeFlow } from "@/lib/skole";
 import { lookupCode, saveProgress } from "@/lib/skole-store";
 
 // A pupil's code (budgetpro Skole). POST { code } → { code, flow, answers, expires } (flow is null before the first
 // save), 404 for an unknown or expired code. PUT { code, flow, answers } saves the work, checked by sanitizeFlow and
 // sanitizeAnswers; the teacher can read it. The code travels in the body, not the URL, so æøå need no escaping.
+// Only wrong codes are counted per IP (a whole class shares the school's IP and asks again every 20 s), so nobody can
+// walk through the codes to read or change pupils' work.
 const noStore = { "Cache-Control": "no-store" };
 const MAX_BODY = 48_000;
+/** A class of 30 typing a code wrong a few times each stays well inside; walking 34.560 codes takes over 200 hours. */
+const MAX_MISSES = 150;
 
 async function readBody(req: Request): Promise<Record<string, unknown> | null> {
   const text = await req.text();
@@ -19,18 +24,27 @@ async function readBody(req: Request): Promise<Record<string, unknown> | null> {
 }
 
 const codeOf = (b: Record<string, unknown> | null) => (typeof b?.code === "string" ? normalizeCode(b.code) : "");
+const miss = (req: Request) => noteMiss("elev-miss", clientIp(req.headers), HOUR);
+const blocked = async (req: Request) => !(await missesLeft("elev-miss", clientIp(req.headers), MAX_MISSES, HOUR));
 
 export async function POST(req: Request) {
+  if (await blocked(req)) return tooMany();
   const code = codeOf(await readBody(req));
   const found = isCode(code) ? await lookupCode(code) : null;
-  if (!found) return new Response(null, { status: 404, headers: noStore });
+  if (!found) {
+    await miss(req);
+    return new Response(null, { status: 404, headers: noStore });
+  }
   return Response.json({ code, ...found }, { headers: noStore });
 }
 
 export async function PUT(req: Request) {
+  if (await blocked(req)) return tooMany();
   const b = await readBody(req);
   const code = codeOf(b);
   const flow = sanitizeFlow(b?.flow);
   if (!isCode(code) || !flow) return new Response(null, { status: 400, headers: noStore });
-  return new Response(null, { status: (await saveProgress(code, flow, sanitizeAnswers(b?.answers))) ? 204 : 404, headers: noStore });
+  if (await saveProgress(code, flow, sanitizeAnswers(b?.answers))) return new Response(null, { status: 204, headers: noStore });
+  await miss(req);
+  return new Response(null, { status: 404, headers: noStore });
 }

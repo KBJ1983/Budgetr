@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
+import { mailAllowed, tooMany } from "@/lib/rate-limit";
 import { makeTeacherSession, TEACHER_COOKIE, teacherCookieOptions } from "@/lib/session";
 import { isEmail, normalizeEmail } from "@/lib/signup";
 import { deliverTeacherMail } from "@/lib/skole-auth";
 import { findTestTeacher, openTestTeacher } from "@/lib/skole-test-teachers";
 import { requestTeacherLogin } from "@/lib/skole-teachers";
+import { testUsersOpen } from "@/lib/users";
 
 // budgetpro Skole: mails a login code + link to a teacher. The answer is the same whether or not the e-mail is a
 // teacher, so nobody can find out which e-mails are in use. A test teacher's login (LÆRER1 …, lib/skole-test-teachers.ts)
@@ -16,7 +18,7 @@ export async function POST(req: Request) {
     return new Response(null, { status: 400 });
   }
   const typed = (body as Record<string, unknown> | null)?.email;
-  const test = findTestTeacher(typed);
+  const test = testUsersOpen() ? findTestTeacher(typed) : undefined;
   if (test) {
     const t = await openTestTeacher(test);
     (await cookies()).set(TEACHER_COOKIE, await makeTeacherSession(t.id), teacherCookieOptions);
@@ -24,5 +26,6 @@ export async function POST(req: Request) {
   }
   const email = normalizeEmail(typed);
   if (!isEmail(email)) return Response.json({ errors: { email: "Skriv en gyldig e-mail, fx navn@skole.dk." } }, { status: 400 });
+  if (!(await mailAllowed(req.headers, email))) return tooMany();
   return Response.json(await deliverTeacherMail(req, await requestTeacherLogin(email)), { headers: { "Cache-Control": "no-store" } });
 }

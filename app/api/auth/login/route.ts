@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { isEmail, normalizeEmail, requestLogin } from "@/lib/accounts";
 import { deliver } from "@/lib/auth-mail";
 import { noteSeatCode } from "@/lib/customer-seats";
+import { mailAllowed, tooMany } from "@/lib/rate-limit";
 
 // Mails a login link (a confirm link while the e-mail isn't confirmed). Same answer for unknown e-mails. A seat code
 // sent along (/login?kode=…) is noted on the account and taken when the link or code is used.
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
   }
   const email = normalizeEmail(body?.email);
   if (!isEmail(email)) return Response.json({ error: "email" }, { status: 400 });
+  if (!(await mailAllowed(req.headers, email))) return tooMany();
   try {
     const link = await requestLogin(email);
     if (link && body.kode) await noteSeatCode(link.account.id, body.kode);

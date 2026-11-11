@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { signup, validateSignup } from "@/lib/accounts";
 import { deliver } from "@/lib/auth-mail";
 import { noteSeatCode } from "@/lib/customer-seats";
+import { mailAllowed, tooMany } from "@/lib/rate-limit";
 import { tryNoteGoal } from "@/lib/traffic-store";
 
 // Sign up: checks the form and mails a confirm link (and notes a seat code sent along, lib/customer-seats.ts). The answer is the same whether or not the e-mail already
@@ -15,6 +16,7 @@ export async function POST(req: NextRequest) {
   }
   const v = validateSignup(body);
   if (!v.ok) return Response.json({ errors: v.errors }, { status: 400 });
+  if (!(await mailAllowed(req.headers, v.value.email))) return tooMany();
   const source = await tryNoteGoal("opret", req.headers);
   try {
     const link = await signup(v.value, undefined, undefined, source);

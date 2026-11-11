@@ -1,7 +1,7 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { addMember, redeem, removeMember, signup } from "./accounts";
 import {
   canAccess, makeSession, makeTeacherSession, readSession, readTeacherSession, SESSION_MAX_AGE_S, sessionLogin, TEACHER_MAX_AGE_S,
@@ -46,6 +46,24 @@ describe("canAccess", () => {
   it("lets test users in without a cookie", async () => {
     expect(await canAccess("test1", undefined, t0, dir)).toBe(true);
     expect(await canAccess("nobody", undefined, t0, dir)).toBe(false);
+  });
+
+  it("closes the test users on the live site, but keeps them during the test period and keeps the demo", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("SITE_PASSWORD", "");
+    vi.stubEnv("TEST_USERS", "");
+    try {
+      expect(await canAccess("kbj", undefined, t0, dir)).toBe(false);
+      expect(await canAccess("test1", undefined, t0, dir)).toBe(false);
+      expect(await canAccess("demo", undefined, t0, dir)).toBe(true);
+      vi.stubEnv("SITE_PASSWORD", "test-periode");
+      expect(await canAccess("kbj", undefined, t0, dir)).toBe(true);
+      vi.stubEnv("SITE_PASSWORD", "");
+      vi.stubEnv("TEST_USERS", "1");
+      expect(await canAccess("test1", undefined, t0, dir)).toBe(true);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("lets an account in only with its own session, and only once the e-mail is confirmed", async () => {

@@ -1,10 +1,12 @@
 import { cookies } from "next/headers";
+import { redeemAllowed, tooMany } from "@/lib/rate-limit";
 import { redeemAdminCode, redeemAdminLink } from "@/lib/agreement-admins";
 import { AGREEMENT_COOKIE, agreementCookieOptions, makeAgreementSession } from "@/lib/session";
 
 // /aftale: uses a mailed link ({ token }, POST from /aftale/bekraeft, never on GET) or the mailed code
 // ({ email, code }, typed where it was asked for) and starts the kundeadmin's session.
 export async function POST(req: Request) {
+  if (!(await redeemAllowed(req.headers))) return tooMany();
   let body: { token?: unknown; email?: unknown; code?: unknown };
   try {
     body = await req.json();

@@ -14,6 +14,7 @@
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { listGrants, type Grant } from "./agreements";
 import { openStore } from "./kv";
+import { allow } from "./rate-limit";
 import { MAX_ORG_ADMINS, parseAdmins, today, type Ledger, type Org, type OrgCategory } from "./owner";
 import { readLedger, writeLedger } from "./owner-store";
 import { isEmail, normalizeEmail } from "./signup";
@@ -106,6 +107,12 @@ export async function redeemAdminCode(email: unknown, code: unknown, now = new D
   if (!/^\d{6}$/.test(digits) || !isEmail(e)) return null;
   const a = await readAdmin(adminId(e), dir);
   if (!a?.token || !(Date.parse(a.token.expires) > now.getTime())) return null;
+  // Counted atomically per mailed code before comparing, so guesses sent at once can't slip past the limit.
+  if (!(await allow("admin-code", a.token.code, MAX_ADMIN_CODE_TRIES, 60 * 60, dir))) {
+    delete a.token;
+    await saveAdmin(a, dir);
+    return null;
+  }
   if (same(a.token.code, codeHash(a, digits))) return use(a, now, dir);
   a.token.tries += 1;
   if (a.token.tries >= MAX_ADMIN_CODE_TRIES) delete a.token;

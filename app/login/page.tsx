@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LoginForm } from "@/components/app/LoginForm";
 import { seatOffer } from "@/lib/customer-seats";
+import { testUsersOpen } from "@/lib/users";
 import "./app.css";
 
 export const metadata: Metadata = {
@@ -16,5 +17,5 @@ const one = (v: string | string[] | undefined) => (typeof v === "string" ? v.sli
 export default async function LoginPage({ searchParams }: { searchParams: Promise<Params> }) {
   const p = await searchParams;
   const seat = typeof p.kode === "string" ? await seatOffer(p.kode) : null;
-  return <LoginForm next={one(p.next)} email={one(p.email)} seat={seat ?? undefined} testHint={process.env.NODE_ENV === "development"} />;
+  return <LoginForm next={one(p.next)} email={one(p.email)} seat={seat ?? undefined} testHint={process.env.NODE_ENV === "development"} testLogins={testUsersOpen()} />;
 }

@@ -6,10 +6,10 @@ import { AuthShell, MailSent, safeNext } from "@/components/app/AuthShell";
 import { seatMonths, type SeatOffer } from "@/components/app/CreateAccountForm";
 import { isEmail } from "@/lib/signup";
 import { login, logout, useSession } from "@/lib/store";
-import { isAccountId } from "@/lib/users";
+import { DEMO_ID, findUser, isAccountId } from "@/lib/users";
 
 /** Log in (/login). A seat code in the link (/login?kode=…) goes along and is taken on login (lib/customer-seats.ts). */
-export function LoginForm({ next, email, seat, testHint }: { next?: string; email?: string; seat?: SeatOffer; testHint?: boolean }) {
+export function LoginForm({ next, email, seat, testHint, testLogins }: { next?: string; email?: string; seat?: SeatOffer; testHint?: boolean; testLogins?: boolean }) {
   const { user, ready } = useSession();
   const [value, setValue] = useState(email ?? "");
   const [error, setError] = useState("");
@@ -33,8 +33,9 @@ export function LoginForm({ next, email, seat, testHint }: { next?: string; emai
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Test users log in with their initials, no password.
-    if (login(value)) {
+    // Test users log in with their initials, no password – only while the site is closed (testUsersOpen); the demo always.
+    const test = findUser(value);
+    if (test && (test.id === DEMO_ID || testLogins) && login(value)) {
       // /app is the original static app, outside the Next router: do a full navigation.
       window.location.assign(safeNext(next));
       return;

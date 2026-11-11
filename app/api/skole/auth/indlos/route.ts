@@ -1,10 +1,12 @@
 import { cookies } from "next/headers";
+import { redeemAllowed, tooMany } from "@/lib/rate-limit";
 import { makeTeacherSession, TEACHER_COOKIE, teacherCookieOptions } from "@/lib/session";
 import { redeemTeacherCode, redeemTeacherLink } from "@/lib/skole-teachers";
 
 // budgetpro Skole: uses a mailed link ({ token }, POST from /skole/laerer/bekraeft, never on GET) or the mailed code
 // ({ email, code }, typed where it was asked for) and starts the teacher's session.
 export async function POST(req: Request) {
+  if (!(await redeemAllowed(req.headers))) return tooMany();
   let body: { token?: unknown; email?: unknown; code?: unknown };
   try {
     body = await req.json();
