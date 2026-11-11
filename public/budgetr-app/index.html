@@ -1039,10 +1039,18 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
 .demostrip{display:none;padding:8px 16px;background:#3F3F46;color:#FFFFFF;font-size:13px;line-height:1.4;text-align:center}
 .demostrip a{color:#FFFFFF;font-weight:600;margin-left:6px;white-space:nowrap}
 html.isdemo .demostrip{display:block}
+/* The goals in a scenario's settings: a goal that is in shows a check on a tint, one taken out is struck through on a
+   dashed edge (user's wish: the squeezed checkbox did not show what a click did). */
+.gscope.gsel label.chip{cursor:pointer;gap:6px}
+.gscope.gsel label.chip input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.gscope.gsel label.chip:has(input:checked){background:var(--pine-bg);border-color:var(--rule2);color:var(--ink)}
+.gscope.gsel label.chip:has(input:checked)::before{content:"✓";font-weight:700;color:var(--pine)}
+.gscope.gsel label.chip:not(:has(input:checked)){background:transparent;border-style:dashed;color:var(--ink3);text-decoration:line-through}
+.gscope.gsel label.chip:has(input:focus-visible){outline:2px solid var(--focus,#2f6fb3);outline-offset:2px}
 /* Nyt scenarie: the three steps; an empty scenario's "Sådan bliver forskellen til" on the scenario's yellow with a way on. */
-.nschow{margin-top:14px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--scn) 45%,var(--card));color:var(--scn-on);font-size:13.5px;line-height:1.45}
+.nschow{margin-top:14px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--scn) 40%,#FFFFFF);color:var(--scn-on);font-size:13.5px;line-height:1.45}
 .nschow ol{margin:6px 0 0;padding-left:20px}.nschow li+li{margin-top:3px}
-section.fcard.why.wempty{background:color-mix(in srgb,var(--scn) 40%,var(--card))!important;border-color:color-mix(in srgb,var(--scn) 80%,var(--rule))!important}
+section.fcard.why.wempty{background:color-mix(in srgb,var(--scn) 40%,#FFFFFF)!important;border-color:color-mix(in srgb,var(--scn) 80%,#FFFFFF)!important}
 section.fcard.why.wempty p{margin:6px 0 14px;max-width:720px;color:var(--scn-on)}
 /* The tab row on wider screens (user's wish, Nov 2026: less packed): the budget menu with the small label
    "Gældende budget", smaller tabs and buttons, and "+ Nyt scenarie" only in the budget menu and on Hvad nu hvis. */
@@ -1691,7 +1699,7 @@ tr.grp.resline td.r{font-size:16px}
 .dfor h2 .hsub{font-weight:400;color:var(--ink2);font-size:.85em}
 
 /* The scenario bar */
-.scnbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:10px 0 0;padding:10px 14px;border-radius:12px;background:var(--scn,#F7DC7E);color:var(--scn-on,#18181B);font-size:14px;box-shadow:0 6px 18px -8px rgba(16,20,21,.45)}
+.scnbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:10px 0 0;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--scn,#F7DC7E) 40%,#FFFFFF);color:var(--scn-on,#18181B);font-size:14px;box-shadow:0 6px 18px -8px rgba(16,20,21,.45)}
 .scnbar[hidden]{display:none}
 .scnbar .sbdot{width:10px;height:10px;border-radius:50%;background:#18181B;flex:0 0 auto}
 .scnbar .sbtx{flex:1;min-width:200px}
@@ -2542,7 +2550,7 @@ function hvisHtml(){const sc=curSc(),val=e=>calcWith(e,()=>{const t=totals();ret
   else h+=`<p class="muted" style="margin-top:14px">${L.length?'Vælg et scenarie for at se det trin for trin.':'Der er ingen scenarier endnu. Tryk på Nyt scenarie for at lave et.'}</p>`;
   return h}
 const SCEDIT=sc=>`${scDiffHtml(sc)}<label>Navn<input id="scName" value="${esc(sc.name||'')}"></label><label>Gælder fra<input id="scFrom" value="${esc(sc.from||'')}" placeholder="fx januar 2027"></label>${(()=>{const ba=S.accounts.find(a=>a.type==='faelles')||S.accounts[0];if(!ba)return '';const sd=saldoFor(ba.id);return `<label>Saldo ${esc(ba.name)}<input id="scSaldo" data-acc="${ba.id}" inputmode="decimal" value="${nf.format(sd.amount||0)}" style="width:110px"></label><label>pr.<input id="scSaldoD" type="date" value="${esc(sd.date)}" style="width:150px"></label>`})()}<button type="button" id="btnDelSc" class="danger">Slet scenarie</button>
-    <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope"><span>Opsparingsmål i scenariet:</span>${S.goals.map(g=>`<label class="chip"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}`;
+    <p>Du redigerer scenariet. Ændringer her påvirker ikke det nuværende budget.</p>${(S.goals||[]).length?`<div class="gscope gsel"><span>Opsparingsmål i scenariet – tryk på et mål for at tage det ud af eller med i scenariet:</span>${S.goals.map(g=>`<label class="chip" title="${goalIn(g,sc.id)?'Med i scenariet – tryk for at tage det ud':'Ikke med i scenariet – tryk for at tage det med'}"><input type="checkbox" data-gscope="${g.id}" data-key="${sc.id}" ${goalIn(g,sc.id)?'checked':''}>${esc(g.name||'Mål')} · ${kr(goalCalc(g).monthly)}/md.</label>`).join('')}</div>`:''}`;
 
 function render(){
   const app=$('app');
