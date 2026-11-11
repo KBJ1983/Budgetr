@@ -2666,7 +2666,8 @@ function monthCheckHtml(){if(!monthCheckDue())return '';const last=S.settings.mo
   const prev=e=>e.history.slice().sort((a,b)=>a.date<b.date?-1:1).pop();
   const rows=[...changed.map(e=>`<li><b>${esc(e.desc)}</b> ${kr(+prev(e).amount||0)} → ${kr(+e.amount||0)}</li>`),...fresh.map(e=>`<li><b>${esc(e.desc)}</b> ny post, ${kr(+e.amount||0)}</li>`)];
   const checks=cur().filter(e=>e.check).length,todos=todoList().length;
-  const extra=[checks&&`${checks} ${checks===1?'post er':'poster er'} markeret til tjek`,todos&&todoCount(todos)+' venter under klokken'].filter(Boolean);
+  // The posts to check are handled one by one under "Det skal … gøre" right below, so this only points there.
+  const extra=[checks&&`${checks} ${checks===1?'post er':'poster er'} markeret til tjek – ${checks===1?'den står':'de står'} under Det skal ${wI('du','I')} gøre`,todos&&todoCount(todos)+' venter under klokken'].filter(Boolean);
   // No "første gang" label (it confused people); the first check just asks to look the posts through.
   return `<div class="mcheck" role="region" aria-label="Månedstjek"><div class="mchead"><h2>Månedstjek</h2>${last?`<span class="hint">Siden ${esc(fmtDate(last))}</span>`:''}</div>
     <p>${last?'Hvad har ændret sig siden sidst? Se listen igennem. Passer resten stadig, så bekræft det med ét tryk.':'Se budgettet igennem én gang om måneden. Passer det stadig, så bekræft det med ét tryk.'}</p>
