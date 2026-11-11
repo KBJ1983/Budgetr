@@ -1544,6 +1544,10 @@ section.whosec{margin-top:22px}
 .inbox li.ck .am{flex:1;color:var(--ink2);font-family:var(--mono);font-size:13px;white-space:nowrap}
 .inbox li.ck .ckb{display:flex;gap:6px}
 .inbox li.ck button{margin:0;padding:5px 12px;min-height:0;font-size:13px;border-radius:999px;white-space:nowrap}
+/* "Det skal … gøre" on the grey of the old Månedstjek box (user's wish); Månedstjek's "Budgettet passer" on its own row. */
+#app>section.inbox{background:var(--band);border:1px solid var(--rule)}
+.inbox li.ck.mcok{padding-top:4px}
+.inbox li.ck.mcok button{padding:7px 16px}
 tr.row.mark td{background:var(--pine-bg)!important}
 tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
 .bcalc{display:grid;margin-top:4px}
@@ -2356,7 +2360,7 @@ function envData(){const t=totals(),bk=bankCalc(),E=act();
   return {t,bk,R:t.exp-H,H,O:t.sav,L:t.sav?t.afterSav:t.left,rc:byCat(Rs),hc:byCat(Hs),sav}}
 const perLeft=p=>{const c=personCalc(p.id);return totals().sav?c.afterSav:c.left};
 var CK_MAX=6; // posts to check listed one by one on Overblik; more go behind "Se alle på Budgetposter"
-function inboxItems(){const L=[];
+function inboxItems(){const L=[],mc=monthCheckItem();if(mc)L.push(mc);
   const fx=cur().filter(e=>e.type==='overfoersel').map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
   if(fx.length){const gap=fx.reduce((a,x)=>a+x.rec-setupAmt(x.e),0);L.push({t:`Ret ${fx.length} ${fx.length===1?'overførsel':'overførsler'} i netbanken`,x:gap>0?`${kr(gap)} for lidt om måneden`:'Beløbene passer ikke',b:'Se overførslerne',a:'data-go="overf"'})}
   S.accounts.forEach(a=>{const M0=monthly(a.id),sd=saldoFor(a.id),st=planStart(sd);let v=sd.amount,low=Infinity,li=st;
@@ -2369,7 +2373,10 @@ function inboxItems(){const L=[];
   return L}
 function inboxHtml(){const L=inboxItems();if(!L.length)return '';
   return `<section class="inbox"><div class="ih"><h2>Det skal ${wI('du','I')} gøre</h2><span class="dcount">${L.length}</span></div><ul class="todo">${L.map((x,i)=>`<li class="t"><span class="ic">${i+1}</span><b>${x.t}</b><span class="tx">${x.x}</span>${x.b?`<button type="button" class="lnk" ${x.a}>${x.b}</button>`:''}</li>`
-    +(x.posts||[]).map(e=>`<li class="ck"><span class="nm">${esc(e.desc)}</span><span class="am">${kr(amtOf(e))} · ${(FREQ[e.freq]||'').toLowerCase()}</span><span class="ckb"><button type="button" data-ckok="${e.id}">Beløbet passer</button><button type="button" data-ckfix="${e.id}">Ret</button></span></li>`).join('')).join('')}</ul></section>`}
+    +(x.posts||[]).map(e=>`<li class="ck"><span class="nm">${esc(e.desc)}</span><span class="am">${kr(amtOf(e))} · ${(FREQ[e.freq]||'').toLowerCase()}</span><span class="ckb"><button type="button" data-ckok="${e.id}">Beløbet passer</button><button type="button" data-ckfix="${e.id}">Ret</button></span></li>`).join('')
+    +(x.mc?x.mc.slice(0,CK_MAX).map(r=>`<li class="ck"><span class="nm">${esc(r.e.desc)}</span><span class="am">${r.x}</span><span class="ckb"><button type="button" data-ckfix="${r.e.id}">Ret</button></span></li>`).join('')
+      +(x.mc.length>CK_MAX?`<li class="ck"><span class="am">og ${x.mc.length-CK_MAX} mere</span></li>`:'')
+      +`<li class="ck mcok"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button></li>`:'')).join('')}</ul></section>`}
 function mainHtml(D){const t=D.t;
   return `<section class="dmain"><span class="over">Til rådighed ${per()}</span><b class="big ${D.L<0?'neg':''}">${disp(D.L)}</b>
     <p>Det, ${wI('du','I')} har tilbage at bruge, når regninger, husholdning og opsparing er betalt.</p>
@@ -2524,7 +2531,6 @@ function render(){
   /* Overblik, top to bottom (user's wish, Nov 2026: not too much in the first view): Månedstjek when it is due,
      Rådighedsbeløb, Konti and Hvem betaler hvad folded (sfoldHtml), and last "Hvad er der tilbage" with the sentence
      (the key-figure card on phones) and Måned for måned. */
-  if(!sc&&!DR)h+=monthCheckHtml();
   const bk=bankCalc(), D=envData();
   h+=inboxHtml()+`<div class="dtop">${mainHtml(D)}${bankHtml(bk)}</div>`+fordelingHtml(D);
   /* (the bank's fold-out moved into the calculation above) */
@@ -2660,23 +2666,16 @@ function clampHero(){const s=document.querySelector('#app .hero small:not(.hbar)
   s.classList.toggle('clamp',s.scrollHeight>s.clientHeight+2);s.onclick=()=>{if(s.classList.contains('clamp')){s.classList.remove('clamp');s.classList.add('open')}}}
 const daysSince=d=>Math.floor((Date.parse(DAY())-Date.parse(d))/864e5);
 function monthCheckDue(){const sp=S.settings||{};return sp.monthCheck?daysSince(sp.monthCheck)>=MC_DAYS:S.entries.length>=5}
-function monthCheckHtml(){if(!monthCheckDue())return '';const last=S.settings.monthCheck||'';
+/* Månedstjek is the first item of "Det skal … gøre" (user's wish, Nov 2026: one list, nothing twice): the posts with a new
+   amount or new since the last check, each with "Ret", and "Budgettet passer". Not while a scenario or draft is open. */
+function monthCheckItem(){if(curSc()||DR||!monthCheckDue())return null;const last=S.settings.monthCheck||'';
   const E=S.entries.filter(e=>e.active!==false&&!e.auto&&(e.type==='udgift'||e.type==='indtaegt')&&e.since&&e.since>last);
-  const changed=E.filter(e=>(e.history||[]).length),fresh=E.filter(e=>!(e.history||[]).length);
   const prev=e=>e.history.slice().sort((a,b)=>a.date<b.date?-1:1).pop();
-  const rows=[...changed.map(e=>`<li><b>${esc(e.desc)}</b> ${kr(+prev(e).amount||0)} → ${kr(+e.amount||0)}</li>`),...fresh.map(e=>`<li><b>${esc(e.desc)}</b> ny post, ${kr(+e.amount||0)}</li>`)];
-  const checks=cur().filter(e=>e.check).length,todos=todoList().length;
-  // The posts to check are handled one by one under "Det skal … gøre" right below, so this only points there.
-  const extra=[checks&&`${checks} ${checks===1?'post er':'poster er'} markeret til tjek – ${checks===1?'den står':'de står'} under Det skal ${wI('du','I')} gøre`,todos&&todoCount(todos)+' venter under klokken'].filter(Boolean);
-  // No "første gang" label (it confused people); the first check just asks to look the posts through.
-  return `<div class="mcheck" role="region" aria-label="Månedstjek"><div class="mchead"><h2>Månedstjek</h2>${last?`<span class="hint">Siden ${esc(fmtDate(last))}</span>`:''}</div>
-    <p>${last?'Hvad har ændret sig siden sidst? Se listen igennem. Passer resten stadig, så bekræft det med ét tryk.':'Se budgettet igennem én gang om måneden. Passer det stadig, så bekræft det med ét tryk.'}</p>
-    ${rows.length?`<ul>${rows.slice(0,6).join('')}${rows.length>6?`<li>og ${rows.length-6} mere</li>`:''}</ul>`:last?`<p class="muted">Ingen beløb er rettet siden sidst.</p>`:''}
-    ${extra.length?`<p class="muted">${esc(extra.join(' · '))}.</p>`:''}
-    <div class="mcbtns"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button><button type="button" id="btnMcEdit">Ret posterne</button></div></div>`}
+  const rows=E.map(e=>({e,x:(e.history||[]).length?`${kr(+prev(e).amount||0)} → ${kr(+e.amount||0)}`:`ny post, ${kr(+e.amount||0)}`}));
+  // No "første gang" label (it confused people); the first check just asks to look the budget through.
+  return {t:'Månedstjek – passer budgettet stadig?',x:last?(rows.length?`Ændret siden ${esc(fmtDate(last))}:`:`Intet er rettet siden ${esc(fmtDate(last))}`):'Se budgettet igennem én gang om måneden',mc:rows}}
 function bindMonthCheck(){const ok=$('btnMcOk');if(!ok)return;
-  ok.onclick=()=>{S.settings.monthCheck=DAY();commit();toast('Tak. Vi spørger igen om en måned')};
-  $('btnMcEdit').onclick=()=>document.querySelector('button[data-page="poster"]').click()}
+  ok.onclick=()=>{S.settings.monthCheck=DAY();commit();toast('Tak. Vi spørger igen om en måned')}}
 /* Phones: the key figures as one card in "Hvad er der tilbage", last on Overblik (shown by CSS only below 760 px, in
    place of the sentence in .hero). Same numbers as the sentence and the person cards; Rådighedsbeløb has its own
    section at the top. */

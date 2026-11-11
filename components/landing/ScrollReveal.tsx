@@ -7,25 +7,12 @@ import { useEffect } from "react";
  * `data-reveal-group` are staggered. Progressive enhancement: the server renders everything visible,
  * and only elements that are still below the fold when this runs get hidden first – so nothing
  * flickers, and without JS (or with reduced motion) the page is simply static.
- * Only the first time a page is scrolled in a browser session (user's wish): after that it stays static.
+ * Each block comes in once, the first time it is scrolled past on a visit; scrolling back up leaves it in place.
  */
 export function ScrollReveal() {
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Noted when the first block is shown (not here: in development the effect runs twice, and the second run must
-    // not skip what the first one hid).
-    const key = `bp:reveal:${location.pathname}`;
-    const seen = () => {
-      try {
-        sessionStorage.setItem(key, "1");
-      } catch {
-        // No storage (private mode, blocked): reveal every time.
-      }
-    };
-    try {
-      if (sessionStorage.getItem(key)) return;
-    } catch {}
 
     document.querySelectorAll<HTMLElement>("[data-reveal-group]").forEach((group) => {
       // A swipe strip (components/landing/Swipe.tsx) that scrolls sideways comes in as one piece.
@@ -42,7 +29,7 @@ export function ScrollReveal() {
 
     const fold = window.innerHeight;
     const pending = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]")).filter(
-      (el) => el.getBoundingClientRect().top > fold * 0.92,
+      (el) => el.dataset.revealState !== "shown" && el.getBoundingClientRect().top > fold * 0.92,
     );
     pending.forEach((el) => (el.dataset.revealState = "pending"));
 
@@ -53,7 +40,6 @@ export function ScrollReveal() {
           const el = item.target as HTMLElement;
           el.dataset.revealState = "shown";
           io.unobserve(el);
-          seen();
         }
       },
       { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
