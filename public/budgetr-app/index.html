@@ -1556,6 +1556,8 @@ section.whosec{margin-top:22px}
 @media (min-width:761px){.inbox ul.mclist{display:grid;grid-template-columns:repeat(3,max-content);gap:8px 18px;align-items:center;justify-content:start;margin-top:12px}
   .inbox ul.mclist li.ck{display:contents}.inbox ul.mclist li.ck .am{margin-left:0;justify-self:end}.inbox ul.mclist li.ck.more .nm,.inbox ul.mclist li.mcok button{grid-column:1/-1;justify-self:start}}
 .inbox li.ck.mcok button{padding:7px 16px}
+/* The note beside the Budgetposter heading sits right on a slightly darker tile, so it does not float (user's wish). */
+#app>section>.sechead .hint.phint{margin-left:auto;text-align:right;padding:10px 14px;border-radius:10px;background:var(--band)}
 tr.row.mark td{background:var(--pine-bg)!important}
 tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
 .bcalc{display:grid;margin-top:4px}
@@ -2620,7 +2622,7 @@ function render(){
 
   // poster (own tab). hTop is the overview so far; the posts page starts with the scenario bar only.
   const hTop=h; h=scBarHtml(true)+startInfo(true);
-  h+=`<section><div class="sechead"><h2>Budgetposter</h2><span class="hint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Hvem betaler</button>, og opsparingsmålene under <button type="button" class="ghost" data-go="formue" style="padding:0;color:var(--pine);text-decoration:underline">Opsparing og gæld</button>.</span></div>
+  h+=`<section><div class="sechead"><h2>Budgetposter</h2><span class="hint phint">Beløb omregnet til ${per()}. Overførsler mellem konti står under <button type="button" class="ghost" data-goto="overf" style="padding:0;color:var(--pine);text-decoration:underline">Hvem betaler</button>, og opsparingsmålene under <button type="button" class="ghost" data-go="formue" style="padding:0;color:var(--pine);text-decoration:underline">Opsparing og gæld</button>.</span></div>
   <div class="filters"><div class="fchips">
     <select id="flType" aria-label="Filtrér type"><option value="alle">Alle typer</option><option value="udgift">Alle udgifter</option><option value="regn">Udgifter, banken regner med</option><option value="hush">Husholdning</option><option value="indtaegt">Indtægter</option><option value="tjek">Skal tjekkes</option><option value="steget">Steget mindst ${devPct()} %</option></select>
     <select id="flAcct" aria-label="Filtrér konto"><option value="alle">Alle konti</option>${S.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}<option value="">Ikke placeret</option></select>
