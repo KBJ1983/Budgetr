@@ -1547,6 +1547,8 @@ section.whosec{margin-top:22px}
 /* "Det skal … gøre" on the grey of the old Månedstjek box (user's wish); Månedstjek's "Budgettet passer" on its own row. */
 #app>section.inbox{background:var(--band);border:1px solid var(--rule)}
 .inbox li.ck.mcok{padding-top:4px}
+.inbox .mcsub{margin:6px 0 2px;font-size:14px;color:var(--ink2)}
+.inbox li.ck{padding-left:0!important}
 .inbox li.ck.mcok button{padding:7px 16px}
 tr.row.mark td{background:var(--pine-bg)!important}
 tr.row.mark td:first-child{box-shadow:inset 3px 0 0 var(--btn)}
@@ -2359,24 +2361,15 @@ function envData(){const t=totals(),bk=bankCalc(),E=act();
   const sav=E.filter(e=>e._goal).map(e=>[String(e.desc||'').replace(/^Opsparing: /,''),mAvg(e)]).concat(S.persons.filter(p=>pNum(p,'savings')).map(p=>[p.name+'s opsparing',pNum(p,'savings')]));
   return {t,bk,R:t.exp-H,H,O:t.sav,L:t.sav?t.afterSav:t.left,rc:byCat(Rs),hc:byCat(Hs),sav}}
 const perLeft=p=>{const c=personCalc(p.id);return totals().sav?c.afterSav:c.left};
-var CK_MAX=6; // posts to check listed one by one on Overblik; more go behind "Se alle på Budgetposter"
-function inboxItems(){const L=[],mc=monthCheckItem();if(mc)L.push(mc);
-  const fx=cur().filter(e=>e.type==='overfoersel').map(e=>({e,rec:transferRec(e)})).filter(x=>x.rec!==null&&Math.abs(x.rec-setupAmt(x.e))>=1);
-  if(fx.length){const gap=fx.reduce((a,x)=>a+x.rec-setupAmt(x.e),0);L.push({t:`Ret ${fx.length} ${fx.length===1?'overførsel':'overførsler'} i netbanken`,x:gap>0?`${kr(gap)} for lidt om måneden`:'Beløbene passer ikke',b:'Se overførslerne',a:'data-go="overf"'})}
-  S.accounts.forEach(a=>{const M0=monthly(a.id),sd=saldoFor(a.id),st=planStart(sd);let v=sd.amount,low=Infinity,li=st;
-    for(let k=0;k<12;k++){const x=M0[(((st+k)%12)+12)%12];v+=x.i-x.o;if(v<low){low=v;li=st+k}}
-    if(low<0)L.push({t:`${esc(a.name)} går i minus i ${idxLbl(li).toLowerCase()}`,x:`Laveste saldo ${kr(low)}`,b:'Se måned for måned',a:`data-plan="${a.id}"`})});
-  const ck=cur().filter(e=>e.check&&e.type!=='overfoersel');
-  // Each post to check gets its own row under the item: "Beløbet passer" takes the mark off, "Ret" shows it on Budgetposter.
-  if(ck.length)L.push({t:`${ck.length} ${ck.length===1?'post skal':'poster skal'} tjekkes`,x:'Passer beløbet stadig?',b:ck.length>CK_MAX?'Se alle på Budgetposter':'',a:'data-tjek',posts:ck.slice(0,CK_MAX)});
-  const td=todoList().length;if(td)L.push({t:esc(todoCount(td))+' venter',x:'Under klokken',b:'Se opgaverne',a:'data-todos'});
-  return L}
-function inboxHtml(){const L=inboxItems();if(!L.length)return '';
-  return `<section class="inbox"><div class="ih"><h2>Det skal ${wI('du','I')} gøre</h2><span class="dcount">${L.length}</span></div><ul class="todo">${L.map((x,i)=>`<li class="t"><span class="ic">${i+1}</span><b>${x.t}</b><span class="tx">${x.x}</span>${x.b?`<button type="button" class="lnk" ${x.a}>${x.b}</button>`:''}</li>`
-    +(x.posts||[]).map(e=>`<li class="ck"><span class="nm">${esc(e.desc)}</span><span class="am">${kr(amtOf(e))} · ${(FREQ[e.freq]||'').toLowerCase()}</span><span class="ckb"><button type="button" data-ckok="${e.id}">Beløbet passer</button><button type="button" data-ckfix="${e.id}">Ret</button></span></li>`).join('')
-    +(x.mc?x.mc.slice(0,CK_MAX).map(r=>`<li class="ck"><span class="nm">${esc(r.e.desc)}</span><span class="am">${r.x}</span><span class="ckb"><button type="button" data-ckfix="${r.e.id}">Ret</button></span></li>`).join('')
-      +(x.mc.length>CK_MAX?`<li class="ck"><span class="am">og ${x.mc.length-CK_MAX} mere</span></li>`:'')
-      +`<li class="ck mcok"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button></li>`:'')).join('')}</ul></section>`}
+var CK_MAX=6; // changed posts listed one by one in Månedstjek
+/* Overblik shows only Månedstjek when it is due (user's wish, Nov 2026: transfers to fix, an account below zero, posts
+   to check and tasks live under the bell, not here too). One grey box: the posts with a new amount or new since the
+   last check, each with "Ret" (Budgetposter at the post, marked), then "Budgettet passer". */
+function inboxHtml(){const x=monthCheckItem();if(!x)return '';
+  return `<section class="inbox" role="region" aria-label="Månedstjek"><div class="ih"><h2>Månedstjek</h2></div><p class="mcsub">${x.x}</p><ul class="todo">`
+    +x.mc.slice(0,CK_MAX).map(r=>`<li class="ck"><span class="nm">${esc(r.e.desc)}</span><span class="am">${r.x}</span><span class="ckb"><button type="button" data-ckfix="${r.e.id}">Ret</button></span></li>`).join('')
+    +(x.mc.length>CK_MAX?`<li class="ck"><span class="am">og ${x.mc.length-CK_MAX} mere</span></li>`:'')
+    +`<li class="ck mcok"><button type="button" class="primary" id="btnMcOk">Budgettet passer</button></li></ul></section>`}
 function mainHtml(D){const t=D.t;
   return `<section class="dmain"><span class="over">Til rådighed ${per()}</span><b class="big ${D.L<0?'neg':''}">${disp(D.L)}</b>
     <p>Det, ${wI('du','I')} har tilbage at bruge, når regninger, husholdning og opsparing er betalt.</p>
@@ -2666,14 +2659,14 @@ function clampHero(){const s=document.querySelector('#app .hero small:not(.hbar)
   s.classList.toggle('clamp',s.scrollHeight>s.clientHeight+2);s.onclick=()=>{if(s.classList.contains('clamp')){s.classList.remove('clamp');s.classList.add('open')}}}
 const daysSince=d=>Math.floor((Date.parse(DAY())-Date.parse(d))/864e5);
 function monthCheckDue(){const sp=S.settings||{};return sp.monthCheck?daysSince(sp.monthCheck)>=MC_DAYS:S.entries.length>=5}
-/* Månedstjek is the first item of "Det skal … gøre" (user's wish, Nov 2026: one list, nothing twice): the posts with a new
-   amount or new since the last check, each with "Ret", and "Budgettet passer". Not while a scenario or draft is open. */
+/* Månedstjek, the only box of its kind on Overblik (inboxHtml): the posts with a new amount or new since the last check.
+   Not while a scenario or draft is open. */
 function monthCheckItem(){if(curSc()||DR||!monthCheckDue())return null;const last=S.settings.monthCheck||'';
   const E=S.entries.filter(e=>e.active!==false&&!e.auto&&(e.type==='udgift'||e.type==='indtaegt')&&e.since&&e.since>last);
   const prev=e=>e.history.slice().sort((a,b)=>a.date<b.date?-1:1).pop();
   const rows=E.map(e=>({e,x:(e.history||[]).length?`${kr(+prev(e).amount||0)} → ${kr(+e.amount||0)}`:`ny post, ${kr(+e.amount||0)}`}));
   // No "første gang" label (it confused people); the first check just asks to look the budget through.
-  return {t:'Månedstjek – passer budgettet stadig?',x:last?(rows.length?`Ændret siden ${esc(fmtDate(last))}:`:`Intet er rettet siden ${esc(fmtDate(last))}`):'Se budgettet igennem én gang om måneden',mc:rows}}
+  return {x:last?(rows.length?`Passer budgettet stadig? Det er ændret siden ${esc(fmtDate(last))}:`:`Passer budgettet stadig? Intet er rettet siden ${esc(fmtDate(last))}.`):'Se budgettet igennem én gang om måneden. Passer det stadig, så bekræft det med ét tryk.',mc:rows}}
 function bindMonthCheck(){const ok=$('btnMcOk');if(!ok)return;
   ok.onclick=()=>{S.settings.monthCheck=DAY();commit();toast('Tak. Vi spørger igen om en måned')}}
 /* Phones: the key figures as one card in "Hvad er der tilbage", last on Overblik (shown by CSS only below 760 px, in
@@ -3650,7 +3643,6 @@ function bindMain(){
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goPage(b.dataset.go));
   document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{planAcct=b.dataset.plan;render();const p=document.querySelector('section.plan');if(p)p.scrollIntoView({behavior:'smooth',block:'start'})});
   document.querySelectorAll('[data-tjek]').forEach(b=>b.onclick=()=>{F.type='tjek';goPage('poster')});
-  document.querySelectorAll('[data-ckok]').forEach(b=>b.onclick=()=>{const x=S.entries.find(e=>e.id===b.dataset.ckok);if(!x)return;x.check=false;commit();toast('Posten er tjekket')});
   document.querySelectorAll('[data-ckfix]').forEach(b=>b.onclick=()=>{const id=b.dataset.ckfix;goPage('poster');setTimeout(()=>jumpPost(id,true),0)});
   document.querySelectorAll('[data-todos]').forEach(b=>b.onclick=()=>{const t=$('btnTodo');if(t)setTimeout(()=>t.click(),0)});
   document.querySelectorAll('[data-newpost]').forEach(b=>b.onclick=()=>openEntry(null));
