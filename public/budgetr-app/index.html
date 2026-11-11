@@ -1396,20 +1396,18 @@ dialog h2,.sethead h2{font-weight:700}
 .dfor .stack i b{font:600 15px/1.2 var(--mono)}
 .dfor .stack i span,.dfor .stack i b{overflow:hidden;text-overflow:clip}
 .dfor .stack i.nar{padding:0 8px} .dfor .stack i.nar span{display:none} .dfor .stack i.nar b{font-size:12.5px}
-.dfor .stack i.tiny{padding:0} .dfor .stack i.tiny>*{display:none}
+.dfor .stack i em{display:none;font:600 12px/1.2 var(--mono);font-style:normal}
+.dfor .stack i.tiny{padding:0 4px;align-items:center} .dfor .stack i.tiny>*{display:none} .dfor:not(.small) .stack i.tiny>em{display:block}
+.dfor .stack i.none{padding:0} .dfor .stack i.none>*{display:none}
 .elegend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:13px;color:var(--ink2)}
 .elegend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .elegend i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .elegend b{font:600 12.5px var(--mono);color:var(--ink)}
 .e1{background:var(--env1);color:var(--env1-on)} .e2{background:var(--env2);color:var(--env2-on)} .e3{background:var(--env3);color:var(--env3-on)} .e4{background:var(--env4);color:var(--env4-on)} .e0{background:var(--env0)}
-.dfor .brace{position:relative;height:46px;margin-top:6px}
-.dfor .brace .bx{position:absolute;top:0;height:12px;border:2px solid var(--ink3);border-top:0;border-radius:0 0 8px 8px}
-.dfor .brace .bt{position:absolute;top:16px;right:0;font-size:12.5px;line-height:1.3;color:var(--ink2);text-align:left}
-.dfor .brace .bt b{font-family:var(--mono);color:var(--ink)}
 .dfor .env{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:6px}
 /* The four envelopes in the calm look of Opsparing og gæld (user's wish): plain cards with a thin edge, the name and the
    amount on one line, the share of the income under it as a thin bar in the envelope's slate tone, then the posts as
-   rows on a thin line. The stack above is a thin bar too; the envelopes carry the numbers. */
+   rows on a thin line. */
 .dfor .ev{border-radius:14px;overflow:hidden;display:flex;flex-direction:column;padding:16px 16px 14px;background:var(--card);border:1px solid var(--rule);color:var(--ink)}
 .dfor .ev.e1,.dfor .ev.e2,.dfor .ev.e3,.dfor .ev.e4{background:var(--card);color:var(--ink)}
 .dfor .ev .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -1423,9 +1421,9 @@ dialog h2,.sethead h2{font-weight:700}
 .dfor .ev li:first-child{border-top:0}
 .dfor .ev li span:last-child{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
 .dfor .ev .home{margin:10px 0 0;font-size:12.5px;color:var(--ink2)}
-.dfor:not(.small) .stack{height:12px;border-radius:99px}
-.dfor:not(.small) .stack i{padding:0}
-.dfor:not(.small) .stack i>*{display:none}
+/* The stack carries each part's name and amount (user's wish, Nov 2026); a narrow part shows only its amount, a tiny
+   one nothing (its title still names it). */
+.dfor:not(.small) .stack{height:58px;border-radius:12px;margin-bottom:16px}
 .dfor .dv-st{display:none}
 .dfor .stairs{display:grid;gap:3px;margin-top:10px}
 .dfor .st{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:2px 10px;align-items:center;padding:7px 0;font-size:14px}
@@ -2395,10 +2393,9 @@ function bankHtml(bk){const F=(loansFreedWithin(12)||[]).filter(x=>x.inB),fr=F.r
     ${F.length?`<p class="bfree">${F.map(x=>`Fra ${idxLbl(x.i).toLowerCase()} er ${esc((x.l.desc||x.l.bank||'lånet').toLowerCase())} betalt: <b class="pos">+${disp(x.free)}</b>`).join('. ')}. Så er ${wI('du','I')} ${disp(Math.abs(nb))} ${nb>=0?'over':'under'} kravet.</p>`:''}</section>`}
 function fordelingHtml(D,small){const t=D.t,inc=Math.max(1,t.inc),P=v=>Math.max(0,v)/inc*100,pc=v=>Math.round(P(v))+' % af indtægten';
   const parts=[['e1','Regninger',D.R],['e2','Husholdning',D.H],['e3','Opsparing',D.O],['e4','Til rådighed',D.L]];
-  const fit=v=>P(v)>=13?'':P(v)>=7?' nar':' tiny';
-  const bar=`<div class="stack">${parts.filter(x=>x[2]>0.5).map(x=>`<i class="${x[0]}${fit(x[2])}" style="width:${P(x[2])}%" title="${x[1]}: ${disp(x[2])}"><span>${x[1]}</span><b>${disp(x[2])}</b></i>`).join('')}</div>`;
+  const fit=v=>P(v)>=13?'':P(v)>=7?' nar':P(v)>=3?' tiny':' none';
+  const bar=`<div class="stack">${parts.filter(x=>x[2]>0.5).map(x=>`<i class="${x[0]}${fit(x[2])}" style="width:${P(x[2])}%" title="${x[1]}: ${disp(x[2])}"><span>${x[1]}</span><b>${disp(x[2])}</b><em>${disp(x[2]).replace(/s*kr$/,'')}</em></i>`).join('')}</div>`;
   const legend=`<div class="elegend">${parts.map(x=>`<span><i class="${x[0]}"></i>${x[1]} <b>${disp(x[2])}</b></span>`).join('')}</div>`;
-  const brace=`<div class="brace"><div class="bx" style="left:${P(D.R)}%;width:${Math.max(0,100-P(D.R))}%"></div><div class="bt" style="left:${Math.min(P(D.R),60)}%">Bankens rådighedsbeløb <b>${disp(D.bk.rad)}</b> · krav ${kr(D.bk.req)} · <b>${kr(Math.abs(D.bk.buf))} ${D.bk.buf>=0?'over':'under'}</b></div></div>`;
   if(small)return `<section class="dfor small"><div class="sechead"><h2>Sådan fordeler de ${disp(t.inc)} <span class="hsub">(samlede indtægter)</span> sig</h2></div><div class="dv-bar">${bar}${legend}</div></section>`;
   const top=(L,n)=>{const a=L.slice(0,n),r=L.slice(n).reduce((s,x)=>s+x[1],0);return a.concat(r>0.5?[['Andet',r]]:[]).map(([k,v])=>`<li><span>${esc(k)}</span><span>${disp(v)}</span></li>`).join('')};
   const env=(c,l,v,items,home)=>`<div class="ev ${c}"><div class="top"><span>${l}</span><b>${disp(v)}</b></div><small class="pc">${pc(v)}</small><div class="evbar"><i class="${c}" style="width:${Math.min(100,P(v))}%"></i></div><ul>${items||'<li class="muted"><span>Ingen</span></li>'}</ul>${home?`<div class="home">${home}</div>`:''}</div>`;
@@ -2408,7 +2405,7 @@ function fordelingHtml(D,small){const t=D.t,inc=Math.max(1,t.inc),P=v=>Math.max(
   const a=P(D.R),b=P(D.H),o=P(D.O),l=P(D.L);
   const stairs=`<div class="stairs">${st('','Indtægter','Løn og andre indtægter',disp(t.inc),0,100,'e0')}${st('','− Regninger','Faste udgifter, banken regner med','−'+disp(D.R),100-a,a,'e1')}${st('sub','= Bankens rådighedsbeløb','Det tal, banken regner med',disp(D.bk.rad),0,100-a,'hatch')}${st('','− Husholdning','Fx mad, tøj og gaver','−'+disp(D.H),100-a-b,b,'e2')}${t.sav?st('','− Opsparing','Mål og opsparing','−'+disp(D.O),100-a-b-o,o,'e3'):''}${st('end','= Til rådighed','',disp(D.L),0,l,'e4')}</div>`;
   return `<section class="dfor"><div class="sechead"><h2>Sådan fordeler de ${disp(t.inc)} sig <button type="button" class="helplink" data-help="bank">Sådan regnes det</button></h2></div>
-    <div class="dv-bar">${bar}${brace}${envs}</div><div class="dv-st"><p class="hint">Hvert trin trækker noget fra.</p>${stairs}</div></section>`}
+    <div class="dv-bar">${bar}${envs}</div><div class="dv-st"><p class="hint">Hvert trin trækker noget fra.</p>${stairs}</div></section>`}
 /* Opsparing og gæld: the goals and the loans under one tab, with three key figures on top and a switch between them. */
 function formueHead(){const t=totals(),key=SC||'base',G=(S.goals||[]).filter(g=>goalIn(g,key)).map(goalCalc);
   const saved=G.reduce((a,c)=>a+(c.est||0),0),target=G.reduce((a,c)=>a+(c.T||0),0);
