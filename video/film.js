@@ -370,8 +370,8 @@
    */
   function importScene(el) {
     const FILES = [
-      ["CSV", "background:var(--midnight);color:var(--lime)", "Lønkonto.csv", "386 posteringer fra 1. okt. 2025 til 30. sep. 2026", "Lønkonto"],
-      ["XLSX", "background:var(--lime);color:var(--midnight)", "Budgetkonto.xlsx", "142 posteringer fra 1. okt. 2025 til 30. sep. 2026", "Budgetkonto"],
+      ["CSV", "background:var(--midnight);color:var(--on-dark)", "Lønkonto.csv", "386 posteringer fra 1. okt. 2025 til 30. sep. 2026", "Lønkonto"],
+      ["XLSX", "background:var(--lime);color:var(--on-lime)", "Budgetkonto.xlsx", "142 posteringer fra 1. okt. 2025 til 30. sep. 2026", "Budgetkonto"],
       ["PDF", "background:var(--lime-tone);color:var(--olive)", "Fælleskonto.pdf", "214 posteringer fra 1. okt. 2025 til 30. sep. 2026", "Fælleskonto"],
     ];
     const ROWS = [
@@ -433,13 +433,13 @@
 
   /**
    * The first step of the guide "Start nyt budget" (renderWiz(), WS_START in the app, same texts): empty, from
-   * statements or from existing budgets. The cursor (drawn by the film) points at each choice, picks "Ud fra
-   * kontoudskrifter" and presses Næste. update(u) takes seconds since the scene began; T says when: hover 1.2/2.0/2.8,
+   * statements or from existing budgets. The cursor (drawn by the film) points at each choice, picks choice `pick`
+   * (default 1, "Ud fra kontoudskrifter") and presses Næste. update(u) takes seconds since the scene began; T says when: hover 1.2/2.0/2.8,
    * pick 3.6, next 4.6.
    */
-  function startScene(el) {
+  function startScene(el, pick = 1) {
     const OPTS = [
-      ["Tomt budget", "Du lægger selv posterne ind under hver overskrift på siden Budgetposter"],
+      ["Tom skabelon", "Du lægger selv posterne ind under hver overskrift på siden Budgetposter"],
       ["Ud fra kontoudskrifter", "Læg kontoudskrifter fra netbanken ind som CSV, Excel eller PDF. budgetpro finder de faste poster og overførslerne mellem jeres konti"],
       ["Ud fra eksisterende budgetter", "Læg et eller flere budgetter fra Excel eller CSV ind. Posterne hentes ind, som de står, og kan suppleres med kontoudskrifter"],
     ];
@@ -457,7 +457,7 @@
       opts.forEach((o, i) => {
         const k = out(p(u, 0.3 + i * 0.18, 0.9 + i * 0.18));
         put(o, { o: k, x: (1 - k) * 30 });
-        const picked = u >= T.pick ? i === 1 : i === 0;
+        const picked = u >= T.pick ? i === pick : i === 0;
         o.classList.toggle("on", picked);
         // Highlighted while the cursor rests on it (it arrives 0.35 s before its key and leaves at the key)
         o.classList.toggle("hov", u >= T.hover[i] - 0.35 && u < T.hover[i] + 0.1);

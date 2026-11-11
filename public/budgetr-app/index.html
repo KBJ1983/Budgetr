@@ -5165,7 +5165,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
   const P=W.persons.filter(p=>p.name);
   if(WS===WS_START){const so=(v,name,hint)=>`<label class="wzopt"><input type="radio" name="wzStart" value="${v}" ${W.start===v?'checked':''}><span class="wzgn"><b>${name}</b><small>${hint}</small></span></label>`;
     b.innerHTML=(wzDraft()?'<div class="verdict ok" style="margin:0 0 12px">Du har allerede et budget. Det nye budget oprettes som en kladde ved siden af det, du har nu. Dit nuværende budget er uændret, indtil du åbner kladden og vælger &quot;Sæt som primært budget&quot;.</div>':'')+`<p class="wzp">Hvordan vil du starte budgettet? Guiden spørger først om navn, personer og konti. Har du valgt filer, lægger du dem ind, når budgettet er oprettet. Selve filerne bliver ikke gemt, kun de poster, du vælger.</p>
-    ${so('tom','Tomt budget','Du lægger selv posterne ind under hver overskrift på siden Budgetposter')}
+    ${so('tom','Tom skabelon','Du lægger selv posterne ind under hver overskrift på siden Budgetposter')}
     ${so('udskrifter','Ud fra kontoudskrifter','Læg kontoudskrifter fra netbanken ind som CSV, Excel eller PDF. budgetpro finder de faste poster og overførslerne mellem jeres konti')}
     ${so('budget','Ud fra eksisterende budgetter','Læg et eller flere budgetter fra Excel eller CSV ind. Posterne hentes ind, som de står, og kan suppleres med kontoudskrifter')}`}
   if(WS===WS_NAME)b.innerHTML=`<p class="wzp">Hvad skal budgettet hedde? Navnet står øverst på siden og i eksporten.</p><div class="wzgrid"><input id="wzName" value="${esc(W.title)}" placeholder="fx Budget for Anna og Jonas" autocomplete="off" aria-label="Budgettets navn"></div>`;
@@ -5218,7 +5218,7 @@ function renderWiz(){const b=$('wzBody');$('wzErr').hidden=true;$('wzHint').text
       <li><b>${esc(W.title)}</b></li><li>${P.length} ${P.length===1?'person':'personer'}: ${P.map(p=>esc(p.name)).join(', ')}${sal.length?` · løn for ${sal.map(p=>esc(p.name)).join(', ')}`:''}</li>
       ${wzInvites().length?`<li>Invitation til at logge ind sendes til ${wzInvites().map(p=>esc(p.email)).join(' og ')}</li>`:''}
       <li>Konti: ${accN.map(esc).join(', ')}${W.acc.budget&&parseAmt(W.acc.saldo)?` · saldo ${kr(parseAmt(W.acc.saldo))} pr. ${esc(fmtDate(W.acc.saldoDate))}`:''}</li>
-      <li>Start: ${{udskrifter:'ud fra kontoudskrifter, der lægges ind, når budgettet er oprettet',budget:'ud fra eksisterende budgetter, der lægges ind, når budgettet er oprettet'}[W.start]||'tomt budget, posterne lægges ind på siden Budgetposter'}</li>
+      <li>Start: ${{udskrifter:'ud fra kontoudskrifter, der lægges ind, når budgettet er oprettet',budget:'ud fra eksisterende budgetter, der lægges ind, når budgettet er oprettet'}[W.start]||'tom skabelon, posterne lægges ind på siden Budgetposter'}</li>
       <li>Overskrifter: Indtægter${W.extra?', Ekstra indtægter':''}${grp.length?', '+grp.map(g=>esc(g.name)).join(', '):''}</li>
             ${wzSolo()?'':`<li>Fordeling: ${W.split==='lige'?'ligeligt':W.split==='manuel'?`${esc(P[0]?.name||'')} ${W.manualPct} %`:'efter indkomst'}${W.auto&&W.acc.budget&&W.acc.personal?' · automatiske overførsler':''}</li>`}
       <li>${G.length?G.length+' opsparingsmål: '+G.map(g=>esc(g.name)).join(', '):'Ingen opsparingsmål'}</li>

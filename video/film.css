@@ -17,20 +17,24 @@
   --comp: #f4de96; --fcard-b-bg: var(--comp); --fcard-b-line: var(--comp); --orb-bg: #f9edc6;
   --shadow: 0 30px 60px -24px rgba(16, 20, 21, 0.35);
   --font: "Hanken Grotesk", system-ui, sans-serif;
+  /* The accent where it sits on the dark parts, and the text on an accent surface (a6 swaps both for white). */
+  --on-dark: var(--lime); --on-lime: var(--midnight); --hl-dark: var(--lime);
 }
-/* "A6" (Nov 2026, privat, erhverv, kom-i-gang): stone page, graphite text and dark cards, light violet as the accent on
-   surfaces (bars, pills, the curtain, highlights), ultraviolet for accent text and buttons, rosa only for the small drifting
-   card. The logo never uses the blue: all graphite on light, all white on dark (--logo-mono), the icon white on ultraviolet. */
+/* "A6" (Nov 2026, privat, erhverv, kom-i-gang): stone page, graphite text and dark cards, no light violet anywhere (user's wish):
+   ultraviolet for accent surfaces, text and buttons on light, white for the accents on the dark parts (the blue reads as
+   purple there), rosa for the drifting card and the key phrase on dark, neutral greys for tints, glows and the orb. The logo never uses the blue: all graphite on light, all white on dark (--logo-mono), the icon white on ultraviolet. */
 :root[data-theme="a6"] {
   --paper: #f3f3f1; --stone: #ececE9; --card: #f8f8f6;
   --ink: #18181b; --ink-2: #5e5e63; --ink-3: #6a6a70; --rule: #e0e0db; --rule-2: #cfcfca;
   --midnight: #202024; --midnight-2: #2a2a2f; --midnight-card: #26262b; --midnight-rule: #3a3a41; --decor: #2a2a2f;
   --haze: #acacb2; --dark-text: #f3f3f1; --logo-dark: #ffffff; --logo-mono: 1; --icon-bg: #5b3df5;
-  --lime: #b4a8ff; --lime-rgb: 180, 168, 255; --lime-dark: #8f7ff7; --lime-tone: #ece9fe; --olive: #4b2fe0; --error: #a3453a;
-  --comp: #ff9fcf; --fcard-b-bg: var(--comp); --fcard-b-line: var(--comp); --orb-bg: #e4dfff;
+  --lime: #5b3df5; --lime-rgb: 24, 24, 27; --lime-dark: #5b3df5; --lime-tone: #e9e9e5; --olive: #4b2fe0; --error: #a3453a;
+  --comp: #ff9fcf; --fcard-b-bg: var(--comp); --fcard-b-line: var(--comp); --orb-bg: #e9e9e5;
+  --on-dark: #ffffff; --on-lime: #ffffff; --hl-dark: var(--comp);
   --shadow: 0 30px 60px -24px rgba(24, 24, 27, 0.3);
   --font: "Plus Jakarta Sans", system-ui, sans-serif;
 }
+:root[data-theme="a6"] #orb2 { border-color: var(--rule-2); opacity: 1; }
 :root[data-theme="a6"] .endbtn, :root[data-theme="a6"] .btn:not(.ghost) { background: #5b3df5; color: #ffffff; }
 html[data-theme="a6"], html[data-theme="a6"] body { background: #18181b; }
 /* budgetpro Skole, "Is og solgul" (docs/design/skole-21b.html): solgul replaces lime, warm page and rules */
@@ -61,8 +65,8 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
    size – in the sticker's own em, minus the .24em flex gap of .lg */
 /* line-height 0 on the wrapper + overflow hidden: the pill's baseline is its bottom edge, standing on the baseline of "pro". */
 .lg-stw { line-height: 0; }
-.lg-st { display: inline-block; vertical-align: baseline; overflow: hidden; margin-left: calc((.22em - .24em) / .42); font: 700 .42em/1 "Hanken Grotesk", sans-serif; letter-spacing: 0; padding: calc(.13em / .42) calc(.24em / .42); border-radius: 999px; background: var(--lime); color: var(--midnight); transform-origin: 30% 70%; }
-.pill { display: inline-flex; align-items: center; height: 1.6em; padding: 0 .7em; border-radius: 999px; background: var(--lime); color: var(--midnight); font-weight: 600; }
+.lg-st { display: inline-block; vertical-align: baseline; overflow: hidden; margin-left: calc((.22em - .24em) / .42); font: 700 .42em/1 "Hanken Grotesk", sans-serif; letter-spacing: 0; padding: calc(.13em / .42) calc(.24em / .42); border-radius: 999px; background: var(--lime); color: var(--on-lime); transform-origin: 30% 70%; }
+.pill { display: inline-flex; align-items: center; height: 1.6em; padding: 0 .7em; border-radius: 999px; background: var(--lime); color: var(--on-lime); font-weight: 600; }
 
 /* Dark card (intro and end) */
 .darkcard { position: absolute; inset: 0; background: var(--midnight); color: var(--dark-text); overflow: hidden; }
@@ -71,15 +75,15 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .fcard { position: absolute; border-radius: 22px; }
 .fcard.a { background: var(--midnight-2); border: 1.5px solid var(--midnight-rule); }
 .fcard.b { border: 2px solid var(--fcard-b-line); background: var(--fcard-b-bg); }
-.fcard.c { background: var(--lime); }
+.fcard.c { background: var(--on-dark); }
 .end { background: transparent; }
 .end .darkcard { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .end .darkcard > :not(.decor):not(.ring):not(.fcard) { position: relative; }
 .intro h1 { position: absolute; left: 116px; width: 1500px; font-size: 108px; line-height: 1.04; font-weight: 700; letter-spacing: -0.04em; }
 .intro h1 > span { display: block; }
-.over { font-size: 26px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--lime); }
+.over { font-size: 26px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--on-dark); }
 .dchip { display: inline-flex; align-items: center; gap: 14px; padding: 16px 28px; border-radius: 999px; border: 1.5px solid var(--midnight-rule); background: var(--midnight-card); font-size: 26px; }
-.dchip::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+.dchip::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--on-dark); }
 .endbtn { display: inline-flex; align-items: center; gap: 14px; height: 84px; padding: 0 44px; border-radius: 999px; background: var(--lime); color: var(--midnight); font-size: 32px; font-weight: 600; }
 
 /* Curtain between the dark cards and the light scenes (film.js curtain) */
@@ -91,7 +95,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .w > span { display: inline-block; will-change: transform; }
 /* Lime highlight under a key phrase (film.js hl) */
 .hl { background: linear-gradient(var(--lime), var(--lime)) no-repeat 0 86% / calc(var(--k, 0) * 100%) .32em; }
-.darkcard .hl { background: none; color: var(--lime); }
+.darkcard .hl { background: none; color: var(--hl-dark); }
 
 /* Moving lime shapes behind the scenes (film.js orb) */
 #orb { position: absolute; left: 0; top: 0; width: 100px; height: 100px; border-radius: 50%; background: var(--orb-bg); }
@@ -101,7 +105,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 /* Captions, left column */
 .cap { position: absolute; left: 140px; top: 290px; width: 640px; }
 .cap .step, .vtag .step, .tag { display: inline-flex; align-items: center; gap: 14px; font-size: 20px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--olive); margin-bottom: 30px; }
-.cap .step b, .vtag .step b { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--midnight); color: var(--lime); font-size: 21px; font-weight: 600; letter-spacing: 0; }
+.cap .step b, .vtag .step b { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--midnight); color: var(--on-dark); font-size: 21px; font-weight: 600; letter-spacing: 0; }
 .tag i { width: 14px; height: 14px; border-radius: 50%; background: var(--lime-dark); box-shadow: 0 0 0 6px var(--lime-tone); }
 .cap h2 { font-size: 74px; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 28px; }
 .cap p { font-size: 30px; line-height: 1.42; color: var(--ink-2); }
@@ -142,7 +146,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .phone .notch { position: absolute; top: 12px; left: 50%; width: 96px; height: 28px; margin-left: -48px; border-radius: 16px; background: var(--midnight); z-index: 2; }
 .spot { position: absolute; border: 4px solid var(--lime-dark); border-radius: 16px; box-shadow: 0 0 0 10px rgba(var(--lime-rgb), .35); }
 .toast { display: inline-flex; align-items: center; gap: 12px; padding: 14px 24px; border-radius: 999px; background: var(--midnight); color: #fff; font-size: 20px; font-weight: 500; box-shadow: var(--shadow); }
-.toast::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+.toast::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--on-dark); }
 
 /* Cursor (added by film.js) */
 #cursor { left: 0; top: 0; width: 40px; height: 40px; z-index: 50; pointer-events: none; }
@@ -183,7 +187,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .gs-head h3 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
 .gs-dots { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .gs-dots span { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 600; background: var(--stone); color: var(--ink-3); }
-.gs-dots span.on { background: var(--midnight); color: var(--lime); }
+.gs-dots span.on { background: var(--midnight); color: var(--on-dark); }
 .gs-dots b { margin-left: 8px; font-size: 18px; font-weight: 600; color: var(--ink-2); }
 .gs-body { padding: 24px 44px 0; }
 .gs-lead { font-size: 19px; line-height: 1.45; color: var(--ink-3); margin-bottom: 18px; }

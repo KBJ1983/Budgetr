@@ -1,9 +1,10 @@
 <!doctype html>
 <!--
-  Privat film (about 1 min 48 s) for budgetpro.dk: what you get with budgetpro – the guide's start step, statement import, the overview, sharing, goals,
-  loans, reminders and the rest – and the price. "A6" with motion graphics (logo build, kinetic headlines,
-  curtain transitions, lime orb). Runtime and shared styles: film.js / film.css. Render: `pnpm video privat`.
-  Screenshots show the fictional demo budget (public/landing/, `pnpm shots`).
+  Privat film (about 1 min 27 s) for budgetpro.dk: the main features one by one – getting started (the guide's start
+  step, "Tom skabelon"), the overview, editing posts, a scenario as a dialog (after "Det, I plejer at spørge hinanden
+  om" on the front page), loans, notifications and sharing – and the price. "A6" with motion graphics (logo build,
+  kinetic headlines, curtain transitions, orb); no light violet. Runtime and shared styles: film.js / film.css.
+  Render: `pnpm video privat`. Screenshots show the fictional demo budget (public/landing/, `pnpm shots`).
 -->
 <html lang="da" data-theme="a6">
 <head>
@@ -16,45 +17,46 @@
 <link rel="stylesheet" href="film.css" />
 <style>
   #gs { left: 900px; top: 200px; }
-  #imp { left: 900px; top: 160px; }
   #overblik { left: 820px; top: 170px; width: 960px; }
   #overblik .view { height: 460px; }
   #mob { left: 1560px; top: 360px; }
-  #hvem { left: 860px; top: 150px; width: 900px; }
-  #logins { left: 800px; top: 690px; width: 460px; padding: 28px 30px; }
-  #logins h4 { font-size: 22px; font-weight: 600; margin-bottom: 16px; }
-  .who { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 20px; }
-  .who .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--midnight); color: #fff; font-size: 16px; font-weight: 600; }
-  .who small { margin-left: auto; font-size: 16px; color: var(--ink-3); }
-  .who.add { color: var(--olive); font-weight: 500; }
-  .who.add .av { background: var(--lime-tone); color: var(--olive); font-size: 24px; }
-  #photo { left: 850px; top: 140px; width: 420px; height: 760px; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); }
-  #photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 70%; }
-  #goal { left: 1150px; top: 170px; width: 670px; padding: 34px 36px 30px; background: var(--white); border: 1px solid var(--rule); border-radius: 28px; box-shadow: var(--shadow); }
-  #goal h3 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 22px; }
-  .gf { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .gf .fl { position: relative; display: flex; flex-direction: column; gap: 8px; font-size: 17px; font-weight: 500; color: var(--ink-2); }
+
+  /* Budgetposter: the page, then the post editor ("Ny post", the app's own labels) */
+  #poster { left: 700px; top: 170px; width: 960px; }
+  #poster .view { height: 540px; }
+  #newHot { position: absolute; left: 825px; top: 118px; width: 113px; height: 30px; }
+  #edit { left: 1180px; top: 250px; width: 620px; padding: 30px 32px 28px; }
+  #edit h3 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 22px; }
+  .gf { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .gf .fl { display: flex; flex-direction: column; gap: 8px; font-size: 16px; font-weight: 500; color: var(--ink-2); }
   .gf .full { grid-column: 1 / -1; }
-  .gin { height: 54px; border-radius: 12px; border: 1.5px solid var(--rule-2); background: var(--paper); display: flex; align-items: center; padding: 0 16px; font-size: 21px; color: var(--ink); }
-  .gin.focus { border-color: var(--midnight); background: var(--white); box-shadow: 0 0 0 4px rgba(169, 220, 203, .6); }
+  .gin { height: 52px; border-radius: 12px; border: 1.5px solid var(--rule-2); background: var(--paper); display: flex; align-items: center; padding: 0 16px; font-size: 20px; color: var(--ink); }
+  .gin.focus { border-color: var(--midnight); background: var(--white); box-shadow: 0 0 0 4px rgba(var(--lime-rgb), .12); }
   .gin .ph { color: #a1a1a8; }
-  .caret { display: inline-block; width: 2px; height: 26px; background: var(--ink); margin-left: 1px; }
-  .gseg { display: inline-flex; justify-self: start; border: 1.5px solid var(--rule-2); border-radius: 12px; overflow: hidden; }
-  .gseg span { padding: 10px 18px; font-size: 18px; color: var(--ink-2); }
-  .gseg span.on { background: var(--midnight); color: #fff; }
-  #gPrev { margin-top: 22px; padding: 18px 22px; border-radius: 16px; background: var(--card); border: 1px solid var(--rule); min-height: 118px; }
-  #gPrev.done { background: var(--lime-tone); border-color: transparent; }
-  #gBig { display: flex; align-items: baseline; gap: 12px; font-size: 20px; color: var(--ink-2); margin-bottom: 6px; }
-  #gBig b { font: 500 44px/1.1 "Geist Mono", monospace; color: var(--olive); }
-  #gSmall { font-size: 18px; line-height: 1.45; color: var(--ink-3); }
-  #cal { position: absolute; top: calc(100% + 8px); right: 0; width: 340px; padding: 18px; background: var(--white); border: 1px solid var(--rule); border-radius: 18px; box-shadow: var(--shadow); z-index: 5; }
-  .calh { display: flex; align-items: center; justify-content: space-between; font-size: 19px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
-  .calh i { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--rule); display: grid; place-items: center; font-style: normal; font-size: 20px; color: var(--ink-2); }
-  .calg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-  .calg b { font-size: 13px; font-weight: 600; color: var(--ink-3); padding: 4px 0; }
-  .calg span { height: 36px; display: grid; place-items: center; font-size: 16px; color: var(--ink); border-radius: 10px; }
-  .calg span.sel { background: var(--midnight); color: var(--lime); }
+  .caret { display: inline-block; width: 2px; height: 24px; background: var(--ink); margin-left: 1px; }
+  .efoot { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+  #etoast { left: 1180px; top: 860px; }
+
+  /* Scenarios as a dialog (the front page's "Det, I plejer at spørge hinanden om") */
+  #talkPhoto { left: 700px; top: 150px; width: 400px; height: 780px; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); }
+  #talkPhoto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+  #chat { left: 1150px; top: 190px; width: 680px; }
+  .q { display: flex; align-items: flex-end; gap: 14px; }
+  .q .av { flex: none; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--comp); color: var(--ink); font-size: 21px; font-weight: 700; }
+  .q p { padding: 20px 26px; border-radius: 26px 26px 26px 8px; background: var(--white); border: 1px solid var(--rule); box-shadow: var(--shadow); font-size: 27px; font-weight: 600; letter-spacing: -0.01em; }
+  #typing { display: flex; gap: 8px; width: 104px; margin: 22px 0 0 auto; padding: 20px 24px; border-radius: 22px 22px 8px 22px; background: var(--stone); }
+  #typing i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink-3); }
+  #ans { width: 560px; margin: -64px 0 0 auto; padding: 22px 26px; border-radius: 26px 26px 8px 26px; background: var(--stone); }
+  #ans .lab { display: block; margin-bottom: 6px; font: 500 15px "Geist Mono", monospace; text-transform: uppercase; letter-spacing: .08em; color: var(--olive); }
+  #ans b { font: 600 42px/1.15 "Geist Mono", monospace; letter-spacing: -0.02em; }
+  #ans p { margin-top: 6px; font-size: 20px; line-height: 1.4; color: var(--ink-2); }
+  #vs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 34px; }
+  #vs div { padding: 16px 18px; border-radius: 18px; background: var(--white); border: 1px solid var(--rule); font-size: 16px; color: var(--ink-3); }
+  #vs b { display: block; margin-top: 4px; font: 600 27px "Geist Mono", monospace; letter-spacing: -0.02em; color: var(--ink); }
+  #vs .neg b { color: var(--error); }
+
   #laan { left: 820px; top: 180px; width: 960px; }
+
   .mailc { left: 880px; width: 900px; padding: 26px 30px; display: flex; gap: 22px; align-items: center; border-radius: 26px; }
   .mailc .mb { flex: 1; min-width: 0; }
   .mailc .mf { display: flex; justify-content: space-between; font-size: 17px; color: var(--ink-3); margin-bottom: 6px; }
@@ -65,32 +67,37 @@
   #m1 { top: 210px; } #m2 { top: 420px; } #m3 { top: 610px; }
   .rise { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 15px; color: var(--ink-3); }
   .rise b { font: 500 30px/1 "Geist Mono", monospace; color: var(--error); }
-  #more { left: 860px; top: 230px; width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .mc { display: flex; align-items: center; gap: 18px; height: 112px; padding: 0 28px; background: var(--white); border: 1px solid var(--rule); border-radius: 20px; box-shadow: 0 14px 30px -18px rgba(16, 20, 21,.25); }
-  .mc i { width: 52px; height: 52px; border-radius: 14px; background: var(--lime-tone); display: grid; place-items: center; flex: none; }
-  .mc b { display: block; font-size: 24px; font-weight: 600; }
-  .mc span { font-size: 17px; color: var(--ink-3); }
+
+  #hvem { left: 860px; top: 150px; width: 900px; }
+  #logins { left: 800px; top: 690px; width: 460px; padding: 28px 30px; }
+  #logins h4 { font-size: 22px; font-weight: 600; margin-bottom: 16px; }
+  .who { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 20px; }
+  .who .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--midnight); color: #fff; font-size: 16px; font-weight: 600; }
+  .who small { margin-left: auto; font-size: 16px; color: var(--ink-3); }
+  .who.add { color: var(--olive); font-weight: 500; }
+  .who.add .av { background: var(--lime-tone); color: var(--olive); font-size: 24px; }
 
   /* Reel (1080×1920): the visuals under the captions */
   [data-format="reel"] #gs { left: 90px; top: 800px; }
-  [data-format="reel"] #imp { left: 110px; top: 820px; }
   [data-format="reel"] #overblik { left: 60px; top: 840px; }
   [data-format="reel"] #mob { left: 690px; top: 1010px; scale: .86; }
-  [data-format="reel"] #hvem { left: 90px; top: 800px; }
-  [data-format="reel"] #logins { left: 60px; top: 1200px; }
-  [data-format="reel"] #photo { left: 60px; top: 800px; width: 400px; height: 820px; }
-  [data-format="reel"] #goal { left: 350px; top: 860px; }
+  [data-format="reel"] #poster { left: 60px; top: 760px; }
+  [data-format="reel"] #edit { left: 230px; top: 1000px; }
+  [data-format="reel"] #etoast { left: 230px; top: 1640px; }
+  [data-format="reel"] #talkPhoto { left: 60px; top: 760px; width: 960px; height: 360px; }
+  [data-format="reel"] #chat { left: 100px; top: 1160px; width: 880px; }
   [data-format="reel"] #laan { left: 60px; top: 840px; }
   [data-format="reel"] .mailc { left: 60px; width: 960px; }
   [data-format="reel"] #m1 { top: 780px; } [data-format="reel"] #m2 { top: 1010px; } [data-format="reel"] #m3 { top: 1240px; }
-  [data-format="reel"] #more { left: 80px; top: 760px; width: 920px; }
+  [data-format="reel"] #hvem { left: 90px; top: 800px; }
+  [data-format="reel"] #logins { left: 60px; top: 1200px; }
 </style>
 </head>
 <body>
 <div id="stage">
   <div class="dots" style="left:120px;top:56px;height:168px"></div>
 
-  <!-- 1 · Intro -->
+  <!-- Intro -->
   <div class="layer intro" id="s1">
     <div class="darkcard">
       <div class="decor" style="width:900px;height:900px;right:-260px;top:-320px"></div>
@@ -105,97 +112,84 @@
     </div>
   </div>
 
-  <!-- 1b · The guide's first step: empty, from statements or from existing budgets -->
+  <!-- 1 · Getting started: the guide's first step -->
   <div class="layer" id="sg">
     <div class="cap" id="cg">
-      <div class="tag"><i></i>Kom i gang</div>
-      <h2>Vælg, hvordan du vil <span class="hl">starte</span></h2>
-      <p>Med et tomt budget, ud fra kontoudskrifter fra netbanken eller ud fra de budgetter, du allerede har i Excel.</p>
+      <div class="tag"><i></i>Kom godt i gang</div>
+      <h2>Kom i gang på <span class="hl">få minutter</span></h2>
+      <p>Start med en tom skabelon, med kontoudskrifter eller med dit Excel-budget.</p>
     </div>
     <div class="abs" id="gs"></div>
   </div>
 
-  <!-- 2 · Statement import -->
-  <div class="layer" id="s2">
-    <div class="cap" id="c2">
-      <div class="tag"><i></i>Kontoudskrifter</div>
-      <h2>Start med tallene fra <span class="hl">netbanken</span></h2>
-      <p>Læg CSV, Excel eller PDF ind. budgetpro finder de faste poster, og du vælger selv, hvad der kommer med.</p>
-    </div>
-    <div class="abs" id="imp"></div>
-  </div>
-
-  <!-- 3 · Overview -->
+  <!-- 2 · Overview -->
   <div class="layer" id="s3">
     <div class="cap" id="c3">
-      <div class="tag"><i></i>Overblik</div>
+      <div class="tag"><i></i>Nemt overblik</div>
       <h2>Se, hvad der er <span class="hl">tilbage</span></h2>
-      <p>Efter faste udgifter og opsparing – og rådighedsbeløbet, som banken regner det.</p>
+      <p>Til rådighed hver måned – og rådighedsbeløbet, som banken regner det.</p>
     </div>
     <div class="abs card shot" id="overblik">
       <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
       <div class="view"><img id="overImg" src="../public/landing/overblik-light.jpg" alt="" /></div>
-      <div class="spot" id="spot1" style="left:164px;top:336px;width:146px;height:46px"></div>
-      <div class="spot" id="spot2" style="left:384px;top:440px;width:184px;height:84px"></div>
+      <div class="spot" id="spot1" style="left:22px;top:382px;width:236px;height:72px"></div>
+      <div class="spot" id="spot2" style="left:546px;top:240px;width:196px;height:250px"></div>
     </div>
     <div class="abs phone" id="mob"><div class="scr"><img src="../public/landing/mobil-light.jpg" alt="" /></div></div>
   </div>
 
-  <!-- 4 · Together -->
-  <div class="layer" id="s4">
-    <div class="cap" id="c4">
-      <div class="tag"><i></i>Sammen</div>
-      <h2>Del budgettet <span class="hl">fair</span></h2>
-      <p>Fordel de fælles udgifter efter indkomst, ligeligt eller med en fast procent. I kan være op til tre om budgettet.</p>
+  <!-- 3 · Budget posts: a new post in a few seconds -->
+  <div class="layer" id="sp">
+    <div class="cap" id="cp">
+      <div class="tag"><i></i>Budgetposterne</div>
+      <h2>Ret og tilføj på <span class="hl">sekunder</span></h2>
+      <p>Skriv beløbet og hvor ofte – resten regnes om med det samme.</p>
     </div>
-    <div class="abs card shot" id="hvem">
+    <div class="abs card shot" id="poster">
       <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
-      <div class="view"><img src="../public/landing/hvem-light.jpg" alt="" /></div>
+      <div class="view"><img src="../public/landing/poster-light.jpg" alt="" /></div>
+      <div id="newHot"></div>
     </div>
-    <div class="abs card" id="logins">
-      <h4>Hvem kan logge ind</h4>
-      <div class="who" id="w1"><span class="av">A</span>Anna<small>Primær</small></div>
-      <div class="who" id="w2"><span class="av">J</span>Jonas<small>Har fået en invitation</small></div>
-      <div class="who add" id="w3"><span class="av">+</span>Tilføj en e-mail</div>
-    </div>
-  </div>
-
-  <!-- 5 · Dreams -->
-  <div class="layer" id="s5">
-    <div class="cap" id="c5">
-      <div class="tag"><i></i>Opsparingsmål</div>
-      <h2>Giv drømmen en <span class="hl">dato</span></h2>
-      <p>Skriv beløbet og vælg en måldato. Så regner budgetpro ud, hvad du skal lægge til side hver måned.</p>
-    </div>
-    <div class="abs" id="photo"><img id="photoImg" src="../public/landing/foto-strand.jpg" alt="" /></div>
-    <div class="abs" id="goal">
-      <h3>Nyt opsparingsmål</h3>
+    <div class="abs card" id="edit">
+      <h3>Ny post</h3>
       <div class="gf">
-        <div class="fl full">Navn<div class="gin" id="gName"></div></div>
-        <div class="gseg full"><span class="on">Fast beløb</span><span>Fast månedlig indbetaling</span></div>
-        <div class="fl">Målbeløb (kr.)<div class="gin" id="gTarget"></div></div>
-        <div class="fl">Allerede opsparet (kr.)<div class="gin">0</div></div>
-        <div class="fl">Startdato<div class="gin">01.11.2026</div></div>
-        <div class="fl">Måldato<div class="gin" id="gEnd"></div>
-          <div id="cal">
-            <div class="calh"><i>‹</i><span id="calMonth"></span><i id="calNext">›</i></div>
-            <div class="calg" id="calGrid"></div>
-          </div>
-        </div>
+        <div class="fl">Type<div class="gin">Udgift</div></div>
+        <div class="fl">Kategori<div class="gin">Husholdning</div></div>
+        <div class="fl full">Beskrivelse<div class="gin" id="eDesc"></div></div>
+        <div class="fl">Beløb pr. betaling (kr.)<div class="gin" id="eAmt"></div></div>
+        <div class="fl">Hvor ofte<div class="gin">Hver måned</div></div>
       </div>
-      <div id="gPrev">
-        <div id="gBig"><b id="gMon">0 kr</b>pr. måned i 8 måneder</div>
-        <div id="gSmall"></div>
+      <div class="efoot"><span class="btn ghost">Annullér</span><span class="btn" id="eSave">Gem post</span></div>
+    </div>
+    <div class="abs toast" id="etoast">Fitness er lagt ind – Overblik og Hvem betaler er regnet om</div>
+  </div>
+
+  <!-- 4 · Scenarios as a dialog -->
+  <div class="layer" id="sd">
+    <div class="cap" id="cd">
+      <div class="tag"><i></i>Scenarier</div>
+      <h2>Spørg, før I <span class="hl">beslutter</span></h2>
+      <p>Se et scenarie ved siden af budgettet – uden at ændre det.</p>
+    </div>
+    <div class="abs" id="talkPhoto"><img id="talkImg" src="../public/landing/foto-flytning.jpg" alt="" /></div>
+    <div class="abs" id="chat">
+      <div class="q" id="tq"><span class="av">M</span><p>Har vi råd til et nyt hus fra juli?</p></div>
+      <div id="typing"><i></i><i></i><i></i></div>
+      <div id="ans"><span class="lab">budgetpro · scenarie</span><b id="ansNum">0 kr til rådighed</b><p>3.537 kr mindre om måneden end i dag. Budgettet selv er ikke ændret.</p></div>
+      <div id="vs">
+        <div id="vs1">Nuværende budget<b>3.105 kr</b></div>
+        <div id="vs2">Nyt hus fra juli 2027<b>−432 kr</b></div>
+        <div id="vs3" class="neg">Forskel pr. måned<b>−3.537 kr</b></div>
       </div>
     </div>
   </div>
 
-  <!-- 6 · Loans -->
+  <!-- 5 · Loans -->
   <div class="layer" id="s6">
     <div class="cap" id="c6">
       <div class="tag"><i></i>Lån</div>
       <h2>Se, hvornår lånene er <span class="hl">betalt ud</span></h2>
-      <p>Restgæld, rente og ydelse giver en slutdato for hvert lån – og en tidslinje over det, der frigives.</p>
+      <p>Restgælden fremskrives måned for måned, og du ser, hvad der frigives.</p>
     </div>
     <div class="abs card shot" id="laan">
       <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
@@ -203,12 +197,12 @@
     </div>
   </div>
 
-  <!-- 7 · Messages -->
+  <!-- 6 · Notifications -->
   <div class="layer" id="s7">
     <div class="cap" id="c7">
-      <div class="tag"><i></i>Beskeder</div>
+      <div class="tag"><i></i>Notifikationer</div>
       <h2>Besked, når det <span class="hl">betyder noget</span></h2>
-      <p>Når budgettet trænger til at blive set igennem, når du når et delmål, og når en udgift stiger. I appen, på mail eller sms.</p>
+      <p>Når budgettet skal ses efter, et mål er halvvejs, eller en udgift stiger.</p>
     </div>
     <div class="abs card mailc" id="m1">
       <span data-icon="56"></span>
@@ -221,7 +215,7 @@
       <div class="mb"><div class="mf"><b>budgetpro</b><span>1. marts</span></div>
         <h4>Tillykke, du har nået 50 % af dit opsparingsmål</h4>
         <p>Sommerferie i Italien: skønnet opsparet 12.000 kr af 24.000 kr.</p></div>
-      <div class="side"><svg width="96" height="96" viewBox="0 0 76 76"><circle cx="38" cy="38" r="30" fill="none" stroke="#ECECE9" stroke-width="10"/><circle id="ring" cx="38" cy="38" r="30" fill="none" stroke="#7CC1AA" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 38 38)"/><text id="ringPct" x="38" y="44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="17" font-weight="500" fill="#101415">0 %</text></svg></div>
+      <div class="side"><svg width="96" height="96" viewBox="0 0 76 76"><circle cx="38" cy="38" r="30" fill="none" stroke="#ECECE9" stroke-width="10"/><circle id="ring" cx="38" cy="38" r="30" fill="none" stroke="#5B3DF5" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 38 38)"/><text id="ringPct" x="38" y="44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="17" font-weight="500" fill="#18181B">0 %</text></svg></div>
     </div>
     <div class="abs card mailc" id="m3">
       <span data-icon="56"></span>
@@ -232,19 +226,22 @@
     </div>
   </div>
 
-  <!-- 8 · And the rest -->
-  <div class="layer" id="s8">
-    <div class="cap" id="c8">
-      <div class="tag"><i></i>Og meget mere</div>
-      <h2>Alt det, et regneark ellers skal <span class="hl">klare</span></h2>
+  <!-- 7 · Sharing -->
+  <div class="layer" id="s4">
+    <div class="cap" id="c4">
+      <div class="tag"><i></i>Deling</div>
+      <h2>Del budgettet <span class="hl">fair</span></h2>
+      <p>Fordel de fælles udgifter efter indkomst, og giv hinanden hvert sit login.</p>
     </div>
-    <div class="abs" id="more">
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 9c0 6 12 0 12 6"/></svg></i><div><b>Scenarier</b><span>Hvad hvis I flytter eller skifter job?</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></i><div><b>Kladder</b><span>Et nyt budget ved siden af</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></i><div><b>Faste overførsler</b><span>Pengene, der flytter sig selv</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><b>Måned for måned</b><span>Saldoen på hver konto</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></i><div><b>Opgaver</b><span>Noter, hvad der skal gøres</span></div></div>
-      <div class="mc"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B2FE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></i><div><b>PDF og Excel</b><span>Dine tal, når du vil have dem</span></div></div>
+    <div class="abs card shot" id="hvem">
+      <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
+      <div class="view"><img src="../public/landing/hvem-light.jpg" alt="" /></div>
+    </div>
+    <div class="abs card" id="logins">
+      <h4>Hvem kan logge ind</h4>
+      <div class="who" id="w1"><span class="av">A</span>Anna<small>Primær</small></div>
+      <div class="who" id="w2"><span class="av">J</span>Jonas<small>Har fået en invitation</small></div>
+      <div class="who add" id="w3"><span class="av">+</span>Tilføj en e-mail</div>
     </div>
   </div>
 
@@ -268,37 +265,24 @@
 
 <script src="film.js"></script>
 <script>
-  const { $, $$, p, out, back, inOut, lerp, kr, put, rise, slide, scene, enter, words, caption, count, cursor, bars } = F;
+  const { $, $$, p, out, back, inOut, lerp, kr, put, rise, slide, scene, enter, words, count, cursor, bars, press } = F;
   // Each scene: its caption alone, then its visual alone (F.timeline gives [visual start, end] and .a = caption start)
-  const TL = F.timeline({ intro: 6.4, scenes: [["#cg", 6.4], ["#c2", 8.2], ["#c3", 7.6], ["#c4", 6.8], ["#c5", 8.6], ["#c6", 6.6], ["#c7", 7.8], ["#c8", 5.6]] });
-  const [SG, S2, S3, S4, S5, S6, S7, S8] = TL.scenes, END = TL.END, DURATION = TL.DURATION;
+  const TL = F.timeline({ intro: 6.2, scenes: [["#cg", 6.0], ["#c3", 6.0], ["#cp", 6.8], ["#cd", 6.6], ["#c6", 5.4], ["#c7", 6.4], ["#c4", 5.6]] });
+  const [SG, S3, SP, SD, S6, S7, S4] = TL.scenes, END = TL.END, DURATION = TL.DURATION;
 
-  // Scene 5: a holiday goal – 24.000 kr from November 2026 to 1 July 2027 is 8 payments of 3.000 kr
-  const GOAL = "Sommerferie i Italien", TARGET = "24.000";
-  const MONTHS = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"];
   const caret = (t, on) => (on && Math.floor(t * 2.5) % 2 === 0 ? '<span class="caret"></span>' : "");
-  /** The date picker, `step` months after November 2026; `picked` marks the 1st. */
-  function calendar(step, picked) {
-    const m = (10 + step) % 12, y = 2026 + Math.floor((10 + step) / 12);
-    const lead = (new Date(y, m, 1).getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
-    $("#calMonth").textContent = `${MONTHS[m]} ${y}`;
-    let h = ["ma", "ti", "on", "to", "fr", "lø", "sø"].map((d) => `<b>${d}</b>`).join("") + "<span></span>".repeat(lead);
-    for (let d = 1; d <= days; d++) h += `<span${d === 1 ? ` id="d1"${picked ? ' class="sel"' : ""}` : ""}>${d}</span>`;
-    if ($("#calGrid").dataset.h !== h) ($("#calGrid").innerHTML = h), ($("#calGrid").dataset.h = h);
-  }
+  const DESC = "Fitness", AMT = "349";
 
-  const gs = F.startScene($("#gs"));
-  const imp = F.importScene($("#imp"));
-  const IMP0 = S2[0] + 0.5;
+  const gs = F.startScene($("#gs"), 0);
 
-  // Where the lime orb sits behind each scene (centre x/y and diameter)
+  // Where the orb sits behind each scene (centre x/y and diameter)
   const ORB = F.soloOrb({ x: 1500, y: 560, d: 560 }, TL.scenes, [
-    { x: 520, y: 820, d: 600 }, { x: 1500, y: 300, d: 560 }, { x: 560, y: 820, d: 620 }, { x: 1500, y: 860, d: 520 }, { x: 1200, y: 260, d: 700 },
-    { x: 620, y: 900, d: 560 }, { x: 1480, y: 300, d: 600 }, { x: 960, y: 560, d: 820 },
+    { x: 520, y: 820, d: 600 }, { x: 1500, y: 300, d: 560 }, { x: 1560, y: 860, d: 560 }, { x: 560, y: 300, d: 620 },
+    { x: 1500, y: 860, d: 520 }, { x: 1480, y: 300, d: 600 }, { x: 620, y: 860, d: 560 },
   ]);
 
   function frame(t) {
-    // 1 · Intro: the logo builds itself, the headline comes in word by word, cards drift
+    // Intro: the logo builds itself, the headline comes in word by word, cards drift
     F.darkBg("#s1", t, 0);
     F.buildLogo("#s1-logo", t, 0.1);
     rise("#s1-eyebrow", t, 0.6, 1e9, 20);
@@ -308,19 +292,13 @@
     F.orb(t, ORB);
     rise(".dots", t, SG.a + 0.4, 1e9, 30);
 
-    // 1b · The guide's start step
+    // 1 · Getting started: the guide's start step, "Tom skabelon" is picked
     scene("#sg", t, SG.a - 0.4, SG[1]);
     F.title("#cg", t, SG.a + 0.3, SG[0]);
     enter("#gs", t, SG[0] + 0.1, SG[1]);
     gs.update(t - SG[0]);
 
-    // 2 · Import
-    scene("#s2", t, S2.a, S2[1]);
-    F.title("#c2", t, S2.a + 0.2, S2[0]);
-    enter("#imp", t, S2[0] + 0.4, S2[1]);
-    imp.update(t - IMP0);
-
-    // 3 · Overview: the amount left, then the bank's disposable amount
+    // 2 · Overview: the amount left, then the bank's disposable amount
     const u3 = t - S3[0];
     scene("#s3", t, S3.a, S3[1]);
     F.title("#c3", t, S3.a + 0.2, S3[0]);
@@ -331,50 +309,49 @@
     $("#overImg").style.transform = `translateY(${-140 * inOut(p(u3, 3.4, 4.2))}px)`;
     put("#spot2", { o: out(p(u3, 4.3, 4.7)), s: lerp(1.15, 1, back(p(u3, 4.3, 4.8))) });
 
-    // 4 · Together
-    scene("#s4", t, S4.a, S4[1]);
-    F.title("#c4", t, S4.a + 0.2, S4[0]);
-    enter("#hvem", t, S4[0] + 0.3, S4[1]);
-    const lk = back(p(t, S4[0] + 1.3, S4[0] + 2.1));
-    put("#logins", { o: out(p(t, S4[0] + 1.3, S4[0] + 1.7)), x: (1 - lk) * -80, y: (1 - lk) * 40, r: (1 - lk) * -4 });
-    ["#w1", "#w2", "#w3"].forEach((w, i) => slide(w, t, S4[0] + 1.8 + i * 0.25, 1e9, { x: 30, y: 0 }));
+    // 3 · Budget posts: "+ Ny budgetpost" opens the editor, a post is typed in and saved
+    const up = t - SP[0];
+    scene("#sp", t, SP.a, SP[1]);
+    F.title("#cp", t, SP.a + 0.2, SP[0]);
+    enter("#poster", t, SP[0] + 0.3, SP[1]);
+    const ek = back(p(up, 1.5, 2.1)), eOut = inOut(p(up, 4.9, 5.3));
+    put("#edit", { o: Math.min(out(p(up, 1.5, 1.8)), 1 - eOut), x: (1 - ek) * 120, y: eOut * 30, s: lerp(0.94, 1, ek) });
+    const nD = Math.round(DESC.length * p(up, 2.3, 2.9)), nA = Math.round(AMT.length * p(up, 3.3, 3.6));
+    const fD = up >= 2.2 && up < 3.1, fA = up >= 3.1 && up < 4.4;
+    $("#eDesc").classList.toggle("focus", fD);
+    $("#eDesc").innerHTML = DESC.slice(0, nD) + caret(t, fD) || (fD ? "" : '<span class="ph">fx Fitness</span>');
+    $("#eAmt").classList.toggle("focus", fA);
+    $("#eAmt").innerHTML = AMT.slice(0, nA) + caret(t, fA) || (fA ? "" : '<span class="ph">0</span>');
+    press("#eSave", up, 4.6);
+    put("#etoast", { o: out(p(up, 5.1, 5.4)), y: (1 - back(p(up, 5.1, 5.6))) * 24 });
 
-    // 5 · Dreams
-    const u5 = t - S5[0];
-    scene("#s5", t, S5.a, S5[1]);
-    F.title("#c5", t, S5.a + 0.2, S5[0]);
-    enter("#photo", t, S5[0] + 0.3, S5[1], { x: 0, ry: 0 });
-    $("#photoImg").style.transform = `scale(${1.18 - 0.12 * out(p(t, S5[0], S5[1]))})`;
-    enter("#goal", t, S5[0] + 0.7, S5[1], { x: 180, ry: -20 });
-    // Name and amount are typed in, then the goal date is picked in the calendar and the monthly amount appears
-    const nName = Math.round(GOAL.length * p(u5, 1.2, 2.1)), nAmt = Math.round(TARGET.length * p(u5, 2.2, 2.6));
-    const fName = u5 >= 1.1 && u5 < 2.15, fAmt = u5 >= 2.15 && u5 < 2.8, calOpen = u5 >= 2.9 && u5 < 5.2, picked = u5 >= 4.9;
-    $("#gName").classList.toggle("focus", fName);
-    $("#gName").innerHTML = GOAL.slice(0, nName) + caret(t, fName);
-    $("#gTarget").classList.toggle("focus", fAmt);
-    $("#gTarget").innerHTML = TARGET.slice(0, nAmt) + caret(t, fAmt);
-    $("#gEnd").classList.toggle("focus", calOpen);
-    $("#gEnd").innerHTML = picked ? "01.07.2027" : '<span class="ph">dd.mm.åååå</span>';
-    calendar(Math.round(8 * inOut(p(u5, 3.7, 4.5))), picked);
-    const ck = back(p(u5, 2.9, 3.25)), cOut = p(u5, 5.0, 5.2);
-    put("#cal", { o: Math.min(out(p(u5, 2.9, 3.1)), 1 - cOut), y: (1 - ck) * -12 - cOut * 8, s: lerp(0.96, 1, ck) });
-    $("#gPrev").classList.toggle("done", picked);
-    put("#gBig", { o: out(p(u5, 5.2, 5.5)), y: (1 - out(p(u5, 5.2, 5.6))) * 10 });
-    count("#gMon", t, S5[0] + 5.2, S5[0] + 6.0, 3000, (n) => `${kr(n)} kr`);
-    $("#gSmall").textContent = picked
-      ? "8 indbetalinger fra november 2026 til juni 2027: 3.000 kr pr. måned, 36.000 kr pr. år."
-      : "Vælg en måldato, der ligger mindst en måned efter startdatoen.";
+    // 4 · Scenarios: a question, budgetpro answers from the scenario, then the comparison
+    const ud = t - SD[0];
+    scene("#sd", t, SD.a, SD[1]);
+    F.title("#cd", t, SD.a + 0.2, SD[0]);
+    enter("#talkPhoto", t, SD[0] + 0.3, SD[1], { x: 0, ry: 0 });
+    $("#talkImg").style.transform = `scale(${1.16 - 0.1 * out(p(t, SD[0], SD[1]))})`;
+    const qk = back(p(ud, 0.8, 1.3));
+    put("#tq", { o: out(p(ud, 0.8, 1.05)), y: (1 - qk) * 30, s: lerp(0.92, 1, qk) });
+    put("#typing", { o: Math.min(out(p(ud, 1.6, 1.8)), 1 - p(ud, 2.6, 2.75)) });
+    $$("#typing i").forEach((d, i) => (d.style.transform = `translateY(${-6 * Math.max(0, Math.sin(t * 9 - i * 0.9))}px)`));
+    const ak = back(p(ud, 2.7, 3.2));
+    put("#ans", { o: out(p(ud, 2.7, 2.95)), y: (1 - ak) * 30, s: lerp(0.92, 1, ak) });
+    count("#ansNum", t, SD[0] + 2.8, SD[0] + 3.5, 432, (n) => `${n ? "−" : ""}${kr(n)} kr til rådighed`);
+    ["#vs1", "#vs2", "#vs3"].forEach((v, i) => {
+      const a = 4.0 + i * 0.25, k = back(p(ud, a, a + 0.55));
+      put(v, { o: out(p(ud, a, a + 0.3)), y: (1 - k) * 36 });
+    });
 
-    // 6 · Loans: the screenshot glides down to the timeline
+    // 5 · Loans: the screenshot glides down to the timeline
     scene("#s6", t, S6.a, S6[1]);
     F.title("#c6", t, S6.a + 0.2, S6[0]);
     enter("#laan", t, S6[0] + 0.3, S6[1]);
-    $("#laanImg").style.transform = `translateY(${-60 * inOut(p(t, S6[0] + 2.2, S6[0] + 4.2))}px)`;
+    $("#laanImg").style.transform = `translateY(${-60 * inOut(p(t, S6[0] + 2.0, S6[0] + 4.0))}px)`;
 
-    // 7 · Messages
+    // 6 · Notifications: three mails come in one after another
     scene("#s7", t, S7.a, S7[1]);
     F.title("#c7", t, S7.a + 0.2, S7[0]);
-    // Three mails come in one after another
     ["#m1", "#m2", "#m3"].forEach((m, i) => {
       const a = S7[0] + 0.6 + i * 1.3, k = back(p(t, a, a + 0.7));
       put(m, { o: out(p(t, a, a + 0.4)), x: (1 - k) * 160, y: (1 - k) * -30, r: (1 - k) * 3 });
@@ -384,15 +361,15 @@
     $("#ringPct").textContent = `${pct} %`;
     $("#elPct").textContent = `+${Math.round(25 * out(p(t, S7[0] + 3.5, S7[0] + 4.4)))} %`;
 
-    // 8 · And the rest: the tiles pop in as a wave
-    scene("#s8", t, S8.a, S8[1]);
-    F.title("#c8", t, S8.a + 0.2, S8[0]);
-    $$("#more .mc").forEach((el, i) => {
-      const a = S8[0] + 0.4 + (i % 2) * 0.12 + Math.floor(i / 2) * 0.2, k = back(p(t, a, a + 0.6));
-      put(el, { o: out(p(t, a, a + 0.35)), y: (1 - k) * 50, s: lerp(0.86, 1, k) });
-    });
+    // 7 · Sharing
+    scene("#s4", t, S4.a, S4[1]);
+    F.title("#c4", t, S4.a + 0.2, S4[0]);
+    enter("#hvem", t, S4[0] + 0.3, S4[1]);
+    const lk = back(p(t, S4[0] + 1.3, S4[0] + 2.1));
+    put("#logins", { o: out(p(t, S4[0] + 1.3, S4[0] + 1.7)), x: (1 - lk) * -80, y: (1 - lk) * 40, r: (1 - lk) * -4 });
+    ["#w1", "#w2", "#w3"].forEach((w, i) => slide(w, t, S4[0] + 1.8 + i * 0.25, 1e9, { x: 30, y: 0 }));
 
-    bars(t, [SG, S2, S3, S4, S5, S6, S7, S8].map((s) => [s.a + 0.3, s[1] - 0.2]), [SG.a, END + 0.3]);
+    bars(t, [SG, S3, SP, SD, S6, S7, S4].map((s) => [s.a + 0.3, s[1] - 0.2]), [SG.a, END + 0.3]);
 
     // Curtains: the intro lifts away, the end card drops in
     F.curtain(t, ["#s1", SG.a - 0.1], ["#end", END]);
@@ -402,14 +379,14 @@
     F.buildLogo("#endLogo", t, END + 0.7);
     rise("#endLine", t, END + 1.6, 1e9, 24);
     rise("#endSub", t, END + 1.9, 1e9, 20);
-    const ek = back(p(t, END + 2.2, END + 2.8));
-    put("#endUrl", { o: out(p(t, END + 2.2, END + 2.5)), s: lerp(0.6, 1, ek) });
+    const ek2 = back(p(t, END + 2.2, END + 2.8));
+    put("#endUrl", { o: out(p(t, END + 2.2, END + 2.5)), s: lerp(0.6, 1, ek2) });
 
     cursor(t, [
-      { keys: [...gs.T.hover.map((h, i) => [SG[0] + h, gs.opts[i]]), [SG[0] + gs.T.pick, gs.opts[1]], [SG[0] + gs.T.next, gs.next]],
+      { keys: [...gs.T.hover.map((h, i) => [SG[0] + h, gs.opts[i]]), [SG[0] + gs.T.pick, gs.opts[0]], [SG[0] + gs.T.next, gs.next]],
         clicks: [SG[0] + gs.T.pick, SG[0] + gs.T.next] },
-      { keys: [[IMP0 + imp.T.next, imp.next], [IMP0 + imp.T.add, imp.add]], clicks: [IMP0 + imp.T.next, IMP0 + imp.T.add] },
-      { keys: [[S5[0] + 2.9, "#gEnd"], [S5[0] + 3.7, "#calNext"], [S5[0] + 4.9, "#d1"]], clicks: [S5[0] + 2.9, S5[0] + 3.7, S5[0] + 4.9] },
+      { keys: [[SP[0] + 1.2, "#newHot"], [SP[0] + 2.2, "#eDesc"], [SP[0] + 3.1, "#eAmt"], [SP[0] + 4.6, "#eSave"]],
+        clicks: [SP[0] + 1.2, SP[0] + 2.2, SP[0] + 3.1, SP[0] + 4.6] },
     ]);
   }
 
