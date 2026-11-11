@@ -43,10 +43,10 @@ export function ArrowRightIcon(props: IconProps) {
 export function PeopleIcon(props: IconProps) {
   return (
     <Svg strokeWidth={1.9} {...props}>
-      <circle cx="9" cy="8" r="3.2" />
-      <path d="M3.5 19c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5" />
-      <circle cx="17" cy="9" r="2.6" />
-      <path d="M16 14.2c2.4.2 4 1.8 4.5 4.8" />
+      <circle cx="8" cy="8.5" r="3" />
+      <path d="M3 19c0-3.2 2.2-5.5 5-5.5s5 2.3 5 5.5" />
+      <circle cx="16.5" cy="9.5" r="2.5" />
+      <path d="M15 14.2c.5-.2 1-.3 1.5-.3 2.5 0 4.5 2.1 4.5 5.1" />
     </Svg>
   );
 }
@@ -63,9 +63,8 @@ export function WandIcon(props: IconProps) {
 export function UploadIcon(props: IconProps) {
   return (
     <Svg strokeWidth={1.9} {...props}>
-      <path d="M12 20V9" />
-      <path d="M7 13l5-5 5 5" />
-      <path d="M5 4h14" />
+      <path d="M12 13.5v-10M8 7.5l4-4 4 4" />
+      <path d="M4.5 15.5V18a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2.5" />
     </Svg>
   );
 }
@@ -82,9 +81,8 @@ export function LockIcon(props: IconProps) {
 export function DownloadIcon(props: IconProps) {
   return (
     <Svg strokeWidth={1.9} {...props}>
-      <path d="M12 4v11" />
-      <path d="M7 10l5 5 5-5" />
-      <path d="M5 20h14" />
+      <path d="M12 3.5v10M8 9.5l4 4 4-4" />
+      <path d="M4.5 15.5V18a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2.5" />
     </Svg>
   );
 }
@@ -139,15 +137,11 @@ export function TargetIcon(props: IconProps) {
   );
 }
 
-/** Two paths from one point: a scenario next to the current budget. */
+/** A road that splits in two: a scenario next to the current budget (the app's Hvad nu hvis). */
 export function BranchIcon(props: IconProps) {
   return (
     <Svg strokeWidth={1.9} {...props}>
-      <circle cx="6" cy="6" r="2" />
-      <circle cx="6" cy="18" r="2" />
-      <circle cx="18" cy="8" r="2" />
-      <path d="M6 8v8" />
-      <path d="M18 10c0 4-6 3-11.5 6.5" />
+      <path d="M12 20.5V15c0-2.2-1-3.4-2.6-5L5 5.5M12 15c0-2.2 1-3.4 2.6-5L19 5.5M5 10V5.5h4.5M19 10V5.5h-4.5" />
     </Svg>
   );
 }
@@ -166,9 +160,8 @@ export function TransferIcon(props: IconProps) {
 export function CalendarIcon(props: IconProps) {
   return (
     <Svg strokeWidth={1.9} {...props}>
-      <rect x="4" y="5" width="16" height="15" rx="2" />
-      <path d="M4 10h16" />
-      <path d="M9 3v4M15 3v4" />
+      <rect x="4" y="5.5" width="16" height="14.5" rx="2" />
+      <path d="M4 10h16M9 3.5v4M15 3.5v4M8.5 14h.01M12 14h.01M15.5 14h.01" />
     </Svg>
   );
 }
@@ -184,7 +177,7 @@ export function MenuIcon(props: IconProps) {
 export function CloseIcon(props: IconProps) {
   return (
     <Svg size={20} {...props}>
-      <path d="M6 6l12 12M18 6L6 18" />
+      <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
     </Svg>
   );
 }
@@ -192,8 +185,8 @@ export function CloseIcon(props: IconProps) {
 export function BellIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" />
-      <path d="M10 20.5a2 2 0 0 0 4 0" />
+      <path d="M6.5 10a5.5 5.5 0 0 1 11 0v3.5l1.8 3H4.7l1.8-3z" />
+      <path d="M10 19.5a2 2 0 0 0 4 0" />
     </Svg>
   );
 }
