@@ -157,7 +157,7 @@ function Sectors() {
     {
       tag: "Banker",
       title: "Kunder, der kommer forberedte til lånesamtalen.",
-      body: "Rådighedsbeløbet i budgetpro regnes efter samme princip som bankernes: de faste udgifter trækkes fra, og mad, opsparing og gaver holdes ude. Giv adgang før mødet eller som en kundefordel til nye og faste kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
+      body: "Rådighedsbeløbet i budgetpro regnes efter samme tommelfingerregel, som mange banker bruger: de faste udgifter trækkes fra, og mad, opsparing og gaver holdes ude. Det er et skøn, ikke bankens egen kreditvurdering. Giv adgang før mødet eller som en kundefordel til nye og faste kunder, så samtalen kan handle om rådgivning i stedet for at samle tal.",
       bullets: ["Fx 12 eller 24 måneder pr. kode", "Løn, lån, opsparing og rådighed ét sted", "Kunden deler selv budgettet som PDF eller Excel"],
       photo: { src: "/landing/foto-flytning.jpg", alt: "Et par, der flytter sammen, med flyttekasser", position: "50% 35%" },
     },
@@ -247,14 +247,14 @@ const TRUST_CARDS: readonly { icon: ReactNode; title: string; body: string; comp
   },
   {
     icon: <ShieldIcon size={18} strokeWidth={1.8} />,
-    title: "Ingen kan se koderne",
+    title: "Koderne vises ingen steder",
     comp: true,
-    body: "Koden står kun i mailen til kunden. Hverken jeres administratorer eller budgetpro kan se den.",
+    body: "Koden står kun i mailen til kunden. Den vises ikke for jeres administratorer og gemmes ikke hos os.",
   },
   {
     icon: <GlobeIcon size={20} strokeWidth={1.8} />,
-    title: "Data bliver i EU",
-    body: "Budgetter og brugere opbevares på servere i EU. Intet hentes fra netbanken, kunden lægger selv tallene ind.",
+    title: "Budgetterne gemmes i EU",
+    body: "Budgetter og brugere gemmes i en database i EU. Intet hentes fra netbanken, kunden lægger selv tallene ind.",
   },
   {
     icon: <DownloadIcon size={20} strokeWidth={1.8} />,
@@ -311,7 +311,7 @@ function Pricing() {
             </h2>
           </div>
           <p className={`${styles.headBody} ${styles.headBodyDark}`}>
-            Vælg antal koder og hvor længe de gælder. Prisen vises pr. måned, og I kan se den pr. år. Send en forespørgsel,
+            Vælg antal koder og hvor længe de gælder. Prisen vises for hele pakken, og I kan se den pr. måned eller pr. år. Send en forespørgsel,
             så får I et tilbud. Det binder jer ikke til noget.
           </p>
         </div>

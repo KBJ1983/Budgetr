@@ -408,8 +408,9 @@ export function parentTalk(c: Case) {
       "Hvilket råd om penge vil din forælder give dig, når du selv flytter hjemmefra?",
     ],
     parentsTitle: "Til dig som forælder",
-    parents: `Dit barn har lavet et månedsbudget for en ung voksen i budgetpro Skole: løn, bolig, faste udgifter, hverdag og opsparing. Vil I selv have et overblik over familiens økonomi, kan I prøve budgetpro gratis i 30 dage på budgetpro.dk. Du skal ikke oplyse betalingskort for at starte.`,
-    footer: "Vil I lave et budget for hele familien? Prøv budgetpro gratis i 30 dage på budgetpro.dk.",
+    // No offer of budgetpro here: the PDF is homework from school, and advertising through the school is not allowed.
+    parents: `Dit barn har lavet et månedsbudget for en ung voksen i undervisningen: løn, bolig, faste udgifter, hverdag og opsparing. Snak gerne om, hvordan pengene hænger sammen hos jer. I bestemmer selv, hvor meget I vil fortælle, og der er ingen rigtige svar.`,
+    footer: "Lavet i budgetpro Skole",
   };
 }
 

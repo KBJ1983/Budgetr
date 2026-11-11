@@ -45,7 +45,7 @@ describe("helpers", () => {
 
   it("writes calm Danish texts", () => {
     const t = reminderText("Vores budget", day("2026-06-10"), day("2026-09-30"), "http://localhost:3200/app");
-    expect(t.text).toContain("Det er 3 måneder siden, du sidst rettede i budgettet Vores budget.");
+    expect(t.text).toContain("Det er 3 måneder siden, du sidst rettede i budgettet »Vores budget«.");
     expect(t.sms.length).toBeLessThanOrEqual(160);
     expect(`${t.subject}${t.text}${t.sms}`).not.toContain("!");
   });

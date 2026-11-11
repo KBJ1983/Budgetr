@@ -17,7 +17,7 @@ const SLIDES: readonly TourSlide[] = [
   {
     label: "Scenarier",
     title: "Kend rådigheden, før I byder.",
-    body: "Opret et scenarie og prøv en ændring uden at røre budgettet: bolig, barsel eller nyt job. Hvert scenarie holdes op mod det nuværende budget.",
+    body: "Opret et scenarie og prøv en ændring uden at røre budgettet: bolig, barsel eller nyt job. Hvert scenarie holdes op mod det gældende budget.",
     visual: { kind: "photo", src: "/landing/foto-noegler.jpg", alt: "En familie, der får nøglerne til et nyt hjem", position: "center 45%" },
   },
   {
@@ -99,7 +99,7 @@ const SLIDES: readonly TourSlide[] = [
 const ALL: readonly { title: string; items: readonly string[] }[] = [
   {
     title: "Overblik",
-    items: ["Tilbage pr. måned efter faste udgifter og opsparing", "Rådighedsbeløbet, som banken regner det", "Saldo på hver konto måned for måned", "Lyst og mørkt tema"],
+    items: ["Til rådighed pr. måned efter udgifter, husholdning og opsparing", "Bankens rådighedsbeløb, som et skøn", "Saldo på hver konto måned for måned", "Lyst og mørkt tema"],
   },
   {
     title: "Poster og konti",
@@ -115,11 +115,11 @@ const ALL: readonly { title: string; items: readonly string[] }[] = [
   },
   {
     title: "Planlægning",
-    items: ["Opret scenarier og hold dem op mod det nuværende budget", "Kladder med nye budgetter ved siden af det, du har", "Guide i 9 trin til et nyt budget"],
+    items: ["Opret scenarier og hold dem op mod det gældende budget", "Kladder med nye budgetter ved siden af det, du har", "En guide, der tager dig trin for trin til et nyt budget"],
   },
   {
     title: "Beskeder",
-    items: ["Besked ved 10, 25, 50, 75 og 100 % af et mål", "Påmindelse om at se budgettet igennem", "Opgaver på poster og konti", "Også på mail eller sms, hvis du vil"],
+    items: ["Besked ved 10, 25, 50, 75 og 100 % af et mål", "Påmindelse om at se budgettet igennem", "Opgaver på poster og konti", "Påmindelser også på mail eller sms, hvis du vil"],
   },
   {
     title: "Dine data",
@@ -272,10 +272,10 @@ const CELLS: readonly Cell[] = [
     tone: "mint",
     over: "Scenarier",
     title: "Prøv, før I beslutter",
-    body: "Flytning, barsel, nyt job eller et nyt lån. Hvert scenarie holdes op mod det nuværende budget.",
+    body: "Flytning, barsel, nyt job eller et nyt lån. Hvert scenarie holdes op mod det gældende budget.",
     pic: (
       <div className={styles.bentoScen}>
-        <span>Nuværende</span>
+        <span>Gældende</span>
         <span data-on="">Nyt hus</span>
         <span>Barsel Sofie</span>
       </div>

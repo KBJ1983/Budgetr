@@ -57,8 +57,8 @@ export function demoCustomer(now = new Date()) {
     e(id, "overfoersel", desc, amount, { account: "", payer: "", from, to, auto: true, ...o });
 
   const persons = [
-    { id: "p1", name: "Sofie", savings: 0 },
-    { id: "p2", name: "Mikkel", savings: 6000 },
+    { id: "p1", name: "Sofie", savings: 3700 },
+    { id: "p2", name: "Mikkel", savings: 2300 },
   ];
 
   const accounts = [
@@ -129,9 +129,9 @@ export function demoCustomer(now = new Date()) {
   ];
 
   const loans = [
-    { id: "l1", bank: "Realkredit", desc: "Realkreditlån", original: 2300000, rest: 1795000, monthly: 11900, rate: 4.2, ends: "2053 - jun", restDate: monthText(-1), link: "b1", paused: false, note: "" },
-    { id: "l2", bank: "Bilfinansiering", desc: "Billån", original: 175000, rest: 26000, monthly: 3300, rate: 5.9, ends: "2027 - apr", restDate: monthText(-1), link: "t1", paused: false, note: "Bilen er betalt ud til foråret" },
-    { id: "l3", bank: "Staten", desc: "Studielån", original: 115000, rest: 61000, monthly: 1050, rate: 4.6, ends: "2032 - feb", restDate: monthText(-3), link: "s4", paused: false, note: "" },
+    { id: "l1", bank: "Realkredit", desc: "Realkreditlån", original: 2300000, rest: 1795000, monthly: 11900, rate: 4.2, ends: "2044 - sep", restDate: monthText(-1), link: "b1", paused: false, note: "" },
+    { id: "l2", bank: "Bilfinansiering", desc: "Billån", original: 175000, rest: 26000, monthly: 3300, rate: 5.9, ends: "2027 - jul", restDate: monthText(-1), link: "t1", paused: false, note: "Bilen er betalt ud til sommer" },
+    { id: "l3", bank: "Staten", desc: "Studielån", original: 115000, rest: 61000, monthly: 1050, rate: 4.6, ends: "2032 - apr", restDate: monthText(-3), link: "s4", paused: false, note: "" },
     { id: "l4", bank: "Banken", desc: "Kassekredit", original: 30000, rest: 8000, monthly: 1000, rate: 9.5, ends: "2027 - jun", restDate: monthText(-1), link: "", paused: true, include: false, note: "Bruges kun i nødstilfælde" },
   ];
 

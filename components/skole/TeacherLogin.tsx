@@ -111,6 +111,11 @@ export function TeacherLogin({ email = "", start = "login", testHint = false }: 
               <button className={`${s.btn} ${s.btnPrimary}`} disabled={busy}>
                 {mode === "opret" ? "Opret bruger" : TEST_LOGIN.test(values.email) ? "Log ind" : "Send kode"}
               </button>
+              {mode === "opret" && (
+                <p className={s.hint}>
+                  Vi gemmer dit navn, din skole og din e-mail. Læs mere i <a href="/skole/privatliv">privatlivspolitikken</a>.
+                </p>
+              )}
             </form>
           )}
         </div>

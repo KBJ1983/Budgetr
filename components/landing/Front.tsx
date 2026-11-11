@@ -67,7 +67,7 @@ export function FrontFilm() {
 
 const ROWS = [
   { label: "Indtægter", value: "64.050", w: 100 },
-  { label: "Regninger", value: "35.493", w: 55 },
+  { label: "Udgifter", value: "35.493", w: 55 },
   { label: "Husholdning", value: "12.633", w: 20 },
   { label: "Opsparing", value: "12.818", w: 20 },
 ] as const;
@@ -134,7 +134,7 @@ export function FrontBento() {
         <span className={f.k}>Et scenarie ved siden af budgettet – uden at røre det</span>
         <div className={f.cmp}>
           <div>
-            <span className={f.k}>Nuværende budget</span>
+            <span className={f.k}>Gældende budget</span>
             <b>3.105</b>
           </div>
           <div>
@@ -198,7 +198,7 @@ export function FrontBento() {
 
 const CHAPTERS = [
   { no: "01", title: "Det kommer ind", sub: "Løn og børnefamilieydelse", value: "64.050" },
-  { no: "02", title: "Det går fast", sub: "Regninger og husholdning, pr. måned", value: "−48.127" },
+  { no: "02", title: "Det går fast", sub: "Udgifter og husholdning, pr. måned", value: "−48.127" },
   { no: "03", title: "Det lægges til side", sub: "Opsparingsmål og fast opsparing", value: "−12.818" },
 ] as const;
 
@@ -211,7 +211,7 @@ export function FrontStory() {
           3.105<small>kr</small>
         </h2>
         <p className={f.storyText}>
-          Det har Sofie og Mikkel til rådighed hver måned, når regninger, husholdning og opsparing er betalt. Ét tal, de
+          Det har Sofie og Mikkel til rådighed hver måned, når udgifter, husholdning og opsparing er betalt. Ét tal, de
           begge kan stole på, fordi det bygger på deres egne poster.
         </p>
       </div>
@@ -247,7 +247,7 @@ const GROUPS: readonly Group[] = [
   {
     icon: <CalendarIcon size={20} />,
     title: "Overblik",
-    items: ["Tilbage pr. måned efter faste udgifter og opsparing", "Rådighedsbeløbet, som banken regner det", "Saldo på hver konto måned for måned"],
+    items: ["Til rådighed pr. måned efter udgifter, husholdning og opsparing", "Bankens rådighedsbeløb, som et skøn", "Saldo på hver konto måned for måned"],
   },
   {
     icon: <UploadIcon size={20} />,
@@ -284,15 +284,15 @@ const GROUPS: readonly Group[] = [
     title: "Scenarier og planlægning",
     items: [
       "Scenarier for flytning, barsel, nyt job eller et nyt lån",
-      "Hvert scenarie holdes op mod det nuværende budget",
+      "Hvert scenarie holdes op mod det gældende budget",
       "Kladder med nye budgetter ved siden af det, du har",
-      "Guide i 9 trin til et nyt budget",
+      "En guide, der tager dig trin for trin til et nyt budget",
     ],
   },
   {
     icon: <BellIcon size={20} />,
     title: "Beskeder",
-    items: ["Besked ved 10, 25, 50, 75 og 100 % af et mål", "Påmindelse om at se budgettet igennem", "Opgaver på poster og konti", "På mail eller sms, hvis du vil"],
+    items: ["Besked ved 10, 25, 50, 75 og 100 % af et mål", "Påmindelse om at se budgettet igennem", "Opgaver på poster og konti", "Påmindelser også på mail eller sms, hvis du vil"],
   },
   {
     icon: <DownloadIcon size={20} />,
@@ -330,7 +330,7 @@ export function FrontFeatures() {
           </span>
           <p className={f.ovDark}>Scenarier og kladder</p>
           <h3 className={f.scenTitle}>Prøv det, før I beslutter det.</h3>
-          <p className={f.scenLede}>Lav et scenarie for det, I overvejer, og se det ved siden af det nuværende budget. Budgettet selv ændres ikke.</p>
+          <p className={f.scenLede}>Lav et scenarie for det, I overvejer, og se det ved siden af det gældende budget. Budgettet selv ændres ikke.</p>
           <p className={f.ideas}>
             {IDEAS.map((i) => (
               <span key={i} data-on={i === "Nyt hus" ? "" : undefined}>
@@ -340,7 +340,7 @@ export function FrontFeatures() {
           </p>
           <div className={f.vs}>
             <div>
-              <span>Nuværende budget</span>
+              <span>Gældende budget</span>
               <b>3.105 kr</b>
             </div>
             <div>
@@ -355,9 +355,9 @@ export function FrontFeatures() {
           <Ticks
             className={f.ticksDark}
             items={[
-              "Hvert scenarie holdes op mod det nuværende budget – bedre i grønt, dårligere i rødt",
+              "Hvert scenarie holdes op mod det gældende budget – det, der bliver dårligere, står med rødt",
               "Kladder: hele nye budgetter ved siden af, fx når to økonomier skal lægges sammen",
-              "Guide i 9 trin til et nyt budget",
+              "En guide, der tager dig trin for trin til et nyt budget",
             ]}
           />
         </div>
@@ -456,8 +456,8 @@ const SAFE = [
   { icon: <UploadIcon size={20} />, title: "Posteringerne gemmes ikke", body: "Kontoudskriften bruges til at finde de faste poster. Kun dem, du vælger, kommer med." },
   { icon: <LockIcon size={20} />, title: "Ingen adgangskode", body: "Du logger ind med en engangskode på mail. Der er ikke noget kodeord, der kan gættes eller lække." },
   { icon: <PeopleIcon size={20} />, title: "Hver sin adgang", body: "Deler I budgettet, har hver sit login. Fjerner du en, mister de adgangen med det samme." },
-  { icon: <ShieldIcon size={20} />, title: "Ingen sporing", body: "Ingen reklamer og ingen sporingscookies. Skrifttyperne hentes ikke hos Google." },
-  { icon: <DownloadIcon size={20} />, title: "Du kan altid gå", body: "Tag dine tal med som PDF, Excel eller sikkerhedskopi – eller slet din bruger og alt, der hører til." },
+  { icon: <ShieldIcon size={20} />, title: "Ingen sporingscookies", body: "Ingen reklamer, ingen sporingscookies og ingen tredjeparter. Skrifttyperne hentes ikke hos Google." },
+  { icon: <DownloadIcon size={20} />, title: "Du kan altid gå", body: "Tag dine tal med som PDF, Excel eller sikkerhedskopi – eller slet din bruger og dit budget." },
 ] as const;
 
 export function FrontSafety() {
@@ -496,7 +496,7 @@ export function FrontSafety() {
             <li>Posteringerne fra kontoudskriften</li>
             <li>Adgang til din netbank</li>
             <li>Adgangskoder</li>
-            <li>Betalingskort, før de 30 dage er gået</li>
+            <li>Dine kortoplysninger</li>
           </ul>
         </div>
         <Link href="/privatliv" className={f.more}>
@@ -513,7 +513,7 @@ const FAQ = [
   { q: "Skal budgetpro have adgang til min netbank?", a: "Nej. Du henter selv en kontoudskrift i netbanken og uploader den. budgetpro finder de faste poster og gemmer ikke posteringerne." },
   { q: "Kan vi bruge det sammen?", a: "Ja. Du kan give op til to andre adgang til samme budget med deres egen e-mail. En ekstra bruger koster 9 kr pr. måned." },
   { q: "Hvad sker der efter de 30 dage?", a: "Du vælger, om du vil betale pr. måned eller pr. år. Der er ingen binding." },
-  { q: "Kan jeg få mine data med?", a: "Ja, som PDF, Excel eller en sikkerhedskopi. Du kan også slette din bruger og alt, der hører til, under Indstillinger." },
+  { q: "Kan jeg få mine data med?", a: "Ja, som PDF, Excel eller en sikkerhedskopi. Du kan også slette din bruger og dit budget under Indstillinger." },
 ] as const;
 
 export function FrontPricing() {

@@ -247,7 +247,8 @@
   border: 1px solid var(--rule);
   background: var(--field);
   color: var(--tx);
-  font-size: 15px;
+  /* 16px: iOS zooms into smaller fields. */
+  font-size: 16px;
   width: 100%;
   min-width: 0;
 }

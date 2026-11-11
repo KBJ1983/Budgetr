@@ -223,7 +223,7 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
           ) : null}
           <p className="bx-muted af-lead">
             Her giver du {school ? "lærere" : "jeres kunder"} adgang til budgetpro{school ? " Skole" : ""}. Du skriver kun en e-mail, så sender vi
-            personen en kode. Ingen kan se koderne – heller ikke du.
+            personen en kode. Koden står kun i mailen og vises ingen andre steder – heller ikke her.
           </p>
           <div className="bx-tiles">
             <div className={`bx-tile${view.seats.free ? " is-hi" : ""}`}>

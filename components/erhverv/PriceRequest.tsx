@@ -250,7 +250,9 @@ export function PriceRequest() {
         <button type="submit" className={e.submit} disabled={busy}>
           {busy ? "Sender" : "Send prisforespørgsel"} <ArrowRightIcon size={16} />
         </button>
-        <p className={e.formNote}>Vi bruger kun oplysningerne til at svare jer.</p>
+        <p className={e.formNote}>
+          Vi bruger kun oplysningerne til at svare jer. Læs mere i <a href="/privatliv">privatlivspolitikken</a>.
+        </p>
       </div>
     </form>
   );

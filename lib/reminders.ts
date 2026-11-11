@@ -120,12 +120,12 @@ const MAIL_TODOS = 10;
 export function reminderText(title: string, touched: Date, now: Date, url: string, todos: Todo[] = []) {
   const n = monthsBetween(touched, now);
   const since = `Det er ${n === 1 ? "en måned" : `${n} måneder`} siden, du sidst rettede i budgettet`;
-  const name = title.trim() || "dit budget";
+  const name = title.trim();
   const tasks = todos.length ? `Du har ${todoCount(todos.length)}, der venter:\n${todoLines(todos)}\n` : "";
   return {
     subject: "Tid til at se budgettet igennem",
     text:
-      `Hej\n\n${since} ${name}. Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.\n\n` +
+      `Hej\n\n${since}${name ? ` »${name}«` : ""}. Se beløbene igennem, så de passer med det, der faktisk går ind og ud af kontiene.\n\n` +
       tasks +
       `${url}\n\nDu kan ændre eller slå påmindelsen fra under Indstillinger, Påmindelser.\n\nbudgetpro`,
     sms: `budgetpro: ${since}.${todos.length ? ` Du har ${todoCount(todos.length)}.` : ""} Se det igennem, når du har tid: ${url}`,
@@ -147,7 +147,7 @@ export function todoReminderText(title: string, old: Todo[], all: number, days: 
     text:
       `Hej\n\n${waited}:\n${todoLines(old)}` +
       (rest > 0 ? `\nDu har også ${todoCount(rest)} mere, som er nyere.\n` : "") +
-      `\nMarkér en opgave som klaret under klokken i topmenuen, når den er gjort.\n\n${url}\n\n` +
+      `\nTryk Ok ved opgaven under klokken i topmenuen, når den er gjort.\n\n${url}\n\n` +
       `Du kan ændre eller slå påmindelsen om opgaver fra under Indstillinger, Påmindelser.\n\nbudgetpro`,
     sms: `budgetpro: ${old.length === 1 ? "En opgave" : `${old.length} opgaver`} har ventet i mere end ${days} dage. Se dem under klokken: ${url}`,
   };

@@ -4,7 +4,7 @@
   the start step: empty, from statements or from existing budgets – the film picks empty – then name, people, accounts, expense headings, split, goals, the bank step skipped, reminders, then the summary; the guide makes
   no expense posts, they go in afterwards under the headings). Way 2 is a draft
   (Ny kladde) filled from statements (CSV/PDF) and a budget made in Excel (months as columns, the total row skipped),
-  then "Sæt som primært budget". Last, a scenario: "+ Nyt scenarie" in the budget menu, its name and "Gælder fra", a
+  then "Sæt som gældende budget". Last, a scenario: "+ Nyt scenarie" in the budget menu, its name and "Gælder fra", a
   changed post, and the comparison with the current budget. Texts, labels and numbers follow the app
   (public/budgetr-app/index.html: openWiz, renderWiz, openDft, renderDImp, budgetRows, renderScn, compareHtml). "A6"; runtime and shared styles in film.js / film.css.
   Render: `pnpm video kom-i-gang` (and `--reel`). Made-up people (Anna and Jonas, as in the demo budget) and amounts.
@@ -374,10 +374,10 @@
           <li>2 personer: Anna, Jonas · løn for Anna, Jonas</li>
           <li>Konti: Budgetkonto, 2 lønkonti, Fælles opsparing</li>
           <li>Start: tom skabelon, posterne lægges ind på siden Budgetposter</li>
-          <li>Overskrifter: Indtægter, Ekstra indtægter, Bolig, Forsyning, Forsikring, Bil, Kommunikation, Abonnementer, Husholdning, Fagforening og a-kasse, Børn, Ferie</li>
+          <li>Kategorier: Indtægter, Ekstra indtægter, Bolig, Forsyning, Forsikring, Bil, Kommunikation, Abonnementer, Husholdning, Fagforening og a-kasse, Børn, Ferie</li>
           <li>Fordeling: efter indkomst · automatiske overførsler</li>
           <li>1 opsparingsmål: Sommerferie i Italien</li>
-          <li>Bankens krav til rådighedsbeløbet: standardkrav</li>
+          <li>Vejledende krav til rådighedsbeløbet: standardkrav</li>
           <li>Påmindelse hver 3. måned · besked ved milepæle</li>
         </ul>
       </div>
@@ -410,13 +410,13 @@
       <p>Vælg Ny kladde i budgetmenuen. En kladde er et budget ved siden af det, du har – fra bunden eller som en kopi.</p>
     </div>
     <div class="abs" id="menuBox">
-      <span class="scnbtn"><span>Nuværende budget</span><b>Mit budget</b>▾</span>
+      <span class="scnbtn"><span>Gældende budget</span><b>Mit budget</b>▾</span>
       <div class="card" id="menu">
         <div class="mh">Budget</div>
-        <div class="mi on"><b>Mit budget</b><span>Nuværende · det budget, I lever efter i dag</span></div>
+        <div class="mi on"><b>Mit budget</b><span>Gældende · det budget, I lever efter i dag</span></div>
         <div class="msep"></div>
         <div class="mh">Scenarier · ændringer af budgettet</div>
-        <div class="mi"><b>+ Nyt scenarie</b><span>Prøv en ændring, fx ny bolig, uden at røre det nuværende budget</span></div>
+        <div class="mi"><b>+ Nyt scenarie</b><span>Prøv en ændring, fx ny bolig, uden at røre det gældende budget</span></div>
         <div class="msep"></div>
         <div class="mh">Kladder · hele budgetter ved siden af</div>
         <div class="mi" id="mNew"><b>+ Ny kladde</b><span>Byg et nyt budget ud fra kontoudskrifter fra flere konti</span></div>
@@ -425,10 +425,10 @@
     <div class="abs card" id="kdlg">
       <h3>Ny kladde</h3>
       <div class="bd">
-        <p class="lead" style="font-size:18px">En kladde er et budget ved siden af det, du bruger i dag. Læg kontoudskrifter fra alle konti eller et budget fra Excel ind i den, ret til, og sæt den som primært budget, når den er færdig.</p>
+        <p class="lead" style="font-size:18px">En kladde er et budget ved siden af det, du bruger i dag. Læg kontoudskrifter fra alle konti eller et budget fra Excel ind i den, ret til, og sæt den som gældende budget, når den er færdig.</p>
         <div class="fl">Navn<div class="in">Kladde 1</div></div>
         <div class="opt"><span class="rd on"></span><span>Start fra bunden<small>Til en ny økonomi, fx når to økonomier skal lægges sammen</small></span></div>
-        <div class="opt"><span class="rd"></span><span>Start med en kopi af det nuværende budget<small>Ret i en kopi, og hent de nyeste beløb ind fra kontoudskrifterne</small></span></div>
+        <div class="opt"><span class="rd"></span><span>Start med en kopi af det gældende budget<small>Ret i en kopi, og hent de nyeste beløb ind fra kontoudskrifterne</small></span></div>
       </div>
       <div class="foot"><div class="r"><span class="gbtn">Annullér</span><span class="btn" id="kOk">Opret kladde</span></div></div>
     </div>
@@ -508,17 +508,17 @@
     <div class="cap" id="c11">
       <div class="tag"><i></i>Vej 2 · Dine egne tal</div>
       <h2>Gør kladden til dit <span class="hl">budget</span></h2>
-      <p>Ret til i ro, og vælg Sæt som primært budget. Indtil da er dit nuværende budget uændret, og bagefter gemmes det som en kladde.</p>
+      <p>Ret til i ro, og vælg Sæt som gældende budget. Indtil da er dit gældende budget uændret, og bagefter gemmes det som en kladde.</p>
     </div>
     <div class="abs card shot" id="prim">
       <div class="bar"><i></i><i></i><i></i><div class="url">budgetpro.dk/app</div></div>
       <div class="view">
-        <div id="dbar"><div class="tx"><b>Kladde: Kladde 1</b><span>Du arbejder i en kladde. Det primære budget er ikke ændret. 3 filer lagt ind.</span></div>
-          <span class="gbtn">Tilføj filer</span><span class="gbtn">Luk kladden</span><span class="btn" id="dbUse">Sæt som primært budget</span></div>
+        <div id="dbar"><div class="tx"><b>Kladde: Kladde 1</b><span>Du arbejder i en kladde. Det gældende budget er ikke ændret. 3 filer lagt ind.</span></div>
+          <span class="gbtn">Tilføj filer</span><span class="gbtn">Luk kladden</span><span class="btn" id="dbUse">Sæt som gældende budget</span></div>
         <img id="primImg" src="../public/landing/poster-light.jpg" alt="" />
       </div>
     </div>
-    <div class="toast" id="pToast">Kladde 1 er nu det primære budget</div>
+    <div class="toast" id="pToast">Kladde 1 er nu det gældende budget</div>
   </div>
 
   <!-- 12 · A scenario: "what if…" next to the current budget -->
@@ -526,16 +526,16 @@
     <div class="cap" id="c12">
       <div class="tag"><i></i>Scenarier</div>
       <h2>Hvad hvis…? Prøv det i et <span class="hl">scenarie</span></h2>
-      <p>Opret et scenarie i budgetmenuen, og ret de poster, der ændrer sig. Overblikket holder scenariet op mod det nuværende budget, som er uændret.</p>
+      <p>Opret et scenarie i budgetmenuen, og ret de poster, der ændrer sig. Overblikket holder scenariet op mod det gældende budget, som er uændret.</p>
     </div>
     <div class="abs" id="sMenu">
-      <span class="scnbtn"><span>Nuværende budget</span><b>Vores budget</b>▾</span>
+      <span class="scnbtn"><span>Gældende budget</span><b>Vores budget</b>▾</span>
       <div class="card" id="sMenuCard">
         <div class="mh">Budget</div>
-        <div class="mi on"><b>Vores budget</b><span>Nuværende · det budget, I lever efter i dag</span></div>
+        <div class="mi on"><b>Vores budget</b><span>Gældende · det budget, I lever efter i dag</span></div>
         <div class="msep"></div>
         <div class="mh">Scenarier · ændringer af budgettet</div>
-        <div class="mi" id="sNew"><b>+ Nyt scenarie</b><span>Prøv en ændring, fx ny bolig, uden at røre det nuværende budget</span></div>
+        <div class="mi" id="sNew"><b>+ Nyt scenarie</b><span>Prøv en ændring, fx ny bolig, uden at røre det gældende budget</span></div>
         <div class="msep"></div>
         <div class="mh">Kladder · hele budgetter ved siden af</div>
         <div class="mi"><b>+ Ny kladde</b><span>Byg et nyt budget ud fra kontoudskrifter fra flere konti</span></div>
@@ -553,9 +553,9 @@
         <label>Beløb pr. betaling (kr.)<span class="in" id="sAmt"></span></label>
       </div>
       <div id="sCmp">
-        <h4 id="sCmpTitle">Nuværende og Nyt job fra januar 2027</h4>
+        <h4 id="sCmpTitle">Gældende og Nyt job fra januar 2027</h4>
         <p class="hint">Grøn er en forbedring, rød en forværring. Beløb pr. måned.</p>
-        <div class="crow h"><span></span><em>Nuværende</em><em>Scenarie</em><em>Forskel</em></div>
+        <div class="crow h"><span></span><em>Gældende</em><em>Scenarie</em><em>Forskel</em></div>
         <div class="crow"><span>Indtægter</span><em>60.500</em><em>63.100</em><span class="pill up">+2.600</span></div>
         <div class="crow"><span>Faste udgifter</span><em>45.255</em><em>45.255</em><span class="pill">0 kr</span></div>
         <div class="crow key"><span>Tilbage efter al opsparing</span><em>8.701</em><em>11.301</em><span class="pill up">+2.600</span></div>
@@ -611,7 +611,7 @@
   }
 
   // The guide: after the start step, step i + 1 is shown from STEP[i] (in u); each change is a click on Næste (or Spring over at 36.8)
-  const STEPS = ["Start", "Navn", "Personer", "Konti", "Overskrifter", "Fordeling", "Opsparingsmål", "Bankens krav", "Påmindelser", "Opret"];
+  const STEPS = ["Start", "Navn", "Personer", "Konti", "Kategorier", "Fordeling", "Opsparingsmål", "Vejledende krav", "Påmindelser", "Opret"];
   const STEP = [12.5, 15.8, 19.8, 23.0, 29.0, 32.0, 35.6, 36.8, 38.6];
   const CREATE = 41.8;
   // The hint under each step (wzHint in the app)
@@ -811,7 +811,7 @@
     press("#rAdd", u, ADD);
     put("#rToast", { o: Math.min(out(p(u, ADD + 0.15, ADD + 0.45)), 1 - inOut(p(u, S10[1] - 0.6, S10[1]))), y: (1 - back(p(u, ADD + 0.15, ADD + 0.6))) * 24 });
 
-    // 11 · The draft bar: "Sæt som primært budget"
+    // 11 · The draft bar: "Sæt som gældende budget"
     scene("#s11", u, S11[0], S11[1]);
     caption("#c11", u, S11[0] + 0.2);
     enter("#prim", u, S11[0] + 0.3, S11[1]);

@@ -89,6 +89,9 @@ export function AgreementLogin({ email: initialEmail = "" }: { email?: string })
             <p className="bx-muted" style={{ marginTop: 4 }}>
               Er du kunde og vil se dit budget? <a href="/login">Log ind her</a>.
             </p>
+            <p className="bx-muted">
+              Sådan behandler vi oplysningerne: <a href="/privatliv">privatlivspolitikken</a>.
+            </p>
           </form>
         ) : (
           <form className="bx-auth-form" onSubmit={submitCode} noValidate>

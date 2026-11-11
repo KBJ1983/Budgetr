@@ -3,7 +3,7 @@ import legal from "@/components/legal/legal.module.css";
 import { LegalShell } from "@/components/legal/LegalShell";
 import { MAX_BACKUPS } from "@/lib/budget-file";
 import { COMPANY, companyLine, PRIVACY_UPDATED } from "@/lib/company";
-import { AGREEMENT_MAX_AGE_S, SESSION_MAX_AGE_S, TEACHER_MAX_AGE_S } from "@/lib/session";
+import { ADMIN_MAX_AGE_S, AGREEMENT_MAX_AGE_S, SESSION_MAX_AGE_S, TEACHER_MAX_AGE_S } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "Privatlivspolitik og cookies – budgetpro",
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
     <LegalShell
       title="Privatlivspolitik"
       updated={PRIVACY_UPDATED}
-      lead="Et budget indeholder løn, lån og kontonumre. Derfor gemmer vi kun det, der skal til for at budgetpro virker. Vi sælger ingen oplysninger, viser ingen reklamer og bruger ingen sporing."
+      lead="Et budget indeholder løn, lån og kontonumre. Derfor gemmer vi kun det, der skal til for at budgetpro virker. Vi sælger ingen oplysninger, viser ingen reklamer og bruger ingen sporingscookies eller tredjeparter."
     >
       <h2 id="ansvarlig">Hvem er ansvarlig</h2>
       <p>
@@ -96,16 +96,18 @@ export default function PrivacyPage() {
         Sender du en prisforespørgsel fra Erhverv-siden, gemmer vi navn, firma, e-mail, telefon og det, du skriver, så vi kan
         svare dig. Vores svar til dig gemmes sammen med henvendelsen. Kundeadministratorer hos virksomheder med en aftale gemmes med e-mail, så de kan logge ind og sende
         adgange. Den, der får en adgang, får koden på mail. Når du bruger koden, noterer vi, at din konto har adgang fra
-        virksomheden, og hvornår adgangen slutter. En uge før den slutter, får du en mail om det. Virksomheden kan se, at adgangen er taget i brug, men ikke dit budget.
-        Vi er selv dataansvarlige for
-        dit budget, også når du har fået adgang gennem en aftale.
+        virksomheden, og hvornår adgangen slutter. En uge før den slutter, får du en mail om det. Virksomheden kan se din
+        e-mail, at adgangen er taget i brug, og hvornår den slutter, men ikke dit budget. Kundeadministratorerne kan skrive en
+        note ved en adgang, fx et sagsnummer. Noten vises aldrig for dig. De e-mails og noter, virksomheden giver os,
+        behandler vi på virksomhedens vegne. Vi er selv dataansvarlige for dit budget, også når du har fået adgang gennem en
+        aftale.
       </p>
 
       <h3>budgetpro Skole</h3>
       <p>
         Lærere gemmes med navn, skole og e-mail. Elever logger ind med en kode uden navn, og vi gemmer elevens valg og svar,
         så læreren kan følge klassen. Eleverne bliver bedt om ikke at skrive navne. En klasse og alt om den slettes
-        automatisk, når de 30, 60 eller 90 dage, læreren har valgt, er gået. For elevernes oplysninger behandler vi data på
+        automatisk, når de dage, læreren har valgt, er gået (højst et år). For elevernes oplysninger behandler vi data på
         skolens vegne, og skolen kan få en databehandleraftale med os.
       </p>
 
@@ -113,7 +115,8 @@ export default function PrivacyPage() {
       <p>Vi deler ikke dine oplysninger med andre end de leverandører, der driver tjenesten for os:</p>
       <ul>
         <li>
-          <strong>Vercel</strong> – hosting af hjemmesiden og appen
+          <strong>Vercel</strong> – hosting af hjemmesiden og appen. Vercel gemmer i kort tid tekniske logs med IP-adresse og
+          browser for at drive og sikre tjenesten
         </li>
         <li>
           <strong>Upstash</strong> – databasen, hvor budgetter og konti gemmes, på servere i EU
@@ -183,8 +186,8 @@ export default function PrivacyPage() {
       <p>
         budgetpro bruger kun cookies og lagring, der er nødvendige, for at siden virker. Vi bruger ingen cookies til
         statistik, reklame eller sporing, og derfor beder vi dig ikke om samtykke. Besøg tælles uden cookies og uden at gemme
-        noget i din browser: en besøgende genkendes kun samme dag ud fra en uigenkendelig udgave af IP-adresse og browser, og
-        den slettes efter to dage. Har din browser slået &quot;Global Privacy Control&quot; eller &quot;Do Not Track&quot; til, tæller
+        noget i din browser: en besøgende genkendes kun samme dag ud fra en pseudonymiseret udgave (en nøglet hash) af IP-adresse og browser,
+        og den slettes efter to dage. Har din browser slået &quot;Global Privacy Control&quot; eller &quot;Do Not Track&quot; til, tæller
         vi dig ikke. Skrifttyperne hentes fra vores eget domæne,
         så din browser kontakter ikke andre for at vise siden.
       </p>
@@ -246,10 +249,24 @@ export default function PrivacyPage() {
             </tr>
             <tr>
               <td>
-                <code>bp:intro</code>
+                <code>budgetr-app:…:draft</code>
               </td>
-              <td>Husker, at du har set logo-introen på forsiden</td>
+              <td>Lokal lagring i fanen: hvilken kladde der er åben i appen</td>
               <td>Til du lukker fanen</td>
+            </tr>
+            <tr>
+              <td>
+                <code>budgetpro-skole:kode</code>
+              </td>
+              <td>Lokal lagring i fanen: elevkoden, så eleven kommer tilbage til sit budget, hvis siden genindlæses</td>
+              <td>Til fanen lukkes</td>
+            </tr>
+            <tr>
+              <td>
+                <code>budgetr_admin</code>
+              </td>
+              <td>Cookie, der holder budgetpros egen administration logget ind</td>
+              <td>{days(ADMIN_MAX_AGE_S)}, eller til der logges ud</td>
             </tr>
           </tbody>
         </table>

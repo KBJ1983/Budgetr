@@ -108,11 +108,11 @@ describe("skole money", () => {
 });
 
 describe("Mit budget", () => {
-  it("gives the PDF a talk with the parents and a word to them about the free month", () => {
+  it("gives the PDF a talk with the parents, without advertising budgetpro to them", () => {
     const t = parentTalk(caseById("mira"));
     expect(t.questions.length).toBeGreaterThanOrEqual(6);
     expect(t.questions.some((q) => q.includes("Mira"))).toBe(true);
-    for (const text of [t.parents, t.footer]) expect(text).toMatch(/gratis i 30 dage på budgetpro\.dk/);
+    for (const text of [t.parents, t.footer]) expect(text).not.toMatch(/gratis|prøv|budgetpro\.dk/i);
     // Calm copy: no exclamation marks.
     expect(JSON.stringify(t)).not.toContain("!");
   });

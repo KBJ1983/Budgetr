@@ -870,17 +870,18 @@
   margin-top: 22px;
 }
 .faq details {
-  padding: 14px 16px;
   border-radius: 14px;
   background: #fff;
   border: 1px solid var(--v-rule);
 }
+/* The whole card opens it, not only the line of text. */
 .faq summary {
   cursor: pointer;
   font-weight: 650;
+  padding: 14px 16px;
 }
 .faq p {
-  margin: 8px 0 0;
+  margin: -6px 16px 14px;
   font-size: 15px;
   line-height: 1.55;
   color: var(--v-ink-2);

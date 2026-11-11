@@ -16,7 +16,7 @@ export function Shell({ right, toast, children }: { right?: React.ReactNode; toa
       <footer className={s.footer}>
         <span>Eksempeltal</span>
         <span>
-          Ingen navne gemmes · <Link href="/skole/privatliv">Privatlivspolitik</Link>
+          Elevernes navne gemmes ikke ·<Link href="/skole/privatliv">Privatlivspolitik</Link>
         </span>
       </footer>
       {toast && (
