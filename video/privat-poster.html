@@ -1,0 +1,93 @@
+<!doctype html>
+<!--
+  The poster of the privat film (public/video/budgetpro-privat.jpg and -reel.jpg), drawn instead of a frame from the
+  intro, so it does not repeat the hero's "Hele din økonomi. Ét roligt overblik." (user's wish, Nov 2026): "budgetpro
+  kort fortalt" with the scenario dialog from the front page ("Det, I plejer at spørge hinanden om", the demo family's
+  numbers – keep them in step with components/landing/Front.tsx). A6, no light violet. Render both with
+  `pnpm video privat --poster` (16:9) and `pnpm video privat --poster --reel` (9:16).
+-->
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>budgetpro – plakat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600&family=Hanken+Grotesk:wght@200;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=block" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #202024; }
+  body { position: relative; font-family: "Plus Jakarta Sans", system-ui, sans-serif; color: #f3f3f1; -webkit-font-smoothing: antialiased; }
+  .abs { position: absolute; }
+  .circle { position: absolute; border-radius: 50%; background: #26262b; }
+  .ring { position: absolute; border-radius: 50%; border: 1.5px solid #34343a; }
+
+  .logo { left: 140px; top: 96px; display: inline-flex; align-items: baseline; gap: .24em; font-size: 46px; line-height: 1; color: #fff; }
+  .logo svg { width: 1.05em; height: 1.05em; align-self: flex-end; margin-bottom: -.02em; }
+  .logo b { font: 700 1em/1 "Hanken Grotesk", sans-serif; letter-spacing: -.045em; }
+  .logo i { font: 200 1em/1 "Hanken Grotesk", sans-serif; font-style: normal; letter-spacing: -.035em; margin-left: .03em; }
+
+  .text { left: 140px; top: 300px; width: 800px; }
+  .over { font: 500 22px/1 "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: #acacb2; }
+  h1 { margin-top: 30px; font-size: 104px; line-height: 1.02; font-weight: 750; letter-spacing: -0.045em; }
+  .sub { margin-top: 30px; font-size: 32px; line-height: 1.42; color: #acacb2; }
+  .play { margin-top: 52px; display: inline-flex; align-items: center; gap: 22px; height: 96px; padding: 0 40px 0 14px; border-radius: 999px; background: #5b3df5; color: #fff; font-size: 30px; font-weight: 650; }
+  .play span { width: 70px; height: 70px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .play small { font: 500 24px "Geist Mono", monospace; color: rgba(255, 255, 255, .78); }
+
+  .chat { left: 1060px; top: 140px; width: 720px; }
+  .q { display: flex; align-items: flex-end; gap: 16px; }
+  .av { flex: none; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-size: 23px; font-weight: 700; }
+  .av.m { background: #ff9fcf; color: #18181b; }
+  .av.s { background: #f3f3f1; color: #18181b; }
+  .q p { padding: 22px 28px; border-radius: 28px 28px 28px 8px; background: #2a2a2f; border: 1px solid #3a3a41; font-size: 30px; font-weight: 600; letter-spacing: -0.01em; }
+  .a { width: 600px; margin: 20px 0 0 auto; padding: 26px 30px; border-radius: 28px 28px 8px 28px; background: #f3f3f1; color: #18181b; }
+  .lab { display: block; margin-bottom: 8px; font: 500 17px "Geist Mono", monospace; text-transform: uppercase; letter-spacing: .08em; color: #4b2fe0; }
+  .a b { font: 600 52px/1.1 "Geist Mono", monospace; letter-spacing: -0.02em; }
+  .a .unit { margin-left: 14px; font-size: 26px; font-weight: 600; color: #18181b; }
+  .a p { margin-top: 8px; font-size: 22px; line-height: 1.4; color: #5e5e63; }
+  .vs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 26px; }
+  .vs div { padding: 18px 20px; border-radius: 20px; background: #2a2a2f; font-size: 18px; color: #acacb2; }
+  .vs b { display: block; margin-top: 6px; font: 600 30px "Geist Mono", monospace; letter-spacing: -0.02em; color: #fff; }
+  .vs .neg b { color: #ff9c8a; }
+  .q2 { margin-top: 44px; }
+  .a.small { width: 460px; padding: 20px 26px; }
+  .a.small b { font-size: 36px; }
+
+  /* Reel (1080×1920): text and the play pill on top, the dialog below – all clear of the player's control bar */
+  [data-format="reel"], [data-format="reel"] body { width: 1080px; height: 1920px; }
+  [data-format="reel"] .logo { left: 90px; top: 150px; }
+  [data-format="reel"] .text { left: 90px; top: 300px; width: 900px; }
+  [data-format="reel"] h1 { font-size: 96px; }
+  [data-format="reel"] .play { margin-top: 40px; }
+  [data-format="reel"] .chat { left: 90px; top: 960px; width: 900px; }
+  [data-format="reel"] .q2 { margin-top: 36px; }
+</style>
+<script>if (location.search.includes("reel")) document.documentElement.dataset.format = "reel";</script>
+</head>
+<body>
+  <div class="circle" style="width:980px;height:980px;right:-300px;top:-380px"></div>
+  <div class="ring" style="width:1400px;height:1400px;right:-520px;top:-590px"></div>
+  <div class="circle" style="width:620px;height:620px;left:-260px;bottom:-330px"></div>
+
+  <div class="abs logo"><svg viewBox="0.5 1.5 63 60" aria-hidden="true"><rect x="9" y="3" width="34" height="22" rx="5" fill="#fff" stroke="#202024" stroke-width="3"/><rect x="21" y="8" width="34" height="22" rx="5" fill="#fff" stroke="#202024" stroke-width="3"/><rect x="2" y="19" width="60" height="41" rx="13" fill="#fff" stroke="#202024" stroke-width="3"/><rect x="40" y="35" width="15" height="8" rx="4" fill="#202024"/></svg><span><b>budget</b><i>pro</i></span></div>
+
+  <div class="abs text">
+    <p class="over">budgetpro kort fortalt</p>
+    <h1>Hvad giver budgetpro dig?</h1>
+    <p class="sub">En hurtig tur gennem overblik, budgetposter, scenarier, lån, beskeder og deling.</p>
+    <div class="play"><span><svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true"><path d="M3 2.5l21 12.5-21 12.5z" fill="#5b3df5"/></svg></span>Se filmen <small>1:25</small></div>
+  </div>
+
+  <div class="abs chat">
+    <div class="q"><span class="av m">M</span><p>Har vi råd til et nyt hus fra juli?</p></div>
+    <div class="a"><span class="lab">budgetpro · scenarie</span><b>−432 kr</b><span class="unit">til rådighed</span><p>3.537 kr mindre om måneden end i dag. Budgettet selv er ikke ændret.</p></div>
+    <div class="vs">
+      <div>Nuværende budget<b>3.105 kr</b></div>
+      <div>Nyt hus fra juli 2027<b>−432 kr</b></div>
+      <div class="neg">Forskel pr. måned<b>−3.537 kr</b></div>
+    </div>
+    <div class="q q2"><span class="av s">S</span><p>Hvornår er billånet betalt ud?</p></div>
+    <div class="a small"><span class="lab">budgetpro · lån</span><b>Juli 2027</b><p>Derefter frigives 3.300 kr om måneden.</p></div>
+  </div>
+</body>
+</html>

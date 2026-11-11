@@ -6,6 +6,8 @@
  *   pnpm video privat --still=12.5 out.png     → one PNG of second 12.5 instead (for checking a frame)
  *   pnpm video skole --reel                    → public/video/budgetpro-skole-reel.mp4, 1080×1920 (9:16) for phones
  *                                                and reels
+ *   pnpm video privat --poster [--reel]        → public/video/budgetpro-privat[-reel].jpg from video/privat-poster.html
+ *                                                (a drawn poster instead of an intro frame)
  *
  * Each film gets a background track from Mixkit (MUSIC below; the Mixkit Stock Music Free License allows it in
  * commercial videos without credit, but not handing out the file on its own, so the MP3 is fetched into
@@ -38,6 +40,19 @@ mkdirSync(dirname(out), { recursive: true });
 const browser = await chromium.launch({ channel: "chrome" });
 const viewport = reel ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 };
 const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+
+// --poster: a film with its own drawn poster (video/<name>-poster.html) gets it as its JPG instead of an intro frame.
+if (args.includes("--poster")) {
+  const src = resolve(`video/${name}-poster.html`);
+  if (!existsSync(src)) throw new Error(`No poster page: video/${name}-poster.html`);
+  const jpg = resolve(`public/video/budgetpro-${base}.jpg`);
+  await page.goto(`${pathToFileURL(src).href}${reel ? "?reel" : ""}`, { waitUntil: "networkidle" });
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: jpg, type: "jpeg", quality: 86 });
+  await browser.close();
+  console.log(`Wrote ${jpg}`);
+  process.exit(0);
+}
 await page.goto(`${pathToFileURL(resolve(`video/${name}.html`)).href}?render${reel ? "&reel" : ""}`, { waitUntil: "networkidle" });
 await page.evaluate(() => window.ready);
 const duration = await page.evaluate(() => window.DURATION);
