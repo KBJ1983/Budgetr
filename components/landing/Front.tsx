@@ -15,6 +15,7 @@ import {
   ShieldIcon,
   UploadIcon,
 } from "./icons";
+import { LogoIntro } from "./LogoIntro";
 import { PricePlans } from "./PricePlans";
 import { SignupForm } from "./SignupForm";
 
@@ -31,6 +32,7 @@ import { SignupForm } from "./SignupForm";
 export function FrontHero() {
   return (
     <section id="top" className={f.hero} aria-labelledby="hero-title">
+      <LogoIntro />
       <span className={f.chip}>
         Til husstande, der deler økonomi <b>29 kr/md.</b>
       </span>
