@@ -3457,8 +3457,11 @@ let PFOLD=(()=>{try{return JSON.parse(localStorage.getItem('hb-post-fold')||'{}'
 const foldLbl=f=>`<svg viewBox="0 0 16 16" aria-hidden="true"><path d="${f?'M5 5.2 8 2.2l3 3M5 10.8l3 3 3-3M3 8h10':'M5 2.2 8 5.2l3-3M5 13.8l3-3 3 3M3 8h10'}"/></svg><span>${f?'Fold alle ud':'Fold alle sammen'}</span>`;
 // On phones (user's wish) Indtægter and every expense category start folded until opened; what was opened or folded
 // is kept in PFOLD (true = folded, false = opened), so a missing key means the default.
-const pfOn=k=>k in PFOLD?!!PFOLD[k]:(matchMedia('(max-width:760px)').matches&&k!=='g:udgift');
-const pfKeys=()=>['g:indtaegt','g:udgift'].concat(catList().concat([NOCAT,'Opsparing']).map(k=>'c:'+k));
+// The keys are the ones rowsHtml() writes: g:indtaegt / g:regn / g:hush, and c:<group>:<category>.
+const PF_OPEN=k=>k==='g:regn'||k==='g:hush'; // the expense groups stay open when everything else folds
+const pfOn=k=>k in PFOLD?!!PFOLD[k]:(matchMedia('(max-width:760px)').matches&&!PF_OPEN(k));
+const pfKeys=()=>{const cats=[...new Set(catList().concat([NOCAT],cur().filter(e=>e.type==='udgift').map(e=>e.category||NOCAT)))];
+  return ['g:indtaegt','g:regn','g:hush'].concat(...['regn','hush'].map(g=>cats.map(k=>'c:'+g+':'+k)))};
 const foldAllHtml=()=>foldLbl(pfKeys().some(pfOn));
 const savePFold=()=>{try{localStorage.setItem('hb-post-fold',JSON.stringify(PFOLD))}catch(e){}};
 const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!pfOn(key)}" aria-label="${pfOn(key)?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${pfOn(key)?'Fold ud':'Fold sammen'}"></button>`;
@@ -3685,7 +3688,7 @@ function bindMain(){
   $('tbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.target.closest('[data-dragpost],[data-addpost]')){const tr=ev.target.closest('tr.row');if(tr)openRow(tr.dataset.id)}});
   bindPostDrag();if($('btnCats'))$('btnCats').onclick=()=>openCats();
   if($('btnFoldPosts'))$('btnFoldPosts').onclick=()=>{const anyFolded=pfKeys().some(pfOn);
-    PFOLD={};pfKeys().forEach(k=>PFOLD[k]=anyFolded?false:k!=='g:udgift')
+    PFOLD={};pfKeys().forEach(k=>PFOLD[k]=anyFolded?false:!PF_OPEN(k))
     savePFold();$('tbody').innerHTML=rowsHtml();$('btnFoldPosts').innerHTML=foldAllHtml()};}
   if(!$('planSel'))return;
   $('planSel').onchange=e=>{planAcct=e.target.value;render()};
