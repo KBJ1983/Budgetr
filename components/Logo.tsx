@@ -35,6 +35,8 @@ export const BRAND = {
   // "A6" (Nov 2026, current): graphite for the logo and the dark parts, ultraviolet for the front card and buttons,
   // the dark graphite of the website's bands (and the app's dark theme), rosa only for small details.
   graphite: "#18181B",
+  // The logo on light: a dark grey rather than the near-black graphite (user's wish, Nov 2026).
+  logo: "#3F3F46",
   violet: "#5B3DF5",
   dark: "#202024",
   stone: "#F3F3F1",
@@ -44,7 +46,7 @@ export const BRAND = {
 export type LogoTone = "light" | "dark" | "lime";
 
 const TONES: Record<LogoTone, { ink: string; front: string; bg: string }> = {
-  light: { ink: BRAND.graphite, front: BRAND.graphite, bg: "#FFFFFF" },
+  light: { ink: BRAND.logo, front: BRAND.logo, bg: "#FFFFFF" },
   dark: { ink: "#FFFFFF", front: "#FFFFFF", bg: BRAND.dark },
   lime: { ink: BRAND.graphite, front: "#FFFFFF", bg: BRAND.lime },
 };

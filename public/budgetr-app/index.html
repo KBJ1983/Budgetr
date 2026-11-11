@@ -54,7 +54,7 @@
   --pine:#4B2FE0; --pine-bg:#E7EAEF; --pine-ink:#3A22B8; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#18181B; --ochre-bg:#E9E9E5; --ochre-rule:#18181B; --warnline:#18181B;
   --hero-sub:#9C9CA3; --on-pine:#FFFFFF; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#CFCFCA; --lime:#8B98AC; --lime-bar:#8B98AC;
   --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2E3B4E; --deepm:#C5CDD8; --grp:#E7EAEF; --track:#E7E7E3; --scn:#F7DC7E; --scn-on:#18181B;
-  --pos:#2E3B4E; --pos-bg:#E3E7ED; --neg:#A3453A; --neg-bg:#F6E1DC; --logo-ink:#18181B; --logo-front:#18181B;
+  --pos:#2E3B4E; --pos-bg:#E3E7ED; --neg:#A3453A; --neg-bg:#F6E1DC; --logo-ink:#3F3F46; --logo-front:#3F3F46;
   --tone2:#4D5B73; --tone2-bg:#E7EAEF;
   --mk1:#34415A; --mk2:#5E6C84; --mk3:#8B98AC; --mk4:#B8C1CE; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Geist Mono",ui-monospace,"SFMono-Regular",monospace;
@@ -3951,7 +3951,7 @@ async function pdfLogo(){
     const asc=Math.max(mb.actualBoundingBoxAscent,mp.actualBoundingBoxAscent), desc=Math.max(mb.actualBoundingBoxDescent,mp.actualBoundingBoxDescent);
     const top=Math.max(asc,sh-sub), bot=Math.max(desc,sub);
     c.width=Math.ceil(pad*2+sw+gap+mb.width+pl+mp.width);c.height=Math.ceil(pad*2+top+bot);x=c.getContext('2d');
-    const by=pad+top, sy=by+sub-sh, INK='#18181B', LIME=INK;
+    const by=pad+top, sy=by+sub-sh, INK='#3F3F46', LIME=INK;
     // Symbol in viewBox units (0.5 1.5 63 60): each shape is filled, then its outline (and finally the slot) is cut out.
     x.save();x.translate(pad,sy);x.scale(k,k);x.translate(-0.5,-1.5);x.lineWidth=3;
     const rr=(X,Y,w,h,r)=>{x.beginPath();if(x.roundRect)x.roundRect(X,Y,w,h,r);else x.rect(X,Y,w,h)};

@@ -199,7 +199,8 @@
 }
 .film {
   max-width: 1040px;
-  margin: 8px auto 48px;
+  /* Room before the bento under it (user's wish: it felt squeezed). */
+  margin: 8px auto 96px;
 }
 
 /* ---------- bento ---------- */
@@ -951,7 +952,7 @@
     flex: 1;
   }
   .film {
-    margin-bottom: 32px;
+    margin-bottom: 60px;
   }
   .bento {
     grid-template-areas: "main main" "photo photo" "bank bank" "who loan" "scen scen" "imp imp" "check check";
