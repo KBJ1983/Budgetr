@@ -1016,6 +1016,16 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
   .devsec .tablewrap,section.ltproj,section.ltend .tablewrap,section.gsum{display:none!important}
 }
 #btnNew{padding:9px 16px!important;font:600 13px var(--font)!important;border-radius:999px}
+/* Budgetposter on wider screens (user's wish): the heading row stays at the top while the page scrolls (the wrapper
+   clips instead of scrolling, so sticky works against the page – from 1000 px, where the table fits; narrower it
+   scrolls sideways as before), and faint lines between the columns. */
+@media (min-width:1000px){
+  .ptbl{overflow:clip}
+  .ptbl thead th{position:sticky;top:0;z-index:5}
+}
+@media (min-width:761px){
+  .ptbl tr.row>td+td,.ptbl thead th+th{border-left:1px solid color-mix(in srgb,var(--rule) 55%,transparent)}
+}
 /* The budget menu in the top bar (wider screens): only the budget's name; "Scenarie"/"Kladde" shows while one is open. */
 @media (min-width:761px){
   #btnNewScn{display:none!important}
