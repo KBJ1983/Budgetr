@@ -15,7 +15,7 @@ const FLY_MS = 640;
 const BAIL_MS = 5800; // past this the CSS fallback has already hidden the panel
 
 /**
- * Second half of LogoIntro. Once the logo has glitched in, the blue panel contracts to a rounded blue badge just around
+ * Second half of LogoIntro. Once the logo has glitched in, the lime panel contracts to a rounded lime badge just around
  * the logo ("shrink"; the hero shows around it). Then badge and logo take a short run-up (a touch bigger) and whip up
  * together into the header logo's place ([data-intro-target]), shrinking to its size, with two fading copies as a trail;
  * the badge fades on the way and the logo takes the header's colours ("land"). Then the panel is gone (data-state="done")
@@ -89,7 +89,7 @@ export function IntroRunner() {
         width: `${B.right - B.left}px`,
         height: `${B.bottom - B.top}px`,
         borderRadius: `${rad}px`,
-        background: "#5b3df5",
+        background: "#a7cdd0",
         transformOrigin: `${L.left - B.left}px ${L.top - B.top}px`,
       });
       el.appendChild(badge);

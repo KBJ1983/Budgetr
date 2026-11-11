@@ -2,7 +2,8 @@ import { IntroRunner } from "./IntroRunner";
 import s from "./logoIntro.module.css";
 
 /*
- * The front page's opening: an ultraviolet panel covers the hero (the header stays in view), the logo glitches in big in the middle (hard zoom punches in and out, a shaking stage, white glow, sliced ghost
+ * The front page's opening, inside the hero card: a lime panel covers the hero (the header and the white frame stay in
+ * view), the logo glitches in big in the middle (hard zoom punches in and out, a shaking stage, white glow, sliced ghost
  * copies, thin bars), the name snaps in, and then the logo whips up into its place in the header with a short trail while
  * the panel retracts up after it (IntroRunner). About 3.2 s, once per browser session; a click, key or scroll skips it.
  *

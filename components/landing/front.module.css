@@ -10,6 +10,9 @@
   --f-dark-tile: #34343a;
   --f-dark-muted: #acacb2;
   --f-light: #b4a8ff;
+  /* On the dark parts the blue reads as purple, so accents there are white (rosa stays for Til rådighed). */
+  --f-on-dark: #ffffff;
+  --f-tick-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%2318181B' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --f-tint: #eeebff;
   --f-pos: #11845a;
   --f-neg: #c4372e;
@@ -35,7 +38,7 @@
   color: var(--v-olive);
 }
 .ovDark {
-  color: var(--f-light);
+  color: var(--f-on-dark);
 }
 .h2 {
   margin: 10px 0 0;
@@ -126,6 +129,9 @@
 .ticksDark {
   color: var(--f-dark-muted);
 }
+.ticksDark li::before {
+  background: var(--f-on-dark) var(--f-tick-dark) center / 16px no-repeat;
+}
 .fi {
   width: 40px;
   height: 40px;
@@ -139,7 +145,6 @@
 
 /* ---------- hero ---------- */
 .hero {
-  position: relative;
   text-align: center;
   padding: 56px 0 36px;
 }
@@ -289,7 +294,7 @@
   inset: 0 auto 0 0;
   width: var(--w);
   border-radius: 99px;
-  background: var(--f-light);
+  background: var(--f-on-dark);
 }
 .rows b {
   font: 600 14px var(--font-mono);
@@ -556,7 +561,7 @@
   display: grid;
   place-items: center;
   background: var(--f-dark-tile);
-  color: var(--f-light);
+  color: var(--f-on-dark);
 }
 .scenTitle {
   margin: 0;

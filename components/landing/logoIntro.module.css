@@ -1,36 +1,35 @@
 /*
- * Logo intro on the front page (LogoIntro.tsx). It plays on an ultraviolet panel over the hero – the header and the
- * Privat · Erhverv · Skole switch stay in view, so it is clear which site this is. The logo is all white on the blue
- * (like the app icon) and lands all graphite in the header (A6: the logo itself never uses the blue).
+ * Logo intro on the front page (LogoIntro.tsx). It plays on a lime panel inside the hero card – the header, the
+ * Privat · Erhverv · Skole switch and the white frame stay in view, so it is clear which site this is.
  * Timeline from the moment the inline script sets data-state="play" (about 3.5 s in all):
  * 0.15–2.3 s the logo punches in and out in hard zoom steps (from tiny to filling the panel and back) on a shaking stage;
  * 0.2–1.6 s thin bars and sliced ghost copies flicker, the three pieces of the symbol snap in (pocket, back card, front
  * card) with a jolt and a white glow; 1.4–1.95 s the name steps in (with one more punch); 2.5 s IntroRunner sets "land":
- * the panel contracts to a blue badge behind the logo ("shrink", 0.46 s), then badge and logo whip up into the logo's
+ * the panel contracts to a lime badge behind the logo ("shrink", 0.46 s), then badge and logo whip up into the logo's
  * place in the header with a short trail ("land", 0.64 s); the badge fades and the logo takes the header's colours.
  * The flicker stays on the logo and on thin bars – the panel itself never flashes.
  */
 
 .intro {
-  /* Logo on ultraviolet: all white, the outlines cut in the blue. */
-  --ink: #ffffff;
+  /* Logo on light petrol: graphite with a white front card. */
+  --ink: #22272a;
   --front: #ffffff;
-  --cut: #5b3df5;
+  --cut: #a7cdd0;
   --fs: clamp(34px, 9vw, 120px);
 
   position: absolute;
-  inset: 8px 0 0;
+  inset: 6px 14px 14px;
   /* Above the header (z-index 10), so the logo flies over it; the panel itself never covers the header. */
   z-index: 20;
   display: none;
   overflow: hidden;
-  border-radius: 28px;
-  background: #5b3df5;
+  border-radius: 24px;
+  background: #a7cdd0;
   cursor: pointer;
 }
 @media (max-width: 768px) {
   .intro {
-    inset: 4px 0 0;
+    inset: 4px 8px 8px;
     border-radius: 20px;
   }
 }
@@ -43,18 +42,17 @@
 .intro[data-state="play"] {
   animation: bail 0.35s ease-in 6s forwards;
 }
-/* Landing: the header's colours (all graphite, cut-outs in the stone page colour). */
+/* Landing: the header's colours (graphite logo, petrol front card, cut-outs in the card's grey). */
 .intro[data-state="shrink"] {
   pointer-events: none;
 }
 .intro[data-state="land"] {
-  --ink: #18181b;
-  --front: #18181b;
-  --cut: #f3f3f1;
+  --front: #1e6670;
+  --cut: #f0f3f2;
   pointer-events: none;
 }
-/* The header colours come in late in the flight, once the blue badge behind the logo starts to fade. */
-.intro[data-state="land"] :is(.ink, .front, .cut, .slot, .lockup) {
+/* The header colours come in late in the flight, once the lime badge behind the logo starts to fade. */
+.intro[data-state="land"] :is(.front, .cut, .slot) {
   transition-duration: 0.3s;
   transition-delay: 0.32s;
 }
@@ -76,7 +74,7 @@
 .scan {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(to bottom, rgba(24, 24, 27, 0.06) 0 1px, transparent 1px 4px);
+  background: repeating-linear-gradient(to bottom, rgba(16, 20, 21, 0.05) 0 1px, transparent 1px 4px);
   animation: fadeOut 0.5s ease-out 1.9s forwards;
 }
 .intro:is([data-state="shrink"], [data-state="land"]) :is(.halo, .scan, .bars) {
@@ -90,7 +88,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: #18181b;
+  background: #101415;
   opacity: 0;
   animation: bar 0.8s steps(1, end) forwards;
 }
@@ -138,7 +136,6 @@
   line-height: 1;
   white-space: nowrap;
   color: var(--ink);
-  transition: color 0.6s;
   transform-origin: 0 0;
   will-change: transform;
 }
@@ -169,7 +166,7 @@
   opacity: 0;
 }
 .ghostA {
-  color: #18181b;
+  color: #101415;
   animation: sliceA 1.3s steps(1, end) 0.2s forwards;
 }
 .ghostB {
@@ -187,7 +184,6 @@
 
 .ink {
   fill: var(--ink);
-  transition: fill 0.6s;
 }
 .front {
   fill: var(--front);
