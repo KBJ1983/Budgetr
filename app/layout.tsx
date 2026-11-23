@@ -28,7 +28,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "budgetpro – budget for dig, par og familier",
   description:
-    "Saml løn, faste udgifter, lån og opsparing ét sted. Se hvad du har til rådighed, og planlæg med scenarier. 30 dage gratis og uden adgang til netbanken.",
+    "budgetpro gør det nemt at bygge dit budget og holde det opdateret. Skriv posterne ind, eller hent dem fra kontoudskrifter – budgetpro regner resten ud og siger til, når noget skal opdateres. 30 dage gratis og uden adgang til netbanken.",
   icons: { icon: "/icon.svg" },
 };
 

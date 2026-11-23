@@ -166,6 +166,7 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 650;
+  white-space: nowrap;
 }
 .h1 {
   margin: 22px auto 0;

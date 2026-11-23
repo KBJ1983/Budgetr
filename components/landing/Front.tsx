@@ -33,14 +33,14 @@ export function FrontHero() {
   return (
     <section id="top" className={f.hero} aria-labelledby="hero-title">
       <span className={f.chip}>
-        Til husstande, der deler økonomi <b>29 kr/md.</b>
+        Til dig, der vil have kontrollen over dit budget <b>29 kr/md.</b>
       </span>
       <h1 id="hero-title" className={f.h1}>
         Hele din økonomi. <span>Ét roligt overblik.</span>
       </h1>
       <p className={f.lead}>
-        Saml løn, faste udgifter, lån og opsparing ét sted. Se hvad du har til rådighed, og hvad der sker, hvis du
-        flytter, skifter job eller låner.
+        budgetpro gør det nemt at bygge dit budget og holde det opdateret. Skriv posterne ind, eller hent dem fra
+        kontoudskrifter og dit gamle Excel-budget – budgetpro regner resten ud og siger til, når noget skal opdateres.
       </p>
       <div className={f.acts}>
         <Link href="/opret" className={f.btn}>
