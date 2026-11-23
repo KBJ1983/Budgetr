@@ -449,6 +449,7 @@ tr.empty td{font-size:13px;padding:8px 8px 10px 16px}
 .catrow .muted{font-size:12px;white-space:nowrap;padding:0 4px;min-width:62px;text-align:right}
 .catrow button{padding:4px 9px}
 .catadd{display:flex;gap:8px;margin-top:12px}.catadd input{flex:1}
+.catsug p{font-size:13px;margin:14px 0 6px}.catsug div{display:flex;flex-wrap:wrap;gap:6px}
 @media (max-width:640px){.catrow{grid-template-columns:minmax(0,1fr) auto auto auto}.catrow .muted{display:none}}
 /* Konti: drag handle to reorder accounts */
 .dragh{display:inline-flex;align-items:center;justify-content:center;width:18px;height:24px;margin-right:2px;border-radius:5px;color:var(--ink3);cursor:grab;font-size:13px;letter-spacing:-2px;user-select:none;flex:0 0 auto}
@@ -1038,6 +1039,7 @@ dialog.howdlg{width:min(1180px,96vw);max-width:none;height:92vh;max-height:92vh;
    (user's wish). */
 #frm label.check.ckon{padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--scn) 40%,#FFFFFF);color:var(--scn-on);flex-wrap:wrap}
 #frm label.check.ckon .ckhint{color:color-mix(in srgb,var(--scn-on) 72%,transparent)}
+#frm label.check.ckoff{opacity:.55;cursor:default}
 #frm label.check .ckhint{flex-basis:100%;font-size:12.5px;color:var(--ink2);padding-left:28px}
 /* The demo user (login DEMO, /demobruger) sees a strip over the top bar: fictional family, fictional numbers (user's wish). */
 .demostrip{display:none;padding:8px 16px;background:#3F3F46;color:#FFFFFF;font-size:13px;line-height:1.4;text-align:center}
@@ -1809,7 +1811,7 @@ tr.grp.resline td.r{font-size:16px}
       </div>
       <div class="field">
         <label for="fCat">Kategori</label>
-        <input id="fCat" list="cats" autocomplete="off">
+        <input id="fCat" list="cats" autocomplete="off" placeholder="Vælg eller skriv en ny">
         <datalist id="cats"></datalist>
       </div>
       <div class="field">
@@ -1870,7 +1872,7 @@ tr.grp.resline td.r{font-size:16px}
       <label class="check" id="wCheck"><input type="checkbox" id="fCheck"> Skal tjekkes<span class="ckhint" hidden>Tjek beløbet. Fjern markeringen her, når beløbet passer – så forsvinder posten fra opgaverne.</span></label>
       <label class="check" id="wMade" style="grid-column:1/-1"><input type="checkbox" id="fMade" checked> Oprettet i banken. Fjern fluebenet, hvis overførslen mangler at blive sat op, så kommer den på listen under klokken</label>
       <label class="check" id="wBank" style="grid-column:1/-1"><input type="checkbox" id="fBank"> Medregnes i bankens faste udgifter</label>
-      <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen</label>
+      <label class="check" id="wExtra" style="grid-column:1/-1"><input type="checkbox" id="fExtra"> <span>Ekstra indtjening, fx fritidsjob. Tæller kun med, når Medregn ekstra indtjening er slået til, og indgår ikke i fordelingsnøglen. Du slår det til og fra under Indstillinger › Indtægter eller på personkortene under Hvem betaler<span id="exState"></span></span></label>
       <label class="check" id="wFree" style="grid-column:1/-1"><input type="checkbox" id="fFree"> Bundet til bestemte udgifter (øremærket), fx børnefamilieydelse, SU til husleje eller et tilskud. Kan holdes ude af Til rådighed på personkortene under Indstillinger</label>
       <label class="check" id="wSplit" style="grid-column:1/-1"><input type="checkbox" id="fSplit"> Tæller med i fordelingsnøglen (fast indkomst). Fjern fluebenet for en indtægt, der ikke skal påvirke fordelingen, fx en, der går direkte til en fælles konto</label>
       <div class="preview" id="preview"></div>
@@ -2160,6 +2162,7 @@ tr.grp.resline td.r{font-size:16px}
     <p class="muted" style="font-size:13px;margin:0 0 12px">Kategorierne samler de faste udgifter under Poster. Omdøber du en kategori, følger alle dens poster med. Sletter du en, flyttes posterne til Uden kategori.</p>
     <div class="catlist" id="catList"></div>
     <div class="catadd"><input id="catNew" placeholder="Ny kategori, fx Børn" aria-label="Ny kategori" autocomplete="off"><button type="button" id="btnCatAdd">Tilføj</button></div>
+    <div class="catsug" id="catSug"></div>
     <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="btnCatClose" class="primary">Luk</button></div></div>
   </form>
 </dialog>
@@ -3535,6 +3538,10 @@ const savePFold=()=>{try{localStorage.setItem('hb-post-fold',JSON.stringify(PFOL
 const foldBtn=(key,label)=>`<button type="button" class="pfold" data-pfold="${esc(key)}" aria-expanded="${!pfOn(key)}" aria-label="${pfOn(key)?'Fold ud':'Fold sammen'}: ${esc(label)}" title="${pfOn(key)?'Fold ud':'Fold sammen'}"></button>`;
 // Expense categories: S.settings.categories holds their order and categories without posts; names used on posts are added.
 const NOCAT='Uden kategori';
+// Suggested expense categories (user's list, Nov 2026): offered in the post editor's category field and in the
+// Kategorier dialog until the budget has a category with that name.
+const CAT_SUG=['Boligudgifter','Udgifter – lejebolig','Transport','Forsikringer','Børn','Familie','Fritid og sport','Opsparing','Øvrige gældsposter'];
+const catSug=()=>{const have=catList().map(c=>c.toLowerCase());return CAT_SUG.filter(c=>!have.includes(c.toLowerCase()))};
 function catList(){const L=((S.settings&&S.settings.categories)||[]).slice();cur().forEach(e=>{if(e.type==='udgift'&&!e._goal&&e.category&&!L.includes(e.category))L.push(e.category)});return L}
 // Every stored copy of a post: the budget itself, scenario additions and scenario overrides.
 const entryCopies=()=>S.entries.concat(...(S.scenarios||[]).map(sc=>(sc.added||[]).concat(Object.values(sc.overrides||{}))));
@@ -3649,7 +3656,9 @@ function renderCats(){const L=catList(),n=c=>entryCopies().filter(e=>e.category=
   $('catList').querySelectorAll('.catrow').forEach(r=>{const c=r.dataset.cat;
     r.querySelector('[data-catname]').onchange=ev=>{const v=ev.target.value.trim();if(!v){ev.target.value=c;return}if(v!==c&&catList().includes(v)&&!confirm('Kategorien '+v+' findes allerede. Vil du lægge de to sammen?')){ev.target.value=c;return}renameCat(c,v);renderCats()};
     r.querySelectorAll('[data-catmv]').forEach(b=>b.onclick=()=>{const A=catList(),i=A.indexOf(c),j=i+(+b.dataset.catmv);if(j<0||j>=A.length)return;[A[i],A[j]]=[A[j],A[i]];S.settings.categories=A;commit();renderCats()});
-    const del=r.querySelector('[data-catdel]');del.onclick=()=>{const k=n(c);if(k&&del.dataset.armed!=='1'){del.dataset.armed='1';del.textContent=k+' poster flyttes til Uden kategori. Slet?';return}deleteCat(c);renderCats()}})}
+    const del=r.querySelector('[data-catdel]');del.onclick=()=>{const k=n(c);if(k&&del.dataset.armed!=='1'){del.dataset.armed='1';del.textContent=k+' poster flyttes til Uden kategori. Slet?';return}deleteCat(c);renderCats()}});
+  const sg=catSug();$('catSug').innerHTML=sg.length?`<p class="muted">Forslag – tryk for at tilføje</p><div>${sg.map(c=>`<button type="button" class="addcta" data-catsug="${esc(c)}">+ ${esc(c)}</button>`).join('')}</div>`:'';
+  $('catSug').querySelectorAll('[data-catsug]').forEach(b=>b.onclick=()=>{S.settings.categories=catList().concat([b.dataset.catsug]);commit();renderCats()})}
 $('btnCatAdd').onclick=()=>{const v=$('catNew').value.trim();if(!v)return;const L=catList();if(!L.includes(v)){S.settings.categories=L.concat([v]);commit()}$('catNew').value='';renderCats();$('catNew').focus()};
 $('catNew').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();$('btnCatAdd').click()}};
 $('btnCatClose').onclick=()=>$('dlgCat').close();
@@ -3782,8 +3791,11 @@ function syncType(){
   {const inc=t==='indtaegt',v=$('fCover').value;$('lCover').textContent=inc?'Flyttes videre til konto':'Dækkes af fast overførsel fra';
     $('nCover').textContent=inc?'Fx børnepenge, der kommer ind på lønkontoen og fast flyttes til budgetkontoen. Overførslen følger indtægtens beløb og står under Faste overførsler.':'Fx en madkonto, der fyldes op fra budgetkontoen. Overførslen følger udgiftens beløb og står under Faste overførsler.';
     opts($('fCover'),[['',inc?'Ingen, bliver på kontoen':'Ingen, betales direkte fra kontoen'],...S.accounts.map(a=>[a.id,a.name])],v)}
-  $('wExtra').style.display=t==='indtaegt'?'':'none';$('wFree').style.display=t==='indtaegt'&&!$('fExtra').checked?'':'none';
-  $('wSplit').style.display=t==='indtaegt'&&!$('fExtra').checked&&(S.settings||{}).split==='indkomst'?'':'none';
+  $('wExtra').style.display=t==='indtaegt'?'':'none';$('wFree').style.display=t==='indtaegt'?'':'none';
+  $('wSplit').style.display=t==='indtaegt'&&(S.settings||{}).split==='indkomst'?'':'none';
+  // Extra income is never bound and never in the key: keep both choices visible but locked (and unticked) while it is on.
+  {const ex=t==='indtaegt'&&$('fExtra').checked;$('exState').textContent=t==='indtaegt'?(exOn()?' – lige nu er det slået til.':' – lige nu er det slået fra.'):'';
+    ['fFree','fSplit'].forEach(k=>{const c=$(k);if(ex&&!c.disabled){c.dataset.was=c.checked?'1':'';c.checked=false}else if(!ex&&c.disabled){c.checked=c.dataset.was==='1'}c.disabled=ex;c.closest('label').classList.toggle('ckoff',ex)})}
   const ai=t==='overfoersel'?autoInfo({from:$('fFrom').value,to:$('fTo').value}):null;
   $('wAuto').style.display=ai?'':'none'; if(!ai)$('fAuto').checked=false;
   const au=$('fAuto').checked; $('fFreq').disabled=au; if(au){$('fFreq').value='1';$('wStart').style.display='none'}
@@ -3818,12 +3830,12 @@ function openEntry(id,preset){
   opts($('fPayer'),[[FAELLES,'Fælles'],...S.persons.map(p=>[p.id,p.name])],e.payer||FAELLES);
   opts($('fFrom'),accs,e.from);opts($('fTo'),accs,e.to);
   opts($('fCover'),[['',''],...accs],e.cover||'');
-  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;ckMark(!!e.check);$('fBank').checked=id?inBank(e):true;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fFree').checked=isBound(Object.assign({},e,{type:'indtaegt',extra:false}));$('fAuto').checked=!!e.auto;
+  $('fNote').value=e.note||'';$('fActive').checked=e.active!==false;$('fCheck').checked=!!e.check;ckMark(!!e.check);$('fBank').checked=id?inBank(e):true;$('fSplit').disabled=$('fFree').disabled=false;$('fSplit').checked=inSplit(e);$('fExtra').checked=!!e.extra;$('fFree').checked=isBound(Object.assign({},e,{type:'indtaegt',extra:false}));$('fAuto').checked=!!e.auto;
   {const base=id?S.entries.find(x=>x.id===id):null, scx=curSc();$('fHist').innerHTML='';$('fSince').value=base?(base.since||''):'';
     ((base&&base.history)||[]).slice().sort((a,b)=>a.date<b.date?-1:1).forEach(x=>addHist(x));
     $('wHist').style.display=scx?'none':'';
     const dv=id?devOf(e):null;$('histNote').textContent=dv?`Fra ${kr(dv.base.m)} til ${kr(dv.now.m)} pr. md. ${dv.base.unknown?'fra før':'siden'} ${fmtDate(dv.base.date)} (${dv.pct===null?kr(dv.d):pctTxt(dv.pct)}). Når du retter beløbet, gemmes det gamle automatisk her.`:'Når du retter beløbet, gemmes det gamle beløb automatisk her med datoen, så udviklingen kan følges.'}
-  $('cats').innerHTML=catList().map(c=>`<option value="${esc(c)}">`).join('');
+  $('cats').innerHTML=catList().map(c=>`<option value="${esc(c)}">`).join('')+catSug().map(c=>`<option value="${esc(c)}" label="Forslag">`).join('');
   ['eDesc','eAmount','eTo','eCover'].forEach(k=>$(k).textContent='');
   const sc=curSc(), isBase=id&&S.entries.some(x=>x.id===id);
   $('btnDel').style.display=id?'':'none';$('btnDel').textContent=sc?(isBase?'Fjern i scenariet':'Slet fra scenariet'):'Slet post';

@@ -614,6 +614,9 @@
   letter-spacing: -0.02em;
   color: var(--v-dark-text);
 }
+.vs .vsOn b {
+  color: var(--v-rosa);
+}
 .vs .vsDiff b {
   color: var(--f-neg-on-dark);
 }
@@ -1005,7 +1008,7 @@
   .vs {
     grid-template-columns: 1fr 1fr;
   }
-  .vs .vsDiff {
+  .vs :is(.vsDiff, .vsOn) {
     grid-column: 1 / -1;
   }
   .fx .ticks {

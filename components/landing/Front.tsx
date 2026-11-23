@@ -21,7 +21,7 @@ import { SignupForm } from "./SignupForm";
 /*
  * The private front page, design "A6" (Nov 2026, user's choice; prototype public/forslag/mix.html): a short centred
  * hero, the explainer film, a bento grid of the app's parts with the demo family's numbers, the dark "Sådan bliver
- * tallet til" band, Funktioner (a scenario card + the groups folded), the dialog "Det, I plejer at spørge hinanden om",
+ * tallet til" band, Funktioner (a dark card on the budget tool itself, scenarios only as its last line – user's wish, Nov 2026 – + the groups folded), the dialog "Det, I plejer at spørge hinanden om",
  * Tryghed, price + FAQ and the closing signup. Every number is the demo family's (lib/demo-customer.ts, Sofie and
  * Mikkel) as the app shows it – keep them in step when the demo changes. Rosa only in small details, never in lists.
  * Blocks marked data-reveal / data-reveal-group come in as they scroll into view (ScrollReveal, once per session).
@@ -301,7 +301,8 @@ const GROUPS: readonly Group[] = [
   },
 ];
 
-const IDEAS = ["Nyt hus", "Barsel", "Ny bil", "Renten stiger 1 %", "Færre timer"] as const;
+// The frequencies a post can have in the app (the demo family's Bilforsikring is 6.900 kr every half year).
+const FREQS = ["Hver måned", "Hvert kvartal", "Hvert halve år", "En gang om året", "Uregelmæssig"] as const;
 
 function Ticks({ items, className }: { items: readonly string[]; className?: string }) {
   return (
@@ -326,38 +327,42 @@ export function FrontFeatures() {
         </div>
         <div className={f.scen} data-reveal="tilt">
           <span className={f.scenIcon}>
-            <BranchIcon size={20} />
+            <CalendarIcon size={20} />
           </span>
-          <p className={f.ovDark}>Scenarier og kladder</p>
-          <h3 className={f.scenTitle}>Prøv det, før I beslutter det.</h3>
-          <p className={f.scenLede}>Lav et scenarie for det, I overvejer, og se det ved siden af det gældende budget. Budgettet selv ændres ikke.</p>
+          <p className={f.ovDark}>Budgettet</p>
+          <h3 className={f.scenTitle}>Skriv posterne ind. budgetpro regner resten.</h3>
+          <p className={f.scenLede}>
+            Løn, faste udgifter, forsikringer og lån – med det beløb og så tit, de kommer. budgetpro regner om til pr. måned,
+            fordeler de fælles udgifter og viser, hvad I har til rådighed.
+          </p>
           <p className={f.ideas}>
-            {IDEAS.map((i) => (
-              <span key={i} data-on={i === "Nyt hus" ? "" : undefined}>
+            {FREQS.map((i) => (
+              <span key={i} data-on={i === "Hvert halve år" ? "" : undefined}>
                 {i}
               </span>
             ))}
           </p>
           <div className={f.vs}>
             <div>
-              <span>Gældende budget</span>
-              <b>3.105 kr</b>
+              <span>Bilforsikring hvert halve år</span>
+              <b>6.900 kr</b>
             </div>
             <div>
-              <span>Nyt hus fra juli 2027</span>
-              <b>−432 kr</b>
+              <span>Regnet om pr. måned</span>
+              <b>1.150 kr</b>
             </div>
-            <div className={f.vsDiff}>
-              <span>Forskel pr. måned</span>
-              <b>−3.537 kr</b>
+            <div className={f.vsOn}>
+              <span>Til rådighed i alt</span>
+              <b>3.105 kr</b>
             </div>
           </div>
           <Ticks
             className={f.ticksDark}
             items={[
-              "Hvert scenarie holdes op mod det gældende budget – det, der bliver dårligere, står med rødt",
-              "Kladder: hele nye budgetter ved siden af, fx når to økonomier skal lægges sammen",
-              "En guide, der tager dig trin for trin til et nyt budget",
+              "En guide tager dig trin for trin – eller hent posterne fra kontoudskrifter og dit gamle Excel-budget",
+              "Hver af jer får at vide, hvad der skal overføres til budgetkontoen",
+              "Retter du et beløb, følger alle tal med – også bankens rådighedsbeløb",
+              "Og som en ekstra mulighed: prøv et scenarie, fx et nyt hus, ved siden af det gældende budget uden at ændre det",
             ]}
           />
         </div>
@@ -455,7 +460,7 @@ const SAFE = [
   { icon: <NoBankIcon size={20} />, title: "Ingen adgang til netbanken", body: "budgetpro er ikke forbundet til din bank. Du henter selv en kontoudskrift og uploader den." },
   { icon: <UploadIcon size={20} />, title: "Posteringerne gemmes ikke", body: "Kontoudskriften bruges til at finde de faste poster. Kun dem, du vælger, kommer med." },
   { icon: <LockIcon size={20} />, title: "Ingen adgangskode", body: "Du logger ind med en engangskode på mail. Der er ikke noget kodeord, der kan gættes eller lække." },
-  { icon: <PeopleIcon size={20} />, title: "Hver sin adgang", body: "Deler I budgettet, har hver sit login. Fjerner du en, mister de adgangen med det samme." },
+  { icon: <PeopleIcon size={20} />, title: "Hver sin adgang", body: "Flere kan have adgang til budgettet gennem hver sit login. Fjerner du en, mister de adgangen med det samme." },
   { icon: <ShieldIcon size={20} />, title: "Ingen sporingscookies", body: "Ingen reklamer, ingen sporingscookies og ingen tredjeparter. Skrifttyperne hentes ikke hos Google." },
   { icon: <DownloadIcon size={20} />, title: "Du kan altid gå", body: "Tag dine tal med som PDF, Excel eller sikkerhedskopi – eller slet din bruger og dit budget." },
 ] as const;
