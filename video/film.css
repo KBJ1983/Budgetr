@@ -27,15 +27,15 @@
   --paper: #f3f3f1; --stone: #ececE9; --card: #f8f8f6;
   --ink: #18181b; --ink-2: #5e5e63; --ink-3: #6a6a70; --rule: #e0e0db; --rule-2: #cfcfca;
   --midnight: #202024; --midnight-2: #2a2a2f; --midnight-card: #26262b; --midnight-rule: #3a3a41; --decor: #2a2a2f;
-  --haze: #acacb2; --dark-text: #f3f3f1; --logo-dark: #ffffff; --logo-mono: 1; --icon-bg: #5b3df5;
-  --lime: #5b3df5; --lime-rgb: 24, 24, 27; --lime-dark: #5b3df5; --lime-tone: #e9e9e5; --olive: #4b2fe0; --error: #a3453a;
+  --haze: #acacb2; --dark-text: #f3f3f1; --logo-dark: #ffffff; --logo-mono: 1; --icon-bg: #3d56ee;
+  --lime: #3d56ee; --lime-rgb: 24, 24, 27; --lime-dark: #3d56ee; --lime-tone: #e9e9e5; --olive: #2f45d2; --error: #a3453a;
   --comp: #ff9fcf; --fcard-b-bg: var(--comp); --fcard-b-line: var(--comp); --orb-bg: #e9e9e5;
   --on-dark: #ffffff; --on-lime: #ffffff; --hl-dark: var(--comp);
   --shadow: 0 30px 60px -24px rgba(24, 24, 27, 0.3);
   --font: "Plus Jakarta Sans", system-ui, sans-serif;
 }
 :root[data-theme="a6"] #orb2 { border-color: var(--rule-2); opacity: 1; }
-:root[data-theme="a6"] .endbtn, :root[data-theme="a6"] .btn:not(.ghost) { background: #5b3df5; color: #ffffff; }
+:root[data-theme="a6"] .endbtn, :root[data-theme="a6"] .btn:not(.ghost) { background: #3d56ee; color: #ffffff; }
 html[data-theme="a6"], html[data-theme="a6"] body { background: #18181b; }
 /* budgetpro Skole, "Is og solgul" (docs/design/skole-21b.html): solgul replaces lime, warm page and rules */
 :root[data-theme="skole"] {
