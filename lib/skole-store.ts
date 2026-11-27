@@ -31,6 +31,8 @@ export interface SchoolClass {
   created: string;
   /** Lifetime in days (missing on the first classes, which got DEFAULT_DAYS). */
   days?: number;
+  /** ISO time the class ends, for a class made from a school pack (it lives until the pack ends; can't be extended). */
+  ends?: string;
   /** The last step the pupils may open; missing = all (lesson by lesson, LESSON_STEPS in lib/skole.ts). */
   openTo?: number;
   teacherId?: string;
@@ -65,7 +67,8 @@ export const emailHash = (email: string) => hash(`budgetpro-skole:${normalizeEma
 export const isClassId = (id: unknown): id is string => typeof id === "string" && /^[0-9a-f]{10}$/.test(id);
 
 /** When the class's codes stop working and everything is deleted. */
-export const classExpires = (cls: Pick<SchoolClass, "created" | "days">) => new Date(Date.parse(cls.created) + (cls.days ?? DEFAULT_DAYS) * DAY_MS);
+export const classExpires = (cls: Pick<SchoolClass, "created" | "days" | "ends">) =>
+  cls.ends ? new Date(cls.ends) : new Date(Date.parse(cls.created) + (cls.days ?? DEFAULT_DAYS) * DAY_MS);
 const codeExpires = (r: CodeRecord) => (r.expires ? new Date(r.expires) : new Date(Date.parse(r.created) + DEFAULT_DAYS * DAY_MS));
 /** Also true for a broken date, so a bad record goes away. */
 const past = (d: Date, now: Date) => !(now < d);
@@ -92,17 +95,21 @@ export interface NewClass {
   count: number;
   days: number;
   teacherId: string;
+  /** A class from a school pack lives until this moment instead of `days` (which is then worked out from it). */
+  ends?: Date;
 }
 
 /** Makes a class with `count` new codes for the teacher. */
 export async function createClass(o: NewClass, now = new Date(), dir?: string): Promise<SchoolClass> {
-  const { trin, count, days, teacherId } = o;
-  if (!TRIN.includes(trin) || !LIFETIMES.includes(days) || !Number.isInteger(count) || count < 1 || count > MAX_PUPILS) throw new Error("Invalid class");
+  const { trin, count, teacherId, ends } = o;
+  const fixed = ends && ends.getTime() > now.getTime() ? ends : undefined;
+  const days = fixed ? Math.ceil((fixed.getTime() - now.getTime()) / DAY_MS) : o.days;
+  if (!TRIN.includes(trin) || (!fixed && !LIFETIMES.includes(days)) || !Number.isInteger(count) || count < 1 || count > MAX_PUPILS) throw new Error("Invalid class");
   const store = openStore(dir);
   await sweep(now, dir);
   const id = randomBytes(5).toString("hex");
   const created = now.toISOString();
-  const expires = new Date(now.getTime() + days * DAY_MS).toISOString();
+  const expires = (fixed ?? new Date(now.getTime() + days * DAY_MS)).toISOString();
   const codes: string[] = [];
   for (let tries = 0; codes.length < count; tries++) {
     if (tries > count * 50) throw new Error("No free pupil codes");
@@ -111,7 +118,7 @@ export async function createClass(o: NewClass, now = new Date(), dir?: string): 
     if (await store.add(codeKey(code), JSON.stringify(record))) codes.push(code);
   }
   const name = cleanClassName(o.name);
-  const cls: SchoolClass = { id, trin, ...(name ? { name } : {}), created, days, teacherId, codes };
+  const cls: SchoolClass = { id, trin, ...(name ? { name } : {}), created, days, ...(fixed ? { ends: expires } : {}), teacherId, codes };
   await store.set(classKey(id), JSON.stringify(cls));
   await writeIndex(teacherId, [...(await readIndex(teacherId, dir)), id], dir);
   return cls;
@@ -151,7 +158,7 @@ export async function setOpenTo(cls: SchoolClass, openTo: unknown, dir?: string)
 
 /** Gives the class and its codes EXTEND_DAYS more; null when it has reached MAX_CLASS_DAYS. The pupils' work stays. */
 export async function extendClass(cls: SchoolClass, dir?: string): Promise<SchoolClass | null> {
-  if (!canExtend(cls.days ?? DEFAULT_DAYS)) return null;
+  if (cls.ends || !canExtend(cls.days ?? DEFAULT_DAYS)) return null;
   const store = openStore(dir);
   const next: SchoolClass = { ...cls, days: (cls.days ?? DEFAULT_DAYS) + EXTEND_DAYS };
   const expires = classExpires(next).toISOString();
@@ -285,6 +292,7 @@ export async function classOverview(cls: SchoolClass, dir?: string): Promise<Cla
     created: cls.created,
     expires: classExpires(cls).toISOString(),
     days: cls.days ?? DEFAULT_DAYS,
+    ...(cls.ends ? { fixed: true as const } : {}),
     ...(cls.openTo ? { openTo: cls.openTo } : {}),
     rows: cls.codes.map((c, i) => pupilRow(c, flows[i] ?? null, records[i]?.flow ? records[i]?.updated : undefined)),
     stats: classStats(flows),

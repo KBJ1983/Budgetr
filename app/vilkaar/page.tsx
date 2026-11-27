@@ -3,7 +3,7 @@ import Link from "next/link";
 import { LegalShell } from "@/components/legal/LegalShell";
 import { COMPANY, companyLine, TERMS_UPDATED } from "@/lib/company";
 import { MAX_LOGINS } from "@/lib/accounts";
-import { PRICES, TRIAL_DAYS } from "@/lib/owner";
+import { INCLUDED_LOGINS, PRICES, TRIAL_DAYS } from "@/lib/owner";
 
 export const metadata: Metadata = {
   title: "Vilkår – budgetpro",
@@ -50,8 +50,8 @@ export default function TermsPage() {
       <h2 id="pris">Prøveperiode og pris</h2>
       <p>
         De første {TRIAL_DAYS} dage er gratis og uden binding. Derefter koster budgetpro {PRICES.monthly.base} kr om måneden
-        eller {PRICES.yearly.base} kr om året. En ekstra bruger på samme budget koster {PRICES.monthly.extra} kr om måneden
-        eller {PRICES.yearly.extra} kr om året. Alle priser er i danske kroner inkl. moms, og vi viser altid den samlede pris, før du
+        eller {PRICES.yearly.base} kr om året for op til {INCLUDED_LOGINS} brugere på samme budget. En bruger mere koster
+        {PRICES.monthly.extra} kr om måneden eller {PRICES.yearly.extra} kr om året. Alle priser er i danske kroner inkl. moms, og vi viser altid den samlede pris, før du
         betaler. Prøveperioden går ikke automatisk over i et betalt abonnement: du vælger selv, om du vil fortsætte.
       </p>
 

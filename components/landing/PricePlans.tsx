@@ -8,14 +8,14 @@ const PLANS = {
     label: "Månedlig",
     value: "29 kr",
     unit: "pr. måned inkl. moms",
-    note: "Efter 30 dages gratis prøveperiode. Ingen binding. En ekstra bruger på samme budget koster 9 kr pr. måned.",
+    note: "Efter 30 dages gratis prøveperiode. Ingen binding. I kan være 2 brugere på samme budget. En tredje bruger koster 9 kr pr. måned.",
   },
   yearly: {
     label: "Årlig",
     tag: "Spar 15 %",
     value: "296 kr",
     unit: "pr. år inkl. moms",
-    note: "Svarer til ca. 25 kr om måneden. Efter 30 dages gratis prøveperiode. En ekstra bruger på samme budget koster 92 kr pr. år.",
+    note: "Svarer til ca. 25 kr om måneden. Efter 30 dages gratis prøveperiode. I kan være 2 brugere på samme budget. En tredje bruger koster 92 kr pr. år.",
   },
 } as const;
 

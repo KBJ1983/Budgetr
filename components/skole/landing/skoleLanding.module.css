@@ -871,6 +871,31 @@
   flex-direction: column;
   gap: 20px;
 }
+.pricePack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.pricePackName {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font: 700 18px var(--font-text);
+}
+.pricePackName small {
+  font: 400 15px var(--font-text);
+  color: var(--muted);
+}
+.priceMore {
+  font: 400 15px var(--font-text);
+  color: var(--muted);
+}
+.priceMore a {
+  color: inherit;
+  text-decoration: underline;
+}
 .priceRow {
   display: flex;
   align-items: baseline;
@@ -878,7 +903,7 @@
   flex-wrap: wrap;
 }
 .priceAmt {
-  font: 700 56px/1 var(--font-text);
+  font: 700 44px/1 var(--font-text);
   letter-spacing: -0.04em;
 }
 .priceUnit {
@@ -1075,7 +1100,7 @@
     padding: 24px;
   }
   .priceAmt {
-    font-size: 46px;
+    font-size: 38px;
   }
   .closing {
     padding-top: 56px;

@@ -616,7 +616,7 @@ export function FrontSafety() {
 
 const FAQ = [
   { q: "Skal budgetpro have adgang til min netbank?", a: "Nej. Du henter selv en kontoudskrift i netbanken og uploader den. budgetpro finder de faste poster og gemmer ikke posteringerne." },
-  { q: "Kan vi bruge det sammen?", a: "Ja. Du kan give op til to andre adgang til samme budget med deres egen e-mail. En ekstra bruger koster 9 kr pr. måned." },
+  { q: "Kan vi bruge det sammen?", a: "Ja. Du kan give op til to andre adgang til samme budget med deres egen e-mail. To brugere er med i prisen, en tredje koster 9 kr pr. måned." },
   { q: "Hvad sker der efter de 30 dage?", a: "Du vælger, om du vil betale pr. måned eller pr. år. Der er ingen binding." },
   { q: "Kan jeg få mine data med?", a: "Ja, som PDF, Excel eller en sikkerhedskopi. Du kan også slette din bruger og dit budget under Indstillinger." },
 ] as const;

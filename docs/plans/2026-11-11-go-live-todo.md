@@ -52,8 +52,8 @@ resten står her. Afkryds, når et punkt er klaret.
 
 ## C. Beslutninger, du skal tage
 
-- [ ] **Skole-pris:** forsiden sælger "1.500 kr. pr. skoleår" for hele skolen, men koden sælger lærerpladser fra pakker.
-      Hvilken model gælder?
+- [x] **Skole-pris:** besluttet 27.11.2026 – lille pakke 6 klasser 3.000 kr, stor pakke 12 klasser 5.000 kr pr. skoleår
+      (`lib/skole-packs.ts`); forside, /admin, /aftale, lærersiden og guiden følger.
 - [ ] **Henvendelser fra Erhverv:** hvor længe gemmes de (fx 12 måneder, eller 5 år hvis de bliver kunder)? Skal ind i
       `/privatliv`.
 - [ ] **Inaktive konti og lærerbrugere:** slettes efter hvor lang tid uden brug?

@@ -4,7 +4,7 @@
  * the HTML version, lib/mail-html.ts).
  * No server imports, so it is easy to test.
  */
-import type { OrgCategory } from "./owner";
+import { addDays, type OrgCategory } from "./owner";
 
 const spaced = (code: string) => `${code.slice(0, 3)} ${code.slice(3)}`;
 const danishDate = (iso: string) => {
@@ -54,16 +54,20 @@ export function adminInviteMail(orgName: string, loginUrl: string, by?: string) 
   };
 }
 
-/** The seat: a link and the code, sent to the e-mail a kundeadmin typed. `code` is formatted (ABCD-EFGH). */
-export function grantMail(o: { orgName: string; category: OrgCategory; months: number; sendBy: string; code: string; link: string }) {
+/**
+ * The seat: a link and the code, sent to the e-mail a kundeadmin typed. `code` is formatted (ABCD-EFGH). `ends` is the
+ * first day without the seat when the pack has a fixed end (a school pack: the end of the school year).
+ */
+export function grantMail(o: { orgName: string; category: OrgCategory; months: number; sendBy: string; ends?: string; code: string; link: string }) {
   const school = o.category === "skole";
+  const lastDay = o.ends ? danishDate(addDays(o.ends, -1)) : "";
   return {
     subject: school ? `${o.orgName} har givet dig adgang til budgetpro Skole` : `${o.orgName} har givet dig adgang til budgetpro`,
     text: [
       "Hej",
       "",
       school
-        ? `${o.orgName} har givet dig en lærerplads på budgetpro Skole i ${months(o.months)}. Med den kan du oprette klasser, hvor eleverne laver et budget, og følge med i deres valg.`
+        ? `${o.orgName} har givet dig en lærerplads på budgetpro Skole ${o.ends ? `til og med den ${lastDay}` : `i ${months(o.months)}`}. Med den kan du oprette klasser, hvor eleverne laver et budget, og følge med i deres valg.`
         : `${o.orgName} har givet dig budgetpro i ${months(o.months)} uden betaling. budgetpro giver dig et roligt overblik over din økonomi – du bestemmer selv over dine tal.`,
       "",
       "Åbn linket for at komme i gang:",
@@ -74,7 +78,9 @@ export function grantMail(o: { orgName: string; category: OrgCategory; months: n
       "",
       o.code,
       "",
-      `De ${months(o.months)} tæller fra den dag, du bruger koden. Koden kan bruges én gang og senest den ${danishDate(o.sendBy)}.`,
+      o.ends
+        ? `Koden kan bruges én gang og senest den ${danishDate(o.sendBy)}.`
+        : `De ${months(o.months)} tæller fra den dag, du bruger koden. Koden kan bruges én gang og senest den ${danishDate(o.sendBy)}.`,
       school ? "" : `${o.orgName} kan ikke se dit budget. Vi beder dig aldrig om en adgangskode eller om login til din bank.`,
       ...signOff,
     ]

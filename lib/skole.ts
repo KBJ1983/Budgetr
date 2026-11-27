@@ -712,6 +712,8 @@ export interface ClassView {
   /** When the codes stop working and everything is deleted. */
   expires: string;
   days: number;
+  /** Made from a school pack: it lives until the pack ends and can't be extended. */
+  fixed?: true;
   /** The last step the pupils may open (lesson by lesson); missing = all. */
   openTo?: number;
   rows: PupilRow[];

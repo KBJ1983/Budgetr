@@ -8,6 +8,7 @@ import {
   MAX_ORG_ADMINS,
   MAX_PACK_MONTHS,
   PACK_SEND_MONTHS,
+  addDays,
   addMonths,
   listPrice,
   type Category,
@@ -25,6 +26,7 @@ import {
 import { inquiryChoices, sectorLabel } from "@/lib/erhverv";
 import type { InquiryRow } from "@/lib/erhverv-inbox";
 import { isPackCount, isPackMonths, packLabel, packPrice } from "@/lib/erhverv-packs";
+import { SCHOOL_PACK_IDS, SCHOOL_PACKS, schoolPackSendBy, schoolYearEnd, type SchoolPackId } from "@/lib/skole-packs";
 import type { OwnerData } from "@/lib/owner-store";
 import { CrmPanel } from "./CrmPanel";
 import { TrafficPanel } from "./TrafficPanel";
@@ -52,6 +54,8 @@ const ERRORS: Record<string, string> = {
   months: `Varigheden skal være et helt antal måneder fra 1 til ${MAX_PACK_MONTHS}.`,
   bought: "Vælg købsdatoen.",
   sendBy: "Sidste dag skal ligge efter købsdatoen.",
+  classes: "Antal klasser skal være et helt tal.",
+  until: "Pakkens slutdato skal ligge efter købsdatoen.",
   fewer: "Pakken kan ikke blive mindre end det antal pladser, der allerede er sendt.",
   inUse: "Der er allerede sendt pladser herfra, så det kan ikke slettes.",
   inquiry: "Henvendelsen findes ikke længere.",
@@ -395,6 +399,8 @@ const packFrom = (f: FormData) => ({
   bought: f.get("bought"),
   sendBy: f.get("sendBy") || undefined,
   price: f.get("packPrice"),
+  classes: f.get("classes") || undefined,
+  until: f.get("until") || undefined,
 });
 
 /** The fields of a seat pack; a new one starts from the pack a henvendelse asked about, at its list price. */
@@ -411,6 +417,7 @@ function PackFields({
   today: string;
   focus?: boolean;
 }) {
+  if (category === "skole" && (!pack || pack.classes)) return <SchoolPackFields pack={pack} today={today} focus={focus} />;
   return (
     <>
       <div className="bx-grid-2">
@@ -432,6 +439,53 @@ function PackFields({
       <Field label="Pris (kr, valgfri)" help="Betales én gang, på købsdagen">
         <input className="bx-input" name="packPrice" inputMode="decimal" defaultValue={pack?.price ?? askedPrice(asked) ?? ""} />
       </Field>
+    </>
+  );
+}
+
+/**
+ * A school pack (lib/skole-packs.ts): small or big, for the school year it is bought in. It gives as many teacher seats
+ * as classes, and every seat ends with the school year; the price starts at the list price.
+ */
+function SchoolPackFields({ pack, today, focus }: { pack?: PackRow; today: string; focus?: boolean }) {
+  const [kind, setKind] = useState<SchoolPackId>(pack?.classes === SCHOOL_PACKS.lille.classes ? "lille" : pack ? "stor" : "lille");
+  const [bought, setBought] = useState(pack?.bought ?? today);
+  const [price, setPrice] = useState(String(pack?.price ?? SCHOOL_PACKS.lille.price));
+  const p = SCHOOL_PACKS[kind];
+  const until = /^\d{4}-\d{2}-\d{2}$/.test(bought) ? schoolYearEnd(bought) : "";
+  return (
+    <>
+      <div className="bx-grid-2">
+        <Field label="Pakke" help={pack?.sent ? `${num(pack.sent)} lærerpladser er allerede sendt` : `${p.classes} klasser og ${p.classes} lærerpladser`}>
+          <select
+            className="bx-input"
+            value={kind}
+            autoFocus={focus}
+            onChange={(e) => {
+              const next = e.target.value as SchoolPackId;
+              setKind(next);
+              setPrice(String(SCHOOL_PACKS[next].price));
+            }}
+          >
+            {SCHOOL_PACK_IDS.map((id) => (
+              <option key={id} value={id}>
+                {SCHOOL_PACKS[id].label} ({SCHOOL_PACKS[id].classes} klasser)
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Købt" help={until ? `Gælder til og med ${date(addDays(until, -1))}` : undefined}>
+          <input className="bx-input" type="date" name="bought" value={bought} onChange={(e) => setBought(e.target.value)} />
+        </Field>
+      </div>
+      <Field label="Pris (kr)" help="Betales én gang, på købsdagen">
+        <input className="bx-input" name="packPrice" inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} />
+      </Field>
+      <input type="hidden" name="count" value={pack?.count && pack.count > p.classes ? pack.count : p.classes} />
+      <input type="hidden" name="classes" value={p.classes} />
+      <input type="hidden" name="months" value={12} />
+      <input type="hidden" name="until" value={until} />
+      <input type="hidden" name="sendBy" value={until ? schoolPackSendBy(until) : ""} />
     </>
   );
 }
@@ -1119,7 +1173,7 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             defaultStart={editing.customer.trialEnds && editing.customer.trialEnds > data.today ? editing.customer.trialEnds : data.today}
           />
           <p className="bx-muted">
-            Budgettet har {num(editing.customer.logins)} {editing.customer.logins === 1 ? "bruger" : "brugere"}. Prislisten giver 29 kr pr. måned eller 296 kr pr. år, plus 9 kr / 92 kr for hver ekstra bruger.
+            Budgettet har {num(editing.customer.logins)} {editing.customer.logins === 1 ? "bruger" : "brugere"}. Prislisten giver 29 kr pr. måned eller 296 kr pr. år for op til 2 brugere, plus 9 kr / 92 kr for hver bruger derudover.
           </p>
           {error ? <p className="bx-error" role="alert">{error}</p> : null}
         </Dialog>
@@ -1181,11 +1235,9 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
                   {editing.org.packs.map((p) => (
                     <button key={p.id} type="button" className="bx-row" onClick={() => setEditing({ kind: "pack", org: editing.org!, pack: p })}>
                       <span className="bx-row-name">
-                        <b>
-                          {num(p.count)} pladser × {months(p.months)}
-                        </b>
+                        <b>{p.classes ? `${num(p.classes)} klasser · ${num(p.count)} lærerpladser` : `${num(p.count)} pladser × ${months(p.months)}`}</b>
                         <small>
-                          Købt {date(p.bought)} · kan sendes til og med {date(p.sendBy)}
+                          Købt {date(p.bought)} · {p.until ? `gælder til og med ${date(addDays(p.until, -1))}` : `kan sendes til og med ${date(p.sendBy)}`}
                           {p.price ? ` · ${kr(p.price)}` : ""}
                         </small>
                       </span>

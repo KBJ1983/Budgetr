@@ -5,10 +5,14 @@
  * (`Teacher.seat`); it counts only while the grant is still theirs (the school can take it back on /aftale) and its
  * months are not up.
  *
+ * A seat from a school pack (lib/skole-packs.ts) shares the pack's classes with the school's other teachers: each class
+ * made takes one of them for good (`claimClass`), and the classes live until the pack ends.
+ *
  * Teachers who signed up before seats existed keep making classes until EARLY_TEACHERS_UNTIL. So do the fictional
  * test teachers (@eksempel.dk) in development, so `pnpm smoke` can make a class without an agreement in the ledger.
  */
-import { findGrant, grantCode, readGrant, useCode, waitingGrant } from "./agreements";
+import { classPoolKey, findGrant, grantCode, packClassesUsed, readGrant, useCode, waitingGrant } from "./agreements";
+import { openStore } from "./kv";
 import { orgActive, today, type Org } from "./owner";
 import { readLedger } from "./owner-store";
 import { isTestTeacher, TEST_SCHOOL } from "./skole-test-teachers";
@@ -36,6 +40,15 @@ export interface SeatInfo {
   /** The school whose agreement the seat is from; empty for an early teacher. */
   school: string;
   early?: boolean;
+  /** The school pack's classes, when the seat is from one: how many may be made and how many are. */
+  pool?: ClassPool;
+}
+
+export interface ClassPool {
+  org: string;
+  pack: string;
+  max: number;
+  used: number;
 }
 
 /** The teacher's seat today, or null (then the teacher sees the demo and the ways to a seat). */
@@ -45,13 +58,34 @@ export async function teacherSeat(t: Teacher, now = new Date(), dir?: string): P
     const g = await readGrant(t.seat.org, t.seat.grant, dir);
     if (g?.usedBy === t.id) {
       const org = (await readLedger(dir)).orgs.find((o) => o.id === t.seat!.org);
-      return { until: t.seat.until, school: org?.name ?? "" };
+      const pack = org?.packs?.find((p) => p.id === g.pack);
+      const seat: SeatInfo = { until: t.seat.until, school: org?.name ?? "" };
+      if (org && pack?.classes) {
+        const used = await packClassesUsed(org.id, pack.id, dir);
+        seat.pool = { org: org.id, pack: pack.id, max: pack.classes, used: Math.min(used, pack.classes) };
+      }
+      return seat;
     }
   }
   if (isTestTeacher(t.id) && day < EARLY_TEACHERS_UNTIL) return { until: EARLY_TEACHERS_UNTIL, school: TEST_SCHOOL, early: true };
   const testTeacher = process.env.NODE_ENV === "development" && t.email.endsWith("@eksempel.dk");
   if ((t.createdAt < EARLY_TEACHERS_BEFORE || testTeacher) && day < EARLY_TEACHERS_UNTIL) return { until: EARLY_TEACHERS_UNTIL, school: "", early: true };
   return null;
+}
+
+/**
+ * Takes one of the school pack's classes for a class the teacher is about to make; false when they are all used.
+ * Each class has its own numbered place in the store, taken atomically, so two teachers at once can't pass the limit.
+ */
+export async function claimClass(pool: ClassPool, teacherId: string, now = new Date(), dir?: string): Promise<boolean> {
+  const store = openStore(dir);
+  const key = classPoolKey(pool.org, pool.pack);
+  const taken = await store.fields(key);
+  for (let n = 1; n <= pool.max; n++) {
+    if (taken[String(n)]) continue;
+    if ((await store.claim(key, String(n), `${teacherId} ${now.toISOString()}`)).fresh) return true;
+  }
+  return false;
 }
 
 export type SeatTaken = { ok: true; seat: SeatInfo } | { ok: false; error: "unknown" | "used" | "expired" | "notSchool" };
@@ -67,7 +101,7 @@ export async function takeSeat(t: Teacher, code: unknown, now = new Date(), dir?
   if (!r.ok) return r;
   t.seat = { org: org.id, grant: r.grant.id, until: r.grant.until! };
   await saveTeacher(t, dir);
-  return { ok: true, seat: { until: t.seat.until, school: org.name } };
+  return { ok: true, seat: (await teacherSeat(t, now, dir)) ?? { until: t.seat.until, school: org.name } };
 }
 
 /** The teacher's seat, taking one at once when a school has sent a seat to the teacher's e-mail. */

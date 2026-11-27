@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Logo } from "@/components/Logo";
 import type { AgreementView, GrantRow } from "@/lib/agreement-admins";
 import { parseEmails } from "@/lib/email-list";
+import { addDays } from "@/lib/owner";
 
 // Mirrors MAX_BATCH / MAX_NOTE in lib/agreements.ts (a server module, so not imported here).
 const MAX_BATCH = 50;
@@ -244,7 +245,13 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
             <div className="bx-tile">
               <span>Pladser i alt</span>
               <b>{num(view.seats.count)}</b>
-              <span>{view.packs.length === 1 ? `${months(view.packs[0]!.months)} pr. plads` : `${num(view.packs.length)} pakker`}</span>
+              <span>
+                {view.packs.length !== 1
+                  ? `${num(view.packs.length)} pakker`
+                  : view.packs[0]!.classes
+                    ? `${num(view.packs[0]!.classesUsed ?? 0)} af ${num(view.packs[0]!.classes)} klasser oprettet`
+                    : `${months(view.packs[0]!.months)} pr. plads`}
+              </span>
             </div>
           </div>
         </section>
@@ -409,14 +416,21 @@ export function AgreementHome({ initial, orgs, give: initialGive = "" }: { initi
               {view.packs.map((p) => (
                 <div key={p.id} className="af-list-row">
                   <span>
-                    <b>
-                      {num(p.count)} pladser × {months(p.months)}
-                    </b>
-                    <small>{p.open ? `Kan sendes til og med ${date(p.sendBy)}` : `Kunne sendes til og med ${date(p.sendBy)}`}</small>
+                    <b>{p.classes ? `${num(p.classes)} klasser · ${num(p.count)} lærerpladser` : `${num(p.count)} pladser × ${months(p.months)}`}</b>
+                    <small>
+                      {p.until
+                        ? `Gælder til og med ${date(addDays(p.until, -1))}`
+                        : p.open
+                          ? `Kan sendes til og med ${date(p.sendBy)}`
+                          : `Kunne sendes til og med ${date(p.sendBy)}`}
+                    </small>
                   </span>
                   <span className="af-list-num">
-                    {num(p.used)} i brug
-                    <small>{num(Math.max(0, p.count - p.sent))} {p.count - p.sent === 1 ? "fri" : "frie"}</small>
+                    {p.classes ? `${num(p.classesUsed ?? 0)} af ${num(p.classes)} klasser oprettet` : `${num(p.used)} i brug`}
+                    <small>
+                      {p.classes ? `${num(p.used)} lærere i gang · ` : ""}
+                      {num(Math.max(0, p.count - p.sent))} {p.count - p.sent === 1 ? "fri" : "frie"}
+                    </small>
                   </span>
                 </div>
               ))}

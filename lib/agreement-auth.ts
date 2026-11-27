@@ -52,7 +52,7 @@ export async function inviteAdmins(origin: string, org: Org, emails: string[], b
 export async function mailGrant(origin: string, org: Org, grant: Grant, code: string): Promise<boolean> {
   const shown = formatCode(code);
   const link = `${siteUrl(origin)}/aftale/brug?kode=${shown}`;
-  const mail = grantMail({ orgName: org.name, category: org.category, months: grant.months, sendBy: grant.sendBy, code: shown, link });
+  const mail = grantMail({ orgName: org.name, category: org.category, months: grant.months, sendBy: grant.sendBy, ends: grant.ends, code: shown, link });
   return sendAuthMail(grant.email, mail, link, org.category === "skole" ? { theme: "skole" } : {});
 }
 

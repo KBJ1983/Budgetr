@@ -144,7 +144,7 @@ const PRICE_FEATURES = [
 const FAQ = [
   {
     q: "Hvad koster det?",
-    a: "De første 30 dage er gratis med alle funktioner, og du skal ikke oplyse betalingskort for at starte. Kortet skal først bruges, når de 30 dage er gået. Derefter koster det 29 kr om måneden. Deler du budgettet med andre, koster hver ekstra bruger 9 kr om måneden. Betaler du årligt, sparer du 15 %: 296 kr om året og 92 kr om året for hver ekstra bruger. Priserne er inkl. moms.",
+    a: "De første 30 dage er gratis med alle funktioner, og du skal ikke oplyse betalingskort for at starte. Kortet skal først bruges, når de 30 dage er gået. Derefter koster det 29 kr om måneden, og I kan være 2 brugere på samme budget. En tredje bruger koster 9 kr om måneden. Betaler du årligt, sparer du 15 %: 296 kr om året og 92 kr om året for den tredje bruger. Priserne er inkl. moms.",
   },
   {
     q: "Skal jeg give adgang til min netbank?",
@@ -156,7 +156,7 @@ const FAQ = [
   },
   {
     q: "Kan jeg dele budgettet med andre?",
-    a: "Ja. Invitér partner, familie eller en, du deler bolig med. I arbejder i det samme budget, og hver især vælger selv tema og visning. Hver ekstra bruger koster 9 kr om måneden.",
+    a: "Ja. Invitér partner, familie eller en, du deler bolig med. I arbejder i det samme budget, og hver især vælger selv tema og visning. To brugere er med i prisen, en tredje koster 9 kr om måneden.",
   },
   {
     q: "Hvad hvis jeg vil stoppe?",

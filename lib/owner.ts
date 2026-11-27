@@ -64,6 +64,11 @@ export interface Pack {
   sendBy: string;
   /** Kroner, once. */
   price?: number;
+  /** School packs (lib/skole-packs.ts): how many classes the school's teachers may make from the pack. */
+  classes?: number;
+  /** YYYY-MM-DD, the first day without access for every seat in the pack (school packs: the end of the school year).
+   *  Without it, a seat lasts `months` from the day it is taken. */
+  until?: string;
 }
 
 /** Seats sent (incl. used) and used per pack id – from lib/agreements.ts, so this file stays free of storage. */
@@ -101,13 +106,17 @@ export interface LedgerAccount {
   reminded?: string;
 }
 
-/** Price list from the landing page (components/landing/PricePlans.tsx): base price + each extra login. */
+/**
+ * Price list from the landing page (components/landing/PricePlans.tsx): the base price covers INCLUDED_LOGINS logins
+ * on the budget; each login after that costs `extra`.
+ */
 export const PRICES: Record<Interval, { base: number; extra: number }> = {
   monthly: { base: 29, extra: 9 },
   yearly: { base: 296, extra: 92 },
 };
+export const INCLUDED_LOGINS = 2;
 export const listPrice = (interval: Interval, logins: number) =>
-  PRICES[interval].base + PRICES[interval].extra * Math.max(0, logins - 1);
+  PRICES[interval].base + PRICES[interval].extra * Math.max(0, logins - INCLUDED_LOGINS);
 
 // ---- Dates (YYYY-MM-DD strings compare in date order) ------------------------------------------------------------
 
@@ -539,7 +548,20 @@ export function applyChange(ledger: Ledger, change: unknown, accountIds: string[
       const packs = org.packs ?? [];
       if (p.id && !packs.some((x) => x.id === id)) return { ok: false, error: "pack" };
       if (count < (use[id]?.sent ?? 0)) return { ok: false, error: "fewer" };
-      const pack: Pack = { id, count, months, bought: p.bought, sendBy, ...(price ? { price } : {}) };
+      const classes = p.classes === undefined || p.classes === "" || p.classes === null ? undefined : whole(p.classes, 1, MAX_PACK_SEATS);
+      if (classes === null) return { ok: false, error: "classes" };
+      const until = p.until === undefined || p.until === "" || p.until === null ? undefined : p.until;
+      if (until !== undefined && (!isDate(until) || until <= p.bought || sendBy >= until)) return { ok: false, error: "until" };
+      const pack: Pack = {
+        id,
+        count,
+        months,
+        bought: p.bought,
+        sendBy,
+        ...(price ? { price } : {}),
+        ...(classes ? { classes } : {}),
+        ...(until ? { until } : {}),
+      };
       org.packs = packs.some((x) => x.id === id) ? packs.map((x) => (x.id === id ? pack : x)) : [...packs, pack];
       return { ok: true, ledger: next };
     }

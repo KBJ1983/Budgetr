@@ -189,9 +189,12 @@ describe("applyChange", () => {
   });
 
   it("follows the landing page's price list", () => {
+    // Two logins are in the base price; the third costs extra.
     expect(listPrice("monthly", 1)).toBe(29);
-    expect(listPrice("monthly", 3)).toBe(47);
-    expect(listPrice("yearly", 2)).toBe(388);
+    expect(listPrice("monthly", 2)).toBe(29);
+    expect(listPrice("monthly", 3)).toBe(38);
+    expect(listPrice("yearly", 2)).toBe(296);
+    expect(listPrice("yearly", 3)).toBe(388);
   });
 });
 

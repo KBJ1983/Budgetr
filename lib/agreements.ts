@@ -32,6 +32,8 @@ export interface Grant {
   /** Copied from the pack when sent. */
   months: number;
   sendBy: string;
+  /** Copied from the pack's `until` (school packs): the seat ends that day instead of `months` after it is taken. */
+  ends?: string;
   /** ISO times the mail was sent (the first one, and the last day's resends). */
   sentAt: string;
   sends: string[];
@@ -94,6 +96,14 @@ export async function listGrants(orgId: string, dir?: string): Promise<Grant[]> 
   return all.filter((g): g is Grant => !!g).sort((a, b) => b.sentAt.localeCompare(a.sentAt));
 }
 
+/** A school pack's classes: one numbered field per class made (lib/skole-seats.ts `claimClass`). */
+export const classPoolKey = (orgId: string, packId: string) => `aftaler/${orgId}/klasser/${packId}.json`;
+
+/** How many of a school pack's classes have been made. */
+export async function packClassesUsed(orgId: string, packId: string, dir?: string): Promise<number> {
+  return Object.keys(await openStore(dir).fields(classPoolKey(orgId, packId))).length;
+}
+
 /** Seats sent and used per pack. */
 export function packUse(grants: Grant[]): PackUse {
   const use: PackUse = {};
@@ -135,7 +145,7 @@ export async function giveAccess(org: Org, email: string, now = new Date(), dir?
 
 async function newGrant(org: Org, pack: Pack, to: string, now: Date, dir?: string, note?: string): Promise<{ grant: Grant; code: string }> {
   const at = now.toISOString();
-  const grant: Grant = { id: newId(), org: org.id, pack: pack.id, email: to, months: pack.months, sendBy: pack.sendBy, sentAt: at, sends: [at], ...(note ? { note } : {}) };
+  const grant: Grant = { id: newId(), org: org.id, pack: pack.id, email: to, months: pack.months, sendBy: pack.sendBy, ...(pack.until ? { ends: pack.until } : {}), sentAt: at, sends: [at], ...(note ? { note } : {}) };
   const code = await grantCode(grant.id, dir);
   await openStore(dir).set(codeKey(code), JSON.stringify({ org: org.id, grant: grant.id }));
   await saveGrant(grant, dir);
@@ -231,7 +241,7 @@ export async function useCode(input: unknown, holder: string, now = new Date(), 
   const day = today(now);
   if (day > grant.sendBy) return { ok: false, error: "expired" };
   if (!(await openStore(dir).add(usedKey(grant.id), holder))) return { ok: false, error: "used" };
-  const taken: Grant = { ...grant, usedBy: holder, usedAt: now.toISOString(), until: addMonths(day, grant.months) };
+  const taken: Grant = { ...grant, usedBy: holder, usedAt: now.toISOString(), until: grant.ends ?? addMonths(day, grant.months) };
   await saveGrant(taken, dir);
   return { ok: true, grant: taken };
 }

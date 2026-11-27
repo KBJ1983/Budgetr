@@ -6,7 +6,7 @@ import { giveAccess, releaseSeat } from "./agreements";
 import { emptyLedger, type Org } from "./owner";
 import { writeLedger } from "./owner-store";
 import { DEMO_CLASS_ID, demoClass } from "./skole-demo";
-import { EARLY_TEACHERS_UNTIL, canTryFree, claimWaitingSeat, requestSeat, takeSeat, teacherSeat, useTrial } from "./skole-seats";
+import { EARLY_TEACHERS_UNTIL, canTryFree, claimClass, claimWaitingSeat, requestSeat, takeSeat, teacherSeat, useTrial } from "./skole-seats";
 import { readTeacher, redeemTeacherLink, signupTeacher, type Teacher } from "./skole-teachers";
 
 const now = new Date("2026-11-02T10:00:00Z");
@@ -19,13 +19,21 @@ const school: Org = {
   admins: ["admin@skole.dk"],
   packs: [{ id: "p-1", count: 2, months: 12, bought: "2026-10-01", sendBy: "2027-10-01" }],
 };
+// A small school pack (lib/skole-packs.ts): 2 classes shared by the teachers, every seat ends with the school year.
+const packSchool: Org = {
+  id: "o-pakke",
+  name: "Pakkeskolen",
+  category: "skole",
+  admins: ["admin@pakke.dk"],
+  packs: [{ id: "p-s", count: 3, months: 12, bought: "2026-10-01", sendBy: "2027-07-31", classes: 2, until: "2027-08-01" }],
+};
 const bank: Org = { id: "o-bank", name: "Banken", category: "bank", admins: ["a@banken.dk"], packs: [{ id: "p-b", count: 2, months: 3, bought: "2026-10-01", sendBy: "2027-10-01" }] };
 
 describe("teacher seats", () => {
   let dir: string;
   beforeEach(async () => {
     dir = await mkdtemp(path.join(tmpdir(), "budgetr-seats-"));
-    await writeLedger({ ...emptyLedger(), orgs: [school, bank] }, dir);
+    await writeLedger({ ...emptyLedger(), orgs: [school, packSchool, bank] }, dir);
   });
   afterEach(async () => {
     await rm(dir, { recursive: true, force: true });
@@ -77,6 +85,25 @@ describe("teacher seats", () => {
     await releaseSeat("o-skole", g.grant.id, dir);
     expect(await teacherSeat(saved, later(2), dir)).toBeNull();
     expect(await claimWaitingSeat(saved, later(2), dir)).toBeNull();
+  });
+
+  it("shares a school pack's classes between its teachers, and ends every seat with the school year", async () => {
+    const seatFor = async (email: string) => {
+      const t = await teacher(email);
+      const g = await giveAccess(packSchool, email, now, dir);
+      if (!g.ok) throw new Error(g.error);
+      const r = await takeSeat(t, g.code, later(10), dir);
+      if (!r.ok) throw new Error(r.error);
+      return r.seat;
+    };
+    const a = await seatFor("a@pakke.dk");
+    expect(a).toEqual({ until: "2027-08-01", school: "Pakkeskolen", pool: { org: "o-pakke", pack: "p-s", max: 2, used: 0 } });
+    expect(await claimClass(a.pool!, "t-a", now, dir)).toBe(true);
+    const b = await seatFor("b@pakke.dk");
+    expect(b.pool?.used).toBe(1);
+    expect(await claimClass(b.pool!, "t-b", now, dir)).toBe(true);
+    expect(await claimClass(a.pool!, "t-a", now, dir)).toBe(false);
+    expect((await seatFor("c@pakke.dk")).pool?.used).toBe(2);
   });
 
   it("asks a school with an agreement for a seat, at most once a day", async () => {

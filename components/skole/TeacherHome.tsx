@@ -16,7 +16,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 /**
  * The logged-in teacher's front page: make a class, and all live classes with their codes. Without a seat from a
  * school's agreement the teacher can make one free class (codes for TRIAL_DAYS); after that the create form gives way
- * to the demo class and the ways to a seat (SeatPanel).
+ * to the demo class and the ways to a seat (SeatPanel). A seat from a school pack shows how many of the pack's classes
+ * are used; its classes live until the pack ends, so there is no lifetime to pick, and when all are used there is no form.
  */
 export function TeacherHome({
   name,
@@ -39,6 +40,9 @@ export function TeacherHome({
   const [antal, setAntal] = useState(24);
   const [className, setClassName] = useState("");
   const free = !seat && trial;
+  const pool = seat?.pool;
+  const poolFull = !!pool && pool.used >= pool.max;
+  const lastDay = seat ? dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS)) : "";
   const lifetimes = free ? [TRIAL_DAYS] : LIFETIMES;
   const [days, setDays] = useState(free ? TRIAL_DAYS : DEFAULT_DAYS);
   const [busy, setBusy] = useState(false);
@@ -83,7 +87,8 @@ export function TeacherHome({
           <p className={`${s.seatLine} ${s.noPrint}`} suppressHydrationWarning>
             {seat.early
               ? `Du kan oprette klasser til og med ${dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS))}.`
-              : `Din lærerplads fra ${seat.school || "din skole"} gælder til og med ${dayMonthYear(new Date(Date.parse(seat.until) - DAY_MS))}.`}
+              : `Din lærerplads fra ${seat.school || "din skole"} gælder til og med ${lastDay}.`}
+            {pool && ` Skolens pakke giver ${pool.max} klasser i skoleåret, og ${pool.used} er oprettet.`}
           </p>
         ) : free ? (
           <p className={`${s.seatLine} ${s.noPrint}`}>
@@ -94,7 +99,13 @@ export function TeacherHome({
           <SeatPanel code={code} school={school} trialUsed />
         )}
 
-        {(seat || free) && (
+        {poolFull && (
+          <p className={`${s.info} ${s.noPrint}`}>
+            Alle {pool.max} klasser i skolens pakke er oprettet. Skal I bruge flere, kan skolen skrive til budgetpro om en større pakke.
+          </p>
+        )}
+
+        {(seat || free) && !poolFull && (
         <form
           className={`${s.card} ${s.createForm} ${s.noPrint}`}
           onSubmit={(e) => {
@@ -140,6 +151,7 @@ export function TeacherHome({
                 </button>
               </div>
             </div>
+            {!pool && (
             <div className={s.field}>
               <span className={s.label} id="days-label">
                 Koderne virker i
@@ -152,9 +164,10 @@ export function TeacherHome({
                 ))}
               </div>
             </div>
+            )}
           </div>
           <span className={s.small} suppressHydrationWarning>
-            Elevkoderne udløber den {dayMonthYear(new Date(Date.now() + days * DAY_MS))}. Så slettes klassen, koderne og elevernes svar. budgetpro gemmer ingen
+            Elevkoderne udløber den {pool ? lastDay : dayMonthYear(new Date(Date.now() + days * DAY_MS))}. Så slettes klassen, koderne og elevernes svar. budgetpro gemmer ingen
             navne – skriv selv, hvem der har hvilken kode.
           </span>
           {err && (

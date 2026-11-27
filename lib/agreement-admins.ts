@@ -12,7 +12,7 @@
  * codes spend them.
  */
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
-import { listGrants, type Grant } from "./agreements";
+import { listGrants, packClassesUsed, type Grant } from "./agreements";
 import { openStore } from "./kv";
 import { allow } from "./rate-limit";
 import { MAX_ORG_ADMINS, parseAdmins, today, type Ledger, type Org, type OrgCategory } from "./owner";
@@ -184,7 +184,19 @@ export interface AgreementView {
   me: string;
   admins: string[];
   maxAdmins: number;
-  packs: { id: string; count: number; months: number; sendBy: string; sent: number; used: number; open: boolean }[];
+  packs: {
+    id: string;
+    count: number;
+    months: number;
+    sendBy: string;
+    sent: number;
+    used: number;
+    open: boolean;
+    /** School packs: the classes the teachers may make, how many are made, and the first day without access. */
+    classes?: number;
+    classesUsed?: number;
+    until?: string;
+  }[];
   /** free = seats that can be sent today. */
   seats: { count: number; sent: number; used: number; free: number };
   grants: GrantRow[];
@@ -201,7 +213,8 @@ export function grantRow(g: Grant, day: string, school = false): GrantRow {
   return { id: g.id, email: g.email, sentAt: g.sentAt, lastSentAt, status: open ? "sent" : "lapsed", open, release: false, ...note };
 }
 
-export function buildAgreementView(org: Org, me: string, grants: Grant[], now = new Date()): AgreementView {
+/** `classesUsed`: per school pack id, how many of its classes are made. */
+export function buildAgreementView(org: Org, me: string, grants: Grant[], now = new Date(), classesUsed: Record<string, number> = {}): AgreementView {
   const day = today(now);
   const packs = [...(org.packs ?? [])]
     .sort((a, b) => a.bought.localeCompare(b.bought))
@@ -215,6 +228,8 @@ export function buildAgreementView(org: Org, me: string, grants: Grant[], now = 
         sent: mine.length,
         used: mine.filter((g) => g.usedBy).length,
         open: p.bought <= day && day <= p.sendBy,
+        ...(p.classes ? { classes: p.classes, classesUsed: Math.min(p.classes, classesUsed[p.id] ?? 0) } : {}),
+        ...(p.until ? { until: p.until } : {}),
       };
     });
   return {
@@ -236,5 +251,7 @@ export function buildAgreementView(org: Org, me: string, grants: Grant[], now = 
 }
 
 export async function loadAgreementView(org: Org, me: string, now = new Date(), dir?: string): Promise<AgreementView> {
-  return buildAgreementView(org, me, await listGrants(org.id, dir), now);
+  const used: Record<string, number> = {};
+  for (const p of org.packs ?? []) if (p.classes) used[p.id] = await packClassesUsed(org.id, p.id, dir);
+  return buildAgreementView(org, me, await listGrants(org.id, dir), now, used);
 }

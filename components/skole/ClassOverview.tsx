@@ -145,7 +145,7 @@ export function ClassOverview({ teacher, initial, demo, mayExtend }: { teacher: 
         )}
         <p className={`${s.expiry} ${s.noPrint}`} suppressHydrationWarning hidden={!!demo}>
           Elevkoderne udløber den {dayMonthYear(expires)} (om {daysLeft} {daysLeft === 1 ? "dag" : "dage"}). Så slettes klassen, koderne og elevernes svar.
-          {mayExtend && canExtend(view.days) ? (
+          {mayExtend && !view.fixed && canExtend(view.days) ? (
             <>
               {" "}
               <button type="button" className={s.linkBtn} onClick={() => void extend()}>

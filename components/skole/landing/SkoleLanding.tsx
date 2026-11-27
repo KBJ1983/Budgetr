@@ -4,6 +4,7 @@ import { BRAND, SkoleLogo } from "@/components/Logo";
 import { SiteSwitch } from "@/components/SiteSwitch";
 import { COMPANY } from "@/lib/company";
 import { media } from "@/lib/media-version";
+import { PUPILS_PER_CLASS, SCHOOL_PACK_IDS, SCHOOL_PACKS } from "@/lib/skole-packs";
 import l from "./skoleLanding.module.css";
 
 /**
@@ -286,15 +287,26 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
           <div className={l.col}>
             <span className={l.kicker}>Pris</span>
             <h2 id="pris-h" className={l.h2}>
-              Én pris for hele skolen.
+              En fast pris pr. skoleår.
             </h2>
-            <p className={l.body}>Start gratis med én klasse. Når I er klar, får hele skolen adgang for et fast beløb pr. skoleår.</p>
+            <p className={l.body}>
+              Start gratis med én klasse. Når I er klar, vælger skolen en pakke med et antal klasser, som alle skolens lærere deler. Pakken gælder skoleåret
+              ud, og købt fra 1. april gælder den også hele næste skoleår.
+            </p>
           </div>
           <div className={l.priceCard}>
-            <div className={l.priceRow}>
-              <span className={l.priceAmt}>1.500 kr.</span>
-              <span className={l.priceUnit}>pr. skoleår inkl. moms</span>
-            </div>
+            {SCHOOL_PACK_IDS.map((id) => (
+              <div key={id} className={l.pricePack}>
+                <span className={l.pricePackName}>
+                  {SCHOOL_PACKS[id].label}
+                  <small>{SCHOOL_PACKS[id].classes} klasser</small>
+                </span>
+                <span className={l.priceRow}>
+                  <span className={l.priceAmt}>{SCHOOL_PACKS[id].price.toLocaleString("da-DK")} kr.</span>
+                  <span className={l.priceUnit}>pr. skoleår inkl. moms</span>
+                </span>
+              </div>
+            ))}
             <ul className={l.priceList}>
               {PRICE_LIST.map((p) => (
                 <li key={p}>
@@ -308,6 +320,9 @@ export function SkoleLanding({ base, mainSite }: { base: string; mainSite: strin
             <a href="#start" className={l.btnDark}>
               Prøv gratis med én klasse
             </a>
+            <p className={l.priceMore}>
+              Skal I bruge flere end {SCHOOL_PACKS.stor.classes} klasser, så <a href={`mailto:${COMPANY.email}`}>skriv til os</a>.
+            </p>
           </div>
         </div>
       </section>
@@ -536,4 +551,9 @@ const ROWS: [string, string, boolean | null][] = [
   ["GRØN-ULV-58", "Trin 5", null],
 ];
 
-const PRICE_LIST = ["150 elever og 10 lærere", "Alle tre cases og ”Mit budget”", "Klasseoverblik og elevkoder", "Gratis prøve med én klasse"];
+const PRICE_LIST = [
+  `Op til ${PUPILS_PER_CLASS} elever i hver klasse`,
+  "Alle tre cases og ”Mit budget”",
+  "Klasseoverblik og elevkoder",
+  "Gratis prøve med én klasse",
+];

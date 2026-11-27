@@ -33,7 +33,7 @@ function tellSchoolHref(): string {
   const body = [
     "Hej",
     "",
-    "Jeg vil gerne bruge budgetpro Skole i undervisningen. Eleverne laver et månedsbudget for en ung voksen over fire lektioner, og der følger undervisningsmateriale med. Skolen kan købe lærerpladser til de lærere, der skal bruge det.",
+    "Jeg vil gerne bruge budgetpro Skole i undervisningen. Eleverne laver et månedsbudget for en ung voksen over fire lektioner, og der følger undervisningsmateriale med. Skolen kan købe en pakke med 6 eller 12 klasser, som gælder skoleåret ud, og give de lærere, der skal bruge det, en lærerplads.",
     "",
     `Læs mere her: ${site}`,
     "",
