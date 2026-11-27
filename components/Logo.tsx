@@ -37,7 +37,7 @@ export const BRAND = {
   graphite: "#18181B",
   // The logo on light: a dark grey rather than the near-black graphite (user's wish, Nov 2026).
   logo: "#3F3F46",
-  violet: "#3D56EE",
+  violet: "#5B3DF5",
   dark: "#202024",
   stone: "#F3F3F1",
   rosa: "#FF9FCF",

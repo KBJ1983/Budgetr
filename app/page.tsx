@@ -2,6 +2,7 @@ import styles from "@/components/landing/landing.module.css";
 import f from "@/components/landing/front.module.css";
 import {
   FrontBento,
+  FrontSteps,
   FrontFeatures,
   FrontFilm,
   FrontFinal,
@@ -25,7 +26,7 @@ const NAV = [
 
 /**
  * The private front page, design "A6" (Nov 2026, user's choice; prototype public/forslag/mix.html, sections in
- * components/landing/Front.tsx): a centred hero, the explainer film, a bento grid of the app with the demo family's
+ * components/landing/Front.tsx): a centred hero, the explainer film, "Sådan virker det" in three steps, a bento grid of the app with the demo family's
  * numbers and a photo, the dark "Sådan bliver tallet til" band, Funktioner (a scenario card and the groups folded),
  * the dialog "Det, I plejer at spørge hinanden om", Tryghed, price + FAQ and the closing signup with a photo.
  * Title, description and lang come from app/layout.tsx.
@@ -37,6 +38,7 @@ export default function HomePage() {
       <main className={f.main}>
         <FrontHero />
         <FrontFilm />
+        <FrontSteps />
         <FrontBento />
         <FrontStory />
         <FrontFeatures />

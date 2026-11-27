@@ -20,7 +20,8 @@ import { SignupForm } from "./SignupForm";
 
 /*
  * The private front page, design "A6" (Nov 2026, user's choice; prototype public/forslag/mix.html): a short centred
- * hero, the explainer film, a bento grid of the app's parts with the demo family's numbers, the dark "Sådan bliver
+ * hero (the tagline "Dit overblik. Dine drømme." in its chip, "Et enkelt budgetværktøj" in the title), the explainer
+ * film, "Sådan virker det" in three steps (FrontSteps), a bento grid of the app's parts with the demo family's numbers, the dark "Sådan bliver
  * tallet til" band, Funktioner (a dark card on the budget tool itself, scenarios only as its last line – user's wish, Nov 2026 – + the groups folded), the dialog "Det, I plejer at spørge hinanden om",
  * Tryghed, price + FAQ and the closing signup. Every number is the demo family's (lib/demo-customer.ts, Sofie and
  * Mikkel) as the app shows it – keep them in step when the demo changes. Rosa only in small details, never in lists.
@@ -32,15 +33,15 @@ import { SignupForm } from "./SignupForm";
 export function FrontHero() {
   return (
     <section id="top" className={f.hero} aria-labelledby="hero-title">
+      {/* The tagline "Dit overblik. Dine drømme." (user's wish, Nov 2026: used in several places – also the closing signup and the footer). */}
       <span className={f.chip}>
-        Til dig, der vil have kontrollen over dit budget <b>29 kr/md.</b>
+        Dit overblik. Dine drømme. <b>29 kr/md.</b>
       </span>
       <h1 id="hero-title" className={f.h1}>
-        Hele din økonomi. <span>Ét roligt overblik.</span>
+        Overblik over hele din økonomi. <span>Et enkelt budgetværktøj.</span>
       </h1>
       <p className={f.lead}>
-        budgetpro gør det nemt at bygge dit budget og holde det opdateret. Skriv posterne ind, eller hent dem fra
-        kontoudskrifter og dit gamle Excel-budget – budgetpro regner resten ud og siger til, når noget skal opdateres.
+        Kom nemt i gang med budgetoverblik, rådighedsbeløb, opsparingsmål og låneoverblik – og se fakta på, hvad nu hvis.
       </p>
       <div className={f.acts}>
         <Link href="/opret" className={f.btn}>
@@ -59,6 +60,108 @@ export function FrontFilm() {
   return (
     <section id="film" className={f.film} aria-label="Film om budgetpro">
       <Film name="privat" label="Film: hvad du får med budgetpro" />
+    </section>
+  );
+}
+
+/* ---------------- Sådan virker det: three steps ---------------- */
+
+// The frequencies a post can have in the app (the demo family's Bilforsikring is 6.900 kr every half year).
+const FREQS = ["Hver måned", "Hvert kvartal", "Hvert halve år", "En gang om året", "Uregelmæssig"] as const;
+
+/**
+ * How the budget tool works, in three steps (make it, budgetpro works it out, keep it up to date), each with a small
+ * drawn card with the demo family's numbers: the "Ny post" editor, the key figures and the Månedstjek.
+ */
+export function FrontSteps() {
+  return (
+    <section id="saadan" className={f.steps} aria-labelledby="steps-title">
+      <div className={f.stepsHead} data-reveal>
+        <p className={f.ov}>Sådan virker det</p>
+        <h2 id="steps-title" className={f.h2}>
+          Lav budgettet én gang. Hold det opdateret hver måned.
+        </h2>
+        <p className={f.headBody}>
+          budgetpro er et budget for månederne, der kommer – ikke et regnskab over det, du allerede har brugt.
+        </p>
+      </div>
+      <ol className={f.stepGrid} data-reveal-group>
+        <li className={f.step}>
+          <span className={f.stepNo}>01</span>
+          <h3 className={f.stepTitle}>Læg posterne ind</h3>
+          <p className={f.stepBody}>
+            Skriv løn, udgifter og lån ind med det beløb og så tit, de kommer. Eller hent dem fra kontoudskrifter og dit
+            gamle Excel-budget. En guide tager dig trin for trin.
+          </p>
+          <div className={f.mock} aria-hidden="true">
+            <span className={f.mockHead}>Ny post</span>
+            <div className={`${f.field} ${f.fieldText}`}>
+              <span>Navn</span>
+              <b>Bilforsikring</b>
+            </div>
+            <div className={f.field}>
+              <span>Beløb</span>
+              <b>6.900 kr</b>
+            </div>
+            <p className={f.freq}>
+              {FREQS.slice(0, 4).map((i) => (
+                <span key={i} data-on={i === "Hvert halve år" ? "" : undefined}>
+                  {i}
+                </span>
+              ))}
+            </p>
+          </div>
+        </li>
+        <li className={f.step}>
+          <span className={f.stepNo}>02</span>
+          <h3 className={f.stepTitle}>budgetpro regner resten</h3>
+          <p className={f.stepBody}>
+            Alt regnes om til pr. måned. Du ser, hvad der er til rådighed, hvad hver af jer skal overføre, og hvad banken
+            vil kalde dit rådighedsbeløb.
+          </p>
+          <div className={f.mock} aria-hidden="true">
+            <div className={f.field}>
+              <span>Bilforsikring pr. måned</span>
+              <b>1.150 kr</b>
+            </div>
+            <div className={f.field}>
+              <span>Sofie overfører</span>
+              <b>26.200 kr</b>
+            </div>
+            <div className={f.field}>
+              <span>Bankens rådighedsbeløb</span>
+              <b>28.557 kr</b>
+            </div>
+            <div className={`${f.field} ${f.fieldOn}`}>
+              <span>Til rådighed</span>
+              <b>3.105 kr</b>
+            </div>
+          </div>
+        </li>
+        <li className={f.step}>
+          <span className={f.stepNo}>03</span>
+          <h3 className={f.stepTitle}>Hold det opdateret</h3>
+          <p className={f.stepBody}>
+            Hver måned viser Månedstjekket de poster, der har ændret sig. Du retter beløbet, og alle tal følger med. Vil du,
+            får du en påmindelse på mail eller sms.
+          </p>
+          <div className={f.mock} aria-hidden="true">
+            <span className={f.mockHead}>Månedstjek</span>
+            <div className={f.field}>
+              <span>Løn Mikkel</span>
+              <b>26.900 → 27.800</b>
+            </div>
+            <div className={f.field}>
+              <span>El</span>
+              <b>1.250 → 1.550</b>
+            </div>
+            <p className={f.mockActs}>
+              <span>Beløbet er ok</span>
+              <span>Ret</span>
+            </p>
+          </div>
+        </li>
+      </ol>
     </section>
   );
 }
@@ -204,7 +307,7 @@ const CHAPTERS = [
 
 export function FrontStory() {
   return (
-    <section id="saadan" className={f.story} aria-labelledby="story-title" data-reveal>
+    <section id="tallet" className={f.story} aria-labelledby="story-title" data-reveal>
       <div>
         <p className={f.ovDark}>Sådan bliver tallet til</p>
         <h2 id="story-title" className={f.giant}>
@@ -300,9 +403,6 @@ const GROUPS: readonly Group[] = [
     items: ["Eksport til PDF og Excel", "Sikkerhedskopi, du kan gendanne", "Lyst og mørkt tema"],
   },
 ];
-
-// The frequencies a post can have in the app (the demo family's Bilforsikring is 6.900 kr every half year).
-const FREQS = ["Hver måned", "Hvert kvartal", "Hvert halve år", "En gang om året", "Uregelmæssig"] as const;
 
 function Ticks({ items, className }: { items: readonly string[]; className?: string }) {
   return (
@@ -555,6 +655,7 @@ export function FrontFinal() {
   return (
     <section className={f.final} aria-labelledby="final-title">
       <div className={f.finalText} data-reveal>
+        <p className={f.ov}>Dit overblik. Dine drømme.</p>
         <h2 id="final-title" className={f.h2}>
           Slip for de mange versioner af Excel-budgettet.
         </h2>

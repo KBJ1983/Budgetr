@@ -69,7 +69,7 @@ try {
   // Front page "A6": hero, film, the story band, Funktioner, the dialog, Tryghed, Pris (components/landing/Front.tsx)
   await page.goto(`${BASE}/`);
   const order = await page.evaluate(() => [...document.querySelectorAll("main > section")].map((s) => s.id).filter(Boolean));
-  check(order.join(",") === "top,film,saadan,funktioner,sammen,tryghed,pris", `front page sections in order (${order.join(" → ")})`);
+  check(order.join(",") === "top,film,saadan,tallet,funktioner,sammen,tryghed,pris", `front page sections in order (${order.join(" → ")})`);
 
   // Final signup form prefills the account signup
   const signup = page.locator('form:has(input[type="email"])');

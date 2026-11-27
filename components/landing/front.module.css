@@ -170,8 +170,9 @@
 }
 .h1 {
   margin: 22px auto 0;
-  max-width: 13ch;
-  font-size: clamp(44px, 7vw, 88px);
+  max-width: 17ch;
+  font-size: clamp(42px, 6.2vw, 78px);
+  text-wrap: balance;
   line-height: 1.02;
   font-weight: 750;
   letter-spacing: -0.045em;
@@ -202,6 +203,113 @@
   max-width: 1040px;
   /* Room before the bento under it (user's wish: it felt squeezed). */
   margin: 8px auto 96px;
+}
+
+/* ---------- sådan virker det (three steps) ---------- */
+.steps {
+  margin-bottom: 96px;
+  scroll-margin-top: 20px;
+}
+.stepsHead {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+.stepGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  border-radius: var(--f-r);
+  background: #fff;
+  border: 1px solid var(--v-rule);
+}
+.stepNo {
+  font: 500 12px var(--font-mono);
+  color: var(--v-olive);
+}
+.stepTitle {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+.stepBody {
+  margin: 0 0 6px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--v-ink-2);
+}
+.mock {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--f-tile);
+  font-size: 13px;
+}
+.mockHead {
+  font-weight: 700;
+}
+.field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #fff;
+}
+.field span {
+  color: var(--v-ink-2);
+}
+.field b {
+  font: 600 13px var(--font-mono);
+  white-space: nowrap;
+}
+.fieldText b {
+  font-family: inherit;
+}
+.fieldOn {
+  background: var(--v-dark);
+}
+.fieldOn span {
+  color: var(--f-dark-muted);
+}
+.fieldOn b {
+  color: var(--v-rosa);
+}
+.freq,
+.mockActs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.freq span,
+.mockActs span {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12px;
+}
+.freq span[data-on] {
+  background: var(--v-rosa);
+  font-weight: 650;
+}
+.mockActs span:first-child {
+  background: var(--v-btn);
+  color: #fff;
+  font-weight: 650;
 }
 
 /* ---------- bento ---------- */
@@ -926,6 +1034,9 @@
   .tPhoto {
     aspect-ratio: 16 / 10;
   }
+  .stepGrid {
+    grid-template-columns: 1fr;
+  }
   .story,
   .feats,
   .talk,
@@ -958,6 +1069,13 @@
   }
   .film {
     margin-bottom: 60px;
+  }
+  .steps {
+    margin-bottom: 56px;
+  }
+  .step {
+    padding: 18px;
+    border-radius: 18px;
   }
   .bento {
     grid-template-areas: "main main" "photo photo" "bank bank" "who loan" "scen scen" "imp imp" "check check";
