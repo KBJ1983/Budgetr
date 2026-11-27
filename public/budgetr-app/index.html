@@ -45,16 +45,16 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* App palette (Nov 2026, user's choice): the website's blue only where you act – buttons (--btn #3D56EE), links and
-     accent text (--pine #2F45D2, keeps its old name), the active tab and the task badge (--comp) – and otherwise calm
+  /* App palette (Nov 2026, user's choice): the website's blue only where you act – buttons (--btn #5B3DF5), links and
+     accent text (--pine #4B2FE0, keeps its old name), the active tab and the task badge (--comp) – and otherwise calm
      slate blue-greys close together: key-figure tiles (--deep), the Fordeling envelopes (--env1–4, darkest to lightest,
      Til rådighed the lightest), bars (--lime), tints (--pine-bg, --grp), the scenario banner (--scn, yellow – user's wish: you see at once that you edit a scenario). "Better" is a
      dark slate (--pos), not green; "worse" stays red (--neg). No petrol, sand, rosa, lilac or violet surfaces (user's
      wish: one calm expression). --brick stays for errors. --grp is the group bands on Poster. */
   --paper:#F3F3F1; --card:#FFFFFF; --ink:#18181B; --ink2:#5E5E63; --ink3:#5E5E63; --rule:#E0E0DB; --rule2:#CFCFCA; --band:#E9E9E5;
-  --pine:#2F45D2; --pine-bg:#E7EAEF; --pine-ink:#2335A8; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#18181B; --ochre-bg:#E9E9E5; --ochre-rule:#18181B; --warnline:#18181B;
-  --hero-sub:#9C9CA3; --on-pine:#FFFFFF; --btn:#3D56EE; --btn-ink:#FFFFFF; --barud:#CFCFCA; --lime:#8B98AC; --lime-bar:#8B98AC;
-  --comp:#3D56EE; --comp-on:#FFFFFF; --deep:#2E3B4E; --deepm:#C5CDD8; --grp:#E7EAEF; --track:#E7E7E3; --scn:#F7DC7E; --scn-on:#18181B;
+  --pine:#4B2FE0; --pine-bg:#E7EAEF; --pine-ink:#3A22B8; --brick:#A8473C; --brick-bg:#F6E6E3; --ochre:#18181B; --ochre-bg:#E9E9E5; --ochre-rule:#18181B; --warnline:#18181B;
+  --hero-sub:#9C9CA3; --on-pine:#FFFFFF; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#CFCFCA; --lime:#8B98AC; --lime-bar:#8B98AC;
+  --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2E3B4E; --deepm:#C5CDD8; --grp:#E7EAEF; --track:#E7E7E3; --scn:#F7DC7E; --scn-on:#18181B;
   --pos:#2E3B4E; --pos-bg:#E3E7ED; --neg:#A3453A; --neg-bg:#F6E1DC; --logo-ink:#3F3F46; --logo-front:#3F3F46;
   --tone2:#4D5B73; --tone2-bg:#E7EAEF;
   --mk1:#34415A; --mk2:#5E6C84; --mk3:#8B98AC; --mk4:#B8C1CE; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23F0F3F2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -64,11 +64,11 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#3D56EE; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#E9C95C; --scn-on:#18181B; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
-  --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#3D56EE; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
+  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#E9C95C; --scn-on:#18181B; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
+  --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#3D56EE; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#E9C95C; --scn-on:#18181B; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
-  --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#3D56EE; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
+  --paper:#202024; --card:#2A2A2F; --ink:#F3F3F1; --ink2:#ACACB2; --ink3:#94949B; --rule:#3A3A41; --rule2:#4A4A52; --band:#303036; --comp:#5B3DF5; --comp-on:#FFFFFF; --deep:#2B3443; --deepm:#C5CDD8; --grp:#2B3240; --track:#34343A; --scn:#E9C95C; --scn-on:#18181B; --pos:#C5CDD8; --pos-bg:#2F3746; --neg:#F0A196; --neg-bg:#43241F; --logo-ink:#FFFFFF; --logo-front:#FFFFFF; --tone2:#AEB9C9; --tone2-bg:#2B3240;
+  --pine:#AEB9C9; --pine-bg:#2B3240; --pine-ink:#D2D9E3; --brick:#E59A8E; --brick-bg:#3A2220; --hero-sub:#6E6E75; --on-pine:#18181B; --ochre:#F3F3F1; --ochre-bg:#2C2C31; --ochre-rule:#F3F3F1; --warnline:#F3F3F1; --btn:#5B3DF5; --btn-ink:#FFFFFF; --barud:#4A4A52; --bar:#4A4A52; --lime:#6B7990; --lime-bar:#6B7990; --focus:#7FB3EA; --sky:#7AA2D6; --sky-bg:#1A2C48; --plum:#A9B6C8; --plum-bg:#22324A; --mk1:#9AA6B8; --mk2:#6B7990; --mk3:#C5CDD8; --mk4:#4D5B73; --cb-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%23101415' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); color-scheme:dark;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--font)}
@@ -2134,7 +2134,7 @@ tr.grp.resline td.r{font-size:16px}
       <label>Navn<input id="nscName" required maxlength="60" placeholder="Fx Nyt hus"></label>
       <label><span>Gælder fra <span class="muted" style="font-weight:400">(valgfrit)</span></span><input id="nscFrom" maxlength="30" placeholder="Fx januar 2027"></label>
       <div class="nscideas"><span class="muted">Idéer:</span><button type="button" class="chip" data-nsci="Nyt hus">Nyt hus</button><button type="button" class="chip" data-nsci="Barsel">Barsel</button><button type="button" class="chip" data-nsci="Ny bil">Ny bil</button><button type="button" class="chip" data-nsci="Renten stiger 1 %">Renten stiger 1 %</button><button type="button" class="chip" data-nsci="Færre timer">Færre timer</button></div>
-      <div class="nschow"><b>Sådan gør du</b><ol><li>Giv scenariet et navn, og opret det.</li><li>Gå til Budgetposter, mens scenariet er valgt. Den gule bjælke øverst viser, at du er i scenariet.</li><li>Ret, fjern eller tilføj poster. Under Hvad nu hvis ser du, hvordan forskellen bliver til.</li></ol></div>
+      <div class="nschow"><b>Sådan gør du</b><ol><li>Giv scenariet et navn, og opret det.</li><li>Gå til Budgetposter, mens scenariet er valgt. Den gule bjælke øverst viser, at du er i scenariet.</li><li>Ret, fjern eller tilføj poster. Under Hvad nu hvis ser du, hvordan forskellen bliver til.</li><li>Ændrer du løn eller lån, så ret også indtægten. Den er efter skat, og skatten ændrer sig med.</li></ol></div>
       <p class="err" id="nscErr" hidden>Skriv et navn til scenariet.</p>
     </div>
     <div class="dlgfoot"><span></span><div class="rgt"><button type="button" id="nscCancel">Annuller</button><button type="submit" class="primary" id="nscOk">Opret scenarie</button></div></div>
@@ -2453,7 +2453,7 @@ function bankHtml(bk){const F=(loansFreedWithin(12)||[]).filter(x=>x.inB),fr=F.r
     ${row('','− Vejledende krav',`${kr(+bk.b.adults||0)} for ${adultsLbl()}${+bk.b.children?' + '+(+bk.b.children)+' børn × '+kr(+bk.b.childRate||0):''} <button type="button" class="lnk" data-set="bank">Ret</button>`,disp(bk.req))}
     ${row('end '+(ok?'good':'bad'),ok?'= Over kravet':'= Under kravet','',disp(Math.abs(bk.buf)))}</div>
     ${F.length?`<p class="bfree">${F.map(x=>`Fra ${idxLbl(x.i).toLowerCase()} er ${esc((x.l.desc||x.l.bank||'lånet').toLowerCase())} betalt: <b class="pos">+${disp(x.free)}</b>`).join('. ')}. Så er ${wI('du','I')} ${disp(Math.abs(nb))} ${nb>=0?'over':'under'} kravet.</p>`:''}
-    <p class="bnote">Et skøn efter bankernes tommelfingerregel, ikke din banks egen beregning.</p></section>`}
+    <p class="bnote">Et skøn efter bankernes tommelfingerregel, ikke din banks egen beregning.${F.length?' Lån, der betales ud, er regnet efter rentefradrag.':''}</p></section>`}
 function fordelingHtml(D,small){const t=D.t,inc=Math.max(1,t.inc),P=v=>Math.max(0,v)/inc*100,pc=v=>Math.round(P(v))+' % af indtægten';
   const parts=[['e1','Udgifter',D.R],['e2','Husholdning',D.H],['e3','Opsparing',D.O],['e4','Til rådighed',D.L]];
   const fit=v=>P(v)>=13?'':P(v)>=7?' nar':P(v)>=3?' tiny':' none';
@@ -2784,7 +2784,7 @@ function compareHtml(sc){
   // The last rows are what each person has left; they get their own highlighted group.
   const nKey=rows.length-S.persons.length;
   const pill=(l,d)=>`<td class="r">${Math.abs(d)<0.5?'<span class="dpill z">0 kr</span>':`<span class="dpill ${good(l,d)?'up':'dn'}">${d>0?'+':'−'}${disp(Math.abs(d)).replace('-','')}</span>`}</td>`;
-  return `<section class="compare" id="cmp"><div class="sechead"><h2>Gældende og ${esc(sc.name||'scenarie')}${sc.from?' fra '+esc(sc.from):''} <button type="button" class="helplink" data-cmpall>Sammenlign scenarier</button></h2><span class="hint">Grøn er en forbedring, rød en forværring. Beløb ${per()}.</span></div>
+  return `<section class="compare" id="cmp"><div class="sechead"><h2>Gældende og ${esc(sc.name||'scenarie')}${sc.from?' fra '+esc(sc.from):''} <button type="button" class="helplink" data-cmpall>Sammenlign scenarier</button></h2><span class="hint">Grøn er en forbedring, rød en forværring. Beløb ${per()}. ${TAX_SCN}</span></div>
    <div class="cmpgrid"><div class="tablewrap"><table><thead><tr><th></th><th class="r"><span class="chp cur">Gældende</span></th><th class="r"><span class="chp new">${esc(sc.name||'Scenarie')}</span></th><th class="r"><span class="chp dif">Forskel</span></th></tr></thead><tbody>
    ${rows.map((r,i)=>i<nKey?`<tr><td>${esc(r[0])}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${cell(r[0],r[3])}</tr>`
      :(i===nKey?'<tr class="cmpsub"><td colspan="4">Til rådighed pr. person</td></tr>':'')+`<tr class="cmpkey"><td>${esc(r[0].replace(/: til rådighed$/,''))}</td><td class="r">${disp(r[1])}</td><td class="r">${disp(r[2])}</td>${pill(r[0],r[3])}</tr>`).join('')}</tbody></table></div>
@@ -3177,6 +3177,20 @@ function loanCalc(l){
   const link=l.link?S.entries.find(e=>e.id===l.link):null;
   return {P,A,O,interest,afdrag,n,endTxt,paid:O>0?Math.max(0,Math.min(1,1-P/O)):0,link,budget:link&&link.active!==false?mAvg(link):null};
 }
+/* Rentefradrag, as an estimate: interest on debt is worth about 33 % in tax of up to 50.000 kr. of interest a year per
+   person and about 25 % above that (check the rates each year). The incomes in the budget are after tax, so they already
+   hold today's deduction (forskudsopgørelsen): when a loan is paid out, the net income falls by that loan's part of it.
+   All running loans with a rate count, also those without a tick (the tick only hides a loan from the sums). */
+const RF_HI=.33, RF_LO=.25, RF_CAP=50000;
+const rfYear=y=>{const cap=RF_CAP*Math.max(1,(S.persons||[]).length);y=Math.max(0,y);return Math.min(y,cap)*RF_HI+Math.max(0,y-cap)*RF_LO};
+const rfInt=()=>(S.loans||[]).filter(l=>!l.paused&&l.rate!==''&&l.rate!=null).reduce((a,l)=>a+loanCalc(l).interest,0);
+const rfMonth=()=>rfYear(rfInt()*12)/12;
+// The deduction a month that ends with this loan (0 for a loan on pause or without a rate).
+function rfLoan(l){if(l.paused||l.rate===''||l.rate==null)return 0;const I=rfInt()*12,i=loanCalc(l).interest*12;return (rfYear(I)-rfYear(I-i))/12}
+// The incomes are after tax, as the forskudsopgørelse stands now; a scenario that changes pay or loans changes the tax too.
+const TAX_SCN='Indtægterne er efter skat. Ændrer scenariet løn eller lån, ændrer skatten sig også, fx rentefradraget, så ret indtægten med.';
+const RF_NOTE='Frigiver er ydelsen minus lånets del af rentefradraget, fordi nettoindtægten falder lidt, når renten forsvinder. Fradraget er et skøn.';
+const RF_INFO='<p>Renter kan trækkes fra i skat. Fradraget er skønnet til ca. 33 % af de første 50.000 kr. i renter om året pr. person og ca. 25 % derover. Indtægterne i budgettet er efter skat, så de rummer allerede fradraget. Når et lån er betalt ud, falder nettoindtægten derfor lidt, og det frigivne beløb er ydelsen minus lånets del af fradraget.</p>';
 function loansHtml(){
   const L=(S.loans||[]).map((l,i)=>({l,i,c:loanCalc(l)}));
   const srt={input:(a,b)=>a.i-b.i,rate:(a,b)=>(+b.l.rate||0)-(+a.l.rate||0),rest:(a,b)=>b.c.P-a.c.P,interest:(a,b)=>b.c.interest-a.c.interest}[loanSort]||((a,b)=>a.i-b.i);
@@ -3190,7 +3204,7 @@ function loansHtml(){
   const updD=S.loanUpdated?new Date(S.loanUpdated+'T00:00:00'):null, now=new Date();
   const updMonths=updD?(now.getFullYear()-updD.getFullYear())*12+now.getMonth()-updD.getMonth():0, updOld=updD&&updMonths>=6;
   let h=`<div class="hero"><p>${IN.length===L.length?wI('Du har','I har'):'De valgte lån har'} <b>${kr(tP)}</b> i samlet restgæld fordelt på ${selTxt}. Ydelserne er <b>${kr(tA)}</b> om måneden, og heraf er cirka <b>${kr(tI)}</b> renter.</p>
-   <small>${soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>esc(x.l.desc)+' ('+x.c.endTxt+', frigør '+kr(x.c.A)+'/md.)').join(', ')+'. ':''}Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.</small></div>
+   <small>${soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>esc(x.l.desc)+' ('+x.c.endTxt+', frigør ca. '+kr(x.c.A-rfLoan(x.l))+'/md. efter rentefradrag)').join(', ')+'. ':''}Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.</small></div>
   <section><div class="sechead"><h2>Overblik over lån</h2><button type="button" id="btnNewLoan" class="primary newcta">+ Nyt lån</button></div>
    <div class="upd ${updOld?'old':''}"><label for="loanUpd">Overblikket er opdateret</label><input type="date" id="loanUpd" value="${esc(S.loanUpdated||'')}">
     <span>${S.loanUpdated?(updOld?`Opdateret for ${updMonths} måneder siden. Tjek restgælden i netbanken.`:`Senest opdateret ${fmtDate(S.loanUpdated)}.`):'Angiv hvornår restgælden sidst er tjekket.'}</span></div>
@@ -3198,7 +3212,7 @@ function loansHtml(){
     <div class="kpi"><span>Oprindeligt lånt</span><b>${kr(tO)}</b><small>alle lån</small></div>
     <div class="kpi hero2"><span>Samlet restgæld${S.loanUpdated?' pr. '+fmtDate(S.loanUpdated):''}</span><b>${kr(tP)}</b><small>${selTxt[0].toUpperCase()+selTxt.slice(1)}. ${tO?Math.round((1-tP/tO)*100)+' % af det oprindelige beløb er betalt af':''}</small></div>
     <div class="kpi"><span>Ydelse pr. måned</span><b>${kr(tA)}</b><small>uden lån på pause</small></div>
-    <div class="kpi"><span>Heraf renter pr. måned ${ib('<b>Renter pr. måned</b><p>Restgæld × rente ÷ 12 for hvert lån. Det er et skøn: den faktiske rente afhænger af bankens beregning, gebyrer og bidrag.</p>')}</span><b>${kr(tI)}</b><small>${kr(tI*12)} om året</small></div>
+    <div class="kpi"><span>Heraf renter pr. måned ${ib('<b>Renter pr. måned</b><p>Restgæld × rente ÷ 12 for hvert lån. Det er et skøn: den faktiske rente afhænger af bankens beregning, gebyrer og bidrag.</p>'+RF_INFO)}</span><b>${kr(tI)}</b><small>${kr(tI*12)} om året · ca. ${kr(tI-rfYear(tI*12)/12)} efter rentefradrag</small></div>
     <div class="kpi"><span>Gennemsnitlig rente</span><b>${pct(wr)}</b><small>vægtet efter restgæld</small></div>
    </div>
    <div class="sortbar"><label for="loanSortSel">Sortér</label><select id="loanSortSel"><option value="input">Som indtastet</option><option value="rate">Højeste rente først</option><option value="interest">Største rentebetaling først</option><option value="rest">Største restgæld først</option></select><span>Klik på et lån for at rette det. Fjern fluebenet for at se samlet restgæld uden lånet.</span></div>
@@ -3209,7 +3223,7 @@ function loansHtml(){
      <td class="r" data-l="Oprindeligt">${kr(c.O)}</td><td class="r restcol" data-l="Restgæld"><b>${kr(c.P)}</b>${l.restDate&&l.restDate!==(S.loanUpdated?fmtDate(S.loanUpdated,true):'')?`<span class="note">pr. ${esc(l.restDate)}</span>`:''}</td>
      <td class="lpaid" data-l="Betalt af"><div class="loanbar" title="${Math.round(c.paid*100)} % betalt"><div style="width:${Math.round(c.paid*100)}%"></div></div><span class="note">${Math.round(c.paid*100)} %</span></td>
      <td class="r" data-l="Ydelse/md.">${kr(c.A)}</td><td class="r" data-l="Rente">${l.rate!==''&&l.rate!==undefined&&l.rate!==null?pct(l.rate):'<span class="muted">–</span>'}</td><td class="r" data-l="Renter/md.">${l.rate?kr(c.interest):'<span class="muted">–</span>'}</td>
-     <td data-l="Udløber ifølge banken">${esc(l.ends||'')}</td><td data-l="Beregnet slut">${l.paused?'<span class="muted">På pause</span>':c.n===null?(l.rate?'<span class="badge un">Ydelsen dækker ikke renten</span>':'<span class="muted">Angiv rente</span>'):c.n>360?`${c.endTxt}<span class="note">Over 30 år. Er lånet afdragsfrit, eller indeholder ydelsen bidrag?</span>`:`${c.endTxt}${c.n>0?`<span class="lend">frigiver ${kr(c.budget!==null?c.budget:c.A)}/md.</span>`:''}`}</td>
+     <td data-l="Udløber ifølge banken">${esc(l.ends||'')}</td><td data-l="Beregnet slut">${l.paused?'<span class="muted">På pause</span>':c.n===null?(l.rate?'<span class="badge un">Ydelsen dækker ikke renten</span>':'<span class="muted">Angiv rente</span>'):c.n>360?`${c.endTxt}<span class="note">Over 30 år. Er lånet afdragsfrit, eller indeholder ydelsen bidrag?</span>`:`${c.endTxt}${c.n>0?`<span class="lend">frigiver ca. ${kr((c.budget!==null?c.budget:c.A)-rfLoan(l))}/md. efter rentefradrag</span>`:''}`}</td>
      <td class="r" data-l="I budgettet">${c.link?`${c.budget!==null?kr(c.budget):'<span class="muted">Inaktiv</span>'}${diff?`<span class="badge chk">${c.budget>c.A?'+':''}${kr(c.budget-c.A)}</span>`:''}<span class="note">${esc(c.link.desc)}</span>`:'<span class="muted">Ikke tilknyttet</span>'}</td></tr>`}).join('')}
    <tr class="cat"><td colspan="3">I alt, ${selTxt}</td><td class="r">${kr(tO)}</td><td class="r restcol">${kr(tP)}</td><td></td><td class="r">${kr(tA)}</td><td class="r">${pct(wr)}</td><td class="r">${kr(tI)}</td><td colspan="3"></td></tr>
    </tbody></table></div>
@@ -3282,11 +3296,11 @@ function loanEnd(l,c){ // {i, txt, est}
 // Loans ending within `months` whose payment is still in the budget being shown (a scenario can already have removed the post).
 function loansFreedWithin(months){const nw=nowIdx();return (S.loans||[]).filter(l=>l.include!==false).map(l=>{const c=loanCalc(l),en=loanEnd(l,c);if(!en||en.i<nw||en.i-nw>months)return null;
   const ln=l.link?cur().find(e=>e.id===l.link):null;if(ln&&ln.active===false)return null;
-  return {l,i:en.i,free:ln?mAvg(ln):c.A,inB:ln?inBank(ln):true}}).filter(Boolean).sort((a,b)=>a.i-b.i)}
+  const gross=ln?mAvg(ln):c.A;return {l,i:en.i,gross,free:gross-rfLoan(l),inB:ln?inBank(ln):true}}).filter(Boolean).sort((a,b)=>a.i-b.i)}
 function loanEndsHtml(){
-  const nw=nowIdx(), L=(S.loans||[]).filter(l=>l.include!==false).map(l=>{const c=loanCalc(l),en=loanEnd(l,c);return en&&en.i>=nw?{l,c,en,free:c.budget!==null?c.budget:c.A}:null}).filter(Boolean).sort((a,b)=>a.en.i-b.en.i);
+  const nw=nowIdx(), L=(S.loans||[]).filter(l=>l.include!==false).map(l=>{const c=loanCalc(l),en=loanEnd(l,c);if(!en||en.i<nw)return null;const gross=c.budget!==null?c.budget:c.A;return {l,c,en,gross,free:gross-rfLoan(l)}}).filter(Boolean).sort((a,b)=>a.en.i-b.en.i);
   if(!L.length)return '';
-  let cum=0;const rows=L.map(x=>{cum+=x.free;const m=x.en.i-nw;return `<tr class="row" data-loan="${x.l.id}" tabindex="0"><td class="desc"><span class="lnum">${L.indexOf(x)+1}</span>${esc(x.l.desc||x.l.bank)}<span class="note">${esc(x.l.bank||'')}${x.l.paused?' · på pause':''}</span></td><td>${idxLbl(x.en.i)}${x.en.est?'':' <span class="badge mute">angivet</span>'}</td><td class="r">${m<=0?'denne måned':m<12?m+' md.':Math.floor(m/12)+' år'+(m%12?' '+(m%12)+' md.':'')}</td><td class="r"><b>${kr(x.free)}</b></td><td class="r">${kr(x.free*12)}</td><td class="r">${kr(cum)}</td></tr>`}).join('');
+  let cum=0;const rows=L.map(x=>{cum+=x.free;const m=x.en.i-nw;return `<tr class="row" data-loan="${x.l.id}" tabindex="0"><td class="desc"><span class="lnum">${L.indexOf(x)+1}</span>${esc(x.l.desc||x.l.bank)}<span class="note">${esc(x.l.bank||'')}${x.l.paused?' · på pause':''}</span></td><td>${idxLbl(x.en.i)}${x.en.est?'':' <span class="badge mute">angivet</span>'}</td><td class="r">${m<=0?'denne måned':m<12?m+' md.':Math.floor(m/12)+' år'+(m%12?' '+(m%12)+' md.':'')}</td><td class="r">${kr(x.gross)}</td><td class="r"><b>${kr(x.free)}</b></td><td class="r">${kr(x.free*12)}</td><td class="r">${kr(cum)}</td></tr>`}).join('');
   // tidslinje
   const a=nw, cap=a+12*12, b=Math.min(cap,Math.max(a+12,L[L.length-1].en.i+3)), W=1000,H=230,pl=64,pr=16,pt=16,pb=34,iw=W-pl-pr,ih=H-pt-pb, X=i=>pl+(i-a)/(b-a)*iw, tot=L.reduce((s,x)=>s+x.free,0), Y=v=>pt+ih-v/Math.max(1,tot*1.18)*ih;
   let g='',c2=0,path=`M${X(a)},${Y(0)}`;
@@ -3305,8 +3319,8 @@ function loanEndsHtml(){
     <div class="kpi"><span>Næste udløb</span><b>${idxLbl(L[0].en.i)}</b><small>${esc(L[0].l.desc||L[0].l.bank)}, frigiver ${kr(L[0].free)}/md.</small></div>
     <div class="kpi hero2"><span>Frigivet i alt, når alle er betalt</span><b>${kr(tot)}</b><small>pr. md. · ${kr(tot*12)} pr. år · ${idxLbl(L[L.length-1].en.i).toLowerCase()}</small></div></div>
    ${svg}
-   <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Lån</th><th>Udløber</th><th class="r">Om</th><th class="r">Frigiver pr. md.</th><th class="r">Pr. år</th><th class="r">Frigivet i alt pr. md.</th></tr></thead><tbody>${rows}</tbody></table></div>
-   <p class="muted" style="font-size:13px;margin-top:8px">Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb, markeret "angivet". Frigivet beløb er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen. Kun lån med flueben er med.</p></section>`;
+   <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Lån</th><th>Udløber</th><th class="r">Om</th><th class="r">Ydelse pr. md.</th><th class="r">Frigiver pr. md.</th><th class="r">Pr. år</th><th class="r">Frigivet i alt pr. md.</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <p class="muted" style="font-size:13px;margin-top:8px">Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb, markeret "angivet". Ydelsen er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen på lånet. ${RF_NOTE} Kun lån med flueben er med.</p></section>`;
 }
 function bindLoans(){
   $('btnNewLoan').onclick=()=>openLoan(null);
@@ -3432,9 +3446,11 @@ function helpHtml(){
   +sec('bank','Bankens rådighedsbeløb',steps([['','Nettoindtægt (alle indtægter, ekstra indtjening kun hvis den er slået til)'],['m','Bankens faste udgifter: de faste udgifter, der er markeret "Medregnes i bankens faste udgifter"'],['t','Bankens rådighedsbeløb'],['m','Vejledende krav: voksne + antal børn × sats pr. barn'],['t','Luft over kravet (eller under kravet)']])
       +panel('Jeres tal lige nu',wfB)
       +`<p>Bankens faste udgifter er dem, der står under Udgifter på Budgetposter. Mad og husholdning, gaver og opsparing regner banken ikke med, fordi de skal betales af rådighedsbeløbet. De står under Husholdning og Opsparing. Du kan ændre det på den enkelte post. Derfor er bankens rådighedsbeløb højere end det, der står under Til rådighed.</p>
-      <p>Det vejledende krav er en tommelfingerregel, ikke bankens egne satser, og tallene er et skøn – ikke bankens egen beregning. Udløber et lån inden for 12 måneder, viser Sådan ser banken det også, hvor meget luft der er, når ydelsen er væk.</p>`)
+      <p>Det vejledende krav er en tommelfingerregel, ikke bankens egne satser, og tallene er et skøn – ikke bankens egen beregning. Udløber et lån inden for 12 måneder, viser Sådan ser banken det også, hvor meget luft der er, når ydelsen er væk. Det frigivne beløb er regnet efter rentefradrag (se Øvrigt).</p>`)
   +sec('ovrigt','Øvrigt',panel(`Eksempel: ${qName} · ${kr(qAmt)} kvartalsvis = ${kr(qAvg)} pr. måned`,`<div class="hfreq">${qBars}<div class="avg" style="bottom:33.3%"></div><span class="avgl" style="bottom:calc(33.3% + 6px)">Gennemsnit ${kr(qAvg)}/md.</span></div><div class="hfreqm">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`)
-      +ul([`Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.`,
+      +ul([`<b>Indtægter</b> er det, der udbetales efter skat, som forskudsopgørelsen ser ud nu. budgetpro regner ikke selv skat. Ændres løn eller lån, også i et scenarie, ændrer skatten sig med, så ret indtægten, og husk at rette forskudsopgørelsen hos Skattestyrelsen. Ellers kommer forskellen som restskat eller penge tilbage.`,
+        `<b>Rentefradrag</b>: renter på lån kan trækkes fra i skat. Under lån er fradraget skønnet til ca. 33 % af de første 50.000 kr. i renter om året pr. person og ca. 25 % derover. Indtægterne rummer allerede fradraget, så når et lån er betalt ud, falder nettoindtægten lidt. Derfor er det frigivne beløb ydelsen minus lånets del af fradraget, også i Sådan ser banken det. Fradraget på et lån, der snart er betalt, er lille, fordi der kun er lidt rente tilbage.`,
+        `Kvartals-, halvårs- og årsbeløb omregnes til et gennemsnit pr. måned. Måned for måned viser dem i de måneder, de faktisk betales.`,
         `<b>Ekstra indtjening</b> er indtægter med fluebenet Ekstra indtjening, fx et fritidsjob. De står under Indtægter og tæller kun med, når Medregn ekstra indtjening er slået til. De indgår ikke i fordelingsnøglen. Kommer de ikke fast, vælges hyppigheden Uregelmæssig, og beløbet er et gennemsnit pr. måned over året.`,
         `<b>Fremskriv restgæld</b> under lån regner måned for måned fra den dato, overblikket er opdateret: renten er restgæld × rente ÷ 12, og resten af ydelsen trækkes fra restgælden. Det forudsætter samme rente og ydelse i hele perioden. Lån på pause eller uden rente eller ydelse står med restgælden, som den er nu.`,
         `Inaktive poster og mål tæller ikke med. Mål, der er nået måldatoen, tæller heller ikke.`,
@@ -3602,7 +3618,7 @@ function rowsHtml(){
     const G=L.filter(e=>e.type===type&&(gk==='regn'?inBank(e):gk==='hush'?!inBank(e):true));if(!G.length&&!plain)return;
     // Group heading: Indtægter / Faste udgifter with total, count and +; expenses then one row per category.
     const gsum=G.filter(e=>e.active!==false&&exCounts(e)).reduce((a,e)=>a+mAvg(e),0);
-    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+gk,label)}<span class="edot ${gk==='regn'?'e1':gk==='hush'?'e2':'e0'}"></span>${label}${gk==='regn'?'<small class="gsub">Faste udgifter, banken regner med</small>':gk==='hush'?'<small class="gsub">Betales af det, banken lader stå tilbage</small>':''}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${gk==='regn'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg class="g24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12.2V4.8a1.3 1.3 0 0 1 1.3-1.3h7.4l8.3 8.3-8.5 8.5z"/><circle cx="8" cy="8" r="1.4"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
+    h+=`<tr class="grp ${cls}" data-type="${type}" data-cat=""><td colspan="4">${foldBtn('g:'+gk,label)}<span class="edot ${gk==='regn'?'e1':gk==='hush'?'e2':'e0'}"></span>${label}${gk==='indtaegt'?'<small class="gsub">Udbetalt efter skat</small>':gk==='regn'?'<small class="gsub">Faste udgifter, banken regner med</small>':gk==='hush'?'<small class="gsub">Betales af det, banken lader stå tilbage</small>':''}<span class="gcount">${G.length} ${G.length===1?'post':'poster'}</span>${add(type,'',label)}${gk==='regn'?'<button type="button" class="catbtn" data-cats title="Opret, omdøb, sortér og slet udgiftskategorier"><svg class="g24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12.2V4.8a1.3 1.3 0 0 1 1.3-1.3h7.4l8.3 8.3-8.5 8.5z"/><circle cx="8" cy="8" r="1.4"/></svg>Kategorier</button>':''}</td><td class="r">${disp(gsum)}</td><td colspan="3"></td></tr>`;
     if(pfOn('g:'+gk))return;
     if(type==='indtaegt'){G.sort(byOrd).forEach(e=>h+=rowHtml(e));if(!G.length)h+=`<tr class="empty" data-type="indtaegt" data-cat=""><td colspan="8" class="muted">Ingen indtægter endnu. Tryk + for at tilføje en.</td></tr>`;return}
     const by={};G.forEach(e=>{const k=e.category||NOCAT;(by[k]=by[k]||[]).push(e)});
@@ -3982,7 +3998,7 @@ addEventListener('pagehide',()=>{if(!dirty||!S||dbRef)return;const j=JSON.string
    same colours, cards and charts, drawn directly with jsPDF (A4, mm). Amounts are per month unless stated. */
 // An amount and its unit are joined by a no-break space, so a line never breaks between '1.234' and 'kr' (or '%').
 function pdfTxt(s){return String(s??'').replace(/[–—]/g,'-').replace(/−/g,'-').replace(/[“”]/g,'"').replace(/\s*✓/g,'').replace(/→/g,'->').replace(/[  ]/g,' ').replace(/(\d) (kr\b|%)/g,'$1\u00a0$2')}
-const PC={paper:[243,243,241],card:[255,255,255],ink:[24,24,27],ink2:[94,94,99],ink3:[94,94,99],rule:[224,224,219],pine:[47,69,210],pineBg:[231,234,239],lime:[139,152,172],limeDark:[77,91,115],haze:[156,156,163],brick:[168,71,60],brickBg:[246,230,227],ochre:[24,24,27],ochreBg:[233,233,229],focus:[47,111,179]};
+const PC={paper:[243,243,241],card:[255,255,255],ink:[24,24,27],ink2:[94,94,99],ink3:[94,94,99],rule:[224,224,219],pine:[75,47,224],pineBg:[231,234,239],lime:[139,152,172],limeDark:[77,91,115],haze:[156,156,163],brick:[168,71,60],brickBg:[246,230,227],ochre:[24,24,27],ochreBg:[233,233,229],focus:[47,111,179]};
 const PGC=[[79,143,122],[154,125,69],[82,104,138],[143,91,106],PC.ink3], pgColor=g=>PGC[Math.max(0,(S.goals||[]).indexOf(g))%PGC.length];
 const tint=(c,f)=>c.map(v=>Math.round(v+(255-v)*f));
 /* Month-by-month plan for the goals chart (same rules as goalChart on the page). */
@@ -4161,7 +4177,7 @@ function buildPdf(opt){
   const KB=[{label:'Nettoindtægt',value:kr(bk.inc+bk.extra),small:bk.extra?'Inkl. ekstra indtjening '+kr(bk.extra):'Løn og børnefamilieydelse, uden ekstra indtjening'},{label:'Bankens faste udgifter',value:kr(bk.fixed),small:exclNote(bk)},{label:'Bankens rådighedsbeløb',value:kr(bk.rad),small:'pr. måned',kind:'hero'},
     {label:'Vejledende krav',value:kr(bk.req),small:`Tommelfingerregel for ${adultsLbl()} + ${+bk.b.children||0} børn, ikke bankens egne satser`},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:kr(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'}];
   const FR=loansFreedWithin(12).filter(x=>x.inB);
-  if(FR.length){const fr=FR.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=FR[FR.length-1].i;KB.push({label:(nb>=0?'Luft':'Under kravet')+' fra '+idxLbl(last).toLowerCase(),value:kr(Math.abs(nb)),small:'+'+kr(fr)+' frigives: '+FR.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '),kind:nb>=0?'good':'bad'})}
+  if(FR.length){const fr=FR.reduce((a,x)=>a+x.free,0),nb=bk.buf+fr,last=FR[FR.length-1].i;KB.push({label:(nb>=0?'Luft':'Under kravet')+' fra '+idxLbl(last).toLowerCase(),value:kr(Math.abs(nb)),small:'+'+kr(fr)+' frigives efter rentefradrag: '+FR.map(x=>(x.l.desc||x.l.bank)+' ('+MSHORT[((x.i%12)+12)%12]+' '+Math.floor(x.i/12)+')').join(', '),kind:nb>=0?'good':'bad'})}
   kpis(KB,3);
   if(bk.excl.length)para('Ikke med i bankens faste udgifter: '+bk.excl.map(e=>e.desc+' '+kr(mAvg(e))).join(', ')+'.',8,PC.ink3);
   const ids=S.accounts.map(a=>a.id);if(unplaced.length)ids.push('');
@@ -4205,14 +4221,14 @@ function buildPdf(opt){
     const wr=tP>0?IN.reduce((a,x)=>a+x.c.P*(+x.l.rate||0),0)/tP:0, selTxt=IN.length===LL.length?`alle ${LL.length} lån`:`${IN.length} af ${LL.length} lån`, soon=IN.filter(x=>x.c.n!==null&&x.c.n>0&&x.c.n<=18);
     const pct=v=>(+v||0).toLocaleString('da-DK',{minimumFractionDigits:2,maximumFractionDigits:2})+' %';
     hero([IN.length===LL.length?wI('Du har ','I har '):'De valgte lån har ',[kr(tP),'b'],' i samlet restgæld fordelt på '+selTxt+'. Ydelserne er ',[kr(tA),'b'],' om måneden, og heraf er cirka ',[kr(tI),'b'],' renter.'],
-      (soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>x.l.desc+' ('+x.c.endTxt+', frigør '+kr(x.c.A)+'/md.)').join(', ')+'. ':'')+'Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.'+(S.loanUpdated?' Restgælden er senest opdateret '+fmtDate(S.loanUpdated)+'.':''));
+      (soon.length?'Bliver betalt ud inden for 18 måneder: '+soon.map(x=>x.l.desc+' ('+x.c.endTxt+', frigør ca. '+kr(x.c.A-rfLoan(x.l))+'/md. efter rentefradrag)').join(', ')+'. ':'')+'Beregnet slut bygger på restgæld, rente og ydelse og er et skøn.'+(S.loanUpdated?' Restgælden er senest opdateret '+fmtDate(S.loanUpdated)+'.':''));
     h2('Overblik over lån',null,40);
     kpis([{label:'Oprindeligt lånt',value:kr(tO),small:'alle lån'},{label:'Samlet restgæld'+(S.loanUpdated?' pr. '+fmtDate(S.loanUpdated):''),value:kr(tP),small:cap(selTxt)+'.'+(tO?' '+Math.round((1-tP/tO)*100)+' % af det oprindelige beløb er betalt af.':''),kind:'hero',bar:tO?1-tP/tO:0},{label:'Ydelse pr. måned',value:kr(tA),small:'uden lån på pause'},
-      {label:'Heraf renter pr. måned',value:kr(tI),small:kr(tI*12)+' om året'},{label:'Gennemsnitlig rente',value:pct(wr),small:'vægtet efter restgæld'}],3);
+      {label:'Heraf renter pr. måned',value:kr(tI),small:kr(tI*12)+' om året · ca. '+kr(tI-rfYear(tI*12)/12)+' efter rentefradrag'},{label:'Gennemsnitlig rente',value:pct(wr),small:'vægtet efter restgæld'}],3);
     const paid=LL.map(x=>x.c.paid);
     table(['Bank','Beskrivelse','Oprindeligt','Restgæld','Betalt af','Ydelse/md.','Rente','Renter/md.','Beregnet slut','I budgettet'],
       LL.map(({l,c})=>({style:l.include===false?{textColor:PC.ink3}:{},cells:[l.bank||'',(l.desc||'')+(l.paused?' (pause)':'')+(l.include===false?' (ikke medtaget)':'')+(l.note?'\n'+l.note:''),kr(c.O),{content:kr(c.P),styles:{fontStyle:'bold'}},'',kr(c.A),l.rate!==''&&l.rate!=null?pct(l.rate):'-',l.rate?kr(c.interest):'-',
-        (l.paused?'På pause':c.n===null?(l.rate?'Ydelsen dækker ikke renten':'Angiv rente'):c.endTxt+(c.n>0?'\nfrigiver '+kr(c.budget!==null?c.budget:c.A)+'/md.':''))+(l.ends?'\nangivet: '+l.ends:''),
+        (l.paused?'På pause':c.n===null?(l.rate?'Ydelsen dækker ikke renten':'Angiv rente'):c.endTxt+(c.n>0?'\nfrigiver ca. '+kr((c.budget!==null?c.budget:c.A)-rfLoan(l))+'/md.':''))+(l.ends?'\nangivet: '+l.ends:''),
         c.link?(c.budget!==null?kr(c.budget):'Inaktiv')+(c.budget!==null&&Math.abs(c.budget-c.A)>=1&&!l.paused?' ('+(c.budget>c.A?'+':'')+kr(c.budget-c.A)+')':'')+'\n'+c.link.desc:'Ikke tilknyttet']}))
         .concat([{tot:true,cells:[{content:'I alt, '+selTxt,colSpan:2},kr(tO),kr(tP),'',kr(tA),pct(wr),kr(tI),'','']}]),
       {right:[2,3,5,6,7,9],fs:7,cs:{4:{cellWidth:18}},draw:d=>{if(d.section!=='body'||d.column.index!==4||d.row.index>=paid.length)return;const p=paid[d.row.index],bx=d.cell.x+2,bw=d.cell.width-4,by=d.cell.y+2.2;
@@ -4225,14 +4241,14 @@ function buildPdf(opt){
       table(['Lån','Restgæld nu','Pr. '+PJ.toTxt,'Afdraget','Renter',''],PJ.R.map(({l,p})=>[(l.desc||l.bank)+(l.bank&&l.desc?' ('+l.bank+')':''),kr(p.P0),{content:kr(p.P),styles:{fontStyle:'bold'}},kr(p.P0-p.P),p.skip?'-':kr(p.interest),loanProjStatus(p,PJ.si)])
         .concat([{tot:true,cells:['I alt',kr(PJ.tP0),kr(PJ.tP),kr(PJ.tP0-PJ.tP),kr(PJ.tI),'']}]),{right:[1,2,3,4]});
       para(LOANPROJ_NOTE+(PJ.skips.length?LOANPROJ_SKIP:'')+' Datoen vælges under Fremskriv restgæld på fanen Overblik over lån. Kun lån med flueben er med.',7.5,PC.ink3)}
-    const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
+    const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>{const gross=x.c.budget!==null?x.c.budget:x.c.A;return {...x,gross,free:gross-rfLoan(x.l)}}).sort((a,b)=>a.en.i-b.en.i);
     if(LE.length){const s12=LE.filter(x=>x.en.i-nw<=12), totF=LE.reduce((s,x)=>s+x.free,0);
       h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden.',40);
       kpis([{label:'Frigives inden for 12 md.',value:kr(s12.reduce((s,x)=>s+x.free,0)),small:s12.length?s12.map(x=>x.l.desc||x.l.bank).join(', '):'Ingen lån udløber det næste år',kind:s12.length?'good':''},{label:'Næste udløb',value:idxLbl(LE[0].en.i),small:(LE[0].l.desc||LE[0].l.bank)+', frigiver '+kr(LE[0].free)+'/md.'},
         {label:'Frigivet i alt, når alle er betalt',value:kr(totF),small:'pr. md. · '+kr(totF*12)+' pr. år · '+idxLbl(LE[LE.length-1].en.i).toLowerCase(),kind:'hero'}],3);
       let cum=0;
-      table(['Lån','Udløber','Om','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map((x,k)=>{cum+=x.free;const m=x.en.i-nw;return [(k+1)+'. '+(x.l.desc||x.l.bank)+(x.l.bank&&x.l.desc?' ('+x.l.bank+')':'')+(x.l.paused?' · på pause':''),idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),m<=0?'denne måned':m<12?m+' md.':Math.floor(m/12)+' år'+(m%12?' '+(m%12)+' md.':''),{content:kr(x.free),styles:{fontStyle:'bold'}},kr(x.free*12),kr(cum)]}),{right:[2,3,4,5]});
-      para('Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb. Frigivet beløb er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen.',7.5,PC.ink3)}}
+      table(['Lån','Udløber','Om','Ydelse pr. md.','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map((x,k)=>{cum+=x.free;const m=x.en.i-nw;return [(k+1)+'. '+(x.l.desc||x.l.bank)+(x.l.bank&&x.l.desc?' ('+x.l.bank+')':'')+(x.l.paused?' · på pause':''),idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),m<=0?'denne måned':m<12?m+' md.':Math.floor(m/12)+' år'+(m%12?' '+(m%12)+' md.':''),kr(x.gross),{content:kr(x.free),styles:{fontStyle:'bold'}},kr(x.free*12),kr(cum)]}),{right:[2,3,4,5,6]});
+      para('Udløb er beregnet ud fra restgæld, rente og ydelse. Hvor det ikke kan beregnes, fx for lån på pause, bruges det angivne udløb. Ydelsen er budgetpostens beløb, hvis lånet er tilknyttet en post, ellers ydelsen på lånet. '+RF_NOTE,7.5,PC.ink3)}}
 
   /* ===== 3. Faste overførsler ===== */
   chapterStart('Faste overførsler',sub,tocGrp);
@@ -4367,7 +4383,7 @@ async function runPdf(opt){
 /* ---------- Excel ---------- */
 /* One sheet per tab (Budget, Overblik over lån, Faste overførsler, Opsparingsmål) laid out like the page, plus all
    entries as a filterable list. Styled with xlsx-js-style (SheetJS with cell styles); amounts stay numbers with a kr format. */
-const XC={pine:'2F45D2',pineBg:'E7EAEF',limeDark:'4D5B73',ink:'18181B',ink2:'5E5E63',ink3:'5E5E63',rule:'E0E0DB',paper:'F3F3F1',haze:'9C9CA3',brick:'A8473C',brickBg:'F6E6E3',ochre:'18181B',ochreBg:'E9E9E5',white:'FFFFFF'};
+const XC={pine:'4B2FE0',pineBg:'E7EAEF',limeDark:'4D5B73',ink:'18181B',ink2:'5E5E63',ink3:'5E5E63',rule:'E0E0DB',paper:'F3F3F1',haze:'9C9CA3',brick:'A8473C',brickBg:'F6E6E3',ochre:'18181B',ochreBg:'E9E9E5',white:'FFFFFF'};
 const XKR='#,##0 "kr";-#,##0 "kr";0 "kr"';
 const xm=(...L)=>{const r={};L.forEach(o=>{if(o)Object.keys(o).forEach(k=>{r[k]=o[k]&&typeof o[k]==='object'&&k!=='fill'?Object.assign({},r[k],o[k]):o[k]})});return r};
 const xbd=c=>({style:'thin',color:{rgb:c||XC.rule}});
@@ -4423,7 +4439,7 @@ function buildXlsx(){
   B.h2('Rådighedsbeløb som banken regner det','Nettoindtægt minus bankens faste udgifter. Mad og husholdning, opsparing og gaver er ikke med.');
   const FR=loansFreedWithin(12).filter(x=>x.inB), fr=FR.reduce((a,x)=>a+x.free,0);
   B.kpis([{label:'Nettoindtægt',value:r0(bk.inc+bk.extra),small:bk.extra?'inkl. ekstra indtjening':'uden ekstra indtjening'},{label:'Bankens faste udgifter',value:r0(bk.fixed),small:exclNote(bk)},{label:'Bankens rådighedsbeløb',value:r0(bk.rad),small:'pr. måned',kind:'hero'},{label:'Vejledende krav',value:r0(bk.req),small:'tommelfingerregel'},{label:bk.buf>=0?'Luft over kravet':'Under kravet',value:r0(Math.abs(bk.buf)),small:'pr. måned',kind:bk.buf>=0?'good':'bad'},
-    ...(FR.length?[{label:(bk.buf+fr>=0?'Luft':'Under kravet')+' fra '+idxLbl(FR[FR.length-1].i).toLowerCase(),value:r0(Math.abs(bk.buf+fr)),small:'+'+kr(fr)+' frigives fra lån',kind:bk.buf+fr>=0?'good':'bad'}]:[])]);
+    ...(FR.length?[{label:(bk.buf+fr>=0?'Luft':'Under kravet')+' fra '+idxLbl(FR[FR.length-1].i).toLowerCase(),value:r0(Math.abs(bk.buf+fr)),small:'+'+kr(fr)+' frigives fra lån efter rentefradrag',kind:bk.buf+fr>=0?'good':'bad'}]:[])]);
   if(bk.excl.length)B.table(['Ikke med i bankens faste udgifter','Pr. md.'],bk.excl.map(e=>[e.desc,r0(mAvg(e))]).concat([{tot:true,cells:['I alt',r0(bk.exclSum)]}]));
   const unplaced=act().some(e=>e.type==='udgift'&&!e.account), ids=S.accounts.map(a=>a.id).concat(unplaced?['']:[]);
   B.h2('Konti','Hvad løber ind og ud af hver konto, og hvad der er tilbage, pr. måned.');
@@ -4460,7 +4476,7 @@ function buildXlsx(){
   Lw.title('Overblik over lån',title+' · '+stamp+(S.loanUpdated?' · Restgæld opdateret '+fmtDate(S.loanUpdated):''));
   if(!LL.length)Lw.note('Ingen lån registreret endnu.');
   else{const IN=LL.filter(x=>x.l.include!==false), AC=IN.filter(x=>!x.l.paused), tO=IN.reduce((a,x)=>a+x.c.O,0), tP=IN.reduce((a,x)=>a+x.c.P,0), tA=AC.reduce((a,x)=>a+x.c.A,0), tI=AC.reduce((a,x)=>a+x.c.interest,0), wr=tP>0?IN.reduce((a,x)=>a+x.c.P*(+x.l.rate||0),0)/tP:0;
-    Lw.kpis([{label:'Oprindeligt lånt',value:r0(tO),small:'alle lån'},{label:'Samlet restgæld',value:r0(tP),small:(tO?Math.round((1-tP/tO)*100)+' % er betalt af':''),kind:'hero'},{label:'Ydelse pr. måned',value:r0(tA),small:'uden lån på pause'},{label:'Heraf renter pr. md.',value:r0(tI),small:kr(tI*12)+' om året'},{label:'Gennemsnitlig rente',value:wr/100,fmt:'0.00%',small:'vægtet efter restgæld'}]);
+    Lw.kpis([{label:'Oprindeligt lånt',value:r0(tO),small:'alle lån'},{label:'Samlet restgæld',value:r0(tP),small:(tO?Math.round((1-tP/tO)*100)+' % er betalt af':''),kind:'hero'},{label:'Ydelse pr. måned',value:r0(tA),small:'uden lån på pause'},{label:'Heraf renter pr. md.',value:r0(tI),small:kr(tI*12)+' om året · ca. '+kr(tI-rfYear(tI*12)/12)+' efter rentefradrag'},{label:'Gennemsnitlig rente',value:wr/100,fmt:'0.00%',small:'vægtet efter restgæld'}]);
     Lw.h2('Lån');
     Lw.table(['Bank','Beskrivelse','Oprindeligt','Restgæld','Betalt af','Ydelse pr. md.','Rente','Renter pr. md.','Udløber (angivet)','Beregnet slut','I budgettet','Budgetpost'],
       LL.map(({l,c})=>({s:l.include===false?XF.muted:null,cells:[l.bank||'',(l.desc||'')+(l.paused?' (pause)':'')+(l.include===false?' (ikke medtaget)':''),r0(c.O),{v:r0(c.P),s:XF.bold},r0(c.paid),r0(c.A),l.rate===''||l.rate==null?'':(+l.rate)/100,l.rate?r0(c.interest):'',l.ends||'',l.paused?'På pause':c.endTxt||'',c.budget!==null?r0(c.budget):'',c.link?c.link.desc:'']}))
@@ -4471,9 +4487,10 @@ function buildXlsx(){
       Lw.table(['Bank','Lån','Restgæld nu','Pr. '+PJ.toTxt,'Afdraget','Renter','Status'],PJ.R.map(({l,p})=>[l.bank||'',l.desc||'',r0(p.P0),{v:r0(p.P),s:XF.bold},r0(p.P0-p.P),p.skip?'':r0(p.interest),loanProjStatus(p,PJ.si)])
         .concat([{tot:true,cells:['I alt','',r0(PJ.tP0),r0(PJ.tP),r0(PJ.tP0-PJ.tP),r0(PJ.tI),'']}]),{headH:30});
       Lw.note(LOANPROJ_NOTE+(PJ.skips.length?LOANPROJ_SKIP:'')+' Kun lån med flueben er med.')}
-    const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>({...x,free:x.c.budget!==null?x.c.budget:x.c.A})).sort((a,b)=>a.en.i-b.en.i);
+    const nw=nowIdx(), LE=IN.map(x=>({...x,en:loanEnd(x.l,x.c)})).filter(x=>x.en&&x.en.i>=nw).map(x=>{const gross=x.c.budget!==null?x.c.budget:x.c.A;return {...x,gross,free:gross-rfLoan(x.l)}}).sort((a,b)=>a.en.i-b.en.i);
     if(LE.length){let cum=0;Lw.h2('Udløb og frigivne beløb','Hvornår lånene er betalt ud, og hvor meget der frigives om måneden.');
-      Lw.table(['Lån','Bank','Udløber','Om (md.)','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map(x=>{cum+=x.free;return [x.l.desc||x.l.bank,x.l.bank||'',idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),Math.max(0,x.en.i-nw),{v:r0(x.free),s:XF.bold},r0(x.free*12),r0(cum)]}),{plain:[3],headH:30})}}
+      Lw.table(['Lån','Bank','Udløber','Om (md.)','Ydelse pr. md.','Frigiver pr. md.','Pr. år','Frigivet i alt pr. md.'],LE.map(x=>{cum+=x.free;return [x.l.desc||x.l.bank,x.l.bank||'',idxLbl(x.en.i)+(x.en.est?'':' (angivet)'),Math.max(0,x.en.i-nw),r0(x.gross),{v:r0(x.free),s:XF.bold},r0(x.free*12),r0(cum)]}),{plain:[3],headH:30});
+      Lw.note(RF_NOTE)}}
   Lw.add(wb,'Overblik over lån');
 
   /* Faste overførsler */

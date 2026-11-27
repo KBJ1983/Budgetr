@@ -88,7 +88,7 @@ export function AppCard({ dark = false, view = "budget", className }: { dark?: b
 
 /**
  * Rådighed: the light card with the bank's numbers, and a small phone card on its corner: the luft once the car loan
- * is paid in July 2027 (10.557 + the loan's 3.300 = 13.857, as the app shows it).
+ * is paid in July 2027 (10.557 + the loan's 3.300 minus about 42 kr in rentefradrag = 13.814, as the app shows it).
  */
 export function AppPair() {
   return (
@@ -98,7 +98,7 @@ export function AppPair() {
         <Logo fontSize={11} bg="#ECF1EF" />
         <span>Luft fra jul 2027</span>
         <b>
-          13.857<small> kr</small>
+          13.814<small> kr</small>
         </b>
         <span className={styles.appTrack}>
           <span style={{ width: "62%" }} />
