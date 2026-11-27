@@ -26,6 +26,7 @@ import { inquiryChoices, sectorLabel } from "@/lib/erhverv";
 import type { InquiryRow } from "@/lib/erhverv-inbox";
 import { isPackCount, isPackMonths, packLabel, packPrice } from "@/lib/erhverv-packs";
 import type { OwnerData } from "@/lib/owner-store";
+import { CrmPanel } from "./CrmPanel";
 import { TrafficPanel } from "./TrafficPanel";
 
 const kr = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 2 })} kr`;
@@ -473,16 +474,18 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [resetDone, setResetDone] = useState(false);
-  // "Overblik" (the numbers below) or "Trafik" (components/owner/TrafficPanel.tsx); #trafik opens the second.
-  const [tab, setTab] = useState<"overblik" | "trafik">("overblik");
+  // "Overblik" (the numbers below), "Salg" (the sales CRM, components/owner/CrmPanel.tsx) or "Trafik"
+  // (components/owner/TrafficPanel.tsx); #salg (and #salg/<lead>) and #trafik open the other two.
+  const [tab, setTab] = useState<"overblik" | "salg" | "trafik">("overblik");
 
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: light)").matches) setTheme("light");
     if (location.hash === "#trafik") setTab("trafik");
+    if (location.hash.startsWith("#salg")) setTab("salg");
   }, []);
-  const openTab = (t: "overblik" | "trafik") => {
+  const openTab = (t: "overblik" | "salg" | "trafik") => {
     setTab(t);
-    history.replaceState(null, "", t === "trafik" ? "#trafik" : location.pathname);
+    history.replaceState(null, "", t === "overblik" ? location.pathname : `#${t}`);
   };
 
   // New henvendelser show up without a reload: fetch again when the tab is back in view, and once a minute.
@@ -635,13 +638,18 @@ export function OwnerDashboard({ initial, dev, canLogOut }: { initial: OwnerData
             <button type="button" role="tab" className="bx-tab" aria-selected={tab === "overblik"} onClick={() => openTab("overblik")}>
               Overblik
             </button>
+            <button type="button" role="tab" className="bx-tab" aria-selected={tab === "salg"} onClick={() => openTab("salg")}>
+              Salg
+            </button>
             <button type="button" role="tab" className="bx-tab" aria-selected={tab === "trafik"} onClick={() => openTab("trafik")}>
               Trafik
             </button>
           </div>
         </div>
 
-        {tab === "trafik" ? (
+        {tab === "salg" ? (
+          <CrmPanel />
+        ) : tab === "trafik" ? (
           <TrafficPanel />
         ) : (
           <>
