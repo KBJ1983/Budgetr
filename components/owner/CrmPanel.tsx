@@ -24,6 +24,7 @@ import {
   type Outcome,
   type Segment,
 } from "@/lib/crm";
+import { SalesCalc } from "./SalesCalc";
 
 // The "Salg" tab on /admin: the owner's sales CRM (lib/crm.ts). A list of leads with follow-ups first, and one lead
 // at a time with its contacts, what was said and sent (the timeline) and what it led to.
@@ -235,6 +236,7 @@ export function CrmPanel() {
   return (
     <div className="crm">
       {banner}
+      <SalesCalc pool={{ bank: all.filter((l) => l.seg === "bank").length, maegler: all.filter((l) => l.seg === "maegler").length, skole: all.filter((l) => l.seg === "skole").length }} />
       {leads === null ? (
         <p className="bx-muted">Henter leads …</p>
       ) : !leads.length ? (

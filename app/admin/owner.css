@@ -1123,3 +1123,109 @@
   font-size: 13px;
   margin: 12px 0 0;
 }
+
+/* "Hvad skal jeg sælge?" – the revenue calculator on Salg (components/owner/SalesCalc.tsx). */
+.crm-calc > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.crm-calc > summary::-webkit-details-marker {
+  display: none;
+}
+.crm-calc > summary::before {
+  content: "+";
+  font: 600 16px var(--font-mono);
+  margin-right: 8px;
+}
+.crm-calc[open] > summary::before {
+  content: "–";
+}
+.crm-calc > summary > span:first-child {
+  flex: 1 1 260px;
+}
+.calc-sum {
+  font: 500 15px var(--font-mono);
+}
+.calc-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 20px;
+  margin-top: 16px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .calc-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.calc-inputs,
+.calc-out {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.calc-inputs .bx-field {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--tx-2);
+  min-width: 0;
+}
+.calc-group {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 10px 12px 12px;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.calc-group legend {
+  padding: 0 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.calc-group small {
+  font-size: 12px;
+}
+.calc-reset {
+  justify-self: start;
+}
+.calc-table td {
+  vertical-align: top;
+}
+.calc-table small {
+  display: block;
+  font-size: 12px;
+}
+.calc-table td.r {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+.calc-goal {
+  background: var(--band);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+}
+.calc-goal p {
+  margin: 0 0 6px;
+}
+.calc-goal ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 2px;
+}
+.calc-goal.is-ok {
+  margin: 0;
+}
+.calc-note {
+  font-size: 12px;
+  margin: 0;
+}
